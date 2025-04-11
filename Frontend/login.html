@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login & Registration Form | CoderGirl</title>
+    <style>
+        /* Import Google font - Poppins */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            width: 100%;
+           /* background: rgb(15, 128, 128);*/
+             background-image: url('../images/medical.jpg');
+            background-size: cover;
+            background-position: center;
+
+        }
+
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 430px;
+            width: 100%;
+            background: #fff;
+            border-radius: 7px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .container .registration {
+            display: none;
+        }
+
+        #check:checked~.registration {
+            display: block;
+        }
+
+        #check:checked~.login {
+            display: none;
+        }
+
+        #check {
+            display: none;
+        }
+
+        .container .form {
+            padding: 2rem;
+        }
+
+        .form header {
+            font-size: 2rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form input,
+        .form select {
+            height: 60px;
+            width: 100%;
+            padding: 0 15px;
+            font-size: 17px;
+            margin-bottom: 1.3rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .form input:focus {
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .form a {
+            font-size: 16px;
+            color: rgb(9, 102, 102);
+            text-decoration: none;
+        }
+
+        .form a:hover {
+            text-decoration: underline;
+        }
+
+        .form input.button {
+            color: #fff;
+            background: rgb(9, 102, 102);
+            font-size: 1.2rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-top: 1.7rem;
+            cursor: pointer;
+            transition: 0.4s;
+        }
+
+        .form input.button:hover {
+            background: #006653;
+        }
+
+        .signup {
+            font-size: 17px;
+            text-align: center;
+        }
+
+        .signup label {
+            color: #009579;
+            cursor: pointer;
+        }
+
+        .signup label:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <input type="checkbox" id="check">
+        <div class="login form">
+            <header>Login</header>
+            <form action="#">
+                <select id="role" required>
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="admin">Admin</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="patient">Patient</option>
+                </select>
+                <input type="text" placeholder="Enter your email" required>
+                <input type="password" placeholder="Enter your password" required>
+                <a href="#">Forgot password?</a>
+                <input type="button" class="button" value="Login" onclick="redirectUser()">
+            </form>
+            <div class="signup">
+                <span class="signup">Don't have an account?
+                    <label for="check">Signup</label>
+                </span>
+            </div>
+        </div>
+        <div class="registration form">
+            <header>Signup</header>
+            <form action="#">
+                <input type="text" placeholder="Enter your email" required>
+                <input type="password" placeholder="Create a password" required>
+                <input type="password" placeholder="Confirm your password" required>
+                <input type="button" class="button" value="Signup">
+            </form>
+            <div class="signup">
+                <span class="signup">Already have an account?
+                    <label for="check">Login</label>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function redirectUser() {
+            const role = document.getElementById('role').value;
+            const email = document.querySelector('input[type="text"]').value;
+            const password = document.querySelector('input[type="password"]').value;
+
+            // Regular expression for basic email validation
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            // Validate the email
+            if (!emailPattern.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            // Validate the password length
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long.');
+                return;
+            }
+
+            // Check if a role is selected
+            if (!role) {
+                alert('Please select a role.');
+                return;
+            }
+
+            // Save the role in localStorage
+            localStorage.setItem('userRole', role); // Save the role
+
+            // Redirect based on the role
+            if (role === 'admin') {
+                window.location.href = 'admin.html'; // Replace with actual admin panel URL
+            } else if (role === 'doctor') {
+                window.location.href = 'Doctordashboard.html'; // Replace with actual doctor panel URL
+            } else if (role === 'patient') {
+                window.location.href = 'index.html'; // Replace with actual patient panel URL
+            }
+        }
+         function handleSignup() {
+                const email = document.querySelector('.registration input[type="text"]').value;
+                const password = document.querySelector('.registration input[type="password"]').value;
+                const confirmPassword = document.querySelector('.registration input[type="password"]:nth-of-type(2)').value;
+
+                // Email validation
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (!emailPattern.test(email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+
+                // Check password length and match
+                if (password.length < 6) {
+                    alert('Password must be at least 6 characters long.');
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match.');
+                    return;
+                }
+
+                // Assuming successful signup (e.g., you would typically send this to your server)
+                localStorage.setItem('userRole', 'patient'); // Set a default role or handle accordingly
+                alert('Signup successful! Redirecting to login...');
+                // Redirect to login page (or main page)
+                window.location.href = 'login.html'; // Change to your actual login page
+            }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="index.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Catamaran:wght@200&family=Courgette&family=Dancing+Script:wght@700&family=Edu+TAS+Beginner:wght@700&family=Lato:wght@300;900&family=Mukta:wght@700&family=Mulish:wght@300&family=Open+Sans&family=PT+Sans:ital,wght@1,700&family=Poppins:wght@300&family=Raleway:wght@100&family=Roboto&family=Roboto+Condensed:wght@700&family=Roboto+Slab&display=swap"
+        rel="stylesheet">
+  <!---  <script src="https://kit.fontawesome.com/f30fac2c61.js" crossorigin="anonymous"></script>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav>
+            <div class="logo">
+                <img src="../images/Da.png" alt="DocAssist Logo">
+                <h1>DocAssist</h1>
+            </div>
+            <i id="bar" class="fa-solid fa-bars"></i>
+
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
+                <!---- <li><a href="index.html#speciality">Specialities</a></li>-->
+                <li><a href="Contactus.html">Contact Us</a></li>
+                <li><a href="faqs.html">FAQs</a></li> <!-- New FAQs link -->
+        
+                <li><a href="login.html" class="login-button">Login</a></li>
+            </ul>
+        
+        </nav>
+        
+                
+
+        <!-- Contact Section -->
+        <div id="contact">
+            <div class="head">
+                <h1>Contact Us</h1>
+            <!---- <h1>Contact <span>Us</span></h1>-->
+
+            </div>
+            <div class="contact">
+                <h1>Connect With Us</h1>
+                <input type="text" placeholder="Enter Email" id="email">
+                <input type="password" placeholder="Enter Password" id="pass">
+                <input type="tel" placeholder="Enter Contact Number" id="contact">
+                <button id="connectBtn">Connect</button>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="footer">
+            <div class="text">
+                <h3>About Us</h3>
+                <p>24 Hours</p>
+                <p>Top Doctors</p>
+                <p>Best Care</p>
+                <p>Patient</p>
+            </div>
+            <div class="text">
+                <h3>Specialties</h3>
+                <p>Spine Surgery</p>
+                <p>Knee Surgery</p>
+                <p>Leg Surgery</p>
+                <p>Tendon Surgery</p>
+            </div>
+            <div class="text">
+                <h3>Best Teams</h3>
+                <p>Doctors</p>
+                <p>Nursing</p>
+                <p>Staff</p>
+                <p>Hospital</p>
+            </div>
+            <div class="text">
+                <h3>Address</h3>
+                <p>Near MG Road</p>
+                <p>Galaxy Care</p>
+                <p>333-00222</p>
+                <p>2222-4334</p>
+            </div>
+        </div>
+    </div>
+
+    <script> // JavaScript to toggle the hamburger menu
+        document.getElementById('bar').addEventListener('click', function () {
+            const menu = document.querySelector('nav ul');
+            menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
+        });
+
+    </script>
+</body>
+
+</html>

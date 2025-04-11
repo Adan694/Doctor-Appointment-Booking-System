@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <title>FAQs - DocAssist</title>
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0%;
+    width: 100%;
+    background-color: rgb(9, 102, 102);
+    color: white;
+    z-index: 1000;
+    left: 0%;
+}
+ul {
+    display: flex;
+}
+ul li {
+    list-style: none;
+}
+ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    margin-inline: 20px;
+}
+ul li a:hover {
+    color: black;
+    border-bottom: 2px solid black;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin: 0;
+}
+.logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+.logo h1 {
+    font-size: 30px;
+    margin: 0;
+}
+h1 {
+    text-align: center;
+    color: #f4f4f4;
+    margin-top: 20px;
+}
+.faq-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+.faq {
+    margin-bottom: 15px;
+}
+.faq h2 {
+    cursor: pointer;
+    margin: 0;
+    padding: 10px;
+    background: #0f8888;
+    color: white;
+    border-radius: 5px;
+}
+.faq p {
+    display: none;
+    padding: 10px;
+    border: 1px solid #0f8888;
+    border-radius: 5px;
+    background: #e7f9f9;
+}
+#bar {
+    display: none;
+    font-size: 30px;
+    cursor: pointer;
+}
+@media screen and (max-width: 900px) {
+    ul {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        background-color: rgb(9, 102, 102);
+    }
+    ul.active {
+        display: flex;
+    }
+    #bar {
+        z-index: 1001;
+        display: block;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav>
+            <div class="logo">
+                <img src="../images/Da.png" alt="DocAssist Logo">
+                <h1>DocAssist</h1>
+            </div>
+            <i id="bar" class="fa-solid fa-bars"></i>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
+                <li><a href="Contactus.html">Contact Us</a></li>
+                <li><a href="faqs.html">FAQs</a></li> <!-- New FAQs link -->
+                <li id="myAppointments" style="display: none;"><a href="myappointments.html">My Appointments</a></li>
+                <li id="authButton"><a href="login.html" class="login-button">Login</a></li>
+                <!-- Updated Login Button -->
+            </ul>
+        </nav>
+
+        <h1>Frequently Asked Questions</h1>
+        <div class="faq-container">
+
+            <div class="faq">
+                <h2>How do I book an appointment?</h2>
+                <p>You can book an appointment by selecting a doctor and choosing an available time slot on our website.
+                </p>
+            </div>
+
+            <div class="faq">
+                <h2>What if I need to cancel my appointment?</h2>
+                <p>You can cancel your appointment through your account on our website or by contacting our support
+                    team.</p>
+            </div>
+
+            <div class="faq">
+                <h2>Do I need to create an account to book an appointment?</h2>
+                <p>Yes, creating an account will help you manage your appointments easily and receive notifications.</p>
+            </div>
+
+            <div class="faq">
+                <h2>What should I bring to my appointment?</h2>
+                <p>Please bring a valid ID, insurance information (if applicable), and any relevant medical records.</p>
+            </div>
+
+            <div class="faq">
+                <h2>Can I reschedule my appointment?</h2>
+                <p>Yes, you can reschedule your appointment through your account or by contacting our support team.</p>
+            </div>
+
+            <div class="faq">
+                <h2>What if I arrive late for my appointment?</h2>
+                <p>If you arrive late, please inform the receptionist. Depending on the schedule, you may have to wait
+                    or reschedule.</p>
+            </div>
+
+            <div class="faq">
+                <h2>Is telemedicine available?</h2>
+                <p>Yes, we offer telemedicine appointments. You can select this option while booking your appointment.
+                </p>
+            </div>
+
+        </div>
+
+        <script>
+            // Script to toggle FAQ answers
+            const faqs = document.querySelectorAll('.faq h2');
+            faqs.forEach(faq => {
+                faq.addEventListener('click', () => {
+                    const answer = faq.nextElementSibling;
+                    answer.style.display = answer.style.display === 'none' || answer.style.display === '' ? 'block' : 'none';
+                });
+            });
+        </script>
+
+    </div>
+
+<script> // JavaScript to toggle the hamburger menu
+    document.getElementById('bar').addEventListener('click', function () {
+        const menu = document.querySelector('nav ul');
+        menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
+    });
+
+</script>
+</body>
+
+
+</html>

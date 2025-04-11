@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Appointment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            z-index: 1000;
+            padding:10px 20px;
+
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        ul {
+            display: flex;
+        }
+
+        ul li {
+    list-style: none;
+}
+
+ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    margin-inline: 20px;
+}
+
+ul li a:hover {
+    color: black;
+    border-bottom: 2px solid black;
+}
+
+#bar {
+    display: none;
+    /* Hidden by default */
+    font-size: 30px;
+    /* Hamburger icon size */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    /* Increased font size */
+    margin: 0;
+    /* Remove extra margin */
+}
+
+.logo img {
+    width: 60px;
+    /* Set a fixed width */
+    height: 60px;
+    /* Set a fixed height to match width */
+    border-radius: 50%;
+    /* Make the image round */
+    margin-right: 10px;
+    /* Space between image and text */
+    object-fit: cover;
+    /* Ensure the image covers the area */
+}
+
+.logo h1 {
+    font-size: 30px;
+    /* Increase the font size of the text */
+    margin: 0;
+    /* Remove default margin */
+}
+
+
+
+       .main-container {
+    padding: 80px 20px;
+    display: flex;
+    justify-content: space-between; /* Adjust to space them apart */
+    align-items: flex-start;        /* Align items at the start */
+}
+
+        .quick-links {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .quick-links h2 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .quick-links ul {
+            display: list-item;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .quick-links li {
+            margin: 10px 0;
+        }
+
+        .quick-links li a {
+            color: rgb(9, 102, 102);
+            font-size: 16px;
+        }
+
+        .appointments {
+            flex: 1;
+            width: 100%;
+            max-width: 800px;
+            margin-right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        table th {
+            background: #f2f2f2;
+        }
+
+        .btn-view {
+            color: rgb(9, 102, 102);
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .btn-view:hover {
+            color: darkblue;
+        }
+
+        .profile-container {
+            max-width: 400px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .profile-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;}
+
+        button:hover {
+            background-color: rgb(6, 85, 85);
+        }
+
+        /* Footer */
+        .footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 40px;
+            color: white;
+            background-color: rgb(6, 51, 51);
+        }
+
+        .footer .text {
+            margin: 10px;
+        }
+
+        .footer h3 {
+            margin-bottom: 10px;
+        }
+
+        .content {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            background-color: #fff;
+            border-radius: 11px;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .contentDetail {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .contentDetail img {
+            width: 50%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .contentDetail p {
+            margin-top: 0;
+        }
+
+        .content button {
+            width: 30px;
+            height: 30px;
+            background-color: rgb(9, 97, 97);
+            border: none;
+            border-radius: 3px;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+        }
+
+    </style>
+    </head>
+    
+    <body>
+        <!-- Navigation -->
+        <nav>
+            <div class="logo">
+                <img src="../images/Da.png" alt="DocAssist Logo">
+                <h1>DocAssist</h1>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
+                <li><a href="Contactus.html">Contact Us</a></li>
+                <li><a href="faqs.html">FAQs</a></li>
+            </ul>
+        </nav>
+    
+        <div class="main-container">
+            <!-- Quick Links -->
+            <div class="quick-links">
+                <h2>Hello, <span id="username">Ved Prakash N</span></h2>
+                <h2>Quick Links</h2>
+                <ul>
+                    <li><a href="#">My Appointments</a></li>
+                    <li><a href="#myprofile">My Profile</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Log Out</a></li>
+                </ul>
+            </div>
+    
+            <!-- Appointments Section -->
+            <div class="appointments">
+                <h2>My Appointments</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Apt. No.</th>
+                            <th>Apt. Date</th>
+                            <th>Apt. Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>asd5662</td>
+                            <td>29 Sep, 2023</td>
+                            <td>11:00 AM</td>
+                            <td>Booked</td>
+                            <td><span class="btn-view" onclick="viewAppointment('asd5662')">View</span></td>
+                        </tr>
+                        <tr>
+                            <td>asd5663</td>
+                            <td>30 Sep, 2023</td>
+                            <td>10:00 AM</td>
+                            <td>Booked</td>
+                            <td><span class="btn-view" onclick="viewAppointment('asd5663')">View</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+        <div class="profile-container">
+            <h2>My Profile</h2>
+            <form>
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" value="Ved Prakash N" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="vedn@gmail.com" required>
+                <label for="phone">Phone Number *</label>
+                <input type="text" id="phone" name="phone" required>
+                <label for="age">Age</label>
+<input type="number" id="age" name="age" value="15" required>
+<label for="dob">Date of Birth</label>
+<input type="date" id="dob" name="dob" value="1994-12-15" required>
+<label for="gender">Gender *</label>
+<select id="gender" name="gender" required>
+    <option value="male" selected>Male</option>
+    <option value="female">Female</option>
+    <option value="other">Other</option>
+</select>
+<button type="submit">Submit</button>
+</form>
+</div>
+
+<!-- Footer Section -->
+<div class="footer">
+    <div class="text">
+        <h3>About Us</h3>
+        <p>24 Hours</p>
+        <p>Top Doctors</p>
+        <p>Best Care</p>
+        <p>Patient</p>
+    </div>
+    <div class="text">
+        <h3>Specialties</h3>
+        <p>Spine Surgery</p>
+        <p>Knee Surgery</p>
+        <p>Leg Surgery</p>
+        <p>Tendon Surgery</p>
+    </div>
+    <div class="text">
+        <h3>Best Teams</h3>
+        <p>Doctors</p>
+        <p>Nursing</p>
+        <p>Staff</p>
+        <p>Hospital</p>
+    </div>
+    <div class="text">
+        <h3>Address</h3>
+        <p>Near MG Road</p>
+        <p>Galaxy Care</p>
+        <p>333-00222</p>
+        <p>2222-4334</p>
+    </div>
+</div>
+
+<!-- Content Area for Additional Information -->
+<div class="content">
+    <button id="close">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="contentDetail">
+        <!-- Additional content will be populated here -->
+    </div>
+</div>
+
+<script>
+    function viewAppointment(appointmentNo) {
+        alert("Viewing appointment details for: " + appointmentNo);
+    }
+</script>
+</body>
+
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Admin Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #f7f9fc;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            margin: 0;
+            font-size: 24px;
+            color: rgb(9, 102, 102);
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar ul li:hover {
+            background: #e8f0fe;
+            font-weight: bold;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgb(9, 102, 102);
+            /* Navbar color */
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .logout-btn {
+            padding: 10px 15px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        .main-content h2 {
+            margin-top: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            color: #343a40;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            /* Added spacing */
+        }
+
+        .stat-card {
+            flex: 1;
+            margin: 0 10px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .completed {
+            color: green;
+        }
+
+        .cancelled {
+            color: red;
+        }
+
+        .remove-btn {
+            border: none;
+            background: transparent;
+            font-size: 20px;
+            cursor: pointer;
+            color: #007bff;
+            transition: color 0.3s;
+        }
+
+        .remove-btn:hover {
+            color: #dc3545;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #343a40; /* Color for the text */
+            display: block; /* Makes the entire list item clickable */
+            padding: 10px;
+        }
+
+        .sidebar ul li a:hover {
+            background: #e8f0fe; /* Change background on hover */
+            color: #007bff; /* Change text color on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>DocAssist</h2>
+        <ul>
+            <li><a href="Adminpanel.html">Dashboard</a></li>
+            <li><a href="appointments.html">Appointments</a></li>
+            <li><a href="add-doctor.html">Add Doctor</a></li>
+            <li><a href="doctors-list.html">Doctors List</a></li>
+            <li><a href="patients-list.html">Patients List</a></li>
+            <li><a href="settings.html">Settings</a></li>
+            </ul>
+            </div>
+            
+            <div class="main-content">
+                <div class="header">
+                    <h1>Admin Dashboard</h1>
+                    <button class="logout-btn">Logout</button>
+                </div>
+            
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>15</h3>
+                        <p>Doctors</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>6</h3>
+                        <p>Appointments</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>3</h3>
+                        <p>Patients</p>
+                    </div>
+                </div>
+            
+                <h2>Latest Bookings</h2>
+                <div class="card">
+                    <span>Dr. Richard James</span>
+                    <span>Booking on 5 Oct 2024</span>
+                    <span class="status cancelled">Cancelled</span>
+                    <button class="remove-btn">×</button>
+                </div>
+                <div class="card">
+                    <span>Dr. Richard James</span>
+                    <span>Booking on 26 Sep 2024</span>
+                    <span class="status cancelled">Cancelled</span>
+                    <button class="remove-btn">×</button>
+                </div>
+                <div class="card">
+                    <span>Dr. Christopher Davis</span>
+                    <span>Booking on 25 Sep 2024</span>
+                    <span class="status completed">Completed</span>
+                    <button class="remove-btn">×</button>
+                </div>
+                <div class="card">
+                    <span>Dr. Richard James</span>
+                    <span>Booking on 25 Sep 2024</span>
+                    <span class="status completed">Completed</span>
+                    <button class="remove-btn">×</button>
+                </div>
+            </div>
+            
+            <script>
+                document.querySelectorAll('.remove-btn').forEach(button => {
+                    button.addEventListener('click', function () {
+                        this.parentElement.remove();
+                    });
+                });
+            </script>
+            </body>
+            
+            </html>

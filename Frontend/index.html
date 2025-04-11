@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Catamaran:wght@200&family=Courgette&family=Dancing+Script:wght@700&family=Edu+TAS+Beginner:wght@700&family=Lato:wght@300;900&family=Mukta:wght@700&family=Mulish:wght@300&family=Open+Sans&family=PT+Sans:ital,wght@1,700&family=Poppins:wght@300&family=Raleway:wght@100&family=Roboto&family=Roboto+Condensed:wght@700&family=Roboto+Slab&display=swap"
+        rel="stylesheet">
+    <!----<script src="https://kit.fontawesome.com/f30fac2c61.js" crossorigin="anonymous"></script>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav>
+            <div class="logo">
+                <img src="../images/Da.png" alt="DocAssist Logo">
+                <h1>DocAssist</h1>
+            </div>
+            <i id="bar" class="fa-solid fa-bars"></i>
+            <ul>
+                <li><a href="">Home</a></li>
+                <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
+                <!--<li><a href="#speciality">Specialities</a></li> -->
+                <li><a href="Contactus.html">Contact Us</a></li>
+                <li><a href="faqs.html">FAQs</a></li> <!-- New FAQs link -->
+
+<li id="myprofile" style="display: none;">
+    <a href="myprofile.html">
+        <i class="fa-solid fa-user"></i> My Profile
+    </a>
+</li>                <li id="authButton"><a href="login.html" class="login-button">Login</a></li>
+                <!-- Updated Login Button -->
+
+            </ul>
+        </nav>
+
+        <!-- Main Section -->
+        <div class="main">
+            <div class="mainText">
+                <h1>Find The Best Doctors<br> Who Care for You</h1>
+                <h3>Best Teams</h3>
+                <!--<button>Show More</button>-->
+            </div>
+            <img src="../images/mains.png" alt="Main Image">
+        </div>
+
+        <!-- Doctors Section -->
+        <div id="doctors">
+            <div class="head">
+                <h1>Our Great Doctors</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search doctor by name or speciality">
+                <button id="search-btn">Search</button>
+            </div>
+
+            <div class="doctor-list">
+                <div class="card-container">
+                    <!-- Doctor Cards -->
+                    <div class="card">
+                        <img src="../images/d1.jpg" alt="Dr Alexa">
+                        <p><strong>Dr Alexa</strong></p>
+
+                        <!----<p>Dr Alexa</p>-->
+                        <p>Surgeon</p>
+                    </div>
+                    <div class="card">
+                        <img src="../images/D2.webp" alt="Dr Ali">
+                        <p><strong>Dr Ali</strong></p>
+                        <p>Dermatologist</p>
+                    </div>
+                    <div class="card">
+                        <img src="../images/d3.jpg" alt="Dr Aman">
+                        <p><strong>Dr Aman</strong></p>
+                        <p>Opthamologist</p>
+                    </div>
+                    <div class="card hidden">
+                        <img src="../images/d4.jpg" alt="Dr Ayesha">
+                        <p>Dr Ayesha</p>
+                        <p>Cardiologist</p>
+                    </div>
+                </div>
+                <a href="alldoctorsreal.html" class="see-more">SEE MORE</a>
+            </div>
+        </div>
+
+        <!-- Speciality Section -->
+        <div id="speciality">
+            <div class="head">
+                <h1>Our Specialities</h1>
+            </div>
+            <div class="surgery">
+                <div class="surgeryCard">
+                    <img src="../images/s1.png" alt="">
+                    <p>Successfully Knee Surgery</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing.</p>
+                </div>
+                <div class="surgeryCard">
+                    <img src="../images/s2.png" alt="">
+                    <p>Successfully Knee Surgery</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing.</p>
+                </div>
+                <div class="surgeryCard">
+                    <img src="../images/s3.png" alt="">
+                    <p>Successfully Knee Surgery</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Reviews Section -->
+        <div id="patient">
+            <div class="head">
+                <h1>What Our Patients Say</h1>
+            </div>
+            <div class="patients">
+                <div class="patientCard">
+                    <img src="../images/p1.png" alt="">
+                    <img src="../images/p2.png" alt="">
+                </div>
+                <div class="patientCard">
+                    <img src="../images/p3.jpg" alt="">
+                    <img src="../images/p4.jpg" alt="">
+                </div>
+                <div class="patientCard">
+                    <img src="../images/p5.jpg" alt="">
+                    <img src="../images/p6.jpg" alt="">
+                </div>
+            </div>
+        </div>
+
+        <!---- Conditions Section -->
+        <div class="section">
+            <h2>Search by Condition</h2>
+            <div class="icon-container">
+                <div class="icon">Fever</div>
+                <div class="icon">Heart Attack</div>
+                <div class="icon">Allergy</div>
+                <div class="icon">High Blood Pressure</div>
+                <div class="icon">Breathlessness</div>
+                <div class="icon">Diarrhea</div>
+                <div class="icon">Hairfall</div>
+                <div class="icon">Depression</div>
+            </div>
+
+        </div>
+
+
+        <!-- Conditions Section --
+        <div class="section">
+            <h2>Search by Condition</h2>
+            <div class="icon-container">
+                <div class="icon">
+                    <img src="images/Fever.jpg" alt="Fever" />
+                
+                </div>
+                <div class="icon">
+                    <img src="images/heart issue.jpg" alt="Heart Attack" />
+                </div>
+                <div class="icon">
+                    <img src="path/to/allergy-icon.png" alt="allergy" />
+                </div>
+                <div class="icon">
+                    <img src="path/to/high-blood-pressure-icon.png" alt="High Blood Pressure" />
+                </div>
+                <div class="icon">
+                    <img src="path/to/breathlessness-icon.png" alt="Breathlessness" />
+                </div>
+                <div class="icon">
+                    <img src="path/to/diarrhea-icon.png" alt="Diarrhea" />
+                </div>
+                <div class="icon">
+                    <img src="path/to/hairfall-icon.png" alt="Hairfall" />
+                </div>
+                <div class="icon">
+                    <img src="path/to/anxiety-depression-icon.png" alt="Anxiety/Depression" />
+                </div>
+            </div>
+        </div>
+    -->
+
+        <!-- Diseases Section -->
+        <div class="section">
+            <h2>Diseases</h2>
+            <div class="icon-container">
+                <div class="icon">Dengue Fever</div>
+                <div class="icon">Typhoid Fever</div>
+                <div class="icon">Piles</div>
+                <div class="icon">Gastritis</div>
+                <div class="icon">Hernia</div>
+                <div class="icon">Vaginal Infection</div>
+                <div class="icon">Migraine</div>
+                <div class="icon">TB</div>
+            </div>
+
+        </div>
+
+        <!-- Contact Section -->
+        <div id="contact">
+            <div class="head">
+                <h1>Contact <span>Us</span></h1>
+            </div>
+            <div class="contact">
+                <h1>Connect With Us</h1>
+                <input type="text" placeholder="Enter Email" id="email">
+                <input type="password" placeholder="Enter Password" id="pass">
+                <input type="tel" placeholder="Enter Contact Number" id="contact">
+                <button id="connectBtn">Connect</button>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="footer">
+            <div class="text">
+                <h3>About Us</h3>
+                <p>24 Hours</p>
+                <p>Top Doctors</p>
+                <p>Best Care</p>
+                <p>Patient</p>
+            </div>
+            <div class="text">
+                <h3>Specialties</h3>
+                <p>Spine Surgery</p>
+                <p>Knee Surgery</p>
+                <p>Leg Surgery</p>
+                <p>Tendon Surgery</p>
+            </div>
+            <div class="text">
+                <h3>Best Teams</h3>
+                <p>Doctors</p>
+                <p>Nursing</p>
+                <p>Staff</p>
+                <p>Hospital</p>
+            </div>
+            <div class="text">
+                <h3>Address</h3>
+                <p>Near MG Road</p>
+                <p>Galaxy Care</p>
+                <p>333-00222</p>
+                <p>2222-4334</p>
+            </div>
+        </div>
+
+        <!-- Content Area for Additional Information -->
+        <div class="content">
+            <button id="close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="contentDetail">
+                <!-- Additional content will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+  
+
+</body>
+
+</html>
