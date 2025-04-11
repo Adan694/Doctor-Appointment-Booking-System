@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments - Prescripto Admin Panel</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #f7f9fc;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            margin: 0;
+            font-size: 24px;
+            color: rgb(9, 102, 102);
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #343a40;
+            display: block;
+            padding: 10px;
+            transition: background 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background: #e8f0fe;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .logout-btn {
+            padding: 10px 15px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: rgb(9, 102, 102);
+            color: white;
+            padding: 15px;
+        }
+
+        td {
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+        .action {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .cancelled {
+            color: red;
+        }
+
+        .completed {
+            color: green;
+        }
+
+        .delete-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: rgb(9, 102, 102);
+        }
+
+        .delete-btn:hover {
+            color: #dc3545;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>DocAssist</h2>
+        <ul>
+            <li><a href="Adminpanel.html">Dashboard</a></li>
+            <li><a href="adminappoint.html">Appointments</a></li>
+            <li><a href="add-doctor.html">Add Doctor</a></li>
+            <li><a href="doctors-list.html">Doctors List</a></li>
+            <li><a href="patients-list.html">Patients List</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>All Appointments</h1>
+            <button class="logout-btn">Logout</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Patient</th>
+                    <th>Age</th>
+                    <th>Date & Time</th>
+                    <th>Doctor</th>
+                    <th>Fees</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="appointments-table">
+        <!-- Appointments will be dynamically populated here -->
+<tr>
+    <td>1</td>
+    <td>Avinash Kr</td>
+    <td>31</td>
+    <td>5 Oct 2024, 12:00 PM</td>
+    <td>Dr. Richard James</td>
+    <td>$50</td>
+    <td class="action">
+        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
+    </td>
+</tr>
+<tr>
+    <td>2</td>
+    <td>GreatStack</td>
+    <td>24</td>
+    <td>26 Sep 2024, 11:00 AM</td>
+    <td>Dr. Richard James</td>
+    <td>$40</td>
+    <td class="action cancelled">
+        <span class="cancelled">Cancelled</span>
+        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
+    </td>
+</tr>
+<tr>
+    <td>3</td>
+    <td>GreatStack</td>
+    <td>24</td>
+    <td>23 Sep 2024, 01:00 PM</td>
+    <td>Dr. Christopher Davis</td>
+    <td>$30</td>
+    <td class="action completed">
+        <span class="completed">Completed</span>
+        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
+    </td>
+</tr>
+<tr>
+    <td>4</td>
+    <td>GreatStack</td>
+    <td>24</td>
+    <td>22 Sep 2024, 02:00 PM</td>
+    <td>Dr. Richard James</td>
+    <td>$40</td>
+    <td class="action completed">
+        <span class="completed">Completed</span>
+        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
+    </td>
+</tr>
+<tr>
+    <td>5</td>
+    <td>GreatStack</td>
+    <td>24</td>
+    <td>21 Sep 2024, 11:00 AM</td>
+    <td>Dr. Richard James</td>
+    <td>$40</td>
+    <td class="action completed">
+        <span class="completed">Completed</span>
+        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
+    </td>
+</tr>
+<tr>
+    <td>6</td>
+    <td>GreatStack</td>
+    <td>24</td>
+    <td>20 Sep 2024, 06:00 PM</td>
+    <td>Dr. Emily Larson</td>
+    <td>$60</td>
+    <td class="action completed">
+        <span class="completed">Completed</span>
+        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
+    </td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<script>
+    function deleteAppointment(button) {
+        const row = button.closest('tr'); // Get the closest row
+        row.remove(); // Remove the row from the table
+    }
+</script>
+</body>
+
+</html>
