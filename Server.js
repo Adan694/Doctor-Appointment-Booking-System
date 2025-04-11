@@ -37,10 +37,24 @@ app.post('/api/doctors', async (req, res) => {
 
     try {
         const result = await collection.insertOne(newDoctor);
-        res.status(201).json({ message: "Doctor added successfully", doctor: result.ops[0] });
+        res.status(201).json({ message: "Doctor added successfully", doctorId: result.insertedId });
     } catch (error) {
         console.error("Error inserting document:", error.message); // Log more details
         res.status(500).send("Error inserting document");
+    }
+});
+
+// GET endpoint to retrieve all doctors
+app.get('/api/doctors', async (req, res) => {
+    const database = client.db('appointment_system');
+    const collection = database.collection('doctors');
+
+    try {
+        const doctors = await collection.find({}).toArray();
+        res.status(200).json(doctors);
+    } catch (error) {
+        console.error("Error retrieving doctors:", error.message);
+        res.status(500).send("Error retrieving doctors");
     }
 });
 
