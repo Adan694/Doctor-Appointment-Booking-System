@@ -16,47 +16,43 @@
 
         /* Sidebar styles */
         nav {
-            display: flex;
-            flex-direction: column;
             width: 220px;
             background-color: #ffffff;
             padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .nav-title {
+            margin: 0;
             font-size: 24px;
-            margin-bottom: 20px;
             color: rgb(9, 102, 102);
         }
 
-        .nav-item {
-            margin: 15px 0;
-        }
         .nav-item a:hover {
-            background: #e8f0fe;
-            font-weight: bold;
+            background: #e7f0ff; /* Change background on hover */
+            color: #007bff; /* Change text color on hover */
         }
+        .nav-item {
+    margin: 20px 0; /* Increase vertical space between items */
+}
 
 
         .nav-item a {
             color: black;
             text-decoration: none;
-            padding: 10px;
+            padding: 12px 15px;
             display: block;
             border-radius: 4px; /* Rounded corners for better look */
         }
 
         /* Active link styling */
         .nav-item a.active {
-            background-color: #e7f0ff; /* Light blue for active item */
+            background-color: #e8f0fe; /* Light blue for active item */
             font-weight: bold;
             color: #007BFF; /* Adjusted text color for active */
         }
 
-        .nav-item a:hover {
-            background-color: #f0f0f0; /* Hover effect */
-        }
+    
 
         /* Main content styles */
         .content {
