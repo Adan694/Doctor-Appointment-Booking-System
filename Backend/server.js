@@ -2,23 +2,35 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { connectToDatabase } = require('./config/db');
 const { insertDoctor, getDoctors } = require('./models/doctors');
+const cors = require('cors');
+// If you are handling file uploads
+const multer = require('multer');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
-app.use(bodyParser.json());
+app.use(cors()); // Enable CORS for all routes
+app.use(bodyParser.json()); // Middleware for parsing JSON
 
 // Connect to MongoDB
 connectToDatabase();
 
+// Initialize multer for file uploads (optional)
+const upload = multer({ dest: 'uploads/' }); // Customize upload directory
+
 // POST endpoint to add a new doctor
-app.post('/api/doctors', async (req, res) => {
+app.post('/api/doctors/add', upload.single('doctorPicture'), async (req, res) => {
     const doctorData = req.body;
 
     // Basic validation
-    if (!doctorData.name || !doctorData.specialty || !doctorData.email) {
+    if (!doctorData.name || !doctorData.speciality || !doctorData.email) {
         return res.status(400).send("Name, specialty, and email are required.");
+    }
+
+    // Optionally handle the uploaded file information
+    if (req.file) {
+        console.log(`Uploaded file: ${req.file.filename}`);
+        // You can add the file information to doctorData if needed
     }
 
     try {

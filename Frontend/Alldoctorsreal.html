@@ -501,29 +501,25 @@ ul li a:hover {
     </div>
 
     <script>
-      //  document.querySelectorAll('.card').forEach(card => {
-        //    card.addEventListener('click', function () {
-          //      window.location.href = "doc3.html"; // Redirect to doc3.html on card click
-            //});
-        //});
-
-
-
-
-         document.querySelectorAll('.card').forEach((card, index) => {
-                card.addEventListener('click', function () {
-                    // Redirect to doc3.html for the first card
-                    window.location.href = `doc${index + 3}.html`; // Redirect to doc3.html, doc4.html, etc.
-                });
+        // Function to handle card redirection
+        document.querySelectorAll('.card').forEach((card, index) => {
+            card.addEventListener('click', function () {
+                window.location.href = `doc${index + 3}.html`; // Redirect to doc3.html, doc4.html, etc.
             });
+        });
 
+        // When the document is loaded
         document.addEventListener("DOMContentLoaded", function () {
             const cards = document.querySelectorAll(".card"); // Select all card elements
             cards.forEach(card => {
                 updateAvailabilityStatus(card); // Update availability for each card
             });
+
+            // Fetch existing doctors dynamically and update cards (if applicable)
+            fetchDynamicDoctors(); // Ensure you have this function defined to fetch and populate doctors
         });
 
+        // Function to update availability status for a card
         function updateAvailabilityStatus(card) {
             const availability = card.getAttribute("data-available"); // Get availability attribute
             const availabilityText = card.querySelector(".availability"); // Select the availability element within the card
@@ -540,22 +536,30 @@ ul li a:hover {
             }
         }
 
-    document.getElementById('bar').addEventListener('click', function () {
-        const menu = document.querySelector('nav ul');
-        menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
-    });
+        // Search functionality
+        document.getElementById('search-btn').addEventListener('click', () => {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const cards = document.querySelectorAll('.card'); // Select all card elements
 
+            // Loop through all doctor cards
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase(); // Get the doctor's name
+                const specialty = card.getAttribute('data-specialty').toLowerCase(); // Get the doctor's specialty
 
+                // Show or hide card based on search term match
+                if (name.includes(searchTerm) || specialty.includes(searchTerm)) {
+                    card.style.display = ''; // Show card
+                } else {
+                    card.style.display = 'none'; // Hide card
+                }
+            });
+        });
 
-
-
-
-
-
-
-
-
-
+        // Navbar menu toggle code
+        document.getElementById('bar').addEventListener('click', function () {
+            const menu = document.querySelector('nav ul');
+            menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
+        });
     </script>
 
 </body>
