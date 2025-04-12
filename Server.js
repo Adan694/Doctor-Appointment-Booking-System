@@ -1,6 +1,8 @@
+// Import required packages
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
+require('dotenv').config(); // Load environment variables from .env file
 
 const app = express();
 const port = 3000;
@@ -8,8 +10,8 @@ const port = 3000;
 // Middleware
 app.use(bodyParser.json());
 
-// MongoDB connection URI (Ensure this is correct)
-const uri = "mongodb+srv://amnas:ashehzad1q2w3e@cluster0.1lllktq.mongodb.net/";
+// MongoDB connection URI
+const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 
 // Connect to MongoDB with error handling
@@ -25,10 +27,10 @@ connectToDatabase();
 
 // POST endpoint to add a new doctor
 app.post('/api/doctors', async (req, res) => {
-    const newDoctor = req.body; // Contains doctor data from web app
+    const doctorData = req.body; // Receiving data from the client
 
     // Basic validation
-    if (!newDoctor.name || !newDoctor.specialization || !newDoctor.email) {
+    if (!doctorData.name || !doctorData.specialization || !doctorData.email) {
         return res.status(400).send("Name, specialization, and email are required.");
     }
 
@@ -36,10 +38,10 @@ app.post('/api/doctors', async (req, res) => {
     const collection = database.collection('doctors');
 
     try {
-        const result = await collection.insertOne(newDoctor);
-        res.status(201).json({ message: "Doctor added successfully", doctorId: result.insertedId });
+        const result = await collection.insertOne(doctorData);
+        res.status(201).json({ message: 'Doctor added successfully', doctorId: result.insertedId });
     } catch (error) {
-        console.error("Error inserting document:", error.message); // Log more details
+        console.error("Error inserting document:", error.message);
         res.status(500).send("Error inserting document");
     }
 });
