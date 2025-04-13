@@ -135,8 +135,8 @@
                     <option value="doctor">Doctor</option>
                     <option value="patient">Patient</option>
                 </select>
-                <input type="text" placeholder="Enter your email" required>
-                <input type="password" placeholder="Enter your password" required>
+                <input type="text" id="login-email" placeholder="Enter your email" required>
+                <input type="password" id="login-password" placeholder="Enter your password" required>
                 <a href="#">Forgot password?</a>
                 <input type="button" class="button" value="Login" onclick="redirectUser()">
             </form>
@@ -145,18 +145,18 @@
                     <label for="check">Signup</label>
                 </span>
             </div>
-        </div>
-        <div class="registration form">
-            <header>Signup</header>
-            <form action="#">
-                <input type="text" placeholder="Enter your email" required>
-                <input type="password" placeholder="Create a password" required>
-                <input type="password" placeholder="Confirm your password" required>
-                <input type="button" class="button" value="Signup">
-            </form>
-            <div class="signup">
-                <span class="signup">Already have an account?
-                    <label for="check">Login</label>
+            </div>
+            <div class="registration form">
+                <header>Signup</header>
+                <form action="#">
+                    <input type="text" id="signup-email" placeholder="Enter your email" required>
+                    <input type="password" id="signup-password" placeholder="Create a password" required>
+                    <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+                    <input type="button" class="button" value="Signup" onclick="handleSignup()">
+                </form>
+                <div class="signup">
+                    <span class="signup">Already have an account?
+                        <label for="check">Login</label>
                 </span>
             </div>
         </div>
@@ -164,72 +164,92 @@
 
     <script>
         function redirectUser() {
-            const role = document.getElementById('role').value;
-            const email = document.querySelector('input[type="text"]').value;
-            const password = document.querySelector('input[type="password"]').value;
+                const role = document.getElementById('role').value;
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
 
-            // Regular expression for basic email validation
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            // Validate the email
-            if (!emailPattern.test(email)) {
-                alert('Please enter a valid email address.');
-                return;
-            }
-
-            // Validate the password length
-            if (password.length < 6) {
-                alert('Password must be at least 6 characters long.');
-                return;
-            }
-
-            // Check if a role is selected
-            if (!role) {
-                alert('Please select a role.');
-                return;
-            }
-
-            // Save the role in localStorage
-            localStorage.setItem('userRole', role); // Save the role
-
-            // Redirect based on the role
-            if (role === 'admin') {
-                window.location.href = 'admin.html'; // Replace with actual admin panel URL
-            } else if (role === 'doctor') {
-                window.location.href = 'Doctordashboard.html'; // Replace with actual doctor panel URL
-            } else if (role === 'patient') {
-                window.location.href = 'index.html'; // Replace with actual patient panel URL
-            }
-        }
-         function handleSignup() {
-                const email = document.querySelector('.registration input[type="text"]').value;
-                const password = document.querySelector('.registration input[type="password"]').value;
-                const confirmPassword = document.querySelector('.registration input[type="password"]:nth-of-type(2)').value;
-
-                // Email validation
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-                if (!emailPattern.test(email)) {
-                    alert('Please enter a valid email address.');
+                // Validate email and password first
+                if (!email || !password) {
+                    alert('Please enter both email and password.');
                     return;
                 }
 
-                // Check password length and match
-                if (password.length < 6) {
-                    alert('Password must be at least 6 characters long.');
+                // If role is not selected, alert the user
+                if (!role) {
+                    alert('Please select your role.');
                     return;
                 }
+
+                fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, role }) // Send role as well
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw new Error(err.message); }); // More descriptive error
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.token) {
+                            localStorage.setItem('userRole', data.role);
+                            localStorage.setItem('authToken', data.token);
+                            // Redirect based on the role
+                            window.location.href = `${data.role}Dashboard.html`; // Dynamic redirection based on role
+                        } else {
+                            alert('Invalid credentials or account does not exist. Please sign up.');
+                            if (role === 'patient' || role === 'doctor') {
+                                document.getElementById('check').checked = true; // Switch to signup tab
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred during login. ' + error.message);
+                    });
+            }
+
+           function handleSignup() {
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (!email || !password || !confirmPassword) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+
                 if (password !== confirmPassword) {
-                    alert('Passwords do not match.');
+                    alert("Passwords do not match. Please try again.");
                     return;
                 }
 
-                // Assuming successful signup (e.g., you would typically send this to your server)
-                localStorage.setItem('userRole', 'patient'); // Set a default role or handle accordingly
-                alert('Signup successful! Redirecting to login...');
-                // Redirect to login page (or main page)
-                window.location.href = 'login.html'; // Change to your actual login page
+                fetch('http://localhost:3000/api/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password, role: 'patient' }) // Adjust the role if necessary
+                })
+                    .then(response => {
+                        console.log("Response status:", response.status); // Log the response status
+                        return response.json(); // Attempt to parse the response as JSON
+                    })
+                    .then(data => {
+                        alert(data.message || 'User created successfully!'); // Use the message from the response
+                    })
+                    .catch(error => {
+                        console.error('Error during signup:', error); // Log the error
+                        alert('An error occurred during signup: ' + error.message); // Show the error message to the user
+                    });
             }
+            
+
+
+   
     </script>
 </body>
 
