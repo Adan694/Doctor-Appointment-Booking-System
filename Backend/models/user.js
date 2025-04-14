@@ -3,16 +3,16 @@ const bcrypt = require('bcrypt');
 
 // User schema definition
 const UserSchema = new mongoose.Schema({
-    email: { 
-        type: String, 
-        required: true, 
-        unique: true, 
+    email: {
+        type: String,
+        required: true,
+        unique: true,
         match: [/.+\@.+\..+/, 'Please fill a valid email address'] // Email validation regex
     },
     password: { type: String, required: true },
-    role: { 
-        type: String, 
-        required: true, 
+    role: {
+        type: String,
+        required: true,
         enum: ['admin', 'doctor', 'patient'] // Define allowed roles
     }
 }, { timestamps: true }); // Automatically handle createdAt and updatedAt

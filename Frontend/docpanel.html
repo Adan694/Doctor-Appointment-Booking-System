@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #f7f9fc;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            margin: 0;
+            font-size: 24px;
+            color: rgb(9, 102, 102);
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+        .sidebar ul li a {
+    color: #000; /* Adjust color as desired */
+    text-decoration: none; /* Remove underline */
+    padding: 10px; /* Add padding for better clickable area */
+    display: block; /* Make the link fill the entire list item */
+    transition: background 0.3s;
+}
+
+        .sidebar ul li:hover {
+            background: #e8f0fe;
+            font-weight: bold;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgb(9, 102, 102);
+            /* Navbar color */
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .logout-btn {
+            padding: 10px 15px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        .main-content h2 {
+            margin-top: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            color: #343a40;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            /* Added spacing */
+        }
+
+        .stat-card {
+            flex: 1;
+            margin: 0 10px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .latest-bookings {
+            margin-top: 20px;
+        }
+
+        .latest-bookings h2 {
+            margin-bottom: 10px;
+        }
+
+        .latest-bookings ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .latest-bookings li {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .latest-bookings li button {
+            background: transparent;
+            color: red;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .completed {
+            color: green;
+        }
+
+        .cancelled {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>DocAssist</h2>
+        <ul>
+            <li><a href="docpanel.html">Dashboard</a></li>
+            <li><a href="">Appointments</a></li>
+            <li><a href="">Profile</a></li>
+        </ul>
+    </div>
+    <main class="main-content">
+        <header class="header">
+            <h1>Doctor Dashboard</h1>
+            <button class="logout-btn">Logout</button>
+        </header>
+        <section class="stats">
+            <div class="stat-card" id="appointments-card">
+                <h3>0</h3> <!-- Start with 0 -->
+                <p>Appointments</p>
+            </div>
+            <div class="stat-card" id="patients-card">
+                <h3>0</h3> <!-- Start with 0 -->
+                <p>Patients</p>
+            </div>
+        </section>
+        <section class="latest-bookings">
+            <h2>Latest Bookings</h2>
+            <ul id="booking-list"></ul> <!-- Initially empty -->
+        </section>
+    </main>
+    </div>
+    
+    <script>
+       let appointmentsCount = localStorage.getItem('appointmentsCount') ? parseInt(localStorage.getItem('appointmentsCount')) : 0;
+        let patientsCount = localStorage.getItem('patientsCount') ? parseInt(localStorage.getItem('patientsCount')) : 0;
+
+        // Load bookings from localStorage on page load
+        window.onload = function () {
+            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            bookings.forEach(booking => {
+                addBookingToList(booking.name, booking.date, booking.status);
+            });
+            appointmentsCount = bookings.length; // Set the count based on the bookings available
+            updateCounts();
+        };
+
+        function addBookingToList(patientName, bookingDate, bookingStatus) {
+            const newBooking = document.createElement('li');
+            newBooking.innerHTML = `
+        ${patientName} - Booking on ${bookingDate} <span class="status ${bookingStatus}">${capitalizeFirstLetter(bookingStatus)}</span>
+        <button onclick="removeBooking('${patientName}', '${bookingDate}')">&times;</button>
+    `;
+            document.getElementById('booking-list').appendChild(newBooking);
+            appointmentsCount++; // Increment appointments count when a new booking is added
+            updateCounts();
+        }
+
+        function removeBooking(patientName, bookingDate) {
+            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            const bookingIndex = bookings.findIndex(
+                booking => booking.name === patientName && booking.date === bookingDate
+            );
+
+            if (bookingIndex !== -1) {
+                bookings.splice(bookingIndex, 1); // Remove the booking
+                localStorage.setItem('bookings', JSON.stringify(bookings)); // Update localStorage
+                appointmentsCount--; // Decrease appointment count
+                updateCounts(); // Update displayed counts
+
+                // Re-render the booking list after removal
+                document.getElementById('booking-list').innerHTML = ''; // Clear the list
+                bookings.forEach(booking => {
+                    addBookingToList(booking.name, booking.date, booking.status);
+                });
+            }
+        }
+
+        function updateCounts() {
+            document.getElementById('appointments-card').querySelector('h3').innerText = appointmentsCount;
+            document.getElementById('patients-card').querySelector('h3').innerText = patientsCount;
+
+            // Update localStorage
+            localStorage.setItem('appointmentsCount', appointmentsCount);
+            localStorage.setItem('patientsCount', patientsCount);
+        }
+    </script>
+    </body>
+    
+    </html>

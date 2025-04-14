@@ -163,91 +163,62 @@
     </div>
 
     <script>
-        function redirectUser() {
-                const role = document.getElementById('role').value;
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
+       function redirectUser() {
+            const role = document.getElementById('role').value;
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
 
-                // Validate email and password first
-                if (!email || !password) {
-                    alert('Please enter both email and password.');
-                    return;
-                }
-
-                // If role is not selected, alert the user
-                if (!role) {
-                    alert('Please select your role.');
-                    return;
-                }
-
-                fetch('http://localhost:3000/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password, role }) // Send role as well
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => { throw new Error(err.message); }); // More descriptive error
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.token) {
-                            localStorage.setItem('userRole', data.role);
-                            localStorage.setItem('authToken', data.token);
-                            // Redirect based on the role
-                            window.location.href = `${data.role}Dashboard.html`; // Dynamic redirection based on role
-                        } else {
-                            alert('Invalid credentials or account does not exist. Please sign up.');
-                            if (role === 'patient' || role === 'doctor') {
-                                document.getElementById('check').checked = true; // Switch to signup tab
-                            }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred during login. ' + error.message);
-                    });
+            // Validate email and password first
+            if (!email || !password) {
+                alert('Please enter both email and password.');
+                return;
             }
 
-           function handleSignup() {
-                const email = document.getElementById('signup-email').value;
-                const password = document.getElementById('signup-password').value;
-                const confirmPassword = document.getElementById('confirm-password').value;
-
-                if (!email || !password || !confirmPassword) {
-                    alert("Please fill in all fields.");
-                    return;
-                }
-
-                if (password !== confirmPassword) {
-                    alert("Passwords do not match. Please try again.");
-                    return;
-                }
-
-                fetch('http://localhost:3000/api/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password, role: 'patient' }) // Adjust the role if necessary
-                })
-                    .then(response => {
-                        console.log("Response status:", response.status); // Log the response status
-                        return response.json(); // Attempt to parse the response as JSON
-                    })
-                    .then(data => {
-                        alert(data.message || 'User created successfully!'); // Use the message from the response
-                    })
-                    .catch(error => {
-                        console.error('Error during signup:', error); // Log the error
-                        alert('An error occurred during signup: ' + error.message); // Show the error message to the user
-                    });
+            // If role is not selected, alert the user
+            if (!role) {
+                alert('Please select your role.');
+                return;
             }
-            
 
+            // Perform the login request
+            fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password, role }) // Send role as needed
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.message); }); // More descriptive error
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.token) {
+                        localStorage.setItem('userRole', data.role); // Store user role
+                        localStorage.setItem('authToken', data.token); // Store auth token
+
+                        // Redirect based on the role
+                        if (data.role === 'admin') {
+                            window.location.href = 'adminpanel.html'; // Redirect to admin panel
+                        } else if (data.role === 'doctor') {
+                            window.location.href = 'docpanel.html'; // Redirect to doctor panel
+                        } else if (data.role === 'patient') {
+                            window.location.href = 'patientDashboard.html'; // Optional: Redirect to a patient dashboard if needed
+                        }
+                    } else {
+                        alert('Invalid credentials or account does not exist. Please sign up.');
+                        if (role === 'patient' || role === 'doctor') {
+                            document.getElementById('check').checked = true; // Switch to signup tab
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during login. ' + error.message);
+                });
+        }
 
    
     </script>
