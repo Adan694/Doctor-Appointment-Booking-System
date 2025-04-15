@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const rateLimit = require('express-rate-limit');
+const signupRoutes = require('./routes/signup'); // Update with the correct path
+
 
 const app = express();
 const port = process.env.PORT || 3000;
