@@ -15,29 +15,81 @@
             flex-direction: column;
         }
 
-        .navbar {
-            background: #007BFF;
-            padding: 15px;
-            color: white;
-            width: 100%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
+       nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px;
+    position: fixed;
+    top: 0%;
+    width: 100%;
+    left: 0; /* Ensure this is set to zero */
+    background-color: rgb(9, 102, 102);
+    color: white;
+    z-index: 1000;
+    padding: 10px 20px;
+    /* Reduced padding */
+}
 
-        .navbar a {
-            color: white;
-            margin: 0 20px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
+ul {
+    display: flex;
+}
 
-        .navbar a:hover {
-            color: #FFD700;
-        }
+ul li {
+    list-style: none;
+}
+
+ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    margin-inline: 20px;
+}
+
+ul li a:hover {
+    color: black;
+    border-bottom: 2px solid black;
+}
+
+#bar {
+    display: none;
+    /* Hidden by default */
+    font-size: 30px;
+    /* Hamburger icon size */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    /* Increased font size */
+    margin: 0;
+    /* Remove extra margin */
+}
+
+.logo img {
+    width: 60px;
+    /* Set a fixed width */
+    height: 60px;
+    /* Set a fixed height to match width */
+    border-radius: 50%;
+    /* Make the image round */
+    margin-right: 10px;
+    /* Space between image and text */
+    object-fit: cover;
+    /* Ensure the image covers the area */
+}
+
+.logo h1 {
+    font-size: 30px;
+    /* Increase the font size of the text */
+    margin: 0;
+    /* Remove default margin */
+}
+
+
 
         .content {
             display: flex;
@@ -52,7 +104,6 @@
             flex: 2;
             /* Increased space for the left section */
             margin-right: 20px;
-
         }
 
         .availability-appointment-container {
@@ -184,8 +235,7 @@
             background-color: #dc3545;
             cursor: not-allowed;
         }
-
-        .view-all {
+         .view-all {
             color: #007BFF;
             cursor: pointer;
             margin-top: 10px;
@@ -194,11 +244,10 @@
         .videos,
         .articles {
             background: white;
-            padding: 15px; 
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
-           
         }
 
         .video-item,
@@ -223,22 +272,22 @@
             font-weight: bold;
             background: #f8f8f8;
         }
-
         /*Footer*/
         .footer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            padding: 66px;
-            color: white;
-            margin-top: 66px;
-            background-color: rgb(6, 51, 51);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 66px;
+    color: white;
+    margin-top: 66px;
+    background-color: rgb(6, 51, 51);
 
-        }
+}
 
-        .text p {
-            margin-top: 12px;
-        }
+.text p {
+    margin-top: 12px;
+}
+
     </style>
 </head>
 
@@ -246,12 +295,12 @@
 
     <nav>
         <div class="logo">
-            <img src="../images/Da.png" alt="DocAssist Logo">
+            <img src="images/Da.png" alt="DocAssist Logo">
             <h1>DocAssist</h1>
         </div>
         <i id="bar" class="fa-solid fa-bars"></i>
         <ul>
-            <li><a href="">Home</a></li>
+            <li><a href="index.html">Home</a></li>
             <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
             <!--<li><a href="#speciality">Specialities</a></li> -->
             <li><a href="Contactus.html">Contact Us</a></li>
@@ -266,9 +315,9 @@
     <div class="content">
         <div class="profile-container" id="profile">
             <div class="profile-header">
-                <img src="../images/d1.jpg" alt="Doctor's Image">
+                <img src="images/d1.jpg" alt="Doctor's Image">
                 <div>
-                    <h1>Dr. Amir</h1>
+                    <h1>Dr. Alexa</h1>
                     <p>Surgeon</p>
                     <p>MB.B.S., F.C.P.S. (Dermatology)</p>
                     <p><strong>Platinum Doctor</strong></p>
@@ -283,7 +332,7 @@
             </div>
 
             <div class="reviews">
-                <h2>Dr. Amir's Reviews (253)</h2>
+                <h2>Dr. Alexa's Reviews (253)</h2>
                 <div class="review-item">
                     <span>Doctor Checkup</span>
                     <div class="progress">
@@ -350,10 +399,10 @@
                 <div>PIMS</div>
                 <div>JPMC</div>
             </div>
-            <div class="days">
-                <h2>Available Days</h2>
-                <div>Days: M, Tu, W, Th, F, Sa</div>
-                <div>Time: 10:00 AM - 03:00 PM</div>
+        <div class="days">
+            <h2>Available Days</h2>
+            <div>Days: M, Tu, W, Th, F, Sa</div>
+            <div>Time: 10:00 AM - 03:00 PM</div>
             </div>
         </div>
 
@@ -428,7 +477,7 @@
         </div>
         <div class="view-all">View all videos</div>
     </div>
-
+    
     <div class="articles" id="articles">
         <h2>Latest Articles</h2>
         <div class="article-item">
@@ -446,37 +495,37 @@
         <div class="view-all">View all articles</div>
     </div>
 
-    <!-- Footer Section -->
-    <div class="footer">
-        <div class="text">
-            <h3>About Us</h3>
-            <p>24 Hours</p>
-            <p>Top Doctors</p>
-            <p>Best Care</p>
-            <p>Patient</p>
-        </div>
-        <div class="text">
-            <h3>Specialties</h3>
-            <p>Spine Surgery</p>
-            <p>Knee Surgery</p>
-            <p>Leg Surgery</p>
-            <p>Tendon Surgery</p>
-        </div>
-        <div class="text">
-            <h3>Best Teams</h3>
-            <p>Doctors</p>
-            <p>Nursing</p>
-            <p>Staff</p>
-            <p>Hospital</p>
-        </div>
-        <div class="text">
-            <h3>Address</h3>
-            <p>Near MG Road</p>
-            <p>Galaxy Care</p>
-            <p>333-00222</p>
-            <p>2222-4334</p>
-        </div>
+<!-- Footer Section -->
+<div class="footer">
+    <div class="text">
+        <h3>About Us</h3>
+        <p>24 Hours</p>
+        <p>Top Doctors</p>
+        <p>Best Care</p>
+        <p>Patient</p>
     </div>
+    <div class="text">
+        <h3>Specialties</h3>
+        <p>Spine Surgery</p>
+        <p>Knee Surgery</p>
+        <p>Leg Surgery</p>
+        <p>Tendon Surgery</p>
+    </div>
+    <div class="text">
+        <h3>Best Teams</h3>
+        <p>Doctors</p>
+        <p>Nursing</p>
+        <p>Staff</p>
+        <p>Hospital</p>
+    </div>
+    <div class="text">
+        <h3>Address</h3>
+        <p>Near MG Road</p>
+        <p>Galaxy Care</p>
+        <p>333-00222</p>
+        <p>2222-4334</p>
+    </div>
+</div>
 
     <!-- Registration Modal -->
     <div id="registrationModal" class="modal">
@@ -525,28 +574,28 @@
             currentAppointment = { date, time };
             //////////////////////
             console.log('Selected Date:', date, 'Selected Time:', time);
-            //////////////////////////////////
+//////////////////////////////////
             document.getElementById("registrationModal").style.display = "block";
         }
 
         function closeModal() {
             document.getElementById("registrationModal").style.display = "none";
         }
-        function showConfirmationModal() {
-            document.getElementById("registrationModal").style.display = "none";
-            document.getElementById("confirmDate").innerText = currentAppointment.date;
-            document.getElementById("confirmTime").innerText = currentAppointment.time;
-            document.getElementById("confirmationModal").style.display = "block";
-        }
+    function showConfirmationModal() {
+        document.getElementById("registrationModal").style.display = "none";
+        document.getElementById("confirmDate").innerText = currentAppointment.date;
+        document.getElementById("confirmTime").innerText = currentAppointment.time;
+        document.getElementById("confirmationModal").style.display = "block";
+    }
 
-        function closeConfirmationModal() {
-            document.getElementById("confirmationModal").style.display = "none";
-        }
+    function closeConfirmationModal() {
+        document.getElementById("confirmationModal").style.display = "none";
+    }
         function registerUser() {
             const name = document.getElementById("name").value;
             const email = document.getElementById("email").value;
             const phone = document.getElementById("phone").value;
-            if (name && email && phone) {
+             if (name && email && phone) {
                 alert(`Registration successful for ${name}. Proceeding to confirmation.`);
                 showConfirmationModal();
             } else {
@@ -555,41 +604,41 @@
         }
 
 
-        function confirmAppointment() {
-            /////////////////////////////
+    function confirmAppointment() {
+        /////////////////////////////
             console.log('Current Appointment:', currentAppointment);
-            ////////////////////////////////
-            const patientName = document.getElementById("patientName").value;
-            const patientEmail = document.getElementById("patientEmail").value;
-            const patientPhone = document.getElementById("patientPhone").value;
+////////////////////////////////
+        const patientName = document.getElementById("patientName").value;
+        const patientEmail = document.getElementById("patientEmail").value;
+        const patientPhone = document.getElementById("patientPhone").value;
 
-            if (patientName && patientEmail && patientPhone) {
-                const appointment = {
-                    doctorId: 'Dr. Alexa',
-                    date: currentAppointment.date,
-                    time: currentAppointment.time,
-                    patientName,
-                    patientEmail,
-                    patientPhone
-                }; const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
-                appointments.push(appointment);
-                localStorage.setItem('appointments', JSON.stringify(appointments));
+        if (patientName && patientEmail && patientPhone) {
+            const appointment = {
+                doctorId: 'Dr. Alexa',
+                date: currentAppointment.date,
+                time: currentAppointment.time,
+                patientName,
+                patientEmail,
+                patientPhone
+            }; const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+            appointments.push(appointment);
+            localStorage.setItem('appointments', JSON.stringify(appointments));
 
-                alert(`Appointment confirmed for ${patientName} on ${currentAppointment.date} at ${currentAppointment.time}.`);
-                closeConfirmationModal();
-            } else {
-                alert("Please fill all the fields to confirm your appointment.");
-            }
+            alert(`Appointment confirmed for ${patientName} on ${currentAppointment.date} at ${currentAppointment.time}.`);
+            closeConfirmationModal();
+        } else {
+            alert("Please fill all the fields to confirm your appointment.");
         }
-        // Call this on load to render appointments
-        window.onload = function () {
-            loadFromLocalStorage();
-            renderAppointments();
-        };
+    }
+    // Call this on load to render appointments
+    window.onload = function () {
+        loadFromLocalStorage();
+        renderAppointments();
+    };
 
 
 
-
+    
     </script>
 
 </body>
