@@ -17,43 +17,80 @@
             background-color: #f7f9fc;
         }
 
-        .sidebar {
-            width: 220px;
-            background-color: #ffffff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar h2 {
-            margin: 0;
-            font-size: 24px;
-            color: rgb(9, 102, 102);
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            margin: 15px 0;
-            padding: 20px;
-            border-radius: 5px;
-            transition: background 0.3s;
-            cursor: pointer;
-        }
-        .sidebar ul li a {
-    color: #000; /* Adjust color as desired */
-    text-decoration: none; /* Remove underline */
-    padding: 10px; /* Add padding for better clickable area */
-    display: block; /* Make the link fill the entire list item */
-    transition: background 0.3s;
+       
+           nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px;
+    position: fixed;
+    top: 0%;
+    width: 100%;
+    left: 0; /* Ensure this is set to zero */
+    background-color: rgb(9, 102, 102);
+    color: white;
+    z-index: 1000;
+    padding: 10px 20px;
+    /* Reduced padding */
 }
 
-        .sidebar ul li:hover {
-            background: #e8f0fe;
-            font-weight: bold;
-        }
+ul {
+    display: flex;
+}
+
+ul li {
+    list-style: none;
+}
+
+ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    margin-inline: 20px;
+}
+
+ul li a:hover {
+    color: black;
+    border-bottom: 2px solid black;
+}
+
+#bar {
+    display: none;
+    /* Hidden by default */
+    font-size: 30px;
+    /* Hamburger icon size */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    /* Increased font size */
+    margin: 0;
+    /* Remove extra margin */
+}
+
+.logo img {
+    width: 60px;
+    /* Set a fixed width */
+    height: 60px;
+    /* Set a fixed height to match width */
+    border-radius: 50%;
+    /* Make the image round */
+    margin-right: 10px;
+    /* Space between image and text */
+    object-fit: cover;
+    /* Ensure the image covers the area */
+}
+
+.logo h1 {
+    font-size: 30px;
+    /* Increase the font size of the text */
+    margin: 0;
+    /* Remove default margin */
+}
 
         .main-content {
             flex: 1;
@@ -169,14 +206,20 @@
 </head>
 
 <body>
-    <div class="sidebar">
-        <h2>DocAssist</h2>
+    <nav>
+        <div class="logo">
+            <img src="images/Da.png" alt="DocAssist Logo">
+            <h1>DocAssist</h1>
+        </div>
+        <i id="bar" class="fa-solid fa-bars"></i>
         <ul>
             <li><a href="docpanel.html">Dashboard</a></li>
             <li><a href="">Appointments</a></li>
-            <li><a href="">Profile</a></li>
+            <li><a href="docprofile.html">Profile</a></li>
+    
+    
         </ul>
-    </div>
+    </nav>
     <main class="main-content">
         <header class="header">
             <h1>Doctor Dashboard</h1>

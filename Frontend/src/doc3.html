@@ -563,24 +563,22 @@ ul li a:hover {
         </div>
     </div>
 
+   <script>
+    let currentAppointment = {};
 
+    // Function to show registration form
+    function showRegistrationForm(date, time) {
+        currentAppointment = { date, time };
+        console.log('Selected Date:', date, 'Selected Time:', time);
+        document.getElementById("registrationModal").style.display = "block";
+    }
 
+    // Function to close modal
+    function closeModal() {
+        document.getElementById("registrationModal").style.display = "none";
+    }
 
-
-    <script>
-        let currentAppointment = {};
-
-        function showRegistrationForm(date, time) {
-            currentAppointment = { date, time };
-            //////////////////////
-            console.log('Selected Date:', date, 'Selected Time:', time);
-//////////////////////////////////
-            document.getElementById("registrationModal").style.display = "block";
-        }
-
-        function closeModal() {
-            document.getElementById("registrationModal").style.display = "none";
-        }
+    // Function to show confirmation modal
     function showConfirmationModal() {
         document.getElementById("registrationModal").style.display = "none";
         document.getElementById("confirmDate").innerText = currentAppointment.date;
@@ -588,26 +586,28 @@ ul li a:hover {
         document.getElementById("confirmationModal").style.display = "block";
     }
 
+    // Function to close confirmation modal
     function closeConfirmationModal() {
         document.getElementById("confirmationModal").style.display = "none";
     }
-        function registerUser() {
-            const name = document.getElementById("name").value;
-            const email = document.getElementById("email").value;
-            const phone = document.getElementById("phone").value;
-             if (name && email && phone) {
-                alert(`Registration successful for ${name}. Proceeding to confirmation.`);
-                showConfirmationModal();
-            } else {
-                alert("Please fill all the fields to proceed.");
-            }
+
+    // Function to register user for an appointment
+    function registerUser() {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const phone = document.getElementById("phone").value;
+
+        if (name && email && phone) {
+            alert(`Registration successful for ${name}. Proceeding to confirmation.`);
+            showConfirmationModal();
+        } else {
+            alert("Please fill all the fields to proceed.");
         }
+    }
 
-
+    // Function to confirm appointment
     function confirmAppointment() {
-        /////////////////////////////
-            console.log('Current Appointment:', currentAppointment);
-////////////////////////////////
+        console.log('Current Appointment:', currentAppointment);
         const patientName = document.getElementById("patientName").value;
         const patientEmail = document.getElementById("patientEmail").value;
         const patientPhone = document.getElementById("patientPhone").value;
@@ -620,7 +620,8 @@ ul li a:hover {
                 patientName,
                 patientEmail,
                 patientPhone
-            }; const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+            };
+            const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
             appointments.push(appointment);
             localStorage.setItem('appointments', JSON.stringify(appointments));
 
@@ -630,16 +631,30 @@ ul li a:hover {
             alert("Please fill all the fields to confirm your appointment.");
         }
     }
-    // Call this on load to render appointments
+
+    // Call this on load to render appointments and load profile
     window.onload = function () {
         loadFromLocalStorage();
         renderAppointments();
+        loadDoctorProfile(); // Load doctor profile data
     };
 
+    // Function to load doctor profile data
+    function loadDoctorProfile() {
+        const doctorId = 3; // Change this for each doctor page
+        const savedProfile = JSON.parse(localStorage.getItem(`doctorProfile_${doctorId}`));
+        if (savedProfile) {
+            document.querySelector(".profile-header h1").innerText = savedProfile.name;
+            document.querySelector(".profile-header p:nth-of-type(1)").innerText = savedProfile.specialization;
+            document.querySelector(".profile-header p:nth-of-type(2)").innerText = savedProfile.qualifications;
 
-
-    
-    </script>
+            const profilePic = localStorage.getItem(`profilePic_${doctorId}`);
+            if (profilePic) {
+                document.querySelector(".profile-header img").src = profilePic;
+            }
+        }
+    }
+</script>
 
 </body>
 
