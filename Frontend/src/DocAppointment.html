@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Appointment Management</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .appointment-table {
+            margin-bottom: 40px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #f7f9fc;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            z-index: 1000;
+        }
+
+        ul {
+            display: flex;
+        }
+
+        ul li {
+            list-style: none;
+        }
+
+        ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            margin-inline: 20px;
+        }
+
+        ul li a:hover {
+            color: black;
+            border-bottom: 2px solid black;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .logo h1 {
+            font-size: 30px;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <img src="images/Da.png" alt="DocAssist Logo">
+            <h1>DocAssist</h1>
+        </div>
+        <ul>
+            <li><a href="docpanel.html">Dashboard</a></li>
+            <li><a href="DocAppointment.html">Appointments</a></li>
+            <li><a href="docprofile.html">Profile</a></li>
+        </ul>
+    </nav>
+    <div class="container" style="margin-top: 80px;">
+        <h1 class="mt-4">Appointment Management</h1>
+
+        <!-- New Appointments Section -->
+        <h2>New Appointments</h2>
+        <table class="table appointment-table">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Appointment Date & Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="newAppointments">
+                <!-- Dynamic content will go here -->
+            </tbody>
+        </table>
+
+        <!-- Confirmed Appointments Section -->
+        <h2>Confirmed Appointments</h2>
+        <table class="table appointment-table">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Appointment Date & Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="confirmedAppointments">
+                <!-- Dynamic content will go here -->
+            </tbody>
+        </table>
+
+        <!-- Completed Appointments Section -->
+        <h2>Completed Appointments</h2>
+        <table class="table appointment-table">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Appointment Date & Time</th>
+                    <th>Feedback</th>
+                </tr>
+            </thead>
+            <tbody id="completedAppointments">
+                <!-- Dynamic content will go here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Sample initial data for new appointments
+        const initialAppointments = [
+            { patientName: 'John Doe', appointmentTime: '2023-10-01 10:00 AM', status: 'Pending' },
+            { patientName: 'Jane Smith', appointmentTime: '2023-10-01 11:00 AM', status: 'Pending' }
+        ];
+
+        // Load appointments from localStorage or initialize with sample data
+        function loadAppointments() {
+            const newAppointments = JSON.parse(localStorage.getItem('newAppointments')) || initialAppointments;
+            const confirmedAppointments = JSON.parse(localStorage.getItem('confirmedAppointments')) || [];
+            const completedAppointments = JSON.parse(localStorage.getItem('completedAppointments')) || [];
+
+            newAppointments.forEach(appointment => {
+                addNewAppointmentRow(appointment);
+            });
+            confirmedAppointments.forEach(appointment => {
+                addConfirmedAppointmentRow(appointment);
+            });
+            completedAppointments.forEach(appointment => {
+                addCompletedAppointmentRow(appointment);
+            });
+        }
+
+        function addNewAppointmentRow(appointment) {
+            const row = `<tr>
+                <td>${appointment.patientName}</td>
+                <td>${appointment.appointmentTime}</td>
+                <td>${appointment.status}</td>
+                <td>
+                    <button class="btn btn-success" onclick="confirmAppointment(this)">Confirm</button>
+                    <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
+                </td>
+            </tr>`;
+            document.getElementById('newAppointments').insertAdjacentHTML('beforeend', row);
+        }
+
+        function addConfirmedAppointmentRow(appointment) {
+            const row = `<tr>
+                <td>${appointment.patientName}</td>
+                <td>${appointment.appointmentTime}</td>
+                <td>${appointment.status}</td>
+                <td>
+                    <button class="btn btn-primary" onclick="markCompleted(this)">Mark as Completed</button>
+                    <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
+                </td>
+            </tr>`;
+            document.getElementById('confirmedAppointments').insertAdjacentHTML('beforeend', row);
+        }
+
+        function addCompletedAppointmentRow(appointment) {
+            const row = `<tr>
+                <td>${appointment.patientName}</td>
+                <td>${appointment.appointmentTime}</td>
+                <td>No feedback yet</td>
+            </tr>`;
+            document.getElementById('completedAppointments').insertAdjacentHTML('beforeend', row);
+        }
+
+        function confirmAppointment(button) {
+            const row = button.parentElement.parentElement;
+            const patientName = row.cells[0].innerText;
+            const appointmentTime = row.cells[1].innerText;
+
+            // Move appointment to confirmed section
+            const confirmedAppointment = { patientName, appointmentTime, status: 'Confirmed' };
+            addConfirmedAppointmentRow(confirmedAppointment);
+
+            // Remove from new appointments
+            row.remove();
+            updateLocalStorage();
+        }
+
+        function cancelAppointment(button) {
+            const row = button.parentElement.parentElement;
+            row.remove(); // Simply remove the row
+            updateLocalStorage();
+        }
+
+        function markCompleted(button) {
+            const row = button.parentElement.parentElement;
+            const patientName = row.cells[0].innerText;
+            const appointmentTime = row.cells[1].innerText;
+
+            // Move appointment to completed section
+            const completedAppointment = { patientName, appointmentTime };
+            addCompletedAppointmentRow(completedAppointment);
+
+            // Remove from confirmed appointments
+            row.remove();
+            updateLocalStorage();
+        }
+
+        function updateLocalStorage() {
+            const newAppointments = Array.from(document.querySelectorAll('#newAppointments tr')).map(row => ({
+                patientName: row.cells[0].innerText,
+                appointmentTime: row.cells[1].innerText,
+                status: row.cells[2].innerText
+            }));
+
+            const confirmedAppointments = Array.from(document.querySelectorAll('#confirmedAppointments tr')).map(row => ({
+                patientName: row.cells[0].innerText,
+                appointmentTime: row.cells[1].innerText,
+                status: row.cells[2].innerText
+            }));
+
+            const completedAppointments = Array.from(document.querySelectorAll('#completedAppointments tr')).map(row => ({
+                patientName: row.cells[0].innerText,
+                appointmentTime: row.cells[1].innerText
+            }));
+
+            localStorage.setItem('newAppointments', JSON.stringify(newAppointments));
+            localStorage.setItem('confirmedAppointments', JSON.stringify(confirmedAppointments));
+            localStorage.setItem('completedAppointments', JSON.stringify(completedAppointments));
+        }
+
+        // Load appointments when the page loads
+        loadAppointments();
+    </script>
+</body>
+
+</html>

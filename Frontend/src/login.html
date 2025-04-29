@@ -168,6 +168,7 @@
     </div>
 
     <script>
+
         function redirectUser() {
             const role = document.getElementById('login-role').value;
             const email = document.getElementById('login-email').value;
@@ -176,6 +177,17 @@
             // Validate email and password first
             if (!email || !password) {
                 alert('Please enter both email and password.');
+                return;
+            }
+            // Check if the password is at least 6 characters long
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long.');
+                return;
+            }
+            // Validate email format using a regular expression
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                alert('Please enter a valid email address.');
                 return;
             }
 
@@ -224,45 +236,106 @@
                 });
         }
 
-       
-              function handleSignup() {
-                    const role = document.getElementById('signup-role').value;
-                    const email = document.getElementById('signup-email').value;
-                    const password = document.getElementById('signup-password').value;
-                    const confirmPassword = document.getElementById('confirm-password').value;
 
-                    if (!email || !password || !confirmPassword || !role) {
-                        alert('Please fill out all fields.');
-                        return;
-                    }
+        async function handleSignup() {
+                const role = document.getElementById('signup-role').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
 
-                    if (password !== confirmPassword) {
-                        alert('Passwords do not match.');
-                        return;
-                    }
-
-                    fetch('http://localhost:3000/auth/signup', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password, role }) // Ensure role is sent
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.json().then(err => {
-                                    throw new Error(err.message || 'Signup failed.');
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            alert('Signup successful! You can now login.');
-                            document.getElementById('check').checked = false;
-                        })
-                        .catch(error => {
-                            //console.error('Error:', error);
-                            alert('An error occurred during signup. Please try again.');
-                        });
+                if (!email || !password || !confirmPassword || !role ) {
+                    alert('Please fill out all fields.');
+                    return;
                 }
+
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match.');
+                    return;
+                }
+                 // Check if the password is at least 6 characters long
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long.');
+                return;
+            }
+            // Validate email format using a regular expression
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+               // Proceed with signup
+            const response = await fetch('http://localhost:3000/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, role })
+            });
+
+            if (response.ok) {
+                alert('Signup successful! Please check your email for the OTP.');
+                // Store the email to verify later
+                sessionStorage.setItem('pendingOtpEmail', email);
+
+                // Call OTP request here
+                //await sendOtpToEmail(email);
+                await requestOtp(email); // New function to request OTP
+                console.log('Redirecting to verify-otp.html');
+                window.location.href = `verify-otp.html?email=${encodeURIComponent(email)}`;
+
+                // window.location.href = 'verify-otp.html';  // Redirect to the OTP verification page
+            } else {
+                alert('An error occurred during signup. Please try again.');
+            }
+
+        }
+        async function requestOtp(email) {
+                const response = await fetch('http://localhost:3000/auth/request-otp', {
+
+                // const response = await fetch('http://localhost:3000/auth/request-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Error sending OTP');
+                }
+            }
+    async function verifyOtp() {
+        const email = sessionStorage.getItem('pendingOtpEmail');
+        const otp = document.getElementById('otp').value;
+
+        if (!otp || !email) {  // Check both fields
+            alert('Please enter both email and OTP.');
+            return;
+        }
+
+        try {
+            console.log('Email:', email);
+            console.log('OTP:', otp);
+            const response = await fetch('http://localhost:3000/auth/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp })
+            });
+
+            const responseData = await response.json();
+            console.log('Response Status:', response.status);
+            console.log('Response Data:', responseData);
+
+            if (!response.ok) {
+                throw new Error(responseData.message || 'Invalid OTP');
+            }
+
+            alert('OTP verified successfully! You can now login.');
+            window.location.href = 'login.html';
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+      
+
     </script>
 </body>
 
