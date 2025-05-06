@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { insertUser, authenticateUser, generateToken, sendOtpToEmail } = require('../Controllers/AuthController'); // Correct path
+const { insertUser, authenticateUser, generateToken, sendOtpToEmail, verifyOtp } = require('../Controllers/AuthController'); // Correct path
 const Otp = require('../models/otp');
 const nodemailer = require('nodemailer');
+
 
 
 
