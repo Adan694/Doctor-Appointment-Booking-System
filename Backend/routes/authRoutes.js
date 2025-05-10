@@ -15,13 +15,22 @@ router.post('/signup', async (req, res) => {
         return res.status(400).json({ message: "Email, password, and role are required." });
     }
 
+    if (role !== 'patient') {
+    return res.status(403).json({ message: "Only patients are allowed to sign up." });
+  }
+
     try {
         // const userId = await insertUser(email, password, role);
             const userId = await insertUser({ email, password, role });
         res.status(201).json({ message: 'User registered successfully. OTP sent to email.', userId });
     } catch (error) {
         console.error("Error inserting user:", error.message);
-        res.status(500).json({ message: "Error registering user" });
+        // res.status(500).json({ message: "Error registering user" });
+        if (error.code === 11000 && error.keyPattern?.email) {
+    return res.status(409).json({ message: "User already exists with this email." });
+}
+res.status(500).json({ message: "Error registering user" });
+
     }
 });
 

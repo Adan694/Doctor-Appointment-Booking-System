@@ -148,12 +148,15 @@
         <div class="registration form">
             <header>Signup</header>
             <form id="signup-form" onsubmit="event.preventDefault(); handleSignup();">
-                <select id="signup-role" required>
+                <!-- <select id="signup-role" required>
                     <option value="" disabled selected>Select your role</option>
                     <option value="admin">Admin</option>
                     <option value="doctor">Doctor</option>
                     <option value="patient">Patient</option>
-                </select>
+                </select> -->
+                <!-- Role is hardcoded to patient -->
+<input type="hidden" id="signup-role" value="patient">
+
                 <input type="text" id="signup-email" placeholder="Enter your email" required>
                 <input type="password" id="signup-password" placeholder="Create a password" required>
                 <input type="password" id="confirm-password" placeholder="Confirm your password" required>
@@ -274,23 +277,25 @@
                 body: JSON.stringify({ email, password, role })
             });
 
-            if (response.ok) {
+           if (response.ok) {
                 alert('Signup successful! Please check your email for the OTP.');
-                // Store the email to verify later
                 sessionStorage.setItem('pendingOtpEmail', email);
-
-                // Call OTP request here
-                //await sendOtpToEmail(email);
-                await requestOtp(email); // New function to request OTP
-                console.log('Redirecting to verify-otp.html');
-                // window.location.href = `verify-otp.html?email=${encodeURIComponent(email)}`;
+                await requestOtp(email);
                 window.location.href = `verify-otp.html?email=${encodeURIComponent(email)}`;
-
-                // window.location.href = 'verify-otp.html';  // Redirect to the OTP verification page
             } else {
-                alert('An error occurred during signup. Please try again.');
-            }
+                const contentType = response.headers.get("content-type");
+                let errorMessage = "An error occurred during signup. Please try again.";
 
+                if (contentType && contentType.includes("application/json")) {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } else {
+                    const errorText = await response.text();
+                    errorMessage = errorText || errorMessage;
+                }
+
+                alert(errorMessage);
+            }
         }
         async function requestOtp(email) {
                 const response = await fetch('http://localhost:3000/auth/request-otp', {
