@@ -10,6 +10,7 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer'); // Ensure this is imported
 const Otp = require('./models/otp'); // Create a model for OTP
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userroutes');
 
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use('/auth', authRoutes); // Use the auth routes
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, 'Frontend')));
+app.use('/user', userRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
