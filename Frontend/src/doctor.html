@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doctor Profile</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        .profile-card {
+            max-width: 600px;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .profile-card img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .availability {
+            font-weight: bold;
+        }
+
+        .available {
+            color: green;
+        }
+
+        .unavailable {
+            color: red;
+        }
+
+        .slots {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="profile-card" id="profile"></div>
+   
+
+    <script>
+        // Extract doctor name from URL
+        // const params = new URLSearchParams(window.location.search);
+        // const doctorId = params.get("doctorId"); // Get doctorId from URL
+
+
+        // const profileDiv = document.getElementById("profile");
+
+        // if (!name) {
+        //     profileDiv.innerHTML = "<p>No doctor specified.</p>";
+        // } else {
+        //     fetch("http://localhost:3000/api/doctors")
+        //         .then((res) => res.json())
+        //         .then((doctors) => {
+        //             const doctor = doctors.find(d => d.Id === Id);
+        //             if (!doctor) {
+        //                 profileDiv.innerHTML = "<p>Doctor not found.</p>";
+        //                 return;
+        //             }
+
+        //             profileDiv.innerHTML = `
+        //     <img src="${doctor.image || 'images/default-doctor.png'}" alt="${doctor.name}" />
+        //     <h2>${doctor.name}</h2>
+        //     <p><strong>Speciality:</strong> ${doctor.speciality}</p>
+        //     <p><strong>Experience:</strong> ${doctor.experience} years</p>
+        //     <p class="availability ${doctor.available ? "available" : "unavailable"}">
+        //       ${doctor.available ? "Available" : "Not Available"}
+        //     </p>
+        //     <p><strong>Biography:</strong> ${doctor.bio || "No bio available."}</p>
+        //     <h3>Availability Slots:</h3>
+        //      <div id="availability-slots"></div>
+        //     <a href="booking.html?doctor=${encodeURIComponent(doctor.Id)}">Book an Appointment</a>
+
+        //   `;
+          
+        //             // Fetch and display availability slots
+        //             fetchAvailabilitySlots(doctor.name);
+        //         })
+        //         .catch((err) => {
+        //             profileDiv.innerHTML = "<p>Error loading profile.</p>";
+        //             console.error(err);
+        //         });
+        // }
+        // // Function to fetch availability slots for the doctor
+        //     function fetchAvailabilitySlots(doctorName) {
+        //         fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`)
+        //             .then((res) => res.json())
+        //             .then((data) => {
+        //                 const slotsDiv = document.getElementById("availability-slots");
+        //                 data.availabilitySlots.forEach(slot => {
+        //                     const slotElem = document.createElement("div");
+        //                     slotElem.className = "slots";
+        //                     slotElem.innerHTML = `<strong>${slot.date}:</strong> ${slot.slots.length > 0 ? slot.slots.join(", ") : "No slots available"}`;
+        //                     slotsDiv.appendChild(slotElem);
+        //                 });
+        //             })
+        //             .catch(err => {
+        //                 console.error("Error fetching availability slots:", err);
+        //             });
+        //     }
+    // Fix the parameter extraction
+    // Wrap in IIFE to allow return statements
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const doctorId = params.get("id");
+            const profileDiv = document.getElementById("profile");
+
+            if (!doctorId || !/^[0-9a-fA-F]{24}$/.test(doctorId)) {
+                profileDiv.innerHTML = "<p>Invalid doctor ID</p>";
+                return;
+            }
+
+            fetch(`http://localhost:3000/api/doctors/${doctorId}`)
+                .then(async response => {
+                    if (!response.ok) throw new Error(await response.text());
+                    return response.json();
+                })
+                .then(doctor => {
+                    profileDiv.innerHTML = `
+        <img src="${doctor.image}" alt="${doctor.name}">
+        <h2>${doctor.name}</h2>
+        <p>Specialty: ${doctor.speciality}</p>
+        <p><strong>Experience:</strong> ${doctor.experience} years</p>
+            <p class="availability ${doctor.available ? "available" : "unavailable"}">
+               ${doctor.available ? "Available" : "Not Available"}
+             </p>
+             <p><strong>Biography:</strong> ${doctor.bio || "No bio available."}</p>
+             <h3>Availability Slots:</h3>
+              <div id="availability-slots"></div>
+        <a href="booking.html?doctorId=${doctor._id}">Book Appointment</a>
+      `;
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    profileDiv.innerHTML = `<p>Error loading profile: ${err.message}</p>`;
+                });
+        })();
+    </script>
+</body>
+
+</html>

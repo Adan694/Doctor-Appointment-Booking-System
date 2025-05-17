@@ -61,8 +61,6 @@ async function sendOtpToEmail(email) {
     await transporter.sendMail(mailOptions);
 }
 
-// Add these new functions to authcontroller.js
-
 async function verifyOtp(email, otp) {
     console.log('Verifying OTP:', { email, otp });
 
@@ -90,7 +88,6 @@ async function verifyOtp(email, otp) {
     return { success: true, message: 'OTP verified successfully' };
 }
 
-// Update the exports at the bottom
 module.exports = {
     insertUser,
     authenticateUser,

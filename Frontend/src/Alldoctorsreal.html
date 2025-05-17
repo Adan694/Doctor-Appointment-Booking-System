@@ -329,6 +329,8 @@ ul li a:hover {
             </ul>
            
     </nav>
+    <div id="loading" style="text-align:center; color: gray; font-size: 18px;">Loading doctors...</div>
+
 
     <div id="doctors">
         <div class="head">
@@ -339,7 +341,12 @@ ul li a:hover {
             <input type="text" id="search-input" placeholder="Search doctor by name or specialty">
             <button id="search-btn">Search</button>
         </div>
+        <!-- <p id="no-results" style="display:none; text-align:center; font-weight:bold; color:red;">No doctors found.</p> -->
+        <div class="doctor-list"></div>
+        <p class="no-doctors-message" style="display: none;">No doctors found.</p>
 
+
+<!-- 
         <div class="doctor-list">
             <div class="card" data-name="Dr. Alexa" data-specialty="Surgeon" data-experience="10 Years"
                 data-rating="4.5" data-hospital="Galaxy Hospital"
@@ -392,54 +399,6 @@ ul li a:hover {
                     <p class="hospital">Hospital: Galaxy Clinic</p>
                 </div>
             </div>
-            <div class="card" data-name="Dr. Usama" data-specialty="Psychologist" data-experience="10 Years" data-rating="4.7"
-                data-hospital="Aman Clinic" data-details="Expert in skin health and cosmetic procedures." data-available="yes">
-                <img src="images/d5.jpg" alt="Dr usama">
-                <div class="doctor-info">
-                    <p class="doctor-name">Dr. Usama</p>
-                    <p class="specialty">Psychologist</p>
-                    <p class="experience">Experience: 10 Years</p>
-                    <p class="rating">Rating: ★★★★★ (4.7)</p>
-                    <p class="availability"></p>
-                    <p class="hospital">Hospital: Galaxy Clinic</p>
-                </div>
-            </div>
-            <div class="card" data-name="Dr. Wasif" data-specialty="Physiotherapist" data-experience="8 Years" data-rating="4.7"
-                data-hospital="Aman Clinic" data-details="Expert in skin health and cosmetic procedures." data-available="no">
-                <img src="images/d6.jpg" alt="Dr Wasif">
-                <div class="doctor-info">
-                    <p class="doctor-name">Dr. Wasif</p>
-                    <p class="specialty">Physiotherapist</p>
-                    <p class="experience">Experience: 8 Years</p>
-                    <p class="rating">Rating: ★★★★★ (4.7)</p>
-                    <p class="availability"></p>
-                    <p class="hospital">Hospital: Galaxy Clinic</p>
-                </div>
-            </div>
-            <div class="card" data-name="Dr. Amna" data-specialty="Ophthalmologist" data-experience="8 Years" data-rating="4.7"
-                data-hospital="Aman Clinic" data-details="Expert in skin health and cosmetic procedures." data-available="no">
-                <img src="images/d6.jpg" alt="Dr Amna">
-                <div class="doctor-info">
-                    <p class="doctor-name">Dr. Amna</p>
-                    <p class="specialty">Ophthalmologist</p>
-                    <p class="experience">Experience: 8 Years</p>
-                    <p class="rating">Rating: ★★★★★ (4.7)</p>
-                    <p class="availability"></p>
-                    <p class="hospital">Hospital: Galaxy Clinic</p>
-                </div>
-            </div>
-            <div class="card" data-name="Dr. Agha" data-specialty="Ophthalmologist" data-experience="8 Years" data-rating="4.7"
-                data-hospital="Aman Clinic" data-details="Expert in skin health and cosmetic procedures." data-available="yes">
-                <img src="images/d7.webp" alt="Dr Agha">
-                <div class="doctor-info">
-                    <p class="doctor-name">Dr. Agha</p>
-                    <p class="specialty">Ophthalmologist</p>
-                    <p class="experience">Experience: 8 Years</p>
-                    <p class="rating">Rating: ★★★★★ (4.7)</p>
-                    <p class="availability"></p>
-                    <p class="hospital">Hospital: Galaxy Clinic</p>
-                </div>
-            </div>
             <div class="card" data-name="Dr. Maheen" data-specialty="Surgeon" data-experience="5 Years" data-rating="4.7"
                 data-hospital="Aman Clinic" data-details="Expert in skin health and cosmetic procedures." data-available="yes">
                 <img src="images/d8.webp" alt="Dr Maheen">
@@ -457,7 +416,7 @@ ul li a:hover {
                 <img src="images/d9.jpg" alt="Dr Javeria">
                 <div class="doctor-info">
                     <p class="doctor-name">Dr. Javeria</p>
-                    <p class="specialty">Ophthalmologist</p>
+                    <p class="specialty">Gyenocologist</p>
                     <p class="experience">Experience: 8 Years</p>
                     <p class="rating">Rating: ★★★★★ (4.7)</p>
                     <p class="availability"></p>
@@ -465,7 +424,7 @@ ul li a:hover {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
 
@@ -501,109 +460,84 @@ ul li a:hover {
     </div>
 
     <script>
-         // Function to fetch doctors dynamically and update cards
-            async function fetchDynamicDoctors() {
-                try {
-                    const response = await fetch('http://localhost:3000/api/doctors'); // Update this URL to your backend
+        
+        document.addEventListener("DOMContentLoaded", () => {
+                const doctorList = document.querySelector(".doctor-list");
+                const noDoctorsMessage = document.querySelector(".no-doctors-message");
+                const searchInput = document.getElementById("search-input");
+                const searchBtn = document.getElementById("search-btn");
 
-                    if (!response.ok) throw new Error('Network response was not ok');
+                // Optional loading message
+                const loadingMessage = document.createElement("p");
+                loadingMessage.textContent = "Loading doctors...";
+                doctorList.appendChild(loadingMessage);
 
-                    const doctors = await response.json(); // Get the list of doctors from the server
-                    const doctorListDiv = document.querySelector('.doctor-list'); // Select the doctor list container
+                fetch("http://localhost:3000/api/doctors/alldoctors")
+                    .then((response) => {
+                        if (!response.ok) throw new Error("Network response was not ok");
+                        return response.json();
+                    })
+                    .then((doctors) => {
+                        doctorList.innerHTML = ""; // Clear loading message
 
-                    doctors.forEach(doctor => {
-                        const card = document.createElement('div'); // Create a new card element
-                        card.className = 'card';
-                        card.setAttribute('data-name', doctor.name);
-                        card.setAttribute('data-specialty', doctor.specialty);
-                        card.setAttribute('data-experience', doctor.experience);
-                        card.setAttribute('data-rating', doctor.rating);
-                        card.setAttribute('data-hospital', doctor.hospital);
-                        card.setAttribute('data-details', doctor.details);
-                        card.setAttribute('data-available', doctor.available);
+                        if (doctors.length === 0) {
+                            noDoctorsMessage.style.display = "block";
+                            return;
+                        } else {
+                            noDoctorsMessage.style.display = "none";
+                        }
 
-                        // Populate card with doctor data
-                        card.innerHTML = `
-                    <img src="${doctor.image}" alt="${doctor.name}">
-                    <div class="doctor-info">
-                        <p class="doctor-name">${doctor.name}</p>
-                        <p class="specialty">${doctor.specialty}</p>
-                        <p class="experience">Experience: ${doctor.experience}</p>
-                        <p class="rating">Rating: ★★★★★ (${doctor.rating})</p>
-                        <p class="availability"></p>
-                        <p class="hospital">Hospital: ${doctor.hospital}</p>
+                        doctors.forEach((doctor) => {
+                            const card = document.createElement("div");
+                            card.className = "card";
+                            card.innerHTML = `
+                    <img src="${doctor.image}" alt="${doctor.name}" class="doctor-img" />
+                    <div class="card-content">
+                        <h3 class="doctor-name">${doctor.name}</h3>
+                        <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>
+                        <p><strong>Experience:</strong> ${doctor.experience} years</p>
+                        <p class="availability ${doctor.available ? "available" : "unavailable"}">
+                        ${doctor.available ? "Available" : "Not Available"}</p>
+                        <a href="doctor.html?id=${encodeURIComponent(doctor._id)}" class="book-btn">View Profile</a>
                     </div>
                 `;
+                            card.addEventListener("click", () => {
+                                // window.location.href = `doctor.html?Id=${encodeURIComponent(doctor.Id)}`;
+                                window.location.href = `doctor.html?id=${doctor._id}`; // Use _id and ensure it exists
 
-                        doctorListDiv.appendChild(card); // Add the new card to the doctor list
-                        updateAvailabilityStatus(card); // Call function to update status
+                            });
+
+                            doctorList.appendChild(card);
+                        });
+                    })
+                    .catch((error) => {
+                        doctorList.innerHTML = "<p style='color: red;'>Failed to load doctors. Please try again later.</p>";
+                        console.error("Error fetching doctors:", error);
                     });
-                } catch (error) {
-                    console.error('Error fetching doctors:', error);
-                }
-            }
 
-            // When the document is loaded
-            document.addEventListener("DOMContentLoaded", function () {
-                fetchDynamicDoctors(); // Fetch and display doctors
-                const cards = document.querySelectorAll(".card"); // Select all static card elements
-                cards.forEach(card => {
-                    updateAvailabilityStatus(card); // Update availability for each static card
+                // Move the search button event listener inside the DOMContentLoaded
+                searchBtn.addEventListener("click", () => {
+                    const query = searchInput.value.toLowerCase();
+                    const cards = document.querySelectorAll(".card");
+
+                    cards.forEach(card => {
+                        const name = card.querySelector(".doctor-name").textContent.toLowerCase();
+                        const speciality = card.querySelector(".specialty").textContent.toLowerCase();
+
+                        if (name.includes(query) || speciality.includes(query)) {
+                            card.style.display = ""; // Show card
+                        } else {
+                            card.style.display = "none"; // Hide card
+                        }
+                    });
+                });
+
+                searchInput.addEventListener("input", () => {
+                    searchBtn.click(); // Trigger search on input
                 });
             });
+        </script>
 
-            // Function to update availability status for a card (existing code remains unchanged)
-            function updateAvailabilityStatus(card) {
-                const availability = card.getAttribute("data-available");
-                const availabilityText = card.querySelector(".availability");
-
-                if (availability === "yes") {
-                    availabilityText.innerText = "Status: Available";
-                    availabilityText.style.color = "green";
-                } else if (availability === "no") {
-                    availabilityText.innerText = "Status: Not Available";
-                    availabilityText.style.color = "red";
-                } else {
-                    availabilityText.innerText = "Status: Unknown";
-                    availabilityText.style.color = "orange";
-                }
-            }
-
-
-
-        // Function to handle card redirection
-        document.querySelectorAll('.card').forEach((card, index) => {
-            card.addEventListener('click', function () {
-                window.location.href = `doc${index + 3}.html`; // Redirect to doc3.html, doc4.html, etc.
-            });
-        });
-
-       
-        // Search functionality
-        document.getElementById('search-btn').addEventListener('click', () => {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const cards = document.querySelectorAll('.card'); // Select all card elements
-
-            // Loop through all doctor cards
-            cards.forEach(card => {
-                const name = card.getAttribute('data-name').toLowerCase(); // Get the doctor's name
-                const specialty = card.getAttribute('data-specialty').toLowerCase(); // Get the doctor's specialty
-
-                // Show or hide card based on search term match
-                if (name.includes(searchTerm) || specialty.includes(searchTerm)) {
-                    card.style.display = ''; // Show card
-                } else {
-                    card.style.display = 'none'; // Hide card
-                }
-            });
-        });
-
-        // Navbar menu toggle code
-        document.getElementById('bar').addEventListener('click', function () {
-            const menu = document.querySelector('nav ul');
-            menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
-        });
-    </script>
 
 </body>
 

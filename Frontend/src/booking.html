@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Appointment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .slot {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .time-slot {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .time-slot.selected {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .book-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .book-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Book an Appointment</h1>
+    <div id="booking-info"></div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const doctorId = params.get("doctorId"); // Changed from doctor to doctorId
+
+        if (!doctorId) {
+            document.getElementById('booking-info').innerHTML = '<p>Error: No doctor ID provided.</p>';
+        } else {
+            // Fetch doctor availability
+            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    const bookingInfoDiv = document.getElementById('booking-info');
+                    bookingInfoDiv.innerHTML = ''; // Clear previous content
+
+                    if (data.availabilitySlots.length === 0) {
+                        bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
+                    } else {
+                        // Display available slots to select
+                        data.availabilitySlots.forEach(slot => {
+                            const slotElem = document.createElement('div');
+                            slotElem.className = 'slot';
+
+                            // Create date header
+                            const dateHeader = document.createElement('h3');
+                            dateHeader.textContent = slot.date;
+                            slotElem.appendChild(dateHeader);
+
+                            // Create time slots container
+                            const timesContainer = document.createElement('div');
+
+                            // Create individual time slots
+                            slot.slots.forEach(time => {
+                                const timeSlot = document.createElement('span');
+                                timeSlot.className = 'time-slot';
+                                timeSlot.textContent = time;
+                                timeSlot.dataset.date = slot.date;
+                                timeSlot.dataset.time = time;
+
+                                timeSlot.addEventListener('click', function () {
+                                    // Toggle selection
+                                    document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
+                                    this.classList.add('selected');
+                                });
+
+                                timesContainer.appendChild(timeSlot);
+                            });
+
+                            slotElem.appendChild(timesContainer);
+                            bookingInfoDiv.appendChild(slotElem);
+                        });
+
+                        // Add book appointment button
+                        const bookBtn = document.createElement('button');
+                        bookBtn.className = 'book-btn';
+                        bookBtn.textContent = 'Book Appointment';
+                        bookBtn.disabled = true;
+
+                        bookBtn.addEventListener('click', function () {
+                            const selectedSlot = document.querySelector('.time-slot.selected');
+                            if (selectedSlot) {
+                                const date = selectedSlot.dataset.date;
+                                const time = selectedSlot.dataset.time;
+
+                                fetch(`http://localhost:3000/api/appointments`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        doctorId: doctorId,
+                                        date: date,
+                                        time: time,
+                                        patientId: '6807759a64631d152a0003e2' // Replace with actual patient ID
+                                    })
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        alert(`Appointment booked successfully for ${date} at ${time}`);
+                                        // Optionally refresh the page or update UI
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        alert('Error booking appointment');
+                                    });
+                            }
+                        });
+
+                        // Enable/disable book button based on selection
+                        document.addEventListener('click', function (e) {
+                            if (e.target.classList.contains('time-slot')) {
+                                bookBtn.disabled = false;
+                            }
+                        });
+
+                        bookingInfoDiv.appendChild(bookBtn);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('booking-info').innerHTML = `<p>Error fetching availability: ${err.message}</p>`;
+                });
+        }
+    </script>
+</body>
+
+</html>
