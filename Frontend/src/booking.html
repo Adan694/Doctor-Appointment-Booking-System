@@ -125,26 +125,31 @@
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
+                                        // Authorization header if using JWT
+                                        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
                                     },
                                     body: JSON.stringify({
                                         doctorId: doctorId,
                                         date: date,
-                                        time: time,
-                                        patientId: '6807759a64631d152a0003e2' // Replace with actual patient ID
+                                        time: time
+                                        // No patientId needed - server knows from session
                                     })
                                 })
-                                    .then(response => response.json())
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Failed to book appointment');
+                                        }
+                                        return response.json();
+                                    })
                                     .then(data => {
                                         alert(`Appointment booked successfully for ${date} at ${time}`);
-                                        // Optionally refresh the page or update UI
                                     })
                                     .catch(error => {
                                         console.error('Error:', error);
-                                        alert('Error booking appointment');
+                                        alert('Error booking appointment: ' + error.message);
                                     });
                             }
                         });
-
                         // Enable/disable book button based on selection
                         document.addEventListener('click', function (e) {
                             if (e.target.classList.contains('time-slot')) {

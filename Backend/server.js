@@ -14,6 +14,7 @@ const userRoutes = require('./routes/userroutes');
 const doctorroutes = require('./routes/doctorroutes')
 const appointmentRoutes = require('./routes/appointmentRoutes');
 const availabilityRoutes = require('./routes/availabilityRoutes');
+const feedbackroute = require('./routes/feedbackroute');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -43,6 +44,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api', availabilityRoutes);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use('/api', feedbackroute);
 
 
 // Connect to MongoDB
