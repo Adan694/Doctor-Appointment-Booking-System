@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Doctor</title>
     <style>
-        /* Basic styling (same as your original CSS) */
+        /* Basic styling */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -171,7 +171,7 @@
             <li><a href="Adminpanel.html">Dashboard</a></li>
             <li><a href="adminappoint.html">Appointments</a></li>
             <li><a href="add-doctors.html">Add Doctor</a></li>
-            <li><a href="admindoclist.html">Doctors List</a></li>
+            <li><a href="Alldoctorsreal.html">Doctors List</a></li>
             <li><a href="patients-list.html">Patients List</a></li>
             <li><a href="settings.html">Settings</a></li>
         </ul>
@@ -187,9 +187,12 @@
             <form id="doctor-form" enctype="multipart/form-data">
                 <div class="form-group">
                     <div class="upload-button">
-                        <input type="file" id="photo" name="photo" style="opacity: 0; position: absolute; width: 0.1px; height: 0.1px" required />                        <label for="photo" style="cursor: pointer;">Upload Doctor Picture</label>
+                        <input type="file" id="photo" name="photo"
+                            style="opacity: 0; position: absolute; width: 0.1px; height: 0.1px" required />
+                        <label for="photo" style="cursor: pointer;">Upload Doctor Picture</label>
                         <label for="photo" style="cursor: pointer;">
-                            <span id="file-name">Upload Doctor Picture</span>        </label>
+                            <span id="file-name">Upload Doctor Picture</span>
+                        </label>
                     </div>
                 </div>
 
@@ -248,6 +251,7 @@
                     <textarea id="about-doctor" name="about" placeholder="Write about the doctor" rows="4"
                         required></textarea>
                 </div>
+
                 <div class="form-group">
                     <label for="available">Availability</label>
                     <select id="available" name="available" required>
@@ -255,7 +259,8 @@
                         <option value="false">Not Available</option>
                     </select>
                 </div>
-                
+
+                <input type="hidden" id="doctor-role" value="doctor"> <!-- Hidden field for role -->
 
                 <button type="submit" class="btn">Add Doctor</button>
             </form>
@@ -263,152 +268,100 @@
     </div>
 
     <script>
-//         document.getElementById('doctor-form').addEventListener('submit', async function (event) {
-//                 event.preventDefault();
+        document.getElementById('doctor-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
 
-//                 const form = document.getElementById('doctor-form');
-//                 const formData = new FormData(form);
-//                 const submitBtn = form.querySelector('button[type="submit"]');
+            const form = document.getElementById('doctor-form');
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
 
-//                 // Validate required file upload
-//                 const photoInput = document.getElementById('photo');
-//                 if (!photoInput.files.length) {
-//                     alert('Please upload a doctor picture');
-//                     return;
-//                 }
-
-//                 submitBtn.disabled = true;
-//                 submitBtn.textContent = 'Submitting...';
-
-//                 try {
-//                     // First verify backend connection
-//                     const ping = await fetch('http://localhost:3000');
-//                     if (!ping.ok) throw new Error('Backend not responding');
-
-//                     // Submit form data
-//                     const response = await fetch('http://localhost:3000/api/doctors/add', {
-//                         method: 'POST',
-//                         body: formData
-//                     });
-
-//                     if (!response.ok) {
-//                         const error = await response.json();
-//                         throw new Error(error.message || 'Server error');
-//                     }
-
-//                     const result = await response.json();
-//                     alert('Doctor added successfully!');
-//                     form.reset();
-
-//                 } catch (err) {
-//                     console.error('Error:', err);
-
-//                     if (err.message.includes('Failed to fetch')) {
-//                         alert(`Connection error: ${err.message}\n\nPlease check:
-// 1. Backend server is running (node server.js)
-// 2. No CORS issues (check browser console)
-// 3. Correct endpoint URL`);
-//                     } else {
-//                         alert(`Error: ${err.message}`);
-//                     }
-//                 } finally {
-//                     submitBtn.disabled = false;
-//                     submitBtn.textContent = 'Add Doctor';
-//                 }
-//             });
-    document.getElementById('doctor-form').addEventListener('submit', async function (event) {
-        event.preventDefault();
-
-        const form = document.getElementById('doctor-form');
-        const formData = new FormData(form);
-        const submitBtn = form.querySelector('button[type="submit"]');
-
-        // Validate required fields
-        const photoInput = document.getElementById('photo');
-        if (!photoInput.files.length) {
-            showError(photoInput.parentElement, 'Please upload a doctor picture');
-            return;
-        }
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting...';
-
-        try {
-            // Test connection first
-            const ping = await fetch('http://localhost:3000');
-            if (!ping.ok) throw new Error('Backend not responding');
-
-            // Submit form data
-            const response = await fetch('http://localhost:3000/api/doctors/add', {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Server error');
+            // Validate required fields
+            const photoInput = document.getElementById('photo');
+            if (!photoInput.files.length) {
+                showError(photoInput.parentElement, 'Please upload a doctor picture');
+                return;
             }
+            // Append the role to the formData
+            formData.append('role', document.getElementById('doctor-role').value);
 
-            showSuccess('Doctor added successfully!');
-            form.reset();
-            document.getElementById('file-name').textContent = 'Upload Doctor Picture';
-        } catch (err) {
-            console.error('Error:', err);
-            showError(null, err.message);
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Add Doctor';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                // Test connection first
+                const ping = await fetch('http://localhost:3000');
+                if (!ping.ok) throw new Error('Backend not responding');
+
+                // Submit form data
+                const response = await fetch('http://localhost:3000/api/doctors/add', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Server error');
+                }
+
+                showSuccess('Doctor added successfully!');
+                form.reset();
+                document.getElementById('file-name').textContent = 'Upload Doctor Picture';
+            } catch (err) {
+                console.error('Error:', err);
+                showError(null, err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Add Doctor';
+            }
+        });
+
+        // Helper functions
+        function showError(element, message) {
+            const errorElement = document.createElement('div');
+            errorElement.className = 'error-message';
+            errorElement.textContent = message;
+            errorElement.style.color = 'red';
+            errorElement.style.marginTop = '5px';
+
+            if (element) {
+                const existingError = element.querySelector('.error-message');
+                if (existingError) existingError.remove();
+
+                element.appendChild(errorElement);
+                element.style.borderColor = 'red';
+            } else {
+                alert(message);
+            }
         }
-    });
 
-    // Helper functions
-    function showError(element, message) {
-        const errorElement = document.createElement('div');
-        errorElement.className = 'error-message';
-        errorElement.textContent = message;
-        errorElement.style.color = 'red';
-        errorElement.style.marginTop = '5px';
+        function showSuccess(message) {
+            const successElement = document.createElement('div');
+            successElement.className = 'success-message';
+            successElement.textContent = message;
+            successElement.style.color = 'green';
+            successElement.style.marginTop = '10px';
+            successElement.style.textAlign = 'center';
 
-        if (element) {
-            // Remove existing error if any
-            const existingError = element.querySelector('.error-message');
-            if (existingError) existingError.remove();
+            const formContainer = document.querySelector('.form-container');
+            const existingSuccess = formContainer.querySelector('.success-message');
+            if (existingSuccess) existingSuccess.remove();
 
-            element.appendChild(errorElement);
-            element.style.borderColor = 'red';
-        } else {
-            alert(message);
+            formContainer.appendChild(successElement);
+
+            // Auto-remove after 3 seconds and redirect
+            setTimeout(() => {
+                successElement.remove();
+                window.location.href = 'alldoctors.html'; // Redirect to the list of doctors
+            }, 3000);
         }
-    }
-    // Update the success function to redirect to the doctor list page
-    function showSuccess(message) {
-        const successElement = document.createElement('div');
-        successElement.className = 'success-message';
-        successElement.textContent = message;
-        successElement.style.color = 'green';
-        successElement.style.marginTop = '10px';
-        successElement.style.textAlign = 'center';
 
-        const formContainer = document.querySelector('.form-container');
-        const existingSuccess = formContainer.querySelector('.success-message');
-        if (existingSuccess) existingSuccess.remove();
-
-        formContainer.appendChild(successElement);
-
-        // Auto-remove after 3 seconds and redirect
-        setTimeout(() => {
-            successElement.remove();
-            window.location.href = 'alldoctors.html'; // Redirect to the list of doctors
-        }, 3000);
-    }
-    // File input display
-    document.getElementById('photo').addEventListener('change', function (e) {
-        const fileName = e.target.files[0] ? e.target.files[0].name : 'Upload Doctor Picture';
-        document.getElementById('file-name').textContent = fileName;
-    });
+        // File input display
+        document.getElementById('photo').addEventListener('change', function (e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'Upload Doctor Picture';
+            document.getElementById('file-name').textContent = fileName;
+        });
     </script>
-      
 </body>
 
 </html>

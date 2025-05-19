@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models/users'); // Correct model import
 const Otp = require('../models/otp'); // Import Otp model
 const nodemailer = require('nodemailer');
+// const doctorController = require('../Controllers/DoctorController');
+const Doctor  = require('../models/doctors'); // Import your Doctor model
+
 
 // Function to insert a new user into MongoDB
 async function insertUser({ email, password, role }) {
@@ -13,12 +16,26 @@ async function insertUser({ email, password, role }) {
 }
 
 // Function to authenticate a user from MongoDB
-async function authenticateUser(email, password) {
-    const user = await User.findOne({ email });
-    if (user && await bcrypt.compare(password, user.password)) {
-        return user;
+// async function authenticateUser(email, password) {
+//     const user = await User.findOne({ email });
+//     if (user && await bcrypt.compare(password, user.password)) {
+//         return user;
+//     }
+//     return null;
+// }
+async function authenticateUser(email, password, role) {
+    let user;
+
+    if (role === 'doctor') {
+        user = await Doctor.findOne({ email });
+    } else {
+        user = await User.findOne({ email, role }); // patient or admin
     }
-    return null;
+
+    if (!user) return null;
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    return isPasswordValid ? user : null;
 }
 
 // Function to generate a token

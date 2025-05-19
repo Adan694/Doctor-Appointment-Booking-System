@@ -33,7 +33,8 @@ const addDoctor = async (req, res) => {
       fees,
       about,
       photo: req.file.filename,
-      available: req.body.available === 'true'
+      available: req.body.available === 'true',
+      role: req.body.role || 'doctor' // Store the role from the request
     });
 
     await newDoctor.save();
@@ -50,85 +51,64 @@ const addDoctor = async (req, res) => {
   }
 };
 
+// Get all doctors
 const getDoctors = async (req, res) => {
   try {
-    const doctors = await Doctor.find({});
-    const doctorsWithImageUrl = doctors.map(doc => ({
-      ...doc._doc,
-      image: doc.photo ? `http://localhost:3000/uploads/${doc.photo}` : 'default.jpg'
-    }));
-    res.status(200).json(doctorsWithImageUrl);
-  } catch (err) {
-    res.status(500).json({ success: false, message: 'Error retrieving doctors' });
+      const doctors = await Doctor.find();
+      res.status(200).json(doctors);
+  } catch (error) {
+      console.error('Error fetching doctors:', error);
+      res.status(500).json({ message: 'Internal server error.' });
   }
 };
 
-const updateDoctor = async (req, res) => {
-  try {
-    const doctorId = req.params.id;
-    const updates = req.body;
-
-    if (req.file) {
-      updates.photo = req.file.filename;
-    }
-
-    if (updates.password) {
-      updates.password = await bcrypt.hash(updates.password, 10);
-    }
-
-    const updatedDoctor = await Doctor.findByIdAndUpdate(doctorId, updates, { new: true });
-
-    if (!updatedDoctor) {
-      return res.status(404).json({ success: false, message: 'Doctor not found' });
-    }
-
-    res.json({ success: true, doctor: updatedDoctor });
-  } catch (err) {
-    console.error("Error updating doctor:", err);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
-};
-const deleteDoctor = async (req, res) => {
-  try {
-    const doctorId = req.params.id;
-    const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
-
-    if (!deletedDoctor) {
-      return res.status(404).json({ success: false, message: 'Doctor not found' });
-    }
-
-    res.json({ success: true, message: 'Doctor deleted successfully' });
-  } catch (err) {
-    console.error("Error deleting doctor:", err);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
-};
+// Get a doctor by ID
 const getDoctorById = async (req, res) => {
   try {
-    if (!req.params.id.match(/^[0-9a-f]{24}$/)) {
-      return res.status(400).json({ error: "Invalid doctor ID format" });
-    }
-
-    const doctor = await Doctor.findById(req.params.id);
-    if (!doctor) {
-      return res.status(404).json({ error: "Doctor not found" });
-    }
-
-    // Standardize response
-    res.json({
-      _id: doctor._id,
-      name: doctor.name,
-      speciality: doctor.speciality,
-      experience: doctor.experience,
-      available: doctor.available,
-      about: doctor.about,
-      image: doctor.photo 
-        ? `http://localhost:3000/uploads/${doctor.photo}`
-        : 'default.jpg'
-    });
-  } catch (err) {
-    res.status(500).json({ error: "Server error: " + err.message });
+      const doctor = await Doctor.findById(req.params.id);
+      if (!doctor) {
+          return res.status(404).json({ message: 'Doctor not found.' });
+      }
+      res.status(200).json(doctor);
+  } catch (error) {
+      console.error('Error fetching doctor:', error);
+      res.status(500).json({ message: 'Internal server error.' });
   }
 };
 
-module.exports = { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById };
+// Update a doctor by ID
+const updateDoctor = async (req, res) => {
+  try {
+      const { name, email, specialization, phone } = req.body;
+      const doctor = await Doctor.findByIdAndUpdate(
+          req.params.id,
+          { name, email, specialization, phone },
+          { new: true, runValidators: true }
+      );
+
+      if (!doctor) {
+          return res.status(404).json({ message: 'Doctor not found.' });
+      }
+
+      res.status(200).json({ message: 'Doctor updated successfully.', doctor });
+  } catch (error) {
+      console.error('Error updating doctor:', error);
+      res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// Delete a doctor by ID
+const deleteDoctor = async (req, res) => {
+  try {
+      const doctor = await Doctor.findByIdAndDelete(req.params.id);
+      if (!doctor) {
+          return res.status(404).json({ message: 'Doctor not found.' });
+      }
+      res.status(200).json({ message: 'Doctor deleted successfully.' });
+  } catch (error) {
+      console.error('Error deleting doctor:', error);
+      res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+module.exports = { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById};

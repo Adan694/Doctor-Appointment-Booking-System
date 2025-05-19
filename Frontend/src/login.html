@@ -171,6 +171,21 @@
     </div>
 
     <script>
+        window.onload = function () {
+                const token = localStorage.getItem('authToken');
+                const role = sessionStorage.getItem('userRole');
+
+                if (token) {
+                    // Redirect to the appropriate profile page based on role
+                    if (role === 'admin') {
+                        window.location.href = 'Adminpanel.html';
+                    } else if (role === 'doctor') {
+                        window.location.href = 'docpanel.html';
+                    } else if (role === 'patient') {
+                        window.location.href = 'index.html';
+                    }
+                }
+            };
 
         function redirectUser() {
             const role = document.getElementById('login-role').value;
@@ -208,34 +223,84 @@
                 },
                 body: JSON.stringify({ email, password, role })
             })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { throw new Error(err.message); });
+            // Determine the login URL based on role
+            // const loginUrl = role === 'doctor'
+            //     ? 'http://localhost:3000/auth/doctor/login'
+            //     : 'http://localhost:3000/auth/login';
+
+            // // Perform the login request
+            // fetch(loginUrl, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify({ email, password, role })
+            // })
+
+            
+        //         .then(response => {
+        //             if (!response.ok) {
+        //                 return response.json().then(err => { throw new Error(err.message); });
+        //             }
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             if (data.token) {
+        //                 localStorage.setItem('userRole', data.role);
+        //                 localStorage.setItem('authToken', data.token);
+        //                 sessionStorage.setItem('userRole', data.role); // Add this line
+        //                 // Redirect based on the role
+        //                 if (data.role === 'admin') {
+        //                     window.location.href = 'Adminpanel.html';
+        //                 } else if (data.role === 'doctor') {
+        //                     window.location.href = 'docpanel.html';
+        //                 } else if (data.role === 'patient') {
+        //                     window.location.href = 'index.html';
+        //                 }
+        //             } else {
+        //                 alert('Invalid credentials or account does not exist. Please sign up.');
+        //                 // if (role === 'patient' || role === 'doctor') {
+        //                     if (role === 'patient') {
+
+        //                     document.getElementById('check').checked = true; // Switch to signup tab
+        //                 }
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //             alert('An error occurred during login. Please try again.');
+        //         });
+        // }
+        .then(res => {
+                    if (!res.ok) {
+                        return res.json().then(err => { throw new Error(err.message); });
                     }
-                    return response.json();
+                    return res.json();
                 })
                 .then(data => {
-                    if (data.token) {
-                        localStorage.setItem('userRole', data.role);
-                        localStorage.setItem('authToken', data.token);
-                        // Redirect based on the role
-                        if (data.role === 'admin') {
-                            window.location.href = 'Adminpanel.html';
-                        } else if (data.role === 'doctor') {
-                            window.location.href = 'docpanel.html';
-                        } else if (data.role === 'patient') {
-                            window.location.href = 'index.html';
-                        }
+                    const { token, role } = data;
+
+                    // Save token and role
+                    localStorage.setItem('authToken', token);
+                    localStorage.setItem('userRole', role);
+                    sessionStorage.setItem('userRole', role);
+
+                    // Redirect based on role
+                    if (role === 'admin') {
+                        window.location.href = 'Adminpanel.html';
+                    } else if (role === 'doctor') {
+                        window.location.href = 'docpanel.html';
+                    } else if (role === 'patient') {
+                        window.location.href = 'index.html';
                     } else {
-                        alert('Invalid credentials or account does not exist. Please sign up.');
-                        if (role === 'patient' || role === 'doctor') {
-                            document.getElementById('check').checked = true; // Switch to signup tab
-                        }
+                        alert('Unrecognized role.');
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred during login. Please try again.');
+                .catch(err => {
+                    alert(`Login failed: ${err.message}`);
+                    if (role === 'patient') {
+                        document.getElementById('check').checked = true;
+                    }
                 });
         }
 

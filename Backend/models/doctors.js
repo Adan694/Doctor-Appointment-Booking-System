@@ -53,7 +53,11 @@ const doctorSchema = new mongoose.Schema({
   available: {
     type: Boolean,
     default: true
-  }
+  },
+  role: {
+    type: String,
+    default: 'doctor' // Set default role as "doctor"
+}
 });
 
 module.exports = mongoose.model('Doctor', doctorSchema);

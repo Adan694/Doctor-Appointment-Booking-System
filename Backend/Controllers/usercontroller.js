@@ -13,18 +13,23 @@ const getUserProfile = async (req, res) => {
 };
 
 const updateUserProfile = async (req, res) => {
+    console.log('Request method:', req.method);
+    console.log('Request body:', req.body);
+    
     try {
-        const updatedUser = await User.findOneAndUpdate(
-            { email: req.user.email },
-            { ...req.body },
-            { new: true }
-        ).select('-password');
-
-        res.status(200).json({ message: 'Profile updated', updatedUser });
+      const updatedUser = await User.findOneAndUpdate(
+        { email: req.user.email },
+        { ...req.body },
+        { new: true }
+      ).select('-password');
+  
+      console.log('Updated user:', updatedUser);
+      res.status(200).json({ message: 'Profile updated', updatedUser });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating profile' });
+      console.error('Update error:', error);
+      res.status(500).json({ message: 'Error updating profile' });
     }
-};
+  };
 
 const submitFeedback = async (req, res) => {
     try {

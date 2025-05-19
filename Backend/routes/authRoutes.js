@@ -1,8 +1,13 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 const { insertUser, authenticateUser, generateToken, sendOtpToEmail, verifyOtp } = require('../Controllers/AuthController'); // Correct path
 const Otp = require('../models/otp');
 const nodemailer = require('nodemailer');
+const user = require('../models/users'); // Or correct path to your User model
+const Doctor = require('../models/doctors'); // Doctor model
+
 
 
 
@@ -34,16 +39,22 @@ res.status(500).json({ message: "Error registering user" });
     }
 });
 
+
 // POST endpoint for user login
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    // const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required." });
+    // if (!email || !password) {
+    //     return res.status(400).json({ message: "Email and password are required." });
+    // }
+    const { email, password, role } = req.body;
+
+    if (!email || !password || !role) {
+        return res.status(400).json({ message: "Email, password, and role are required." });
     }
-
+    
     try {
-        const user = await authenticateUser(email, password);
+        const user = await authenticateUser(email, password, role);
         if (!user) {
             return res.status(401).json({ message: "Invalid credentials." });
         }
@@ -55,7 +66,6 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: "Error logging in" });
     }
 });
-
 
 // POST endpoint to request OTP (added this to handle OTP separately)
 router.post('/request-otp', async (req, res) => {
@@ -85,6 +95,27 @@ router.post('/verify-otp', async (req, res) => {
         console.error("Error verifying OTP:", error.message);
         res.status(400).json({ message: error.message });
     }
+});
+
+router.get('/profile', async (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ message: "You are not logged in" });
+    }
+
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ email: user.email, role: user.role });
+});
+router.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ message: "Could not log out" });
+        }
+        res.json({ message: 'Logged out successfully' });
+    });
 });
 
 module.exports = router;

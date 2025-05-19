@@ -15,6 +15,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  name: String,
+    phone: String,
+    age: Number,
+    dob: String,
+    gender: { type: String, enum: ['male', 'female', 'other'] },
 });
 
 // Create the User model based on the schema
