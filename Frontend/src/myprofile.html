@@ -329,13 +329,12 @@ input, select {
     <script>
         // Fetch user profile data when the page loads
         window.onload = function () {
-            const token = localStorage.getItem('authToken'); // Get the stored token
-
-            if (!token) {
-                alert("You are not logged in. Redirecting to login page.");
-                window.location.href = 'login.html'; // Redirect to login if not logged in
-                return;
-            }
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert("You are not logged in. Redirecting to login page.");
+                    window.location.href = 'login.html';
+                    return;
+                }
 
             // Fetch user profile data
             fetch('http://localhost:3000/user/profile', {
@@ -369,6 +368,7 @@ input, select {
                     console.error('Error fetching user profile:', error);
                     alert('Could not load profile data. Please try again.');
                 });
+                loadAvailability();
         };
 
         // Handle profile form submission

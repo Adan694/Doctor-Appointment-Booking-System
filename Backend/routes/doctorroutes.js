@@ -23,4 +23,5 @@ router.delete('/:id', deleteDoctor);
 router.get('/alldoctors', getDoctors);
 router.get('/:id', getDoctorById); // Add this line
 
+
 module.exports = router;

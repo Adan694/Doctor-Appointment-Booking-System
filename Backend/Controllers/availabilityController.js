@@ -32,4 +32,20 @@ exports.getAvailability = async (req, res) => {
     }
 };
 
-// Add your updateAvailability function as needed
+// Update availability for doctor
+exports.updateAvailability = async (req, res) => {
+    const doctorId = req.params.id;
+    const { availabilitySlots } = req.body;
+  
+    try {
+      const availability = await Availability.findOneAndUpdate(
+        { doctorId },
+        { availabilitySlots },
+        { new: true, upsert: true }
+      );
+      res.status(200).json(availability);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  };
+  

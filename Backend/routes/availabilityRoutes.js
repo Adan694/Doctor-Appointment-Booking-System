@@ -1,5 +1,5 @@
 const express = require('express');
-const { createAvailability, getAvailability} = require('../Controllers/availabilityController');
+const { createAvailability, getAvailability, updateAvailability} = require('../Controllers/availabilityController');
 
 const router = express.Router();
 
@@ -8,6 +8,7 @@ router.post('/doctors/:id/availability', createAvailability); // Create availabi
 
 // Route to fetch availability by doctor ID
 router.get('/doctors/:id/availability', getAvailability); // Fetch availability
+router.put('/doctors/:id/availability', updateAvailability);
 
 // Route to update availability
 // router.put('/doctors/:id/availability', updateAvailability); // Update availability

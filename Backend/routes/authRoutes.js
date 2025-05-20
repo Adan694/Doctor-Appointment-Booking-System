@@ -41,18 +41,34 @@ res.status(500).json({ message: "Error registering user" });
 
 
 // POST endpoint for user login
-router.post('/login', async (req, res) => {
-    // const { email, password } = req.body;
+// router.post('/login', async (req, res) => {
+//     const { email, password, role } = req.body;
 
-    // if (!email || !password) {
-    //     return res.status(400).json({ message: "Email and password are required." });
-    // }
+//     if (!email || !password || !role) {
+//         return res.status(400).json({ message: "Email, password, and role are required." });
+//     }
+    
+//     try {
+//         const user = await authenticateUser(email, password, role);
+//         if (!user) {
+//             return res.status(401).json({ message: "Invalid credentials." });
+//         }
+
+//         const token = generateToken(user);
+//         res.status(200).json({ message: 'Login successful', token, role: user.role });
+//     } catch (error) {
+//         console.error("Error logging in:", error.message);
+//         res.status(500).json({ message: "Error logging in" });
+//     }
+// });
+
+router.post('/login', async (req, res) => {
     const { email, password, role } = req.body;
 
     if (!email || !password || !role) {
         return res.status(400).json({ message: "Email, password, and role are required." });
     }
-    
+
     try {
         const user = await authenticateUser(email, password, role);
         if (!user) {
@@ -60,12 +76,39 @@ router.post('/login', async (req, res) => {
         }
 
         const token = generateToken(user);
-        res.status(200).json({ message: 'Login successful', token, role: user.role });
+
+        // 🔍 Doctor-specific data
+        if (role === 'doctor') {
+            const doctor = await Doctor.findOne({ email: user.email }); // Make sure this matches your DB structure
+            if (!doctor) {
+                return res.status(404).json({ message: "Doctor not found." });
+            }
+
+            return res.status(200).json({
+                message: 'Login successful',
+                token,
+                role: doctor.role,
+                doctor: {
+                    _id: doctor._id,
+                    name: doctor.name,
+                    email: doctor.email
+                }
+            });
+        }
+
+        // 👤 Response for other roles (e.g., admin, patient)
+        return res.status(200).json({
+            message: 'Login successful',
+            token,
+            role: user.role
+        });
+
     } catch (error) {
         console.error("Error logging in:", error.message);
         res.status(500).json({ message: "Error logging in" });
     }
 });
+
 
 // POST endpoint to request OTP (added this to handle OTP separately)
 router.post('/request-otp', async (req, res) => {

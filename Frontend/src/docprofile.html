@@ -11,104 +11,83 @@
             padding: 30px;
             background: #f4f4f4;
             display: flex;
+            flex-direction: column;
         }
 
-          nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 20px;
-    position: fixed;
-    top: 0%;
-    width: 100%;
-    left: 0; /* Ensure this is set to zero */
-    background-color: rgb(9, 102, 102);
-    color: white;
-    z-index: 1000;
-    padding: 10px 20px;
-    /* Reduced padding */
-}
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            z-index: 1000;
+            padding: 10px 20px;
+        }
 
-ul {
-    display: flex;
-}
+        ul {
+            display: flex;
+        }
 
-ul li {
-    list-style: none;
-}
+        ul li {
+            list-style: none;
+        }
 
-ul li a {
-    text-decoration: none;
-    color: white;
-    font-size: 20px;
-    margin-inline: 20px;
-}
+        ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            margin-inline: 20px;
+        }
 
-ul li a:hover {
-    color: black;
-    border-bottom: 2px solid black;
-}
+        ul li a:hover {
+            color: black;
+            border-bottom: 2px solid black;
+        }
 
-#bar {
-    display: none;
-    /* Hidden by default */
-    font-size: 30px;
-    /* Hamburger icon size */
-    cursor: pointer;
-    /* Pointer cursor on hover */
-}
+        #bar {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
+        }
 
-.logo {
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-    /* Increased font size */
-    margin: 0;
-    /* Remove extra margin */
-}
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+        }
 
-.logo img {
-    width: 60px;
-    /* Set a fixed width */
-    height: 60px;
-    /* Set a fixed height to match width */
-    border-radius: 50%;
-    /* Make the image round */
-    margin-right: 10px;
-    /* Space between image and text */
-    object-fit: cover;
-    /* Ensure the image covers the area */
-}
+        .logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
 
-.logo h1 {
-    font-size: 30px;
-    /* Increase the font size of the text */
-    margin: 0;
-    /* Remove default margin */
-}
-
+        .logo h1 {
+            font-size: 30px;
+            margin: 0;
+        }
 
         .container {
-    display: flex;
-    gap: 20px;
-    margin-top: 80px; /* Adjusted for navbar height */
-    margin-left: 0; /* No left margin needed */
-    flex: 1; /* Take remaining space */
-}
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 100px;
+        }
 
-.profile-section,
-.availability-section {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    flex: 1;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-
-        .profile-section:hover,
-        .availability-section:hover {
-            transform: scale(1.02);
+        .profile-section,
+        .availability-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .profile-header {
@@ -123,10 +102,6 @@ ul li a:hover {
             height: 100px;
             margin-right: 20px;
             border: 2px solid rgb(9, 102, 102);
-        }
-
-        .profile-header h2 {
-            margin: 0;
         }
 
         label {
@@ -153,22 +128,34 @@ ul li a:hover {
             outline: none;
         }
 
-       .availability-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
+        .availability-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
 
-.availability-table th,
-.availability-table td {
-    border: 1px solid #ccc;
-    padding: 10px; /* Increased padding for better spacing */
-    text-align: left;
-}
+        .availability-table th,
+        .availability-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
 
-.availability-table th {
-    background: #e8f0fe;
-}
+        .availability-table th {
+            background: #e8f0fe;
+        }
+
+        .availability-table button {
+            background-color: transparent;
+            color: red;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .availability-table button:hover {
+            color: darkred;
+        }
 
         .btn {
             margin-top: 20px;
@@ -193,11 +180,21 @@ ul li a:hover {
         .add-slot-btn:hover {
             background: #1e7e34;
         }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                flex-direction: column;
+                margin-top: 120px;
+            }
+        }
     </style>
 </head>
 
 <body>
-
     <nav>
         <div class="logo">
             <img src="images/Da.png" alt="DocAssist Logo">
@@ -205,164 +202,202 @@ ul li a:hover {
         </div>
         <i id="bar" class="fa-solid fa-bars"></i>
         <ul>
-        <li><a href="docpanel.html">Dashboard</a></li>
-        <li><a href="DocAppointment.html">Appointments</a></li>
-        <li><a href="docprofile.html">Profile</a></li>
-           
-    
+            <li><a href="docpanel.html">Dashboard</a></li>
+            <li><a href="DocAppointment.html">Appointments</a></li>
+            <li><a href="docprofile.html">Profile</a></li>
         </ul>
     </nav>
 
     <div class="container">
         <div class="profile-section">
             <div class="profile-header">
-<img src="https://via.placeholder.com/100" alt="Doctor Photo" id="profilePic">                <div>
-                    <h2>Dr. <input type="text" id="doctorName" value="Alexa"></h2>
+                <img src="https://via.placeholder.com/100" alt="Doctor Photo" id="profilePic">
+                <div>
+                    <h2>Dr. <input type="text" id="doctorName" value=""></h2>
                 </div>
             </div>
+
             <label for="fileUpload">Change Profile Picture:</label>
-            <input type="file" id="fileUpload" accept="image/*" onchange="previewImage(event)">
+            <input type="file" id="fileUpload" accept="image/*">
 
             <label>Specialization:</label>
-            <input type="text" id="specialization" value="Dermatologist">
+            <input type="text" id="specialization">
 
             <label>Qualifications:</label>
-            <textarea id="qualifications">MBBS, FCPS Dermatology</textarea>
+            <textarea id="qualifications"></textarea>
 
             <label>Services:</label>
-            <textarea id="services">Acne Treatment, Laser Hair Removal, Eczema Care</textarea>
+            <textarea id="services"></textarea>
 
             <label>Conditions Treated:</label>
-            <textarea id="conditions">Acne, Eczema, Dermatitis</textarea>
+            <textarea id="conditions"></textarea>
 
             <label>Experience:</label>
-            <input type="text" id="experience" value="5 years in Dermatology">
+            <input type="text" id="experience">
 
             <label>Memberships:</label>
-            <textarea id="memberships">PMDC, Dermatology Association</textarea>
+            <textarea id="memberships"></textarea>
 
-            <label>Fees:</label>
-            <input type="text" id="fees" value="Rs. 800">
+            <label>Fees (in Rs.):</label>
+            <input type="number" id="fees">
 
             <label>Practice Locations:</label>
-            <textarea id="locations">City Clinic, HealthPlus Center</textarea>
+            <textarea id="locations"></textarea>
 
             <button class="btn" onclick="saveProfile()">Save Profile</button>
         </div>
 
         <div class="availability-section">
             <h2>Availability</h2>
-
             <table class="availability-table" id="availabilityTable">
                 <thead>
                     <tr>
-                        <th>Day</th>
-                        <th>Time</th>
+                        <th>Date</th>
+                        <th>Slots (comma-separated)</th>
                         <th>Remove</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="text" value="Monday"></td>
-                        <td><input type="text" value="10:00 AM - 2:00 PM"></td>
-                        <td><button onclick="removeRow(this)">❌</button></td>
-                    </tr>
-                </tbody>
+                <tbody></tbody>
             </table>
-
-            <button class="btn add-slot-btn" onclick="addAvailabilityRow()">+ Add Slot</button>
+            <button class="btn add-slot-btn" onclick="addSlot()">+ Add Slot</button>
         </div>
     </div>
 
     <script>
-        function saveProfile() {
-                const profile = {
-                    name: document.getElementById("doctorName").value,
-                    specialization: document.getElementById("specialization").value,
-                    qualifications: document.getElementById("qualifications").value,
-                    services: document.getElementById("services").value,
-                    conditions: document.getElementById("conditions").value,
-                    experience: document.getElementById("experience").value,
-                    memberships: document.getElementById("memberships").value,
-                    fees: document.getElementById("fees").value,
-                    locations: document.getElementById("locations").value,
-                    availability: []
-                };
+        const doctorId = localStorage.getItem("doctorId");
+        
 
-                const rows = document.querySelectorAll("#availabilityTable tbody tr");
-                rows.forEach(row => {
-                    const day = row.querySelector("td:nth-child(1) input").value;
-                    const time = row.querySelector("td:nth-child(2) input").value;
-                    if (day && time) {
-                        profile.availability.push({ day, time });
-                    }
+        // function loadDoctorProfile() {
+        //     if (!doctorId || !/^[0-9a-fA-F]{24}$/.test(doctorId)) {
+        //         alert("Invalid or missing doctor ID.");
+        //         return;
+        //     }
+            function loadDoctorProfile() {
+            const token = localStorage.getItem('authToken'); // Get the stored token
+
+                if (!token) {
+                    alert("You are not logged in. Redirecting to login page.");
+                    window.location.href = 'login.html'; // Redirect to login if not logged in
+                    return;
+                }
+            fetch(`http://localhost:3000/api/doctors/${doctorId}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("doctorName").value = data.name || '';
+                    document.getElementById("specialization").value = data.speciality || '';
+                    document.getElementById("qualifications").value = data.qualifications || '';
+                    document.getElementById("services").value = data.services || '';
+                    document.getElementById("conditions").value = data.conditions || '';
+                    document.getElementById("experience").value = data.experience || '';
+                    document.getElementById("memberships").value = data.memberships || '';
+                    document.getElementById("fees").value = data.fees || '';
+                    document.getElementById("locations").value = data.locations || '';
+                    document.getElementById("profilePic").src = data.image || "https://via.placeholder.com/100";
+                })
+                .catch(err => {
+                    console.error("Error loading doctor profile:", err);
+                    alert("Failed to load doctor profile.");
                 });
-
-                // Save profile to localStorage
-                localStorage.setItem('doctorProfile', JSON.stringify(profile));
-
-                // Save profile picture if it exists
-                const profilePic = document.getElementById('profilePic').src;
-                localStorage.setItem('profilePic', profilePic);
-
-                console.log("Profile Saved:", profile);
-                alert("Profile saved successfully! (Check console)");
-            }
-        function addAvailabilityRow() {
-            const table = document.getElementById("availabilityTable").getElementsByTagName("tbody")[0];
-            const newRow = table.insertRow();
-            newRow.innerHTML = `
-                <td><input type="text" placeholder="Day"></td>
-                <td><input type="text" placeholder="Time"></td>
-                <td><button onclick="removeRow(this)">❌</button></td>
-            `;
         }
 
-        function removeRow(button) {
-            const row = button.parentElement.parentElement;
-            row.remove();
+        function loadAvailability() {
+            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`)
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.querySelector("#availabilityTable tbody");
+                    tbody.innerHTML = "";
+                    (data.availabilitySlots || []).forEach(slot => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><input type="date" value="${slot.date}"></td>
+                            <td><input type="text" value="${slot.slots.join(", ")}"></td>
+                            <td><button onclick="removeRow(this)">❌</button></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(err => console.error("Failed to load availability", err));
         }
-        function previewImage(event) {
-                const file = event.target.files[0];
+
+        document.getElementById("fileUpload").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    document.getElementById('profilePic').src = e.target.result;
+                    document.getElementById("profilePic").src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
-            window.onload = function () {
-                    const savedProfile = JSON.parse(localStorage.getItem('doctorProfile'));
-                    if (savedProfile) {
-                        document.getElementById("doctorName").value = savedProfile.name;
-                        document.getElementById("specialization").value = savedProfile.specialization;
-                        document.getElementById("qualifications").value = savedProfile.qualifications;
-                        document.getElementById("services").value = savedProfile.services;
-                        document.getElementById("conditions").value = savedProfile.conditions;
-                        document.getElementById("experience").value = savedProfile.experience;
-                        document.getElementById("memberships").value = savedProfile.memberships;
-                        document.getElementById("fees").value = savedProfile.fees;
-                        document.getElementById("locations").value = savedProfile.locations;
+        });
 
-                        // Load availability
-                        const availabilityTable = document.getElementById("availabilityTable").getElementsByTagName("tbody")[0];
-                        savedProfile.availability.forEach(slot => {
-                            const newRow = availabilityTable.insertRow();
-                            newRow.innerHTML = `
-                <td><input type="text" value="${slot.day}"></td>
-                <td><input type="text" value="${slot.time}"></td>
+        function addSlot() {
+            const tbody = document.querySelector("#availabilityTable tbody");
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><input type="date"></td>
+                <td><input type="text" placeholder="e.g. 10:00 AM, 11:00 AM"></td>
                 <td><button onclick="removeRow(this)">❌</button></td>
             `;
-                        });
+            tbody.appendChild(tr);
+        }
 
-                        // Load profile picture if available
-                        const profilePic = localStorage.getItem('profilePic');
-                        if (profilePic) {
-                            document.getElementById('profilePic').src = profilePic;
-                        }
-                    }
-                };
+        function removeRow(button) {
+            button.closest("tr").remove();
+        }
+
+        function saveProfile() {
+            const profile = {
+                name: document.getElementById("doctorName").value,
+                speciality: document.getElementById("specialization").value,
+                qualifications: document.getElementById("qualifications").value,
+                services: document.getElementById("services").value,
+                conditions: document.getElementById("conditions").value,
+                experience: document.getElementById("experience").value,
+                memberships: document.getElementById("memberships").value,
+                fees: Number(document.getElementById("fees").value),
+                locations: document.getElementById("locations").value,
+                image: document.getElementById("profilePic").src
+            };
+
+            const availabilitySlots = [];
+            const rows = document.querySelectorAll("#availabilityTable tbody tr");
+            rows.forEach(row => {
+                const date = row.querySelector("td:nth-child(1) input").value;
+                const slotsText = row.querySelector("td:nth-child(2) input").value;
+                if (date && slotsText) {
+                    const slots = slotsText.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                    availabilitySlots.push({ date, slots });
+                }
+            });
+
+            fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(profile)
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Profile update failed");
+                    return fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ availabilitySlots })
+                    });
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error("Availability update failed");
+                    alert("Profile and availability updated successfully!");
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Failed to update profile or availability");
+                });
+        }
+
+        window.onload = () => {
+            loadDoctorProfile();
+            loadAvailability();
+        };
     </script>
-
 </body>
 
 </html>

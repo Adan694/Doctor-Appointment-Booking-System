@@ -75,27 +75,51 @@ const getDoctorById = async (req, res) => {
       res.status(500).json({ message: 'Internal server error.' });
   }
 };
+// const getDoctorById = async (req, res) => {
+//   const { id } = req.params;
 
+//   // Validate if ID is present and a valid MongoDB ObjectId
+//   if (!id || id === 'null' || id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+//     return res.status(400).json({ message: 'Invalid doctor ID' });
+//   }
+
+//   try {
+//     const doctor = await Doctor.findById(id);
+//     if (!doctor) {
+//       return res.status(404).json({ message: 'Doctor not found.' });
+//     }
+//     res.status(200).json(doctor);
+//   } catch (error) {
+//     console.error('Error fetching doctor:', error);
+//     res.status(500).json({ message: 'Internal server error.' });
+//   }
+// };
 // Update a doctor by ID
 const updateDoctor = async (req, res) => {
   try {
-      const { name, email, specialization, phone } = req.body;
-      const doctor = await Doctor.findByIdAndUpdate(
-          req.params.id,
-          { name, email, specialization, phone },
-          { new: true, runValidators: true }
-      );
+    const updateFields = req.body;
 
-      if (!doctor) {
-          return res.status(404).json({ message: 'Doctor not found.' });
-      }
+    // Optional: prevent password/email from being updated by doctor directly
+    delete updateFields.password;
+    delete updateFields.email;
 
-      res.status(200).json({ message: 'Doctor updated successfully.', doctor });
+    const updatedDoctor = await Doctor.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateFields },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedDoctor) {
+      return res.status(404).json({ message: 'Doctor not found.' });
+    }
+
+    res.status(200).json({ message: 'Profile updated successfully.', doctor: updatedDoctor });
   } catch (error) {
-      console.error('Error updating doctor:', error);
-      res.status(500).json({ message: 'Internal server error.' });
+    console.error('Error updating doctor profile:', error);
+    res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
 
 // Delete a doctor by ID
 const deleteDoctor = async (req, res) => {
