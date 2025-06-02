@@ -135,4 +135,40 @@ const deleteDoctor = async (req, res) => {
   }
 };
 
-module.exports = { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById};
+const updateDoctorAvailability = async (req, res) => {
+  try {
+    const doctorId = req.params.id;
+    const { availabilitySlots: newSlots } = req.body;
+
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    const existingSlots = doctor.availabilitySlots || [];
+
+    // Merge logic
+    newSlots.forEach(newSlot => {
+      const existingIndex = existingSlots.findIndex(slot => slot.date === newSlot.date);
+      if (existingIndex >= 0) {
+        // Merge slots for the same date
+        existingSlots[existingIndex].slots = Array.from(new Set([
+          ...existingSlots[existingIndex].slots,
+          ...newSlot.slots
+        ]));
+      } else {
+        existingSlots.push(newSlot);
+      }
+    });
+
+    doctor.availabilitySlots = existingSlots;
+    await doctor.save();
+
+    res.status(200).json({ availabilitySlots: doctor.availabilitySlots });
+  } catch (error) {
+    console.error("Error updating availability:", error);
+    res.status(500).json({ message: "Failed to update availability" });
+  }
+};
+
+module.exports = { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, updateDoctorAvailability};

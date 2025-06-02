@@ -218,7 +218,7 @@
             </div>
 
             <label for="fileUpload">Change Profile Picture:</label>
-            <input type="file" id="fileUpload" accept="image/*">
+            <input type="file" id="fileUpload" accept="image/*" onchange="previewImage()">
 
             <label>Specialization:</label>
             <input type="text" id="specialization">
@@ -244,7 +244,12 @@
             <label>Practice Locations:</label>
             <textarea id="locations"></textarea>
 
-            <button class="btn" onclick="saveProfile()">Save Profile</button>
+            <!-- <button class="btn" onclick="saveProfile()">Save Profile</button> -->
+            <div id="buttonGroup">
+                <button class="btn" onclick="enableEditing()">Edit Profile</button>
+            </div>
+
+                        
         </div>
 
         <div class="availability-section">
@@ -265,22 +270,26 @@
 
     <script>
         const doctorId = localStorage.getItem("doctorId");
-        
 
-        // function loadDoctorProfile() {
-        //     if (!doctorId || !/^[0-9a-fA-F]{24}$/.test(doctorId)) {
-        //         alert("Invalid or missing doctor ID.");
-        //         return;
-        //     }
-            function loadDoctorProfile() {
-            const token = localStorage.getItem('authToken'); // Get the stored token
+        function previewImage() {
+            const file = document.getElementById("fileUpload").files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById("profilePic").src = e.target.result;
+            };
+            if (file) reader.readAsDataURL(file);
+        }
 
-                if (!token) {
-                    alert("You are not logged in. Redirecting to login page.");
-                    window.location.href = 'login.html'; // Redirect to login if not logged in
-                    return;
-                }
-            fetch(`http://localhost:3000/api/doctors/${doctorId}`)
+        function loadDoctorProfile() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert("You are not logged in. Redirecting to login page.");
+                window.location.href = 'login.html';
+                return;
+            }
+            fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            })
                 .then(res => res.json())
                 .then(data => {
                     document.getElementById("doctorName").value = data.name || '';
@@ -300,36 +309,74 @@
                 });
         }
 
+        // function loadAvailability() {
+        //     const token = localStorage.getItem('authToken');
+        //     fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+        //         headers: { "Authorization": `Bearer ${token}` }
+        //     })
+        //         .then(res => res.json())
+        //         .then(data => {
+        //             const tbody = document.querySelector("#availabilityTable tbody");
+        //             tbody.innerHTML = "";
+        //             if (!data.availabilitySlots || !data.availabilitySlots.length) return;
+        //             data.availabilitySlots.forEach(slot => {
+        //                 const tr = document.createElement("tr");
+        //                 tr.innerHTML = `
+        //                     <td><input type="date" value="${slot.date}"></td>
+        //                     <td><input type="text" value="${slot.slots.join(", ")}"></td>
+        //                     <td><button onclick="removeRow(this)">❌</button></td>
+        //                 `;
+        //                 tbody.appendChild(tr);
+        //             });
+        //         })
+        //         .catch(err => console.error("Failed to load availability", err));
+        // }
         function loadAvailability() {
-            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`)
-                .then(res => res.json())
-                .then(data => {
-                    const tbody = document.querySelector("#availabilityTable tbody");
-                    tbody.innerHTML = "";
-                    (data.availabilitySlots || []).forEach(slot => {
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-                            <td><input type="date" value="${slot.date}"></td>
-                            <td><input type="text" value="${slot.slots.join(", ")}"></td>
-                            <td><button onclick="removeRow(this)">❌</button></td>
-                        `;
-                        tbody.appendChild(tr);
+                fetch(`http://localhost:3000/api/doctors/${doctorId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const bookingInfoDiv = document.getElementById('booking-info');
+                        bookingInfoDiv.innerHTML = '';
+
+                        if (!data.availabilitySlots || !data.availabilitySlots.length) {
+                            bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
+                            return;
+                        }
+
+                        const groupedSlots = {};
+
+                        // Group slots by date
+                        data.availabilitySlots.forEach(slot => {
+                            if (!groupedSlots[slot.date]) {
+                                groupedSlots[slot.date] = [];
+                            }
+                            // Merge existing slots with new ones
+                            groupedSlots[slot.date] = [...new Set([...groupedSlots[slot.date], ...slot.slots])];
+                        });
+
+                        // Display grouped slots
+                        for (const date in groupedSlots) {
+                            const slotElem = document.createElement('div');
+                            slotElem.className = 'slot';
+
+                            const dateHeader = document.createElement('h3');
+                            dateHeader.textContent = date;
+                            slotElem.appendChild(dateHeader);
+
+                            const timesContainer = document.createElement('div');
+                            timesContainer.textContent = groupedSlots[date].join(', '); // Join slots for display
+
+                            slotElem.appendChild(timesContainer);
+                            bookingInfoDiv.appendChild(slotElem);
+                        }
+
+                        addBookButtonIfMissing();
+                    })
+                    .catch(err => {
+                        document.getElementById('booking-info').innerHTML =
+                            `<p>Error fetching availability: ${err.message}</p>`;
                     });
-                })
-                .catch(err => console.error("Failed to load availability", err));
-        }
-
-        document.getElementById("fileUpload").addEventListener("change", function (event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById("profilePic").src = e.target.result;
-                };
-                reader.readAsDataURL(file);
             }
-        });
-
         function addSlot() {
             const tbody = document.querySelector("#availabilityTable tbody");
             const tr = document.createElement("tr");
@@ -346,6 +393,13 @@
         }
 
         function saveProfile() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert("You are not logged in. Redirecting to login page.");
+                window.location.href = 'login.html';
+                return;
+            }
+
             const profile = {
                 name: document.getElementById("doctorName").value,
                 speciality: document.getElementById("specialization").value,
@@ -356,47 +410,130 @@
                 memberships: document.getElementById("memberships").value,
                 fees: Number(document.getElementById("fees").value),
                 locations: document.getElementById("locations").value,
-                image: document.getElementById("profilePic").src
+                image: document.getElementById("profilePic").src,
+                availabilitySlots: getCurrentAvailabilitySlots()
             };
 
-            const availabilitySlots = [];
-            const rows = document.querySelectorAll("#availabilityTable tbody tr");
-            rows.forEach(row => {
-                const date = row.querySelector("td:nth-child(1) input").value;
-                const slotsText = row.querySelector("td:nth-child(2) input").value;
-                if (date && slotsText) {
-                    const slots = slotsText.split(',').map(s => s.trim()).filter(s => s.length > 0);
-                    availabilitySlots.push({ date, slots });
-                }
-            });
-
-            fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(profile)
-            })
-                .then(res => {
-                    if (!res.ok) throw new Error("Profile update failed");
-                    return fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ availabilitySlots })
-                    });
+            Promise.all([
+                fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(profile)
+                }),
+                fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ availabilitySlots: profile.availabilitySlots })
                 })
-                .then(res => {
-                    if (!res.ok) throw new Error("Availability update failed");
+            ])
+                .then(responses => {
+                    responses.forEach(res => {
+                        if (!res.ok) throw new Error("Update failed");
+                    });
                     alert("Profile and availability updated successfully!");
+                    loadAvailability();
                 })
                 .catch(err => {
-                    console.error(err);
-                    alert("Failed to update profile or availability");
+                    console.error("Update error:", err);
+                    alert("Failed to update profile: " + err.message);
                 });
         }
 
-        window.onload = () => {
-            loadDoctorProfile();
-            loadAvailability();
-        };
+        // function getCurrentAvailabilitySlots() {
+        //     const availabilitySlots = [];
+        //     const rows = document.querySelectorAll("#availabilityTable tbody tr");
+        //     rows.forEach(row => {
+        //         const date = row.querySelector("td:nth-child(1) input").value;
+        //         const slotsText = row.querySelector("td:nth-child(2) input").value;
+        //         if (date && slotsText) {
+        //             const slots = slotsText.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        //             availabilitySlots.push({ date, slots });
+        //         }
+        //     });
+        //     return availabilitySlots;
+        // }
+            function getCurrentAvailabilitySlots() {
+                const availabilitySlots = [];
+                const rows = document.querySelectorAll("#availabilityTable tbody tr");
+                rows.forEach(row => {
+                    const date = row.querySelector("td:nth-child(1) input").value;
+                    const slotsText = row.querySelector("td:nth-child(2) input").value;
+                    if (date && slotsText) {
+                        const slots = slotsText.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                        availabilitySlots.push({ date, slots });
+                    }
+                });
+                return availabilitySlots;
+            }
+        let isEditing = false;
+
+            function enableEditing() {
+                isEditing = true;
+                toggleEditFields(true);
+
+                const buttonGroup = document.getElementById("buttonGroup");
+                buttonGroup.innerHTML = `
+        <button class="btn" onclick="saveProfile()">Save Profile</button>
+    `;
+            }
+
+            function toggleEditFields(enabled) {
+                const fields = [
+                    "doctorName",
+                    "specialization",
+                    "qualifications",
+                    "services",
+                    "conditions",
+                    "experience",
+                    "memberships",
+                    "fees",
+                    "locations",
+                    "fileUpload"
+                ];
+
+                fields.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        if (element.tagName === "TEXTAREA" || element.tagName === "INPUT") {
+                            element.readOnly = !enabled;
+                            element.disabled = !enabled;
+                        }
+                    }
+                });
+
+                // Toggle availability inputs
+                document.querySelectorAll("#availabilityTable input").forEach(input => {
+                    input.readOnly = !enabled;
+                    input.disabled = !enabled;
+                });
+
+                // Show/hide add slot button
+                const addSlotBtn = document.querySelector(".add-slot-btn");
+                addSlotBtn.style.display = enabled ? "inline-block" : "none";
+
+                // Show/hide delete buttons
+                document.querySelectorAll(".availability-table button").forEach(btn => {
+                    btn.style.display = enabled ? "inline-block" : "none";
+                });
+            }
+
+            window.onload = () => {
+                loadDoctorProfile();
+                loadAvailability();
+                toggleEditFields(false); // Start in read-only mode
+
+                const buttonGroup = document.getElementById("buttonGroup");
+                buttonGroup.innerHTML = `
+        <button class="btn" onclick="enableEditing()">Edit Profile</button>
+    `;
+            };
+
     </script>
 </body>
 

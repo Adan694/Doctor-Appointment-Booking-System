@@ -21,7 +21,13 @@ const doctorSchema = new mongoose.Schema({
   locations: String,
   image: String,
   available: { type: Boolean, default: true },
-  role: { type: String, default: 'doctor' }
+  role: { type: String, default: 'doctor' },
+  availabilitySlots: [
+    {
+      date: String,
+      slots: [String]
+    }
+  ]
 });
 
 module.exports = mongoose.model('Doctor', doctorSchema);

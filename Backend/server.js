@@ -13,7 +13,6 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userroutes');
 const doctorroutes = require('./routes/doctorroutes')
 const appointmentRoutes = require('./routes/appointmentRoutes');
-const availabilityRoutes = require('./routes/availabilityRoutes');
 const feedbackroute = require('./routes/feedbackroute');
 const session = require('express-session');
 
@@ -37,7 +36,6 @@ app.use('/api/doctors', doctorroutes);
 app.use('/doctor', doctorroutes); // For view endpoints
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/appointments', appointmentRoutes);
-app.use('/api', availabilityRoutes);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use('/api', feedbackroute);

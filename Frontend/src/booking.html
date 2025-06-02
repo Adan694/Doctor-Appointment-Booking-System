@@ -52,43 +52,35 @@
 <body>
     <h1>Book an Appointment</h1>
     <div id="booking-info"></div>
+    <button onclick="loadAvailability()" class="book-btn">🔁 Refresh Slots</button>
+
 
     <script>
         const params = new URLSearchParams(window.location.search);
         const doctorId = params.get("doctorId"); // Changed from doctor to doctorId
 
-        if (!doctorId) {
-            document.getElementById('booking-info').innerHTML = '<p>Error: No doctor ID provided.</p>';
-        } else {
-            // Fetch doctor availability
-            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`)
-                .then(res => {
-                    if (!res.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return res.json();
-                })
-                .then(data => {
-                    const bookingInfoDiv = document.getElementById('booking-info');
-                    bookingInfoDiv.innerHTML = ''; // Clear previous content
+       
+        function loadAvailability() {
+            fetch(`http://localhost:3000/api/doctors/${doctorId}`)
+            .then(res => res.json())
+                    .then(data => {
+                        const bookingInfoDiv = document.getElementById('booking-info');
+                        bookingInfoDiv.innerHTML = '';
 
-                    if (data.availabilitySlots.length === 0) {
-                        bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
-                    } else {
-                        // Display available slots to select
+                        if (!data.availabilitySlots || !data.availabilitySlots.length) {
+                            bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
+                            return;
+                        }
+
                         data.availabilitySlots.forEach(slot => {
                             const slotElem = document.createElement('div');
                             slotElem.className = 'slot';
-
-                            // Create date header
                             const dateHeader = document.createElement('h3');
                             dateHeader.textContent = slot.date;
                             slotElem.appendChild(dateHeader);
 
-                            // Create time slots container
                             const timesContainer = document.createElement('div');
 
-                            // Create individual time slots
                             slot.slots.forEach(time => {
                                 const timeSlot = document.createElement('span');
                                 timeSlot.className = 'time-slot';
@@ -97,7 +89,6 @@
                                 timeSlot.dataset.time = time;
 
                                 timeSlot.addEventListener('click', function () {
-                                    // Toggle selection
                                     document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
                                     this.classList.add('selected');
                                 });
@@ -109,62 +100,55 @@
                             bookingInfoDiv.appendChild(slotElem);
                         });
 
-                        // Add book appointment button
-                        const bookBtn = document.createElement('button');
-                        bookBtn.className = 'book-btn';
-                        bookBtn.textContent = 'Book Appointment';
-                        bookBtn.disabled = true;
+                        addBookButtonIfMissing();
+                    })
+                    .catch(err => {
+                        document.getElementById('booking-info').innerHTML =
+                            `<p>Error fetching availability: ${err.message}</p>`;
+                    });                   
+            }
 
-                        bookBtn.addEventListener('click', function () {
-                            const selectedSlot = document.querySelector('.time-slot.selected');
-                            if (selectedSlot) {
-                                const date = selectedSlot.dataset.date;
-                                const time = selectedSlot.dataset.time;
+            function addBookButtonIfMissing() {
+                let bookBtn = document.querySelector('.book-btn:not([onclick])');
+                if (!bookBtn) {
+                    bookBtn = document.createElement('button');
+                    bookBtn.className = 'book-btn';
+                    bookBtn.textContent = 'Book Appointment';
+                    bookBtn.disabled = true;
 
-                                fetch(`http://localhost:3000/api/appointments`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        // Authorization header if using JWT
-                                        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-                                    },
-                                    body: JSON.stringify({
-                                        doctorId: doctorId,
-                                        date: date,
-                                        time: time
-                                        // No patientId needed - server knows from session
-                                    })
+                    bookBtn.addEventListener('click', function () {
+                        const selectedSlot = document.querySelector('.time-slot.selected');
+                        if (selectedSlot) {
+                            const date = selectedSlot.dataset.date;
+                            const time = selectedSlot.dataset.time;
+
+                            fetch(`http://localhost:3000/api/appointments`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ doctorId, date, time })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    alert(`Appointment booked successfully for ${date} at ${time}`);
                                 })
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error('Failed to book appointment');
-                                        }
-                                        return response.json();
-                                    })
-                                    .then(data => {
-                                        alert(`Appointment booked successfully for ${date} at ${time}`);
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                        alert('Error booking appointment: ' + error.message);
-                                    });
-                            }
-                        });
-                        // Enable/disable book button based on selection
-                        document.addEventListener('click', function (e) {
-                            if (e.target.classList.contains('time-slot')) {
-                                bookBtn.disabled = false;
-                            }
-                        });
+                                .catch(err => {
+                                    alert('Error booking appointment: ' + err.message);
+                                });
+                        }
+                    });
 
-                        bookingInfoDiv.appendChild(bookBtn);
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    document.getElementById('booking-info').innerHTML = `<p>Error fetching availability: ${err.message}</p>`;
-                });
-        }
+                    document.addEventListener('click', function (e) {
+                        if (e.target.classList.contains('time-slot')) {
+                            bookBtn.disabled = false;
+                        }
+                    });
+
+                    document.getElementById('booking-info').appendChild(bookBtn);
+                }
+            }
+
+            // Automatically load slots when page opens
+            document.addEventListener('DOMContentLoaded', loadAvailability);
     </script>
 </body>
 

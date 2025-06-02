@@ -1,7 +1,8 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById } = require('../Controllers/DoctorController');
+const { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, updateDoctorAvailability } = require('../Controllers/DoctorController');
+const auth = require('../middlewares/auth');
 
 const router = express.Router();
 
@@ -22,6 +23,9 @@ router.put('/:id', upload.single('photo'), updateDoctor);
 router.delete('/:id', deleteDoctor);
 router.get('/alldoctors', getDoctors);
 router.get('/:id', getDoctorById); // Add this line
+// router.put('/:id/availability', auth, updateDoctorAvailability);  // Add this line
+router.put('/:id/availability', updateDoctorAvailability);  // Add this line
+
 
 
 module.exports = router;
