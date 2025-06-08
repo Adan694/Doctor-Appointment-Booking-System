@@ -108,47 +108,103 @@
                     });                   
             }
 
+            // function addBookButtonIfMissing() {
+            //     let bookBtn = document.querySelector('.book-btn:not([onclick])');
+            //     if (!bookBtn) {
+            //         bookBtn = document.createElement('button');
+            //         bookBtn.className = 'book-btn';
+            //         bookBtn.textContent = 'Book Appointment';
+            //         bookBtn.disabled = true;
+
+            //         bookBtn.addEventListener('click', function () {
+            //             const selectedSlot = document.querySelector('.time-slot.selected');
+            //             if (selectedSlot) {
+            //                 const date = selectedSlot.dataset.date;
+            //                 const time = selectedSlot.dataset.time;
+
+            //                 fetch(`http://localhost:3000/api/appointments`, {
+            //                     method: 'POST',
+            //                     headers: { 'Content-Type': 'application/json' },
+            //                     body: JSON.stringify({ doctorId, date, time })
+            //                 })
+            //                     .then(response => response.json())
+            //                     .then(data => {
+            //                         alert(`Appointment booked successfully for ${date} at ${time}`);
+            //                     })
+            //                     .catch(err => {
+            //                         alert('Error booking appointment: ' + err.message);
+            //                     });
+            //             }
+            //         });
+
+            //         document.addEventListener('click', function (e) {
+            //             if (e.target.classList.contains('time-slot')) {
+            //                 bookBtn.disabled = false;
+            //             }
+            //         });
+
+            //         document.getElementById('booking-info').appendChild(bookBtn);
+            //     }
+            // }
+
+            // // Automatically load slots when page opens
+            // document.addEventListener('DOMContentLoaded', loadAvailability);
             function addBookButtonIfMissing() {
-                let bookBtn = document.querySelector('.book-btn:not([onclick])');
-                if (!bookBtn) {
-                    bookBtn = document.createElement('button');
-                    bookBtn.className = 'book-btn';
-                    bookBtn.textContent = 'Book Appointment';
-                    bookBtn.disabled = true;
+                //added
+                const patientId = localStorage.getItem('patientId'); // Retrieve patient ID
+                console.log("Retrieved Patient ID for Booking:", patientId); // Log the patient ID
 
-                    bookBtn.addEventListener('click', function () {
-                        const selectedSlot = document.querySelector('.time-slot.selected');
-                        if (selectedSlot) {
-                            const date = selectedSlot.dataset.date;
-                            const time = selectedSlot.dataset.time;
+                    let bookBtn = document.querySelector('.book-btn:not([onclick])');
+                    if (!bookBtn) {
+                        bookBtn = document.createElement('button');
+                        bookBtn.className = 'book-btn';
+                        bookBtn.textContent = 'Book Appointment';
+                        bookBtn.disabled = true;
 
-                            fetch(`http://localhost:3000/api/appointments`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ doctorId, date, time })
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    alert(`Appointment booked successfully for ${date} at ${time}`);
+                        bookBtn.addEventListener('click', function () {
+                            const selectedSlot = document.querySelector('.time-slot.selected');
+                            if (selectedSlot) {
+                                const date = selectedSlot.dataset.date;
+                                const time = selectedSlot.dataset.time;
+                                const patientId = localStorage.getItem('patientId'); // Retrieve patient ID
+
+                                if (!patientId) {
+                                    alert("You need to log in first.");
+                                    window.location.href = 'login.html'; // Redirect to login if not logged in
+                                    return;
+                                }
+
+                                fetch(`http://localhost:3000/api/appointments`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ patientId, doctorId, date, time }) // Include patientId
                                 })
-                                .catch(err => {
-                                    alert('Error booking appointment: ' + err.message);
-                                });
-                        }
-                    });
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            alert(`Appointment booked successfully for ${date} at ${time}`);
+                                        } else {
+                                            alert('Error booking appointment: ' + data.message);
+                                        }
+                                    })
+                                    .catch(err => {
+                                        alert('Error booking appointment: ' + err.message);
+                                    });
+                            }
+                        });
 
-                    document.addEventListener('click', function (e) {
-                        if (e.target.classList.contains('time-slot')) {
-                            bookBtn.disabled = false;
-                        }
-                    });
+                        document.addEventListener('click', function (e) {
+                            if (e.target.classList.contains('time-slot')) {
+                                bookBtn.disabled = false; // Enable the booking button when a time slot is selected
+                            }
+                        });
 
-                    document.getElementById('booking-info').appendChild(bookBtn);
+                        document.getElementById('booking-info').appendChild(bookBtn);
+                    }
                 }
-            }
 
-            // Automatically load slots when page opens
-            document.addEventListener('DOMContentLoaded', loadAvailability);
+                // Automatically load slots when page opens
+                document.addEventListener('DOMContentLoaded', loadAvailability);
     </script>
 </body>
 

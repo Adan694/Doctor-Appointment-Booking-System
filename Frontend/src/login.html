@@ -213,19 +213,23 @@
                 return res.json();
             })
             .then(data => {
-                const { token, role } = data;
+                // const { token, role } = data;
+                const { token, role, patientId } = data; // Ensure that patientId is included in the response
 
                 // Store token and role
                 localStorage.setItem('authToken', token);
                 localStorage.setItem('userRole', role);
                 sessionStorage.setItem('userRole', role);
+                localStorage.setItem('patientId', patientId); // Store the patient ID
+
+                console.log("Stored Patient ID:", localStorage.getItem('patientId')); // Log the patient ID
 
                 // Store doctorId if role is doctor
                 if (role === 'doctor') {
                     if (data.doctor && data.doctor._id) {
                         localStorage.setItem('doctorId', data.doctor._id);
                         console.log('Doctor ID saved:', data.doctor._id);
-                        window.location.href = 'docpanel.html'; // ✅ Redirect after doctorId is saved
+                        window.location.href = 'docpanel.html'; 
                         return;
                     } else {
                         alert('Doctor ID not found in login response.');

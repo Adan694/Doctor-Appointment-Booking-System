@@ -97,12 +97,17 @@ router.post('/login', async (req, res) => {
         }
 
         // 👤 Response for other roles (e.g., admin, patient)
-        return res.status(200).json({
-            message: 'Login successful',
-            token,
-            role: user.role
-        });
-
+        // return res.status(200).json({
+        //     message: 'Login successful',
+        //     token,
+        //     role: user.role
+        // });
+            return res.status(200).json({
+                message: 'Login successful',
+                token,
+                role: user.role,
+                patientId: user._id // Include patientId
+            });
     } catch (error) {
         console.error("Error logging in:", error.message);
         res.status(500).json({ message: "Error logging in" });

@@ -147,21 +147,35 @@
             { patientName: 'Jane Smith', appointmentTime: '2023-10-01 11:00 AM', status: 'Pending' }
         ];
 
-        // Load appointments from localStorage or initialize with sample data
-        function loadAppointments() {
-            const newAppointments = JSON.parse(localStorage.getItem('newAppointments')) || initialAppointments;
-            const confirmedAppointments = JSON.parse(localStorage.getItem('confirmedAppointments')) || [];
-            const completedAppointments = JSON.parse(localStorage.getItem('completedAppointments')) || [];
+       // Load appointments for the specific doctor
+        function loadDoctorAppointments() {
+            const token = localStorage.getItem('authToken'); // Ensure token is available
+            const doctorId = localStorage.getItem('doctorId'); // Get the doctor's ID from localStorage
 
-            newAppointments.forEach(appointment => {
-                addNewAppointmentRow(appointment);
-            });
-            confirmedAppointments.forEach(appointment => {
-                addConfirmedAppointmentRow(appointment);
-            });
-            completedAppointments.forEach(appointment => {
-                addCompletedAppointmentRow(appointment);
-            });
+            fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}` // Include token for authentication
+                }
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch appointments');
+                    return response.json();
+                })
+                .then(data => {
+                    // Assuming data is an array of appointment objects
+                    data.forEach(appointment => {
+                        // Determine the status and add the appointment to the correct section
+                        if (appointment.status === 'Pending') {
+                            addNewAppointmentRow(appointment);
+                        } else if (appointment.status === 'Confirmed') {
+                            addConfirmedAppointmentRow(appointment);
+                        } else if (appointment.status === 'Completed') {
+                            addCompletedAppointmentRow(appointment);
+                        }
+                    });
+                })
+                .catch(err => console.error("Error fetching doctor appointments:", err));
         }
 
         function addNewAppointmentRow(appointment) {
@@ -257,8 +271,11 @@
         }
 
         // Load appointments when the page loads
-        loadAppointments();
-    </script>
+    // Call this function on page load
+    window.onload = function () {
+        loadDoctorAppointments();
+    };
+        </script>
 </body>
 
 </html>

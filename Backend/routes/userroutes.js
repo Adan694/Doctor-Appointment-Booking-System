@@ -10,5 +10,4 @@ const {
 router.get('/profile', authenticateToken, getUserProfile);
 router.put('/update', authenticateToken, updateUserProfile);
 router.post('/feedback', authenticateToken, submitFeedback);
-
 module.exports = router;
