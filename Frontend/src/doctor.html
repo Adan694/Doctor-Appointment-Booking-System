@@ -39,41 +39,68 @@
         .slots {
             margin-top: 10px;
         }
+
         /* Feedback Form Styles */
-    #feedback-form {
-        margin-top: 20px;
-        border: 1px solid #ccc;
-        padding: 15px;
-        border-radius: 8px;
-    }
+        #feedback-form {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+        }
 
-    #feedback-form label {
-        display: block;
-        margin-bottom: 5px;
-    }
+        #feedback-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
 
-    #feedback-form input,
-    #feedback-form textarea {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-    }
+        #feedback-form input,
+        #feedback-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
 
-    #feedback-form button {
-        background-color: #28a745;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+        #feedback-form button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-    #feedback-message {
-        margin-top: 10px;
-        color: green;
-    }
+        /* Feedback List Styles */
+        .feedback-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+
+        .feedback-item strong {
+            display: block;
+        }
+
+        .feedback-actions {
+            margin-top: 10px;
+        }
+
+        .feedback-actions button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .feedback-actions button.delete {
+            background-color: #dc3545;
+        }
     </style>
 </head>
 
@@ -87,7 +114,6 @@
     </form>
     <h3>Feedback:</h3>
     <div id="feedback-list"></div> <!-- Div to display feedback -->
-   
 
     <script>
         (function () {
@@ -107,20 +133,19 @@
                 })
                 .then(doctor => {
                     profileDiv.innerHTML = `
-        <img src="${doctor.image}" alt="${doctor.name}">
-        <h2>${doctor.name}</h2>
-        <p>Specialty: ${doctor.speciality}</p>
-        <p><strong>Experience:</strong> ${doctor.experience} years</p>
-            <p class="availability ${doctor.available ? "available" : "unavailable"}">
-               ${doctor.available ? "Available" : "Not Available"}
-             </p>
-             <p><strong>Biography:</strong> ${doctor.bio || "No bio available."}</p>
-             <h3>Availability Slots:</h3>
-              <div id="availability-slots"></div>
-        <a href="booking.html?doctorId=${doctor._id}">Book Appointment</a>
-      `;
-      fetchFeedbackForDoctor(doctorId);
-
+                        <img src="${doctor.image}" alt="${doctor.name}">
+                        <h2>${doctor.name}</h2>
+                        <p>Specialty: ${doctor.speciality}</p>
+                        <p><strong>Experience:</strong> ${doctor.experience} years</p>
+                        <p class="availability ${doctor.available ? "available" : "unavailable"}">
+                           ${doctor.available ? "Available" : "Not Available"}
+                        </p>
+                        <p><strong>Biography:</strong> ${doctor.bio || "No bio available."}</p>
+                        <h3>Availability Slots:</h3>
+                        <div id="availability-slots"></div>
+                        <a href="booking.html?doctorId=${doctor._id}">Book Appointment</a>
+                    `;
+                    fetchFeedbackForDoctor(doctorId);
                 })
                 .catch(err => {
                     console.error("Error:", err);
@@ -129,88 +154,141 @@
         })();
 
         function fetchFeedbackForDoctor(doctorId) {
-                fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`)
-                    .then(response => {
-                        if (!response.ok) throw new Error("Failed to fetch feedback");
-                        return response.json();
-                    })
-                    .then(feedbackList => {
-                        const feedbackDiv = document.getElementById("feedback-list");
-                        feedbackDiv.innerHTML = ''; // Clear previous feedback
-                        feedbackList.forEach(feedback => {
-                            const feedbackElem = document.createElement("div");
-                            feedbackElem.innerHTML = `
-                            <strong>Rating:</strong> ${feedback.rating}<br>
-                            <strong>Comment:</strong> ${feedback.comment}<br>
+            fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to fetch feedback");
+                    return response.json();
+                })
+                .then(feedbackList => {
+                    const feedbackDiv = document.getElementById("feedback-list");
+                    feedbackDiv.innerHTML = ''; // Clear previous feedback
+                    feedbackList.forEach(feedback => {
+                        const feedbackElem = document.createElement("div");
+                        feedbackElem.className = "feedback-item";
+                        feedbackElem.dataset.feedbackId = feedback._id; // Store feedback ID
+                        feedbackElem.innerHTML = `
+                            <strong>Rating:</strong> ${feedback.rating}
+                            <strong>Comment:</strong> ${feedback.comment}
+                            <strong>Submitted by:</strong> ${feedback.userEmail || "Anonymous"}
                             <strong>Submitted on:</strong> ${new Date(feedback.timestamp).toLocaleDateString()}
+                            <div class="feedback-actions">
+                                <button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${feedback.comment}')">Edit</button>
+                                <button class="delete" onclick="deleteFeedback('${feedback._id}')">Delete</button>
+                            </div>
                             <hr>
                         `;
-                            feedbackDiv.appendChild(feedbackElem);
-                        });
-                    })
-                    .catch(err => {
-                        console.error("Error fetching feedback:", err);
+                        feedbackDiv.appendChild(feedbackElem);
                     });
+                })
+                .catch(err => {
+                    console.error("Error fetching feedback:", err);
+                });
+        }
+
+        // Handle feedback form submission
+        document.getElementById("feedback-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const rating = document.getElementById("rating").value;
+            const comment = document.getElementById("comment").value;
+            const params = new URLSearchParams(window.location.search);
+            const doctorId = params.get("id");
+
+            const feedbackData = { doctorId, rating, comment };
+
+            const token = localStorage.getItem('token'); // Retrieve token from localStorage
+
+            fetch("http://localhost:3000/api/feedback", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` // Include the token in the headers
+
+                },
+                body: JSON.stringify(feedbackData),
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to submit feedback");
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Feedback submitted:", data);
+                    fetchFeedbackForDoctor(doctorId); // Refresh feedback list
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                });
+        });
+
+        // Edit Feedback Function
+        function editFeedback(feedbackId, currentRating, currentComment) {
+            document.getElementById("rating").value = currentRating;
+            document.getElementById("comment").value = currentComment;
+
+            // Remove the feedback item from the list
+            const feedbackItem = document.querySelector(`[data-feedback-id="${feedbackId}"]`);
+            if (feedbackItem) {
+                feedbackItem.remove();
             }
 
+            // Change the submit button to update feedback
+            const feedbackForm = document.getElementById("feedback-form");
+            feedbackForm.onsubmit = function (event) {
+                event.preventDefault();
 
-            // Function to fetch feedback for the doctor
-                function fetchFeedbackForDoctor(doctorId) {
-                    fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`)
-                        .then(response => {
-                            if (!response.ok) throw new Error("Failed to fetch feedback");
-                            return response.json();
-                        })
-                        .then(feedbackList => {
-                            const feedbackDiv = document.getElementById("feedback-list");
-                            feedbackDiv.innerHTML = ''; // Clear previous feedback
-                            feedbackList.forEach(feedback => {
-                                const feedbackElem = document.createElement("div");
-                                feedbackElem.innerHTML = `
-                            <strong>Rating:</strong> ${feedback.rating}<br>
-                            <strong>Comment:</strong> ${feedback.comment}<br>
-                            <strong>Submitted on:</strong> ${new Date(feedback.timestamp).toLocaleDateString()}
-                            <hr>
-                        `;
-                                feedbackDiv.appendChild(feedbackElem);
-                            });
-                        })
-                        .catch(err => {
-                            console.error("Error fetching feedback:", err);
-                        });
-                }
+                const rating = document.getElementById("rating").value;
+                const comment = document.getElementById("comment").value;
+                const params = new URLSearchParams(window.location.search);
+                const doctorId = params.get("id");
 
-                // Handle feedback form submission
-                document.getElementById("feedback-form").addEventListener("submit", function (event) {
-                    event.preventDefault();
+                const updatedFeedbackData = { feedbackId, rating, comment };
 
-                    const rating = document.getElementById("rating").value;
-                    const comment = document.getElementById("comment").value;
-                    // Fetch doctorId from URL
-                    const params = new URLSearchParams(window.location.search);
-                    const doctorId = params.get("id"); // Ensure this matches your URL
+                const token = localStorage.getItem('token'); // Retrieve token from localStorage
 
-                    const feedbackData = { doctorId, rating, comment }; // Use doctorId from URL
 
-                    fetch("http://localhost:3000/api/feedback", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(feedbackData),
+                fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}` // Include the token in the headers
+
+                    },
+                    body: JSON.stringify(updatedFeedbackData),
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Failed to update feedback");
+                        return response.json();
                     })
-                        .then(response => {
-                            if (!response.ok) throw new Error("Failed to submit feedback");
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log("Feedback submitted:", data);
-                            fetchFeedbackForDoctor(doctorId); // Refresh feedback list
-                        })
-                        .catch(err => {
-                            console.error("Error:", err);
-                        });
+                    .then(data => {
+                        console.log("Feedback updated:", data);
+                        fetchFeedbackForDoctor(doctorId); // Refresh feedback list
+                    })
+                    .catch(err => {
+                        console.error("Error:", err);
+                    });
+            };
+        }
+
+        // Delete Feedback Function
+        function deleteFeedback(feedbackId) {
+            const token = localStorage.getItem('token'); // Retrieve token from localStorage
+            fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}` // Include the token in the headers
+                },
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to delete feedback");
+                    console.log("Feedback deleted");
+                    const params = new URLSearchParams(window.location.search);
+                    const doctorId = params.get("id");
+                    fetchFeedbackForDoctor(doctorId); // Refresh feedback list
+                })
+                .catch(err => {
+                    console.error("Error:", err);
                 });
+        }
     </script>
 </body>
 

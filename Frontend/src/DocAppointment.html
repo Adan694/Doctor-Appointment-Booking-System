@@ -108,18 +108,17 @@
             </tbody>
         </table>
 
-        <!-- Confirmed Appointments Section -->
-        <h2>Confirmed Appointments</h2>
+        <!-- Cancelled Appointments Section -->
+        <h2>Cancelled Appointments</h2>
         <table class="table appointment-table">
             <thead>
                 <tr>
                     <th>Patient Name</th>
                     <th>Appointment Date & Time</th>
-                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody id="confirmedAppointments">
+            <tbody id="cancelledAppointments">
                 <!-- Dynamic content will go here -->
             </tbody>
         </table>
@@ -141,18 +140,11 @@
     </div>
 
     <script>
-        // Sample initial data for new appointments
-        const initialAppointments = [
-            { patientName: 'John Doe', appointmentTime: '2023-10-01 10:00 AM', status: 'Pending' },
-            { patientName: 'Jane Smith', appointmentTime: '2023-10-01 11:00 AM', status: 'Pending' }
-        ];
-
-       // Load appointments for the specific doctor
-        function loadDoctorAppointments() {
+        function loadPatientAppointments() {
             const token = localStorage.getItem('authToken'); // Ensure token is available
-            const doctorId = localStorage.getItem('doctorId'); // Get the doctor's ID from localStorage
+            const patientId = localStorage.getItem('patientId'); // Get the patient's ID from localStorage
 
-            fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, {
+            fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}` // Include token for authentication
@@ -163,20 +155,28 @@
                     return response.json();
                 })
                 .then(data => {
-                    // Assuming data is an array of appointment objects
                     data.forEach(appointment => {
-                        // Determine the status and add the appointment to the correct section
-                        if (appointment.status === 'Pending') {
-                            addNewAppointmentRow(appointment);
-                        } else if (appointment.status === 'Confirmed') {
-                            addConfirmedAppointmentRow(appointment);
-                        } else if (appointment.status === 'Completed') {
-                            addCompletedAppointmentRow(appointment);
+                        if (appointment.status === 'Cancelled') {
+                            addCancelledAppointmentRow({
+                                patientName: appointment.patientId.name,
+                                appointmentTime: `${appointment.date} ${appointment.time}`
+                            });
+                        } else {
+                            addNewAppointmentRow({
+                                patientName: appointment.patientId.name,
+                                appointmentTime: `${appointment.date} ${appointment.time}`,
+                                status: 'Pending' // Adjust as necessary
+                            });
                         }
                     });
                 })
-                .catch(err => console.error("Error fetching doctor appointments:", err));
+                .catch(err => console.error("Error fetching patient appointments:", err));
         }
+
+        // Call this function on page load
+        window.onload = function () {
+            loadPatientAppointments();
+        };
 
         function addNewAppointmentRow(appointment) {
             const row = `<tr>
@@ -184,24 +184,23 @@
                 <td>${appointment.appointmentTime}</td>
                 <td>${appointment.status}</td>
                 <td>
-                    <button class="btn btn-success" onclick="confirmAppointment(this)">Confirm</button>
+                    <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
                     <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
                 </td>
             </tr>`;
             document.getElementById('newAppointments').insertAdjacentHTML('beforeend', row);
         }
 
-        function addConfirmedAppointmentRow(appointment) {
+        function addCancelledAppointmentRow(appointment) {
             const row = `<tr>
                 <td>${appointment.patientName}</td>
                 <td>${appointment.appointmentTime}</td>
-                <td>${appointment.status}</td>
                 <td>
-                    <button class="btn btn-primary" onclick="markCompleted(this)">Mark as Completed</button>
-                    <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
+                    <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
+                    <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
                 </td>
             </tr>`;
-            document.getElementById('confirmedAppointments').insertAdjacentHTML('beforeend', row);
+            document.getElementById('cancelledAppointments').insertAdjacentHTML('beforeend', row);
         }
 
         function addCompletedAppointmentRow(appointment) {
@@ -213,36 +212,49 @@
             document.getElementById('completedAppointments').insertAdjacentHTML('beforeend', row);
         }
 
-        function confirmAppointment(button) {
-            const row = button.parentElement.parentElement;
-            const patientName = row.cells[0].innerText;
-            const appointmentTime = row.cells[1].innerText;
-
-            // Move appointment to confirmed section
-            const confirmedAppointment = { patientName, appointmentTime, status: 'Confirmed' };
-            addConfirmedAppointmentRow(confirmedAppointment);
-
-            // Remove from new appointments
-            row.remove();
-            updateLocalStorage();
-        }
-
-        function cancelAppointment(button) {
-            const row = button.parentElement.parentElement;
-            row.remove(); // Simply remove the row
-            updateLocalStorage();
-        }
-
-        function markCompleted(button) {
+        function completeAppointment(button) {
             const row = button.parentElement.parentElement;
             const patientName = row.cells[0].innerText;
             const appointmentTime = row.cells[1].innerText;
 
             // Move appointment to completed section
-            const completedAppointment = { patientName, appointmentTime };
-            addCompletedAppointmentRow(completedAppointment);
+            addCompletedAppointmentRow({
+                patientName,
+                appointmentTime
+            });
 
-            // Remove from confirmed appointments
+            // Remove from new or cancelled appointments
+            row.remove();
+            updateLocalStorage();
+        }
+
+        function rescheduleAppointment(button) {
+            const row = button.parentElement.parentElement;
+            const patientName = row.cells[0].innerText;
+            const appointmentTime = row.cells[1].innerText;
+
+            // Logic to reschedule the appointment
+            const newDateTime = prompt("Enter new date and time for the appointment:", appointmentTime);
+            if (newDateTime) {
+                console.log(`Rescheduling appointment for ${patientName} to ${newDateTime}`);
+                row.remove(); // Optionally remove from cancelled section
+                addNewAppointmentRow({ patientName, appointmentTime: newDateTime, status: 'Pending' });
+                updateLocalStorage();
+            }
+        }
+
+        function cancelAppointment(button) {
+            const row = button.parentElement.parentElement;
+            const patientName = row.cells[0].innerText;
+            const appointmentTime = row.cells[1].innerText;
+
+            // Move appointment to cancelled section
+            addCancelledAppointmentRow({
+                patientName,
+                appointmentTime
+            });
+
+            // Remove from new appointments
             row.remove();
             updateLocalStorage();
         }
@@ -254,10 +266,9 @@
                 status: row.cells[2].innerText
             }));
 
-            const confirmedAppointments = Array.from(document.querySelectorAll('#confirmedAppointments tr')).map(row => ({
+            const cancelledAppointments = Array.from(document.querySelectorAll('#cancelledAppointments tr')).map(row => ({
                 patientName: row.cells[0].innerText,
-                appointmentTime: row.cells[1].innerText,
-                status: row.cells[2].innerText
+                appointmentTime: row.cells[1].innerText
             }));
 
             const completedAppointments = Array.from(document.querySelectorAll('#completedAppointments tr')).map(row => ({
@@ -266,16 +277,10 @@
             }));
 
             localStorage.setItem('newAppointments', JSON.stringify(newAppointments));
-            localStorage.setItem('confirmedAppointments', JSON.stringify(confirmedAppointments));
+            localStorage.setItem('cancelledAppointments', JSON.stringify(cancelledAppointments));
             localStorage.setItem('completedAppointments', JSON.stringify(completedAppointments));
         }
-
-        // Load appointments when the page loads
-    // Call this function on page load
-    window.onload = function () {
-        loadDoctorAppointments();
-    };
-        </script>
+    </script>
 </body>
 
 </html>
