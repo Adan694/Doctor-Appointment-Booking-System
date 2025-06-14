@@ -140,57 +140,143 @@
     </div>
 
     <script>
+        // function loadPatientAppointments() {
+        //     const token = localStorage.getItem('authToken'); // Ensure token is available
+        //     const patientId = localStorage.getItem('patientId'); // Get the patient's ID from localStorage
+
+        //     fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Authorization': `Bearer ${token}` // Include token for authentication
+        //         }
+        //     })
+        //         .then(response => {
+        //             if (!response.ok) throw new Error('Failed to fetch appointments');
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             data.forEach(appointment => {
+        //                 if (appointment.status === 'Cancelled') {
+        //                     addCancelledAppointmentRow({
+        //                         patientName: appointment.patientId.name,
+        //                         appointmentTime: `${appointment.date} ${appointment.time}`
+        //                     });
+        //                 } else {
+        //                     addNewAppointmentRow({
+        //                         patientName: appointment.patientId.name,
+        //                         appointmentTime: `${appointment.date} ${appointment.time}`,
+        //                         status: 'Pending' // Adjust as necessary
+        //                     });
+        //                 }
+        //             });
+        //         })
+        //         .catch(err => console.error("Error fetching patient appointments:", err));
+        // }
         function loadPatientAppointments() {
-            const token = localStorage.getItem('authToken'); // Ensure token is available
-            const patientId = localStorage.getItem('patientId'); // Get the patient's ID from localStorage
+                const token = localStorage.getItem('authToken'); // Ensure token is available
+                const patientId = localStorage.getItem('patientId'); // Get the patient's ID from localStorage
+                const doctorId = localStorage.getItem('doctorId'); // Get the doctor's ID from localStorage
 
-            fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}` // Include token for authentication
+                fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, { // Change this line
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}` // Include token for authentication
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to fetch appointments');
+                        return response.json();
+                    })
+                    .then(data => {
+                        data.forEach(appointment => {
+                            if (appointment.status === 'Cancelled') {
+                                addCancelledAppointmentRow({
+                                    patientName: appointment.patientId.name,
+                                    appointmentTime: `${appointment.date} ${appointment.time}`
+                                });
+                            // } else {
+                            } else if (appointment.status !== 'Completed') {
+                                
+                                addNewAppointmentRow({
+                                    // patientName: appointment.patientId.name,
+                                    // appointmentTime: `${appointment.date} ${appointment.time}`,
+                                    // status: 'Pending' // Adjust as necessary
+                                    id: appointment._id, // include appointment ID
+                                    patientName: appointment.patientId.name,
+                                    appointmentTime: `${appointment.date} ${appointment.time}`,
+                                    status: appointment.status || 'Pending'
+                                });
+                            }
+                        });
+                    })
+                    .catch(err => console.error("Error fetching patient appointments:", err));
+            }
+
+            function loadDoctorAppointments() {
+                    const doctorId = localStorage.getItem('doctorId'); // Ensure doctor ID is stored
+                    const token = localStorage.getItem('authToken'); // Ensure token is available
+
+                    fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Failed to fetch appointments');
+                            return response.json();
+                        })
+                        .then(data => {
+                            data.forEach(appointment => {
+                                if (appointment.status === 'Completed') {
+                                    addCompletedAppointmentRow({
+                                        patientName: appointment.patientId.name,
+                                        appointmentTime: `${appointment.date} ${appointment.time}`
+                                    });
+                                }
+                            });
+                        })
+                        .catch(err => console.error("Error fetching doctor appointments:", err));
                 }
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to fetch appointments');
-                    return response.json();
-                })
-                .then(data => {
-                    data.forEach(appointment => {
-                        if (appointment.status === 'Cancelled') {
-                            addCancelledAppointmentRow({
-                                patientName: appointment.patientId.name,
-                                appointmentTime: `${appointment.date} ${appointment.time}`
-                            });
-                        } else {
-                            addNewAppointmentRow({
-                                patientName: appointment.patientId.name,
-                                appointmentTime: `${appointment.date} ${appointment.time}`,
-                                status: 'Pending' // Adjust as necessary
-                            });
-                        }
-                    });
-                })
-                .catch(err => console.error("Error fetching patient appointments:", err));
-        }
 
+                function loadFromLocalStorage() {
+                        const cancelledAppointments = JSON.parse(localStorage.getItem('cancelledAppointments')) || [];
+                        cancelledAppointments.forEach(appointment => {
+                            addCancelledAppointmentRow(appointment);
+                        });
+                    }
         // Call this function on page load
         window.onload = function () {
+            loadFromLocalStorage();  
             loadPatientAppointments();
+            loadDoctorAppointments();
         };
 
-        function addNewAppointmentRow(appointment) {
-            const row = `<tr>
-                <td>${appointment.patientName}</td>
-                <td>${appointment.appointmentTime}</td>
-                <td>${appointment.status}</td>
-                <td>
-                    <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
-                    <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
-                </td>
-            </tr>`;
+    //     function addNewAppointmentRow(appointment) {
+    //             const row = `<tr data-appointment-id="${appointment.id}"> <!-- Add appointment ID here -->
+    //     <td>${appointment.patientName}</td>
+    //     <td>${appointment.appointmentTime}</td>
+    //     <td>${appointment.status}</td>
+    //     <td>
+    //         <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
+    //         <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
+    //     </td>
+    // </tr>`;
+    //             document.getElementById('newAppointments').insertAdjacentHTML('beforeend', row);
+    //         }
+    function addNewAppointmentRow(appointment) {
+            // Ensure that appointment.id exists and is not undefined
+            console.log('Adding new appointment:', appointment); // Log for debugging
+
+            const row = `<tr data-appointment-id="${appointment.id}"> <!-- Ensure appointment ID is set -->
+        <td>${appointment.patientName}</td>
+        <td>${appointment.appointmentTime}</td>
+        <td>${appointment.status}</td>
+        <td>
+            <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
+            <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
+        </td>
+    </tr>`;
+
+            // Insert the row into the new appointments table
             document.getElementById('newAppointments').insertAdjacentHTML('beforeend', row);
         }
-
+            
         function addCancelledAppointmentRow(appointment) {
             const row = `<tr>
                 <td>${appointment.patientName}</td>
@@ -213,19 +299,73 @@
         }
 
         function completeAppointment(button) {
-            const row = button.parentElement.parentElement;
-            const patientName = row.cells[0].innerText;
-            const appointmentTime = row.cells[1].innerText;
+                const row = button.parentElement.parentElement;
+                const patientName = row.cells[0].innerText;
+                const appointmentTime = row.cells[1].innerText;
+                const appointmentId = row.getAttribute('data-appointment-id');;
+                const token = localStorage.getItem('authToken'); // Ensure token is available
+                console.log('Updating appointment ID:', appointmentId); // Debugging log
 
-            // Move appointment to completed section
-            addCompletedAppointmentRow({
-                patientName,
-                appointmentTime
-            });
 
-            // Remove from new or cancelled appointments
-            row.remove();
-            updateLocalStorage();
+            //     // Move appointment to completed section
+            //     addCompletedAppointmentRow({
+            //         patientName,
+            //         appointmentTime
+            //     });
+
+            //     // Update the appointment status in the database
+            //     fetch(`http://localhost:3000/api/appointments/${appointmentId}`, { // Adjust this line
+            //         method: 'PUT',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //             'Authorization': `Bearer ${token}`
+            //         },
+            //         body: JSON.stringify({ status: 'Completed' }) // Mark as completed
+            //     })
+            //         .then(response => {
+            //             if (!response.ok) throw new Error('Failed to update appointment');
+            //             return response.json();
+            //         })
+            //         .then(data => {
+            //             console.log('Appointment updated successfully', data);
+            //         })
+            //         .catch(err => {
+            //             console.error('Error updating appointment:', err);
+            //         });
+
+            //     // Remove from new appointments
+            //     row.remove();
+            //     updateLocalStorage();
+            // }
+            // Update the appointment status in the database
+            fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: 'Completed' }) // Mark as completed
+            })
+                .then(response => {
+                    console.error('Error response:', response); // Log the full response for debugging
+
+                    if (!response.ok) throw new Error('Failed to update appointment');
+                    return response.json();
+                })
+                .then(data => {
+                    // Move appointment to completed section
+                    addCompletedAppointmentRow({
+                        patientName,
+                        appointmentTime
+                    });
+
+                    // Remove from new appointments
+                    row.remove();
+                    updateLocalStorage();
+                })
+                .catch(err => {
+                    console.error('Error updating appointment:', err);
+                });
         }
 
         function rescheduleAppointment(button) {
@@ -238,26 +378,66 @@
             if (newDateTime) {
                 console.log(`Rescheduling appointment for ${patientName} to ${newDateTime}`);
                 row.remove(); // Optionally remove from cancelled section
-                addNewAppointmentRow({ patientName, appointmentTime: newDateTime, status: 'Pending' });
+                // addNewAppointmentRow({ patientName, appointmentTime: newDateTime, status: 'Pending' });
+                addNewAppointmentRow({
+                    id: appointmentId, // you should pass or retrieve this from local state or storage
+                    patientName,
+                    appointmentTime: newDateTime,
+                    status: 'Pending'
+                });
                 updateLocalStorage();
             }
         }
 
+        // function cancelAppointment(button) {
+        //     const row = button.parentElement.parentElement;
+        //     const patientName = row.cells[0].innerText;
+        //     const appointmentTime = row.cells[1].innerText;
+
+        //     // Move appointment to cancelled section
+        //     addCancelledAppointmentRow({
+        //         patientName,
+        //         appointmentTime
+        //     });
+
+        //     // Remove from new appointments
+        //     row.remove();
+        //     updateLocalStorage();
+        // }
         function cancelAppointment(button) {
-            const row = button.parentElement.parentElement;
-            const patientName = row.cells[0].innerText;
-            const appointmentTime = row.cells[1].innerText;
+                const row = button.parentElement.parentElement;
+                const appointmentId = row.getAttribute('data-appointment-id');
+                const token = localStorage.getItem('authToken'); // Ensure token is available
 
-            // Move appointment to cancelled section
-            addCancelledAppointmentRow({
-                patientName,
-                appointmentTime
-            });
+                // Update the appointment status in the database
+                fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to cancel appointment');
+                        return response.json();
+                    })
+                    .then(data => {
+                        const patientName = row.cells[0].innerText;
+                        const appointmentTime = row.cells[1].innerText;
 
-            // Remove from new appointments
-            row.remove();
-            updateLocalStorage();
-        }
+                        // Move appointment to cancelled section
+                        addCancelledAppointmentRow({
+                            patientName,
+                            appointmentTime
+                        });
+
+                        // Remove from new appointments
+                        row.remove();
+                        updateLocalStorage();
+                    })
+                    .catch(err => {
+                        console.error('Error cancelling appointment:', err);
+                    });
+            }
 
         function updateLocalStorage() {
             const newAppointments = Array.from(document.querySelectorAll('#newAppointments tr')).map(row => ({

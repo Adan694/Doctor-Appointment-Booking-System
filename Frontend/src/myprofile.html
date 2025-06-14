@@ -194,7 +194,17 @@ input, select {
 .btn-cancel:hover {
     background: #c9302c;
 }
-
+.tab-button {
+  padding: 8px 16px;
+  margin-right: 5px;
+  background-color: #eee;
+  border: none;
+  cursor: pointer;
+}
+.tab-button.active {
+  background-color: #007bff;
+  color: white;
+}
     </style>
 </head>
 
@@ -214,8 +224,14 @@ input, select {
     </nav>
 
     <div class="main-container">
+        
         <!-- Appointments Section -->
         <div class="appointments">
+            <div id="appointment-tabs" style="margin-bottom: 1em;">
+                <button onclick="showAppointments('upcoming')" class="tab-button active">Upcoming</button>
+                <button onclick="showAppointments('past')" class="tab-button">Past</button> </div>
+                <button onclick="showAppointments('all')" class="tab-button">All</button>
+
             <h2>My Appointments</h2>
             <table>
                 <thead>
@@ -340,6 +356,8 @@ input, select {
     </div>
 
     <script>
+                let allAppointments = [];
+
         // Fetch user profile data when the page loads
         window.onload = function () {
             const token = localStorage.getItem('authToken');
@@ -398,33 +416,176 @@ input, select {
                 }
             })
                 .then(response => {
+                    console.log("Raw response:", response); // ✅ Log raw response
+
                     if (!response.ok) throw new Error('Failed to fetch appointments');
                     return response.json();
                 })
-                .then(data => renderAppointments(data))
+                // .then(data => renderAppointments(data))
+                .then(data => {
+                    allAppointments = data; // <-- define and assign
+                    renderAppointments(allAppointments, 'upcoming');
+                })
                 .catch(err => console.error("Error fetching patient appointments:", err));
         }
 
         // Render appointments in the table
-        function renderAppointments(appointments) {
-            const appointmentsBody = document.getElementById('appointments-body');
-            appointmentsBody.innerHTML = ''; // Clear existing appointments
+        // function renderAppointments(appointments) {
+        //     const appointmentsBody = document.getElementById('appointments-body');
+        //     appointmentsBody.innerHTML = ''; // Clear existing appointments
 
-            appointments.forEach(appointment => {
-                const appointmentElement = document.createElement('tr');
-                appointmentElement.innerHTML = `
-                        <td>${appointment._id.toString().substring(18)}</td> <!-- Last 6 chars -->
-                        <td>${new Date(appointment.date).toLocaleDateString()}</td>
-                       <td>${formatTime(appointment.time)}</td> <!-- Fixed time display -->
-                        <td>${appointment.status}</td>
-                        <td> 
-             <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
-            <span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>
-                        </td>
-                    `;
-                appointmentsBody.appendChild(appointmentElement);
-            });
-        }
+        //     appointments.forEach(appointment => {
+        //         const appointmentElement = document.createElement('tr');
+        //         appointmentElement.innerHTML = `
+        //                 <td>${appointment._id.toString().substring(18)}</td> <!-- Last 6 chars -->
+        //                 <td>${new Date(appointment.date).toLocaleDateString()}</td>
+        //                <td>${formatTime(appointment.time)}</td> <!-- Fixed time display -->
+        //                 <td>${appointment.status}</td>
+        //                 <td> 
+        //      <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
+        //     <span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>
+        //                 </td>
+        //             `;
+        //         appointmentsBody.appendChild(appointmentElement);
+        //     });
+        // }
+
+        // function renderAppointments(appointments) {
+        //         const appointmentsBody = document.getElementById('appointments-body');
+        //         if (!appointmentsBody) {
+        //             console.error('appointments-body not found in DOM');
+        //             return;
+        //         }
+
+        //         console.log('Raw appointments:', appointments);
+        //         appointmentsBody.innerHTML = ''; // Clear existing
+
+        //         const now = new Date();
+        //         const upcomingAppointments = appointments.filter(appointment => {
+        //         const appointmentDate = new Date(appointment.date);
+
+        //         let hours = 0, minutes = 0;
+
+        //         // Normalize time
+        //         const time = appointment.time.trim();
+        //         if (/^\d{1,2}$/.test(time)) {
+        //             hours = parseInt(time, 10);
+        //         } else if (/^\d{1,2}:\d{2}$/.test(time)) {
+        //             const [h, m] = time.split(':');
+        //             hours = parseInt(h, 10);
+        //             minutes = parseInt(m, 10);
+        //         } else if (/^\d{1,2} (AM|PM)$/i.test(time)) {
+        //             let [h, period] = time.split(' ');
+        //             h = parseInt(h, 10);
+        //             if (period.toUpperCase() === 'PM' && h !== 12) h += 12;
+        //             if (period.toUpperCase() === 'AM' && h === 12) h = 0;
+        //             hours = h;
+        //         }
+
+        //         appointmentDate.setHours(hours);
+        //         appointmentDate.setMinutes(minutes);
+        //         appointmentDate.setSeconds(0);
+
+        //         console.log('Checking:', appointmentDate.toString());
+        //         return appointmentDate >= new Date();
+        //     });
+
+
+        //         upcomingAppointments.forEach(appointment => {
+        //             const appointmentElement = document.createElement('tr');
+        //             appointmentElement.innerHTML = `
+        //     <td>${appointment._id.toString().substring(18)}</td>
+        //     <td>${new Date(appointment.date).toLocaleDateString()}</td>
+        //     <td>${formatTime(appointment.time)}</td>
+        //     <td>${appointment.status}</td>
+        //     <td>
+        //         <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
+        //         <span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>
+        //     </td>
+        // `;
+        //             appointmentsBody.appendChild(appointmentElement);
+        //         });
+
+        //         if (upcomingAppointments.length === 0) {
+        //             appointmentsBody.innerHTML = '<tr><td colspan="5">No upcoming appointments found.</td></tr>';
+        //         }
+        //     }
+        function renderAppointments(appointments, type = 'upcoming') {
+                const appointmentsBody = document.getElementById('appointments-body');
+                appointmentsBody.innerHTML = '';
+
+                const now = new Date();
+
+                const filtered = appointments.filter(appointment => {
+                    let appointmentDate = new Date(appointment.date); // Sets to midnight
+                    if (isNaN(appointmentDate)) return false;
+
+                    // Parse time string robustly
+                    let timeStr = appointment.time.toString().trim().toLowerCase();
+                    let hours = 0, minutes = 0;
+
+                    // Handle "3", "13", etc.
+                    if (/^\d{1,2}$/.test(timeStr)) {
+                        hours = parseInt(timeStr);
+                    }
+                    // Handle "3 AM" / "3 PM"
+                    else if (/^\d{1,2}\s?(am|pm)$/.test(timeStr)) {
+                        let [, h, period] = timeStr.match(/(\d{1,2})\s?(am|pm)/i) || [];
+                        hours = parseInt(h);
+                        if (period.toLowerCase() === 'pm' && hours < 12) hours += 12;
+                        if (period.toLowerCase() === 'am' && hours === 12) hours = 0;
+                    }
+                    // Handle "13:30"
+                    else if (/^\d{1,2}:\d{2}$/.test(timeStr)) {
+                        [hours, minutes] = timeStr.split(':').map(Number);
+                    }
+
+                    appointmentDate.setHours(hours, minutes, 0, 0);
+
+                    if (type === 'upcoming') return appointmentDate >= now;
+                    if (type === 'past') return appointmentDate < now;
+                    return true; // "all"
+                });
+
+                // Sort appointments by date ascending
+                filtered.sort((a, b) => {
+                    const dateA = new Date(`${a.date}T${a.time}`);
+                    const dateB = new Date(`${b.date}T${b.time}`);
+                    return dateA - dateB;
+                });
+
+                // Render to DOM
+                filtered.forEach(appointment => {
+                    const appointmentElement = document.createElement('tr');
+                    appointmentElement.innerHTML = `
+            <td>${appointment._id.toString().substring(18)}</td>
+            <td>${new Date(appointment.date).toLocaleDateString()}</td>
+            <td>${formatTime(appointment.time)}</td>
+            <td>${appointment.status}</td>
+            <td>
+                <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
+                ${type === 'upcoming' ? `<span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>` : ''}
+            </td>
+        `;
+                    appointmentsBody.appendChild(appointmentElement);
+                });
+
+                if (filtered.length === 0) {
+                    appointmentsBody.innerHTML = `<tr><td colspan="5">No ${type} appointments found.</td></tr>`;
+                }
+            }
+
+
+                function showAppointments(type) {
+                    // Toggle button highlighting
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    document.querySelector(`.tab-button[onclick*="${type}"]`).classList.add('active');
+
+                    renderAppointments(allAppointments, type);
+                }
+
+                   
+
         // Add this helper function
             function formatTime(timeString) {
                 if (!timeString) return 'N/A';
@@ -490,19 +651,28 @@ input, select {
         }
 
         function viewAppointment(appointmentId) {
-                // Fetch full appointment details
-                fetch(`/api/appointments/${appointmentId}`, {
+                fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                     }
                 })
                     .then(res => res.json())
                     .then(data => {
-                        // Display in modal
-                        alert(`Appointment Details:\nDoctor: ${data.doctorId.name}\nDate: ${new Date(data.date).toDateString()}\nTime: ${formatTime(data.time)}`);
+                        document.querySelector('.contentDetail').innerHTML = `
+            <h3>Appointment Details</h3>
+            <p><strong>Doctor:</strong> ${data.doctorId?.name || 'N/A'}</p>
+            <p><strong>Date:</strong> ${new Date(data.date).toDateString()}</p>
+            <p><strong>Time:</strong> ${formatTime(data.time)}</p>
+            <p><strong>Status:</strong> ${data.status}</p>
+        `;
+                        document.getElementById('popupContent').style.display = 'block';
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => {
+                        console.error(err);
+                        alert("Failed to fetch appointment details.");
+                    });
             }
+
 
         function openFeedbackForm() {
             alert("Feedback form would open here.");

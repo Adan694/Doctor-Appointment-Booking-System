@@ -218,6 +218,10 @@
                         <option value="cardiologist">Cardiologist</option>
                         <option value="dermatologist">Dermatologist</option>
                         <option value="orthopedist">Orthopedist</option>
+                        <option value="Surgeon">Surgeon</option>
+                        <option value="Opthamologist">Opthamologist</option>
+
+
                     </select>
                 </div>
 
@@ -317,23 +321,23 @@
         });
 
         // Helper functions
-        function showError(element, message) {
-            const errorElement = document.createElement('div');
-            errorElement.className = 'error-message';
-            errorElement.textContent = message;
-            errorElement.style.color = 'red';
-            errorElement.style.marginTop = '5px';
+        // function showError(element, message) {
+        //     const errorElement = document.createElement('div');
+        //     errorElement.className = 'error-message';
+        //     errorElement.textContent = message;
+        //     errorElement.style.color = 'red';
+        //     errorElement.style.marginTop = '5px';
 
-            if (element) {
-                const existingError = element.querySelector('.error-message');
-                if (existingError) existingError.remove();
+        //     if (element) {
+        //         const existingError = element.querySelector('.error-message');
+        //         if (existingError) existingError.remove();
 
-                element.appendChild(errorElement);
-                element.style.borderColor = 'red';
-            } else {
-                alert(message);
-            }
-        }
+        //         element.appendChild(errorElement);
+        //         element.style.borderColor = 'red';
+        //     } else {
+        //         alert(message);
+        //     }
+        // }
 
         function showSuccess(message) {
             const successElement = document.createElement('div');
