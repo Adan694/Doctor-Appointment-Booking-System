@@ -39,29 +39,6 @@ res.status(500).json({ message: "Error registering user" });
     }
 });
 
-
-// POST endpoint for user login
-// router.post('/login', async (req, res) => {
-//     const { email, password, role } = req.body;
-
-//     if (!email || !password || !role) {
-//         return res.status(400).json({ message: "Email, password, and role are required." });
-//     }
-    
-//     try {
-//         const user = await authenticateUser(email, password, role);
-//         if (!user) {
-//             return res.status(401).json({ message: "Invalid credentials." });
-//         }
-
-//         const token = generateToken(user);
-//         res.status(200).json({ message: 'Login successful', token, role: user.role });
-//     } catch (error) {
-//         console.error("Error logging in:", error.message);
-//         res.status(500).json({ message: "Error logging in" });
-//     }
-// });
-
 router.post('/login', async (req, res) => {
     const { email, password, role } = req.body;
 

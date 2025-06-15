@@ -15,14 +15,6 @@ async function insertUser({ email, password, role }) {
     return savedUser;
 }
 
-// Function to authenticate a user from MongoDB
-// async function authenticateUser(email, password) {
-//     const user = await User.findOne({ email });
-//     if (user && await bcrypt.compare(password, user.password)) {
-//         return user;
-//     }
-//     return null;
-// }
 async function authenticateUser(email, password, role) {
     let user;
 

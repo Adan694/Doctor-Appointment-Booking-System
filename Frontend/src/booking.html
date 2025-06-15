@@ -46,6 +46,66 @@
             background-color: #cccccc;
             cursor: not-allowed;
         }
+         /* Spinner Overlay */
+    #loadingOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #009999;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Toast Notification */
+    #toast {
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #009999;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        z-index: 3000;
+        font-size: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #009999;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
     </style>
 </head>
 
@@ -53,6 +113,16 @@
     <h1>Book an Appointment</h1>
     <div id="booking-info"></div>
     <button onclick="loadAvailability()" class="book-btn">🔁 Refresh Slots</button>
+    <div id="loadingOverlay">
+        <div>
+            <div class="spinner"></div>
+            <div class="loading-text">Booking appointment...</div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast">
+        </div>
 
 
     <script>
@@ -168,11 +238,20 @@
                                 const time = selectedSlot.dataset.time;
                                 const patientId = localStorage.getItem('patientId'); // Retrieve patient ID
 
+                                // if (!patientId) {
+                                //     alert("You need to log in first.");
+                                //     window.location.href = 'login.html'; // Redirect to login if not logged in
+                                //     return;
+                                // }
                                 if (!patientId) {
-                                    alert("You need to log in first.");
-                                    window.location.href = 'login.html'; // Redirect to login if not logged in
+                                    showToast("You need to log in first.");
+                                    setTimeout(() => {
+                                        window.location.href = 'login.html';
+                                    }, 1500);
                                     return;
                                 }
+
+                                showLoadingOverlay(); // <-- show spinner
 
                                 fetch(`http://localhost:3000/api/appointments`, {
                                     method: 'POST',
@@ -181,14 +260,22 @@
                                 })
                                     .then(response => response.json())
                                     .then(data => {
+                                        hideLoadingOverlay(); // <-- hide spinner
+
                                         if (data.success) {
-                                            alert(`Appointment booked successfully for ${date} at ${time}`);
+                                            // alert(`Appointment booked successfully for ${date} at ${time}`);
+                                            showToast(`✅ Appointment booked for ${date} at ${time}`);
+
                                         } else {
-                                            alert('Error booking appointment: ' + data.message);
+                                            // alert('Error booking appointment: ' + data.message);
+                                            showToast(`❌ Error: ${data.message || 'Could not book appointment'}`);
+
                                         }
                                     })
                                     .catch(err => {
-                                        alert('Error booking appointment: ' + err.message);
+                                        // alert('Error booking appointment: ' + err.message);
+                                        hideLoadingOverlay(); // <-- hide spinner
+                                        showToast('❌ Network error: ' + err.message);
                                     });
                             }
                         });
@@ -205,6 +292,24 @@
 
                 // Automatically load slots when page opens
                 document.addEventListener('DOMContentLoaded', loadAvailability);
+
+                function showLoadingOverlay() {
+                        document.getElementById('loadingOverlay').style.display = 'flex';
+                    }
+
+                    function hideLoadingOverlay() {
+                        document.getElementById('loadingOverlay').style.display = 'none';
+                    }
+
+                    function showToast(message, duration = 3000) {
+                        const toast = document.getElementById('toast');
+                        toast.textContent = message;
+                        toast.style.display = 'block';
+                        setTimeout(() => {
+                            toast.style.display = 'none';
+                        }, duration);
+                    }
+
     </script>
 </body>
 

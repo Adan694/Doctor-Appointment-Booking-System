@@ -205,6 +205,31 @@ input, select {
   background-color: #007bff;
   color: white;
 }
+.content {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    z-index: 2000;
+}
+
+#close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
     </style>
 </head>
 
@@ -244,20 +269,7 @@ input, select {
                     </tr>
                 </thead>
                 <tbody id="appointments-body">
-                    <!-- <tr>
-                        <td>asd5662</td>
-                        <td>29 Sep, 2023</td>
-                        <td>11:00 AM</td>
-                        <td>Booked</td>
-                        <td><span class="btn-view" onclick="viewAppointment('asd5662')">View</span></td>
-                    </tr>
-                    <tr>
-                        <td>asd5663</td>
-                        <td>30 Sep, 2023</td>
-                        <td>10:00 AM</td>
-                        <td>Booked</td>
-                        <td><span class="btn-view" onclick="viewAppointment('asd5663')">View</span></td>
-                    </tr> -->
+                   
                 </tbody>
             </table>
         </div>
@@ -429,87 +441,7 @@ input, select {
                 .catch(err => console.error("Error fetching patient appointments:", err));
         }
 
-        // Render appointments in the table
-        // function renderAppointments(appointments) {
-        //     const appointmentsBody = document.getElementById('appointments-body');
-        //     appointmentsBody.innerHTML = ''; // Clear existing appointments
-
-        //     appointments.forEach(appointment => {
-        //         const appointmentElement = document.createElement('tr');
-        //         appointmentElement.innerHTML = `
-        //                 <td>${appointment._id.toString().substring(18)}</td> <!-- Last 6 chars -->
-        //                 <td>${new Date(appointment.date).toLocaleDateString()}</td>
-        //                <td>${formatTime(appointment.time)}</td> <!-- Fixed time display -->
-        //                 <td>${appointment.status}</td>
-        //                 <td> 
-        //      <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
-        //     <span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>
-        //                 </td>
-        //             `;
-        //         appointmentsBody.appendChild(appointmentElement);
-        //     });
-        // }
-
-        // function renderAppointments(appointments) {
-        //         const appointmentsBody = document.getElementById('appointments-body');
-        //         if (!appointmentsBody) {
-        //             console.error('appointments-body not found in DOM');
-        //             return;
-        //         }
-
-        //         console.log('Raw appointments:', appointments);
-        //         appointmentsBody.innerHTML = ''; // Clear existing
-
-        //         const now = new Date();
-        //         const upcomingAppointments = appointments.filter(appointment => {
-        //         const appointmentDate = new Date(appointment.date);
-
-        //         let hours = 0, minutes = 0;
-
-        //         // Normalize time
-        //         const time = appointment.time.trim();
-        //         if (/^\d{1,2}$/.test(time)) {
-        //             hours = parseInt(time, 10);
-        //         } else if (/^\d{1,2}:\d{2}$/.test(time)) {
-        //             const [h, m] = time.split(':');
-        //             hours = parseInt(h, 10);
-        //             minutes = parseInt(m, 10);
-        //         } else if (/^\d{1,2} (AM|PM)$/i.test(time)) {
-        //             let [h, period] = time.split(' ');
-        //             h = parseInt(h, 10);
-        //             if (period.toUpperCase() === 'PM' && h !== 12) h += 12;
-        //             if (period.toUpperCase() === 'AM' && h === 12) h = 0;
-        //             hours = h;
-        //         }
-
-        //         appointmentDate.setHours(hours);
-        //         appointmentDate.setMinutes(minutes);
-        //         appointmentDate.setSeconds(0);
-
-        //         console.log('Checking:', appointmentDate.toString());
-        //         return appointmentDate >= new Date();
-        //     });
-
-
-        //         upcomingAppointments.forEach(appointment => {
-        //             const appointmentElement = document.createElement('tr');
-        //             appointmentElement.innerHTML = `
-        //     <td>${appointment._id.toString().substring(18)}</td>
-        //     <td>${new Date(appointment.date).toLocaleDateString()}</td>
-        //     <td>${formatTime(appointment.time)}</td>
-        //     <td>${appointment.status}</td>
-        //     <td>
-        //         <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
-        //         <span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>
-        //     </td>
-        // `;
-        //             appointmentsBody.appendChild(appointmentElement);
-        //         });
-
-        //         if (upcomingAppointments.length === 0) {
-        //             appointmentsBody.innerHTML = '<tr><td colspan="5">No upcoming appointments found.</td></tr>';
-        //         }
-        //     }
+        
         function renderAppointments(appointments, type = 'upcoming') {
                 const appointmentsBody = document.getElementById('appointments-body');
                 appointmentsBody.innerHTML = '';
@@ -642,12 +574,6 @@ input, select {
         function toggleEditForm() {
             const form = document.getElementById('profile-form');
             form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
-        }
-
-        // Function to handle appointment view (placeholder)
-        function viewAppointment(appointmentNo) {
-            alert("Viewing appointment details for: " + appointmentNo);
-            // Extend this logic to populate modal if needed
         }
 
         function viewAppointment(appointmentId) {

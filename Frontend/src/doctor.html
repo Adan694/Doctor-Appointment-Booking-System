@@ -23,6 +23,24 @@
             max-width: 100%;
             border-radius: 8px;
         }
+        .book-button {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 24px;
+    background: linear-gradient(to right, #28a745, #218838);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.book-button:hover {
+    background: linear-gradient(to right, #218838, #1e7e34);
+    transform: translateY(-2px);
+}
+
 
         .availability {
             font-weight: bold;
@@ -132,19 +150,45 @@
                     return response.json();
                 })
                 .then(doctor => {
+                    // profileDiv.innerHTML = `
+                    //     <img src="${doctor.image}" alt="${doctor.name}">
+                    //     <h2>${doctor.name}</h2>
+                    //     <p>Specialty: ${doctor.speciality}</p>
+                    //     <p><strong>Experience:</strong> ${doctor.experience} years</p>
+                    //     <p class="availability ${doctor.available ? "available" : "unavailable"}">
+                    //        ${doctor.available ? "Available" : "Not Available"}
+                    //     </p>
+                    //     <p><strong>Biography:</strong> ${doctor.bio || "No bio available."}</p>
+                    //     <h3>Availability Slots:</h3>
+                    //     <div id="availability-slots"></div>
+                    //     <a href="booking.html?doctorId=${doctor._id}">Book Appointment</a>
+                    // `;
                     profileDiv.innerHTML = `
-                        <img src="${doctor.image}" alt="${doctor.name}">
-                        <h2>${doctor.name}</h2>
-                        <p>Specialty: ${doctor.speciality}</p>
-                        <p><strong>Experience:</strong> ${doctor.experience} years</p>
-                        <p class="availability ${doctor.available ? "available" : "unavailable"}">
-                           ${doctor.available ? "Available" : "Not Available"}
-                        </p>
-                        <p><strong>Biography:</strong> ${doctor.bio || "No bio available."}</p>
-                        <h3>Availability Slots:</h3>
-                        <div id="availability-slots"></div>
-                        <a href="booking.html?doctorId=${doctor._id}">Book Appointment</a>
-                    `;
+    <img src="${doctor.image}" alt="${doctor.name}">
+    <h2>${doctor.name}</h2>
+     <p class="availability ${doctor.available ? "available" : "unavailable"}">
+        ${doctor.available ? "Available" : "Not Available"}
+    </p>
+    <p><strong>Specialty:</strong> ${doctor.speciality}</p>
+    <p><strong>Experience:</strong> ${doctor.experience} years</p>
+    <p><strong>Degree:</strong> ${doctor.degree}</p>
+    <p><strong>Fees:</strong> ₹${doctor.fees}</p>
+    <p><strong>Address:</strong> ${doctor.address1}${doctor.address2 ? ', ' + doctor.address2 : ''}</p>
+    
+   
+
+    <p><strong>About:</strong> ${doctor.about}</p>
+
+    ${doctor.qualifications ? `<p><strong>Qualifications:</strong> ${doctor.qualifications}</p>` : ''}
+    ${doctor.services ? `<p><strong>Services:</strong> ${doctor.services}</p>` : ''}
+    ${doctor.conditions ? `<p><strong>Conditions Treated:</strong> ${doctor.conditions}</p>` : ''}
+    ${doctor.memberships ? `<p><strong>Memberships:</strong> ${doctor.memberships}</p>` : ''}
+    ${doctor.locations ? `<p><strong>Locations:</strong> ${doctor.locations}</p>` : ''}
+
+    <a class="book-button" href="booking.html?doctorId=${doctor._id}">Book Appointment</a>
+
+`;
+
                     fetchFeedbackForDoctor(doctorId);
                 })
                 .catch(err => {
