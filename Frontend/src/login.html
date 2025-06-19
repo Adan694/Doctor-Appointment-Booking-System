@@ -136,7 +136,7 @@
 
                 <input type="text" id="login-email" placeholder="Enter your email" required>
                 <input type="password" id="login-password" placeholder="Enter your password" required>
-                <a href="#">Forgot password?</a>
+                <a href="forgotpassword.html">Forgot password?</a>
                 <input type="submit" class="button" value="Login">
             </form>
             <div class="signup">
@@ -218,6 +218,8 @@
 
                 // Store token and role
                 localStorage.setItem('authToken', token);
+                console.log('Saved token:', localStorage.getItem('authToken'));
+
                 localStorage.setItem('userRole', role);
                 sessionStorage.setItem('userRole', role);
                 localStorage.setItem('patientId', patientId); // Store the patient ID

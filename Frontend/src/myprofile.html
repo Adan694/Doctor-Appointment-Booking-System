@@ -327,6 +327,23 @@ input, select {
             </div>
             </div>
     </div>
+    <div id="loader" style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px 30px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #006d6d;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 3000;">
+        Loading...
+    </div>
+
     <!-- Footer Section -->
     <div class="footer">
         <div class="text">
@@ -372,6 +389,8 @@ input, select {
 
         // Fetch user profile data when the page loads
         window.onload = function () {
+            showLoader();
+
             const token = localStorage.getItem('authToken');
             if (!token) {
                 alert("You are not logged in. Redirecting to login page.");
@@ -410,6 +429,8 @@ input, select {
                 .catch(error => {
                     console.error('Error fetching user profile:', error);
                     alert('Could not load profile data. Please try again.');
+                    hideLoader();
+
                 });
 
             // Fetch patient appointments after loading the profile
@@ -420,6 +441,8 @@ input, select {
         function fetchPatientAppointments(token) {
             const patientId = localStorage.getItem('patientId');
             console.log("Retrieved patientId from localStorage:", patientId); // ✅ Add this line
+            showLoader();
+
 
             fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
                 method: 'GET',
@@ -437,8 +460,12 @@ input, select {
                 .then(data => {
                     allAppointments = data; // <-- define and assign
                     renderAppointments(allAppointments, 'upcoming');
+                    hideLoader();
+
                 })
                 .catch(err => console.error("Error fetching patient appointments:", err));
+                hideLoader();
+
         }
 
         
@@ -629,6 +656,14 @@ input, select {
                         alert('Failed to cancel appointment: ' + error.message);
                     });
             }
+            function showLoader() {
+                    document.getElementById('loader').style.display = 'block';
+                }
+
+                function hideLoader() {
+                    document.getElementById('loader').style.display = 'none';
+                }
+
     </script>
 </body>
 

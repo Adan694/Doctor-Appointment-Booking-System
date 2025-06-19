@@ -42,17 +42,17 @@
         <div id="contact">
             <div class="head">
                 <h1>Contact Us</h1>
-            <!---- <h1>Contact <span>Us</span></h1>-->
-
             </div>
             <div class="contact">
                 <h1>Connect With Us</h1>
-                <input type="text" placeholder="Enter Email" id="email">
-                <input type="password" placeholder="Enter Password" id="pass">
-                <input type="tel" placeholder="Enter Contact Number" id="contact">
-                <button id="connectBtn">Connect</button>
-            </div>
-        </div>
+                <form id="contactForm">
+                    <input type="email" placeholder="Enter Email" id="email" required>
+                    <input type="password" placeholder="Enter Password" id="pass" required>
+                    <input type="tel" placeholder="Enter Contact Number" id="phone" required>
+                    <textarea id="message" placeholder="Your Message..." required></textarea>
+                    <button type="submit" id="connectBtn">Connect</button>
+                </form>
+            </div>  </div>
 
         <!-- Footer Section -->
         <div class="footer">
@@ -87,13 +87,37 @@
         </div>
     </div>
 
-    <script> // JavaScript to toggle the hamburger menu
-        document.getElementById('bar').addEventListener('click', function () {
-            const menu = document.querySelector('nav ul');
-            menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
-        });
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('contactForm').addEventListener('submit', async function (e) {
+                e.preventDefault(); // Prevent default form submission
 
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('pass').value;
+                const phone = document.getElementById('phone').value;
+                const message = document.getElementById('message').value;
+
+                const data = { email, password, phone, message };
+
+                try {
+                    const response = await fetch('http://localhost:3000/contact', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+                    alert(result.message || 'Form submitted successfully!');
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to submit. Try again.');
+                }
+            });
+        });
     </script>
+    
 </body>
 
 </html>

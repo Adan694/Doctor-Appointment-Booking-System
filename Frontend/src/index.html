@@ -26,16 +26,16 @@
             <ul>
                 <li><a href="">Home</a></li>
                 <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-                <!--<li><a href="#speciality">Specialities</a></li> -->
                 <li><a href="Contactus.html">Contact Us</a></li>
                 <li><a href="faqs.html">FAQs</a></li> <!-- New FAQs link -->
-
-<li id="myprofile" style="display: none;">
-    <a href="myprofile.html">
-        <i class="fa-solid fa-user"></i> My Profile
-    </a>
-</li>                <li id="authButton"><a href="login.html" class="login-button">Login</a></li>
+                <li id="myprofile" style="display: none;">
+                  <a href="myprofile.html">
+                     <i class="fa-solid fa-user"></i> My Profile
+                 </a>
+                 </li>                
+                 <li id="authButton"><a href="login.html" class="login-button">Login</a></li>
                 <!-- Updated Login Button -->
+
 
             </ul>
         </nav>
@@ -259,7 +259,21 @@
         </div>
     </div>
 
-    <script src="main.js"></script>
+    <script src="main.js">
+          document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        function logout() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('patientId');
+                localStorage.removeItem('doctorId');
+                localStorage.removeItem('role');
+                showToast("Logged out successfully!");
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+            }
+
+    </script>
   
 
 </body>

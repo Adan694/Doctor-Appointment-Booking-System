@@ -14,6 +14,7 @@ const userRoutes = require('./routes/userroutes');
 const doctorroutes = require('./routes/doctorroutes')
 const feedbackroute = require('./routes/feedbackroute');
 const bookingRoutes = require('./routes/bookingroutes'); 
+const contactRoutes = require('./routes/contact');
 
 const session = require('express-session');
 
@@ -30,16 +31,18 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use('/api/appointments', bookingRoutes);
-app.use('/auth', authRoutes); // Use the auth routes
+app.use('/auth', authRoutes); 
 app.use(express.static(path.join(__dirname, 'Frontend')));
 app.use(express.static('src')); 
 app.use('/user', userRoutes);
 app.use('/api/doctors', doctorroutes);
-app.use('/doctor', doctorroutes); // For view endpoints
+app.use('/doctor', doctorroutes); 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use('/api', feedbackroute);
+app.use('/', contactRoutes);
+
 app.use(session({
   secret: 'yourSecretKey', // Change this to a strong secret
   resave: false,
@@ -65,8 +68,22 @@ const upload = multer({ dest: 'uploads/' });
 app.get('/', (req, res) => {
     res.send('Welcome to the Appointment Booking System API');
 });
+
+app.post('/contact', async (req, res) => {
+  const { email, password, phone } = req.body;
+
+  try {
+      const newContact = new Contact({ email, password, phone });
+      await newContact.save();
+      res.json({ message: 'Contact form submitted and saved!' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error saving contact info.' });
+  }
+});
 // Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
 

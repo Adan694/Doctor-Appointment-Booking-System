@@ -115,20 +115,6 @@ ul li a:hover {
             font-size: 24px;
         }
 
-        .logout-btn {
-            padding: 10px 15px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .logout-btn:hover {
-            background-color: #c82333;
-        }
-
         .main-content h2 {
             margin-top: 20px;
             font-size: 20px;
@@ -216,14 +202,14 @@ ul li a:hover {
             <li><a href="docpanel.html">Dashboard</a></li>
             <li><a href="DocAppointment.html">Appointments</a></li>
             <li><a href="docprofile.html">Profile</a></li>
-    
+            <li><a href="login.html">Logout</a></li>
+
     
         </ul>
     </nav>
     <main class="main-content">
         <header class="header">
             <h1>Doctor Dashboard</h1>
-            <button class="logout-btn">Logout</button>
         </header>
         <section class="stats">
             <div class="stat-card" id="appointments-card">
@@ -295,6 +281,14 @@ ul li a:hover {
             localStorage.setItem('appointmentsCount', appointmentsCount);
             localStorage.setItem('patientsCount', patientsCount);
         }
+
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+                // Function to handle logout
+                window.logout = function () {
+                    localStorage.removeItem('userRole'); // Clear the user role from localStorage
+                    location.reload(); // Reload the page to update the navbar
+                };
+
     </script>
     </body>
     

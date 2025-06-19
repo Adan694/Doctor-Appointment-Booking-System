@@ -236,20 +236,23 @@
                             if (selectedSlot) {
                                 const date = selectedSlot.dataset.date;
                                 const time = selectedSlot.dataset.time;
-                                const patientId = localStorage.getItem('patientId'); // Retrieve patient ID
 
-                                // if (!patientId) {
-                                //     alert("You need to log in first.");
-                                //     window.location.href = 'login.html'; // Redirect to login if not logged in
-                                //     return;
-                                // }
-                                if (!patientId) {
+                                const patientId = localStorage.getItem('patientId');
+                                if (!patientId || patientId === "undefined" || patientId.trim() === "") {
                                     showToast("You need to log in first.");
                                     setTimeout(() => {
                                         window.location.href = 'login.html';
                                     }, 1500);
                                     return;
                                 }
+
+                                // if (!patientId) {
+                                //     showToast("You need to log in first.");
+                                //     setTimeout(() => {
+                                //         window.location.href = 'login.html';
+                                //     }, 1500);
+                                //     return;
+                                // }
 
                                 showLoadingOverlay(); // <-- show spinner
 

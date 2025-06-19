@@ -1,13 +1,21 @@
 const express = require('express');
-const feedbackController = require('../Controllers/FeedbackController');
+const {
+    submitFeedback,
+    getFeedbackByDoctor,
+    updateFeedback,
+    deleteFeedback
+} = require('../Controllers/FeedbackController');
+const authenticateToken = require('../middlewares/auth');
 
+// const auth = require('../middlewares/auth');
+// const authenticateToken = require('../middlewares/auth');
 const router = express.Router();
 
-router.post('/feedback', feedbackController.submitFeedback);
-router.get('/doctors/:doctorId/feedback', feedbackController.getFeedbackByDoctor);
-// Route to update feedback by ID
-router.put('/feedback/:id', feedbackController.updateFeedback);
+// router.post('/feedback', submitFeedback);
+router.get('/doctors/:doctorId/feedback', getFeedbackByDoctor);
+router.put('/feedback/:id', updateFeedback);
+router.delete('/feedback/:id', deleteFeedback);
+router.post('/feedback', authenticateToken, submitFeedback);
 
-// Route to delete feedback by ID
-router.delete('/feedback/:id', feedbackController.deleteFeedback);
+
 module.exports = router;
