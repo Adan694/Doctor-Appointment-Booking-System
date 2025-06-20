@@ -254,14 +254,16 @@ input, select {
         <div class="appointments">
             <div id="appointment-tabs" style="margin-bottom: 1em;">
                 <button onclick="showAppointments('upcoming')" class="tab-button active">Upcoming</button>
-                <button onclick="showAppointments('past')" class="tab-button">Past</button> </div>
+                <button onclick="showAppointments('past')" class="tab-button">Past</button> 
                 <button onclick="showAppointments('all')" class="tab-button">All</button>
+                <button onclick="showAppointments('missed')" class="tab-button">Missed</button>
 
+                  </div>
             <h2>My Appointments</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Apt. No.</th>
+                        <th>Doctor Name</th>
                         <th>Apt. Date</th>
                         <th>Apt. Time</th>
                         <th>Status</th>
@@ -463,8 +465,12 @@ input, select {
                     hideLoader();
 
                 })
-                .catch(err => console.error("Error fetching patient appointments:", err));
-                hideLoader();
+                // .catch(err => console.error("Error fetching patient appointments:", err));
+                // hideLoader();
+                .catch(err => {
+    console.error("Error fetching patient appointments:", err);
+    hideLoader();
+});
 
         }
 
@@ -500,10 +506,21 @@ input, select {
                     }
 
                     appointmentDate.setHours(hours, minutes, 0, 0);
+                    const status = (appointment.status || '').toLowerCase();
 
-                    if (type === 'upcoming') return appointmentDate >= now;
-                    if (type === 'past') return appointmentDate < now;
-                    return true; // "all"
+                    if (type === 'upcoming') {
+                        return appointmentDate >= now && status !== 'cancelled' && status !== 'completed';
+                    }
+                    if (type === 'past') {
+                        return appointmentDate < now && (status === 'completed' || status === 'cancelled');
+                    }
+                    if (type === 'missed') {
+                        return appointmentDate < now && status !== 'completed' && status !== 'cancelled';
+                    }
+
+                    return true;
+
+
                 });
 
                 // Sort appointments by date ascending
@@ -517,7 +534,8 @@ input, select {
                 filtered.forEach(appointment => {
                     const appointmentElement = document.createElement('tr');
                     appointmentElement.innerHTML = `
-            <td>${appointment._id.toString().substring(18)}</td>
+            
+            <td>${appointment.doctorId?.name || 'Unknown Doctor'}</td>
             <td>${new Date(appointment.date).toLocaleDateString()}</td>
             <td>${formatTime(appointment.time)}</td>
             <td>${appointment.status}</td>
@@ -611,20 +629,23 @@ input, select {
                 })
                     .then(res => res.json())
                     .then(data => {
-                        document.querySelector('.contentDetail').innerHTML = `
+                        const contentDetail = document.querySelector('.contentDetail');
+                        contentDetail.innerHTML = `
             <h3>Appointment Details</h3>
-            <p><strong>Doctor:</strong> ${data.doctorId?.name || 'N/A'}</p>
-            <p><strong>Date:</strong> ${new Date(data.date).toDateString()}</p>
-            <p><strong>Time:</strong> ${formatTime(data.time)}</p>
+            <p><strong>Doctor:</strong> ${data.doctorName || 'N/A'}</p>
+            <p><strong>Date:</strong> ${new Date(data.date).toLocaleDateString()}</p>
+            <p><strong>Time:</strong> ${data.time}</p>
             <p><strong>Status:</strong> ${data.status}</p>
+            <p><strong>Reason:</strong> ${data.reason || 'Not Provided'}</p>
         `;
                         document.getElementById('popupContent').style.display = 'block';
                     })
                     .catch(err => {
-                        console.error(err);
-                        alert("Failed to fetch appointment details.");
+                        console.error("Error fetching appointment details:", err);
+                        alert("Unable to load appointment details.");
                     });
             }
+
 
 
         function openFeedbackForm() {

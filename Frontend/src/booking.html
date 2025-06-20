@@ -55,7 +55,7 @@
         width: 100vw;
         height: 100vh;
         background: rgba(255, 255, 255, 0.7);
-        z-index: 2000;
+        z-index: 4000;
         backdrop-filter: blur(4px);
         align-items: center;
         justify-content: center;
@@ -105,6 +105,88 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+/* Modal Styling */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #444;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #009999;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.cancel-btn {
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background-color: #bbb;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
 
     </style>
 </head>
@@ -123,6 +205,34 @@
     <!-- Toast Notification -->
     <div id="toast">
         </div>
+        <!-- Booking Confirmation Modal -->
+        <!-- Booking Confirmation Modal -->
+        <div id="bookingModal" class="modal-overlay">
+            <div class="modal-content">
+                <h2>Confirm Appointment</h2>
+                <div class="form-group">
+                    <label for="modalName">Name</label>
+                    <input type="text" id="modalName" />
+                </div>
+                <div class="form-group">
+                    <label for="modalPhone">Phone</label>
+                    <input type="text" id="modalPhone" />
+                </div>
+                <div class="form-group">
+                    <label for="modalDate">Date</label>
+                    <input type="text" id="modalDate" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="modalTime">Time</label>
+                    <input type="text" id="modalTime" readonly />
+                </div>
+                <div class="modal-actions">
+                    <button onclick="confirmAppointment()" class="book-btn">✅ Confirm</button>
+                    <button onclick="closeModal()" class="cancel-btn">❌ Cancel</button>
+                </div>
+            </div>
+        </div>
+
 
 
     <script>
@@ -246,42 +356,10 @@
                                     return;
                                 }
 
-                                // if (!patientId) {
-                                //     showToast("You need to log in first.");
-                                //     setTimeout(() => {
-                                //         window.location.href = 'login.html';
-                                //     }, 1500);
-                                //     return;
-                                // }
-
-                                showLoadingOverlay(); // <-- show spinner
-
-                                fetch(`http://localhost:3000/api/appointments`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ patientId, doctorId, date, time }) // Include patientId
-                                })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        hideLoadingOverlay(); // <-- hide spinner
-
-                                        if (data.success) {
-                                            // alert(`Appointment booked successfully for ${date} at ${time}`);
-                                            showToast(`✅ Appointment booked for ${date} at ${time}`);
-
-                                        } else {
-                                            // alert('Error booking appointment: ' + data.message);
-                                            showToast(`❌ Error: ${data.message || 'Could not book appointment'}`);
-
-                                        }
-                                    })
-                                    .catch(err => {
-                                        // alert('Error booking appointment: ' + err.message);
-                                        hideLoadingOverlay(); // <-- hide spinner
-                                        showToast('❌ Network error: ' + err.message);
-                                    });
+                                showBookingModal(date, time);  // << Show the popup modal here
                             }
                         });
+
 
                         document.addEventListener('click', function (e) {
                             if (e.target.classList.contains('time-slot')) {
@@ -312,6 +390,69 @@
                             toast.style.display = 'none';
                         }, duration);
                     }
+                        let selectedDate = '';
+                        let selectedTime = '';
+
+                        function showBookingModal(date, time) {
+                            selectedDate = date;
+                            selectedTime = time;
+
+                            const nameField = document.getElementById('modalName');
+                            const phoneField = document.getElementById('modalPhone');
+                            const dateField = document.getElementById('modalDate');
+                            const timeField = document.getElementById('modalTime');
+
+                            // Fetch user info from localStorage or API if available
+                            const patientName = localStorage.getItem('patientName') || '';
+                            const patientPhone = localStorage.getItem('patientPhone') || '';
+
+                            nameField.value = patientName;
+                            phoneField.value = patientPhone;
+                            dateField.value = date;
+                            timeField.value = time;
+
+                            document.getElementById('bookingModal').style.display = 'flex';
+                        }
+
+                        function closeModal() {
+                            document.getElementById('bookingModal').style.display = 'none';
+                        }
+
+                        function confirmAppointment() {
+                            const patientId = localStorage.getItem('patientId');
+                            const doctorId = new URLSearchParams(window.location.search).get('doctorId');
+                            const name = document.getElementById('modalName').value.trim();
+                            const phone = document.getElementById('modalPhone').value.trim();
+
+                            if (!name || !phone) {
+                                showToast("Please enter all details.");
+                                return;
+                            }
+
+                            showLoadingOverlay();
+
+                            fetch(`http://localhost:3000/api/appointments`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ patientId, doctorId, date: selectedDate, time: selectedTime, name, phone })
+                            })
+                                .then(res => res.json())
+                                .then(data => {
+                                    hideLoadingOverlay();
+                                    closeModal();
+
+                                    if (data.success) {
+                                        showToast(`✅ Appointment booked for ${selectedDate} at ${selectedTime}`);
+                                    } else {
+                                        showToast(`❌ Error: ${data.message || "Booking failed"}`);
+                                    }
+                                })
+                                .catch(err => {
+                                    hideLoadingOverlay();
+                                    closeModal();
+                                    showToast('❌ Network error: ' + err.message);
+                                });
+                        }
 
     </script>
 </body>

@@ -1,48 +1,3 @@
-// const Booking = require('../models/booking');
-// const { User } = require('../models/users'); 
-
-// const bookAppointment = async (req, res) => {
-//     const { patientId, doctorId, date, time } = req.body;
-
-//     console.log("Booking Request Data:", { patientId, doctorId, date, time }); // Log incoming data
-
-//     if (!patientId || !doctorId || !date || !time) {
-//         return res.status(400).json({ success: false, message: "All fields are required." });
-//     }
-
-//     try {
-//         const existingBooking = await Booking.findOne({ doctorId, date, time });
-//         if (existingBooking) {
-//             return res.status(409).json({ success: false, message: "Appointment already booked for this time." });
-//         }
-
-//         const newBooking = new Booking({ patientId, doctorId, date, time });
-//         await newBooking.save();
-
-//         // Fetch the patient's name for display
-//         // const patient = await Patient.findById(patientId);
-//         const patient = await User.findById(patientId);
-//         const patientName = patient ? patient.name : 'Unknown Patient'; // Fallback if patient not found
-
-//         // Send the response with booking information
-//         res.status(201).json({
-//             success: true,
-//             message: "Appointment booked successfully",
-//             booking: {
-//                 _id: newBooking._id,
-//                 patientId: patientId,
-//                 doctorId: doctorId,
-//                 date: date,
-//                 time: time,
-//                 patientName: patientName // Include the patient's name in the response
-//             }
-//         });
-//     } catch (error) {
-//         console.error("Error booking appointment:", error);
-//         res.status(500).json({ success: false, message: "Failed to book appointment", error: error.message });
-//     }
-// };
-
 const Doctor = require('../models/doctors');
 const Booking = require('../models/booking');
 const { User } = require('../models/users');
@@ -63,7 +18,7 @@ const bookAppointment = async (req, res) => {
     if (existingBooking) {
       return res.status(409).json({ success: false, message: "Slot already booked." });
       }
-      // 🚫 Prevent patient double-booking with other doctors
+      // Prevent patient double-booking with other doctors
     const patientConflict = await Booking.findOne({ patientId, date: new Date(formattedDate), time });
     if (patientConflict) {
       return res.status(409).json({
@@ -105,7 +60,7 @@ const bookAppointment = async (req, res) => {
         doctorId,
         date,
         time,
-        patientName
+          patientName
       }
     });
 

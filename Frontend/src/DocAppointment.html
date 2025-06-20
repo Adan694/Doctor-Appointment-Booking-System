@@ -99,6 +99,7 @@
                 <tr>
                     <th>Patient Name</th>
                     <th>Appointment Date & Time</th>
+                    <th>Phone Number</th> <!-- New column -->
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -115,6 +116,7 @@
                 <tr>
                     <th>Patient Name</th>
                     <th>Appointment Date & Time</th>
+                    <th>Phone Number</th> <!-- New column -->
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -130,6 +132,7 @@
                 <tr>
                     <th>Patient Name</th>
                     <th>Appointment Date & Time</th>
+                    <th>Phone Number</th> <!-- New column -->
                     <th>Feedback</th>
                 </tr>
             </thead>
@@ -137,41 +140,46 @@
                 <!-- Dynamic content will go here -->
             </tbody>
         </table>
+        <!-- Missed Appointments Section -->
+        <h2>Missed Appointments</h2>
+        <table class="table appointment-table">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Appointment Date & Time</th>
+                    <th>Phone Number</th> <!-- New column -->
+                </tr>
+            </thead>
+            <tbody id="missedAppointments">
+                <!-- Dynamic content will go here -->
+            </tbody>
+        </table>
+
     </div>
 
     <script>
-        // function loadPatientAppointments() {
-        //     const token = localStorage.getItem('authToken'); // Ensure token is available
-        //     const patientId = localStorage.getItem('patientId'); // Get the patient's ID from localStorage
+        function markAppointmentAsMissed(appointmentId) {
+                const token = localStorage.getItem('authToken');
+                fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: 'Missed' })
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to mark appointment as missed');
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(`✅ Marked appointment ${appointmentId} as Missed`);
+                    })
+                    .catch(err => {
+                        console.error(`❌ Error marking appointment ${appointmentId} as missed:`, err);
+                    });
+            }
 
-        //     fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
-        //         method: 'GET',
-        //         headers: {
-        //             'Authorization': `Bearer ${token}` // Include token for authentication
-        //         }
-        //     })
-        //         .then(response => {
-        //             if (!response.ok) throw new Error('Failed to fetch appointments');
-        //             return response.json();
-        //         })
-        //         .then(data => {
-        //             data.forEach(appointment => {
-        //                 if (appointment.status === 'Cancelled') {
-        //                     addCancelledAppointmentRow({
-        //                         patientName: appointment.patientId.name,
-        //                         appointmentTime: `${appointment.date} ${appointment.time}`
-        //                     });
-        //                 } else {
-        //                     addNewAppointmentRow({
-        //                         patientName: appointment.patientId.name,
-        //                         appointmentTime: `${appointment.date} ${appointment.time}`,
-        //                         status: 'Pending' // Adjust as necessary
-        //                     });
-        //                 }
-        //             });
-        //         })
-        //         .catch(err => console.error("Error fetching patient appointments:", err));
-        // }
         function loadPatientAppointments() {
                 const token = localStorage.getItem('authToken'); // Ensure token is available
                 const patientId = localStorage.getItem('patientId'); // Get the patient's ID from localStorage
@@ -189,25 +197,43 @@
                     })
                     .then(data => {
                         data.forEach(appointment => {
-                            if (appointment.status === 'Cancelled') {
+                            const status = appointment.status?.toLowerCase() || 'pending';
+                            const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
+                            const now = new Date();
+
+                            if (status === 'cancelled') {
                                 addCancelledAppointmentRow({
                                     patientName: appointment.patientId.name,
-                                    appointmentTime: `${appointment.date} ${appointment.time}`
+                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+                                    phone: appointment.patientId.phone || 'N/A',  // ✅ ADD THIS
                                 });
-                            // } else {
-                            } else if (appointment.status !== 'Completed') {
-                                
-                                addNewAppointmentRow({
-                                    // patientName: appointment.patientId.name,
-                                    // appointmentTime: `${appointment.date} ${appointment.time}`,
-                                    // status: 'Pending' // Adjust as necessary
-                                    id: appointment._id, // include appointment ID
+                            } else if (status === 'completed') {
+                                // Skip here – completed appointments are handled separately
+                            } else if (appointmentDateTime < now && status !== 'missed') {
+                                // Update backend status to missed
+                                markAppointmentAsMissed(appointment._id);
+
+                                // Add to frontend
+                                addMissedAppointmentRow({
                                     patientName: appointment.patientId.name,
-                                    appointmentTime: `${appointment.date} ${appointment.time}`,
+                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+
+                                });
+                            }
+ else {
+                                // Upcoming (new or pending)
+                                addNewAppointmentRow({
+                                    id: appointment._id,
+                                    patientName: appointment.patientId.name,
+                                    // appointmentTime: `${appointment.date} ${appointment.time}`,
+                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+                                    phone: appointment.patientId.phone || 'N/A',  
                                     status: appointment.status || 'Pending'
                                 });
                             }
                         });
+
+
                     })
                     .catch(err => console.error("Error fetching patient appointments:", err));
             }
@@ -226,7 +252,8 @@
                                 if (appointment.status === 'Completed') {
                                     addCompletedAppointmentRow({
                                         patientName: appointment.patientId.name,
-                                        appointmentTime: `${appointment.date} ${appointment.time}`
+                                        phone: appointment.patientId.phone || 'N/A' ,
+                                        appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
                                     });
                                 }
                             });
@@ -266,6 +293,7 @@
             const row = `<tr data-appointment-id="${appointment.id}"> <!-- Ensure appointment ID is set -->
         <td>${appointment.patientName}</td>
         <td>${appointment.appointmentTime}</td>
+        <td>${appointment.phone || 'N/A'}</td>
         <td>${appointment.status}</td>
         <td>
             <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
@@ -277,23 +305,48 @@
             document.getElementById('newAppointments').insertAdjacentHTML('beforeend', row);
         }
             
+        // function addCancelledAppointmentRow(appointment) {
+            
+            
+        //     const row = `<tr>
+        //         <td>${appointment.patientName}</td>
+        //         <td>${appointment.appointmentTime}</td>
+        //         <td>${appointment.phone || 'N/A'}</td>
+        //         <td>
+        //             <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
+        //             <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
+        //         </td>
+        //     </tr>`;
+        //     document.getElementById('cancelledAppointments').insertAdjacentHTML('beforeend', row);
+        // }
         function addCancelledAppointmentRow(appointment) {
-            const row = `<tr>
-                <td>${appointment.patientName}</td>
-                <td>${appointment.appointmentTime}</td>
-                <td>
-                    <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
-                    <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
-                </td>
-            </tr>`;
-            document.getElementById('cancelledAppointments').insertAdjacentHTML('beforeend', row);
-        }
+                const formattedTime = new Date(appointment.appointmentTime).toLocaleString();
+
+                const row = `<tr>
+        <td>${appointment.patientName}</td>
+        <td>${formattedTime}</td>
+        <td>${appointment.phone || 'N/A'}</td>
+        <td>
+            <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
+            <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
+            <button class="btn btn-danger" onclick="deleteAppointment(this)">❌</button>
+
+        </td>
+    </tr>`;
+                document.getElementById('cancelledAppointments').insertAdjacentHTML('beforeend', row);
+            }
+
 
         function addCompletedAppointmentRow(appointment) {
             const row = `<tr>
                 <td>${appointment.patientName}</td>
                 <td>${appointment.appointmentTime}</td>
-                <td>No feedback yet</td>
+                        <td>${appointment.phone || 'N/A'}</td>
+                <td>
+            No feedback yet
+            <button class="btn btn-danger btn-sm ml-2" onclick="deleteAppointment(this)">❌</button>
+        </td>
+
             </tr>`;
             document.getElementById('completedAppointments').insertAdjacentHTML('beforeend', row);
         }
@@ -306,37 +359,6 @@
                 const token = localStorage.getItem('authToken'); // Ensure token is available
                 console.log('Updating appointment ID:', appointmentId); // Debugging log
 
-
-            //     // Move appointment to completed section
-            //     addCompletedAppointmentRow({
-            //         patientName,
-            //         appointmentTime
-            //     });
-
-            //     // Update the appointment status in the database
-            //     fetch(`http://localhost:3000/api/appointments/${appointmentId}`, { // Adjust this line
-            //         method: 'PUT',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //             'Authorization': `Bearer ${token}`
-            //         },
-            //         body: JSON.stringify({ status: 'Completed' }) // Mark as completed
-            //     })
-            //         .then(response => {
-            //             if (!response.ok) throw new Error('Failed to update appointment');
-            //             return response.json();
-            //         })
-            //         .then(data => {
-            //             console.log('Appointment updated successfully', data);
-            //         })
-            //         .catch(err => {
-            //             console.error('Error updating appointment:', err);
-            //         });
-
-            //     // Remove from new appointments
-            //     row.remove();
-            //     updateLocalStorage();
-            // }
             // Update the appointment status in the database
             fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
                 method: 'PUT',
@@ -388,22 +410,6 @@
                 updateLocalStorage();
             }
         }
-
-        // function cancelAppointment(button) {
-        //     const row = button.parentElement.parentElement;
-        //     const patientName = row.cells[0].innerText;
-        //     const appointmentTime = row.cells[1].innerText;
-
-        //     // Move appointment to cancelled section
-        //     addCancelledAppointmentRow({
-        //         patientName,
-        //         appointmentTime
-        //     });
-
-        //     // Remove from new appointments
-        //     row.remove();
-        //     updateLocalStorage();
-        // }
         function cancelAppointment(button) {
                 const row = button.parentElement.parentElement;
                 const appointmentId = row.getAttribute('data-appointment-id');
@@ -423,11 +429,13 @@
                     .then(data => {
                         const patientName = row.cells[0].innerText;
                         const appointmentTime = row.cells[1].innerText;
+                        const phone = row.cells[2].innerText;  // ✅ Correctly extract phone
 
                         // Move appointment to cancelled section
                         addCancelledAppointmentRow({
                             patientName,
-                            appointmentTime
+                            appointmentTime,
+                            phone
                         });
 
                         // Remove from new appointments
@@ -438,6 +446,44 @@
                         console.error('Error cancelling appointment:', err);
                     });
             }
+            function addMissedAppointmentRow(appointment) {
+                    const row = `<tr>
+        <td>${appointment.patientName}</td>
+        <td>${appointment.appointmentTime}</td>
+        <td>${appointment.phone || 'N/A'}</td>
+    </tr>`;
+                    document.getElementById('missedAppointments').insertAdjacentHTML('beforeend', row);
+                }
+                
+                function deleteAppointment(button) {
+                        const row = button.parentElement.parentElement;
+                        const appointmentId = row.getAttribute('data-appointment-id'); // Optional, if available
+                        const patientName = row.cells[0].innerText;
+
+                        if (confirm(`Are you sure you want to delete this appointment for ${patientName}?`)) {
+                            row.remove();
+                            updateLocalStorage();
+
+                            // OPTIONAL: If you want to delete from backend as well (only if you have appointmentId)
+                            if (appointmentId) {
+                                const token = localStorage.getItem('authToken');
+                                fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`
+                                    }
+                                })
+                                    .then(res => {
+                                        if (!res.ok) throw new Error("Failed to delete appointment");
+                                        console.log("Appointment deleted successfully.");
+                                    })
+                                    .catch(err => console.error("Error deleting from backend:", err));
+                            }
+                        }
+                    }
+
+
+
 
         function updateLocalStorage() {
             const newAppointments = Array.from(document.querySelectorAll('#newAppointments tr')).map(row => ({
