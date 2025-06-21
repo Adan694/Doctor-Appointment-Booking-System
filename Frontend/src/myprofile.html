@@ -539,10 +539,16 @@ input, select {
             <td>${new Date(appointment.date).toLocaleDateString()}</td>
             <td>${formatTime(appointment.time)}</td>
             <td>${appointment.status}</td>
-            <td>
-                <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
-                ${type === 'upcoming' ? `<span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>` : ''}
-            </td>
+           <td>
+    <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
+    ${type === 'upcoming' ? `
+        <span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>`
+                            : appointment.status.toLowerCase() === 'completed' ? `
+        <span class="btn-feedback" onclick="giveFeedback('${appointment._id}', '${appointment.doctorId?._id}', '${appointment.doctorId?.name}')">Give Feedback</span>`
+                                : ''
+    }
+</td>
+
         `;
                     appointmentsBody.appendChild(appointmentElement);
                 });
@@ -551,6 +557,16 @@ input, select {
                     appointmentsBody.innerHTML = `<tr><td colspan="5">No ${type} appointments found.</td></tr>`;
                 }
             }
+
+            function giveFeedback(appointmentId, doctorId, doctorName) {
+                    // Optional: Save data to localStorage or sessionStorage
+                    sessionStorage.setItem('feedbackDoctorId', doctorId);
+                    sessionStorage.setItem('feedbackDoctorName', doctorName);
+                    sessionStorage.setItem('feedbackAppointmentId', appointmentId);
+
+                    // Redirect to feedback form
+                    window.location.href = 'feedback.html';
+                }
 
 
                 function showAppointments(type) {

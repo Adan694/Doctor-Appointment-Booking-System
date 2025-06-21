@@ -2,43 +2,6 @@ const Feedback = require('../models/feedback');
 // const User = require('../models/users'); // Import User model
 const { User } = require('../models/users'); 
 
-
-
-// // Submit new feedback
-// const submitFeedback = async (req, res) => {
-//     // const { doctorId, rating, comment } = req.body;
-//     const { doctorId, rating, comment} = req.body;
-
-//     // const userId = req.user?.id || req.user?._id || req.user?.userId;
-//     const { patientId } = req.body;
-
-// if (!doctorId || !rating || !comment || !patientId) {
-//     return res.status(400).json({ message: 'All fields are required (doctorId, rating, comment, patientId)' });
-// }
-
-// try {
-//     // Optional: verify patient exists in DB
-//     console.log(typeof User.findById)
-//     const patientExists = await User.findById(patientId);
-//     if (!patientExists) {
-//         return res.status(404).json({ message: 'Patient not found' });
-//     }
-
-//     const feedback = new Feedback({
-//         doctorId,
-//         patientId,
-//         rating,
-//         comment
-//     });
-
-
-//         await feedback.save();
-//         res.status(201).json(feedback);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: 'Error submitting feedback' });
-//     }
-// };
 const submitFeedback = async (req, res) => {
     console.log('Decoded JWT user:', req.user); 
 
@@ -54,7 +17,8 @@ const submitFeedback = async (req, res) => {
 
         const feedback = new Feedback({
             doctorId,
-            userId: user._id, // ✅ This is important
+            userId: user._id, 
+            userName: user.name, 
             rating,
             comment
         });

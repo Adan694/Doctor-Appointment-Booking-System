@@ -124,12 +124,7 @@
 
 <body>
     <div class="profile-card" id="profile"></div>
-    <h3>Leave Feedback:</h3>
-    <form id="feedback-form">
-        <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)" required />
-        <textarea id="comment" placeholder="Your Feedback" required></textarea>
-        <button type="submit">Submit Feedback</button>
-    </form>
+    
     <h3>Feedback:</h3>
     <div id="feedback-list"></div> <!-- Div to display feedback -->
 
@@ -194,10 +189,11 @@
                         feedbackElem.dataset.feedbackId = feedback._id;
 
                         let feedbackHTML = `
-                                <strong>Rating:</strong> ${feedback.rating}
-                                <strong>Comment:</strong> ${feedback.comment}
-                                <strong>Submitted by:</strong> ${feedback.userEmail || "Anonymous"}
-                                <strong>Submitted on:</strong> ${new Date(feedback.timestamp).toLocaleDateString()}
+                               <h4>${feedback.userName || "Anonymous"}</h4>
+                               <p><strong>Rating:</strong> ${feedback.rating}</p>
+                               <p><strong>Comment:</strong> ${feedback.comment}</p>
+                               <p><strong>Submitted on:</strong> ${new Date(feedback.timestamp).toLocaleDateString()}</p>
+
                             `;
 
                         if (feedback.patientId === loggedInPatientId) {
@@ -218,47 +214,7 @@
                 });
         }
 
-        // Submit new feedback
-        document.getElementById("feedback-form").addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            const rating = document.getElementById("rating").value;
-            const comment = document.getElementById("comment").value;
-            const patientId = localStorage.getItem('patientId');
-            const doctorId = new URLSearchParams(window.location.search).get("id");
-
-            const feedbackData = { doctorId, rating, comment, patientId };
-            // const feedbackData = { doctorId, rating, comment };
-
-            const token = localStorage.getItem('authtoken');
-            console.log('Auth token:', token); // ✅ Add this here to debug
-            if (!token) {
-                console.error("No token found in localStorage!");
-            }
-
-            fetch("http://localhost:3000/api/feedback", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    // "Authorization": `Bearer ${token}`
-                    'Authorization': 'Bearer ' + localStorage.getItem('authtoken')  // Make sure token is stored after login
-                },
-                body: JSON.stringify(feedbackData),
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error("Failed to submit feedback");
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("Feedback submitted:", data);
-                    fetchFeedbackForDoctor(doctorId);
-                    document.getElementById("feedback-form").reset(); // Clear form
-                })
-                .catch(err => {
-                    console.error("Error:", err);
-                });
-        });
-
+      
         function editFeedback(feedbackId, currentRating, currentComment) {
             document.getElementById("rating").value = currentRating;
             document.getElementById("comment").value = currentComment;

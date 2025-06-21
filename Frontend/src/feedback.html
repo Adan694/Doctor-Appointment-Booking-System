@@ -2,30 +2,22 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Feedback - DocAssist</title>
     <style>
-        :root {
-            --primary-color: #006d6d;
-            --accent-color: #ffffff;
-            --light-gray: #f9f9f9;
-            --border-radius: 10px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
+        /* SAME STYLES AS BEFORE (truncated here for clarity) */
         body {
             font-family: 'Segoe UI', sans-serif;
+            background-color: #f9f9f9;
             margin: 0;
-            background-color: var(--light-gray);
-            color: #333;
         }
 
         header {
-            background-color: var(--primary-color);
+            background-color: #006d6d;
             color: white;
-            padding: 20px;
             text-align: center;
+            padding: 20px;
         }
 
         .container {
@@ -33,96 +25,61 @@
             margin: 40px auto;
             background-color: white;
             padding: 30px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="email"],
+        label,
+        input,
+        textarea,
         select,
-        textarea {
+        button {
+            display: block;
             width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 15px;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 120px;
+            margin-bottom: 15px;
         }
 
         button {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
+            background-color: #006d6d;
             color: white;
+            padding: 12px;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
             cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #004c4c;
+            font-size: 16px;
         }
 
         .back-link {
-            display: block;
             text-align: center;
+            display: block;
             margin-top: 20px;
-            text-decoration: none;
-            color: var(--primary-color);
+            color: #006d6d;
         }
 
         .back-link:hover {
             text-decoration: underline;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
-
     <header>
         <h1>Feedback</h1>
         <p>We'd love to hear from you!</p>
     </header>
 
     <div class="container">
-        <h2>Share your Experience</h2>
-        <form>
-            <label for="name">Your Name</label>
-            <input type="text" id="name" name="name" required>
-
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="doctor">Select Doctor</label>
-            <select id="doctor" name="doctor" required>
-                <option value="" disabled selected>Select a doctor</option>
-                <option value="Dr. Sharma">Dr. Sharma</option>
-                <option value="Dr. Mehta">Dr. Mehta</option>
-                <option value="Dr. Iyer">Dr. Iyer</option>
-                <option value="Dr. Khan">Dr. Khan</option>
-            </select>
+        <h2 id="formTitle">Share your Experience</h2>
+        <p id="doctorName"></p>
+        <form id="feedbackForm" class="hidden">
+            <input type="hidden" id="doctorId" />
 
             <label for="rating">Rate Your Experience</label>
-            <select id="rating" name="rating" required>
-                <option value="" disabled selected>Select a rating</option>
+            <select id="rating" required>
+                <option value="">Select a rating</option>
                 <option value="5">Excellent (5)</option>
                 <option value="4">Good (4)</option>
                 <option value="3">Average (3)</option>
@@ -131,7 +88,7 @@
             </select>
 
             <label for="comments">Your Comments</label>
-            <textarea id="comments" name="comments" placeholder="Write your feedback here..." required></textarea>
+            <textarea id="comments" placeholder="Write your feedback here..." required></textarea>
 
             <button type="submit">Submit Feedback</button>
         </form>
@@ -139,6 +96,111 @@
         <a href="index.html" class="back-link">← Back to Home</a>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+                const doctorId = sessionStorage.getItem('feedbackDoctorId');
+                const doctorNameEl = document.getElementById("doctorName");
+                const doctorIdInput = document.getElementById("doctorId");
+
+                if (!doctorId) {
+                    doctorNameEl.innerText = "Invalid or missing doctor ID.";
+                    return;
+                }
+
+                const token = localStorage.getItem("authToken"); // optional if not required
+
+                try {
+                    console.log("Fetching doctor with ID:", doctorId);
+                    console.log("Retrieved token:", token);
+
+                    const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                        headers: token ? { "Authorization": `Bearer ${token}` } : {}
+                    });
+
+                    const doctor = await res.json();
+
+                    if (!res.ok || !doctor.name) {
+                        doctorNameEl.innerText = "Doctor not found.";
+                        return;
+                    }
+
+                    doctorNameEl.innerText = `Doctor: ${doctor.name}`;
+                    doctorIdInput.value = doctorId;
+                    document.getElementById("feedbackForm").classList.remove("hidden");
+                    loadFeedback(doctorId); // ✅ Show feedback when page loads
+
+                } catch (error) {
+                    console.error("Doctor fetch failed:", error);
+                    doctorNameEl.innerText = "Error fetching doctor details.";
+                }
+            });
+
+
+        document.getElementById("feedbackForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const token = localStorage.getItem("authToken"); // or get it however you store JWT
+            if (!token) return alert("You must be logged in.");
+            console.log("Stored Patient ID:", localStorage.getItem('patientId')); // Log the patient ID
+
+
+            const payload = {
+                doctorId: document.getElementById("doctorId").value,
+                rating: document.getElementById("rating").value,
+                comment: document.getElementById("comments").value
+            };
+
+            try {
+                const res = await fetch("http://localhost:3000/api/feedback", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.message || "Error submitting feedback");
+                }
+
+                alert("Thank you for your feedback!");
+                window.location.href = "index.html";
+            } catch (error) {
+                alert(error.message);
+                console.error("Feedback submit error:", error);
+            }
+        });
+        async function loadFeedback(doctorId) {
+                const feedbackContainer = document.getElementById("feedbackContainer");
+
+                try {
+                    const res = await fetch(`http://localhost:3000/api/feedback/doctor/${doctorId}`);
+                    const feedbacks = await res.json();
+
+                    if (!res.ok) throw new Error("Failed to load feedback");
+
+                    if (feedbacks.length === 0) {
+                        feedbackContainer.innerHTML = "<p>No feedback yet.</p>";
+                        return;
+                    }
+
+                    feedbackContainer.innerHTML = feedbacks.map(fb => `
+            <div class="feedback-item">
+                <strong>${fb.userName || "Anonymous"}</strong> rated <strong>${fb.rating}/5</strong>
+                <p>${fb.comment}</p>
+                <small>${new Date(fb.timestamp).toLocaleString()}</small>
+            </div>
+        `).join("");
+                } catch (err) {
+                    console.error("Error loading feedback:", err);
+                    feedbackContainer.innerHTML = "<p>Error loading feedback.</p>";
+                }
+            }
+
+    </script>
 </body>
 
 </html>
