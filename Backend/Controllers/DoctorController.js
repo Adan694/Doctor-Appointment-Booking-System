@@ -1,6 +1,7 @@
 const Doctor = require('../models/doctors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Feedback = require('../models/feedback');
 
 const addDoctor = async (req, res) => {
   try {
@@ -73,7 +74,14 @@ const getDoctorById = async (req, res) => {
 const today = new Date().toISOString().split('T')[0]; // format: YYYY-MM-DD
 doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => slot.date >= today);
 
-res.status(200).json(doctor);
+   // 🔥 Fetch feedback for this doctor
+   const feedback = await Feedback.find({ doctorId: doctor._id });
+
+   res.status(200).json({
+     ...doctor.toObject(),
+     feedback: feedback.length ? feedback : [], // include feedback
+   });
+    
 
   } catch (error) {
       console.error('Error fetching doctor:', error);

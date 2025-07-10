@@ -6,161 +6,247 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Admin Dashboard</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
         * {
             box-sizing: border-box;
         }
 
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
+            font-family: 'Roboto', Arial, sans-serif;
             display: flex;
-            background-color: #f7f9fc;
+            height: 100vh;
+            background-color: #f0f2f5;
+            color: #333;
         }
 
+        /* Sidebar */
         .sidebar {
-            width: 220px;
-            background-color: #ffffff;
-            padding: 20px;
+            width: 250px;
+            min-width: 250px;
+            max-width: 250px;
+            background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .sidebar h2 {
-            margin: 0;
             font-size: 24px;
             color: rgb(9, 102, 102);
+            margin: 0 0 40px 20px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
         }
 
         .sidebar ul {
-            list-style-type: none;
+            list-style: none;
             padding: 0;
+            margin: 0;
+            width: 100%;
         }
 
         .sidebar ul li {
-            margin: 15px 0;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s;
-            cursor: pointer;
+            padding: 12px 20px;
+            margin: 10px 0;
         }
 
-        .sidebar ul li:hover {
-            background: #e8f0fe;
+        .sidebar ul li a {
+            text-decoration: none;
+            color: black;
+            font-size: 16px;
+            display: block;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            border-radius: 6px;
+            padding: 10px 15px;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #e8f0fe;
+            color: #007bff;
             font-weight: bold;
         }
 
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        /* Main content */
+        main {
+            flex-grow: 1;
+            padding: 30px 50px;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
-        .header {
+        /* Header */
+        header {
+            background-color: #166e6b;
+            color: white;
+            padding-bottom: 10px;
+            font-size: 28px;
+            font-weight: 700;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
-            background-color: rgb(9, 102, 102);
-            /* Navbar color */
-            color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            border-bottom: 2px solid white;
+            padding: 20px 30px;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .logout-btn {
-            padding: 10px 15px;
-            background-color: #dc3545;
-            color: white;
+        header button {
+            background-color: #28a745;
             border: none;
-            border-radius: 5px;
+            color: white;
+            padding: 10px 22px;
+            font-size: 16px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background-color 0.3s ease;
         }
 
-        .logout-btn:hover {
-            background-color: #c82333;
+        header button:hover {
+            background-color: #1e7e34;
         }
 
-        .main-content h2 {
-            margin-top: 20px;
-            font-size: 20px;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-            color: #343a40;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            /* Added spacing */
-        }
-
-        .stat-card {
-            flex: 1;
-            margin: 0 10px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        /* Dashboard cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+            margin-bottom: 40px;
+            margin-left: 0;
+            padding-left: 0;
         }
 
         .card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #ffffff;
-            padding: 15px;
+            background-color: #fff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card .icon {
+            font-size: 36px;
+            color: #166e6b;
             margin-bottom: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .status {
-            font-weight: bold;
+        .card h2 {
+            margin: 0;
+            font-size: 36px;
+            font-weight: 900;
+            color: #222;
         }
 
-        .completed {
-            color: green;
+        .card p {
+            margin: 8px 0 0;
+            font-size: 18px;
+            color: #666;
+            font-weight: 600;
         }
 
-        .cancelled {
-            color: red;
+        /* Chart section */
+        .charts-section {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+            margin-left: 0;
+            padding-left: 0;
         }
 
-        .remove-btn {
-            border: none;
-            background: transparent;
-            font-size: 20px;
-            cursor: pointer;
-            color: #007bff;
-            transition: color 0.3s;
+        .chart-container {
+            background-color: #fff;
+            flex: 1;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.2);
         }
 
-        .remove-btn:hover {
-            color: #dc3545;
-        }
-        .sidebar ul li a {
-            text-decoration: none;
-            color: #343a40; /* Color for the text */
-            display: block; /* Makes the entire list item clickable */
-            padding: 10px;
+        .chart-container h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #166e6b;
+            font-weight: 700;
+            font-size: 22px;
+            border-bottom: 2px solid #166e6b;
+            padding-bottom: 8px;
         }
 
-        .sidebar ul li a:hover {
-            background: #e8f0fe; /* Change background on hover */
-            color: #007bff; /* Change text color on hover */
+        /* Today's appointments */
+        .todays-appointments {
+            background-color: #fff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.2);
+            margin-left: 0;
+            padding-left: 10px;
+        }
+
+        .todays-appointments h3 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #166e6b;
+            font-weight: 700;
+            font-size: 22px;
+            border-bottom: 2px solid #166e6b;
+            padding-bottom: 8px;
+        }
+
+        .appointment-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appointment-item:last-child {
+            border-bottom: none;
+        }
+
+        .appointment-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 18px;
+            flex-shrink: 0;
+            border: 2px solid #166e6b;
+        }
+
+        .appointment-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .appointment-info {
+            flex-grow: 1;
+        }
+
+        .appointment-info .name {
+            font-weight: 700;
+            font-size: 18px;
+            color: #222;
+        }
+
+        .appointment-info .details {
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .appointment-time {
+            font-weight: 700;
+            color: #166e6b;
+            font-size: 16px;
+            min-width: 80px;
+            text-align: right;
         }
     </style>
 </head>
@@ -172,67 +258,218 @@
             <li><a href="Adminpanel.html">Dashboard</a></li>
             <li><a href="adminappoint.html">Appointments</a></li>
             <li><a href="add-doctors.html">Add Doctor</a></li>
-            <li><a href="Alldoctorsreal.html">Doctors List</a></li>
+            <li><a href="admindoclist.html">Doctors List</a></li>
             <li><a href="patients-list.html">Patients List</a></li>
             <li><a href="settings.html">Settings</a></li>
-            </ul>
+        </ul>
+    </div>
+    <main>
+        <header>
+            <div>Admin Dashboard</div>
+            <button id="logoutBtn">Logout</button>
+        </header>
+
+        <section class="dashboard-cards">
+            <div class="card">
+                <h2 id="admittedPatientsCount">0</h2>
+                <p>Total Patients</p>
             </div>
-            
-            <div class="main-content">
-                <div class="header">
-                    <h1>Admin Dashboard</h1>
-                    <button class="logout-btn">Logout</button>
-                </div>
-            
-                <div class="stats">
-                    <div class="stat-card">
-                        <h3>15</h3>
-                        <p>Doctors</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>6</h3>
-                        <p>Appointments</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>3</h3>
-                        <p>Patients</p>
-                    </div>
-                </div>
-            
-                <h2>Latest Bookings</h2>
-                <div class="card">
-                    <span>Dr. Richard James</span>
-                    <span>Booking on 5 Oct 2024</span>
-                    <span class="status cancelled">Cancelled</span>
-                    <button class="remove-btn">×</button>
-                </div>
-                <div class="card">
-                    <span>Dr. Richard James</span>
-                    <span>Booking on 26 Sep 2024</span>
-                    <span class="status cancelled">Cancelled</span>
-                    <button class="remove-btn">×</button>
-                </div>
-                <div class="card">
-                    <span>Dr. Christopher Davis</span>
-                    <span>Booking on 25 Sep 2024</span>
-                    <span class="status completed">Completed</span>
-                    <button class="remove-btn">×</button>
-                </div>
-                <div class="card">
-                    <span>Dr. Richard James</span>
-                    <span>Booking on 25 Sep 2024</span>
-                    <span class="status completed">Completed</span>
-                    <button class="remove-btn">×</button>
-                </div>
+            <div class="card">
+                <h2 id="appointmentsCount">0</h2>
+                <p>Appointments</p>
             </div>
-            
-            <script>
-                document.querySelectorAll('.remove-btn').forEach(button => {
-                    button.addEventListener('click', function () {
-                        this.parentElement.remove();
-                    });
+            <div class="card">
+                <h2 id="totalDoctorsCount">0</h2>
+                <p>Total Doctors</p>
+            </div>
+        </section>
+
+        <section class="charts-section">
+            <div class="chart-container">
+                <h3>Patients</h3>
+                <canvas id="patientsChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Appointments</h3>
+                <canvas id="appointmentsChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Doctors</h3>
+                <canvas id="doctorsChart"></canvas>
+            </div>
+        </section>
+
+        <section class="todays-appointments">
+            <h3>Today's Appointments</h3>
+            <div id="todaysAppointmentsList">
+                <!-- Appointment items will be inserted here -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+            window.location.href = 'login.html';
+        });
+
+        // Access control and redirect if not admin
+        window.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('userRole');
+            if (role !== 'admin') {
+                alert('Access denied. Admins only.');
+                window.location.href = 'login.html';
+                return;
+            }
+            fetchDashboardStats();
+            fetchTodaysAppointments();
+            renderCharts();
+        });
+
+        async function fetchDashboardStats() {
+            const token = localStorage.getItem('authToken');
+            try {
+                // Fetch patients and doctors counts
+                const countsRes = await fetch('http://localhost:3000/api/admin/dashboard/user-counts', {
+                    headers: { Authorization: 'Bearer ' + token }
                 });
-            </script>
-            </body>
-            
-            </html>
+                const countsData = await countsRes.json();
+                document.getElementById('admittedPatientsCount').textContent = countsData.patientCount || 0;
+                document.getElementById('totalDoctorsCount').textContent = countsData.doctorCount || 0;
+
+                // Fetch appointments count
+                const appointmentsRes = await fetch('http://localhost:3000/api/admin/dashboard/todays-appointments', {
+                    headers: { Authorization: 'Bearer ' + token }
+                });
+                const appointmentsData = await appointmentsRes.json();
+                document.getElementById('appointmentsCount').textContent = appointmentsData.todaysAppointments || 0;
+
+            } catch (error) {
+                console.error('Error fetching dashboard stats:', error);
+            }
+        }
+
+        async function fetchTodaysAppointments() {
+            const token = localStorage.getItem('authToken');
+            try {
+                const res = await fetch('http://localhost:3000/api/admin/dashboard/todays-appointments-list', {
+                    headers: { Authorization: 'Bearer ' + token }
+                });
+                const appointments = await res.json();
+                const container = document.getElementById('todaysAppointmentsList');
+                container.innerHTML = '';
+
+                appointments.forEach(app => {
+                    const div = document.createElement('div');
+                    div.className = 'appointment-item';
+
+                    const photoDiv = document.createElement('div');
+                    photoDiv.className = 'appointment-photo';
+                    const img = document.createElement('img');
+                    img.src = app.patientPhoto || 'images/default.jpg';
+                    img.alt = app.patientName;
+                    photoDiv.appendChild(img);
+
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'appointment-info';
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'name';
+                    nameDiv.textContent = app.patientName;
+                    const detailsDiv = document.createElement('div');
+                    detailsDiv.className = 'details';
+                    detailsDiv.textContent = `With Dr. ${app.doctorName}`;
+                    infoDiv.appendChild(nameDiv);
+                    infoDiv.appendChild(detailsDiv);
+
+                    const timeDiv = document.createElement('div');
+                    timeDiv.className = 'appointment-time';
+                    timeDiv.textContent = app.time;
+
+                    div.appendChild(photoDiv);
+                    div.appendChild(infoDiv);
+                    div.appendChild(timeDiv);
+
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching today\'s appointments:', error);
+            }
+        }
+
+        function renderCharts() {
+            const patientsCtx = document.getElementById('patientsChart').getContext('2d');
+            const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
+            const doctorsCtx = document.getElementById('doctorsChart').getContext('2d');
+
+            // Sample data for charts - replace with real API data if available
+            const labels = ['12 Jan', '13 Jan', '14 Jan', '15 Jan', '16 Jan', '17 Jan', '18 Jan'];
+            const patientsData = [50, 60, 70, 80, 90, 100, 120];
+            const appointmentsData = [40, 50, 60, 70, 80, 90, 110];
+            const doctorsData = [20, 25, 30, 35, 40, 45, 50];
+
+            new Chart(patientsCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Patients',
+                        data: patientsData,
+                        backgroundColor: 'rgb(9, 102, 102)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            new Chart(appointmentsCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Appointments',
+                        data: appointmentsData,
+                        backgroundColor: 'rgb(9, 102, 102)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            new Chart(doctorsCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doctors',
+                        data: doctorsData,
+                        backgroundColor: 'rgb(9, 102, 102)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

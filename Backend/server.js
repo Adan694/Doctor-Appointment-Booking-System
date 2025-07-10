@@ -1,5 +1,6 @@
 const express = require('express');
-const User = require('./models/users'); 
+// const User = require('./models/users'); 
+const { User } = require('./models/users'); // ✅ CORRECT
 const Doctor = require('./models/doctors');
 const cors = require('cors');
 const multer = require('multer');
@@ -11,7 +12,8 @@ const nodemailer = require('nodemailer');
 const Otp = require('./models/otp'); 
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userroutes');
-const doctorroutes = require('./routes/doctorroutes')
+const doctorroutes = require('./routes/doctorroutes');
+const adminRoutes = require('./routes/adminRoutes');
 const feedbackroute = require('./routes/feedbackroute');
 const bookingRoutes = require('./routes/bookingroutes'); 
 const contactRoutes = require('./routes/contact');
@@ -32,7 +34,6 @@ app.use(cors({
 app.use(express.json());
 app.use('/api/appointments', bookingRoutes);
 app.use('/auth', authRoutes); 
-app.use(express.static(path.join(__dirname, 'Frontend')));
 app.use(express.static('src')); 
 app.use('/user', userRoutes);
 app.use('/api/doctors', doctorroutes);
@@ -42,6 +43,9 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use('/api', feedbackroute);
 app.use('/', contactRoutes);
+app.use('/api/admin', adminRoutes);
+app.use(express.static(path.join(__dirname, 'Frontend')));
+
 
 app.use(session({
   secret: 'yourSecretKey', // Change this to a strong secret
@@ -81,6 +85,42 @@ app.post('/contact', async (req, res) => {
       res.status(500).json({ message: 'Error saving contact info.' });
   }
 });
+// Create initial admin user if not exists
+async function createInitialAdmin() {
+  try {
+    const adminEmail = 'admin@example.com';
+    const existingAdmin = await User.findOne({ email: adminEmail });
+
+    if (existingAdmin) {
+      console.log('Initial admin user already exists.');
+      return;
+    }
+
+    const password = 'Admin@123';
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const adminUser = new User({
+      email: adminEmail,
+      password: hashedPassword,
+      role: 'admin',
+      name: 'Super Admin',
+      phone: '',
+      age: null,
+      dob: '',
+      gender: 'other',
+    });
+
+    await adminUser.save();
+    console.log('Initial admin user created successfully.');
+  } catch (error) {
+    console.error('Error creating initial admin user:', error);
+  }
+}
+
+// Call the function inside an async IIFE (Immediately Invoked Function Expression)
+(async () => {
+  await createInitialAdmin();
+})();
 // Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

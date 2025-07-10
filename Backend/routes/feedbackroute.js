@@ -5,7 +5,7 @@ const {
     updateFeedback,
     deleteFeedback
 } = require('../Controllers/FeedbackController');
-const authenticateToken = require('../middlewares/auth');
+const { authenticateToken } = require('../middlewares/auth'); 
 
 // const auth = require('../middlewares/auth');
 // const authenticateToken = require('../middlewares/auth');

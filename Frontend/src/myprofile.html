@@ -229,6 +229,25 @@ input, select {
     cursor: pointer;
     border-radius: 5px;
 }
+.btn-feedback {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-left: 5px;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-feedback:hover {
+        background-color: #0056b3;
+    }
 
     </style>
 </head>
@@ -473,90 +492,147 @@ input, select {
 });
 
         }
+    function renderAppointments(appointments, type = 'upcoming') {
+        const appointmentsBody = document.getElementById('appointments-body');
+        appointmentsBody.innerHTML = '';
 
-        
-        function renderAppointments(appointments, type = 'upcoming') {
-                const appointmentsBody = document.getElementById('appointments-body');
-                appointmentsBody.innerHTML = '';
+        const now = new Date();
+        const removedIds = JSON.parse(localStorage.getItem('removedAppointments') || '[]');
 
-                const now = new Date();
+        const filtered = appointments.filter(appointment => {
+            if (removedIds.includes(appointment._id)) return false;
 
-                const filtered = appointments.filter(appointment => {
-                    let appointmentDate = new Date(appointment.date); // Sets to midnight
-                    if (isNaN(appointmentDate)) return false;
+            const datePart = appointment.date;
+            let timeStr = appointment.time?.toString().trim().toLowerCase() || '';
+            let formattedTime = '00:00:00';
 
-                    // Parse time string robustly
-                    let timeStr = appointment.time.toString().trim().toLowerCase();
-                    let hours = 0, minutes = 0;
-
-                    // Handle "3", "13", etc.
-                    if (/^\d{1,2}$/.test(timeStr)) {
-                        hours = parseInt(timeStr);
-                    }
-                    // Handle "3 AM" / "3 PM"
-                    else if (/^\d{1,2}\s?(am|pm)$/.test(timeStr)) {
-                        let [, h, period] = timeStr.match(/(\d{1,2})\s?(am|pm)/i) || [];
-                        hours = parseInt(h);
-                        if (period.toLowerCase() === 'pm' && hours < 12) hours += 12;
-                        if (period.toLowerCase() === 'am' && hours === 12) hours = 0;
-                    }
-                    // Handle "13:30"
-                    else if (/^\d{1,2}:\d{2}$/.test(timeStr)) {
-                        [hours, minutes] = timeStr.split(':').map(Number);
-                    }
-
-                    appointmentDate.setHours(hours, minutes, 0, 0);
-                    const status = (appointment.status || '').toLowerCase();
-
-                    if (type === 'upcoming') {
-                        return appointmentDate >= now && status !== 'cancelled' && status !== 'completed';
-                    }
-                    if (type === 'past') {
-                        return appointmentDate < now && (status === 'completed' || status === 'cancelled');
-                    }
-                    if (type === 'missed') {
-                        return appointmentDate < now && status !== 'completed' && status !== 'cancelled';
-                    }
-
-                    return true;
-
-
-                });
-
-                // Sort appointments by date ascending
-                filtered.sort((a, b) => {
-                    const dateA = new Date(`${a.date}T${a.time}`);
-                    const dateB = new Date(`${b.date}T${b.time}`);
-                    return dateA - dateB;
-                });
-
-                // Render to DOM
-                filtered.forEach(appointment => {
-                    const appointmentElement = document.createElement('tr');
-                    appointmentElement.innerHTML = `
-            
-            <td>${appointment.doctorId?.name || 'Unknown Doctor'}</td>
-            <td>${new Date(appointment.date).toLocaleDateString()}</td>
-            <td>${formatTime(appointment.time)}</td>
-            <td>${appointment.status}</td>
-           <td>
-    <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
-    ${type === 'upcoming' ? `
-        <span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>`
-                            : appointment.status.toLowerCase() === 'completed' ? `
-        <span class="btn-feedback" onclick="giveFeedback('${appointment._id}', '${appointment.doctorId?._id}', '${appointment.doctorId?.name}')">Give Feedback</span>`
-                                : ''
-    }
-</td>
-
-        `;
-                    appointmentsBody.appendChild(appointmentElement);
-                });
-
-                if (filtered.length === 0) {
-                    appointmentsBody.innerHTML = `<tr><td colspan="5">No ${type} appointments found.</td></tr>`;
+            // 🔍 Validate and parse AM/PM time correctly
+            if (/am|pm/i.test(timeStr)) {
+                const match = timeStr.match(/^(\d{1,2})(?::(\d{2}))?\s?(am|pm)$/i);
+                if (!match) {
+                    console.warn('Invalid AM/PM time:', timeStr);
+                    return false;
                 }
+
+                let [, hour, minute, period] = match;
+                hour = parseInt(hour, 10);
+                minute = parseInt(minute || '0', 10);
+
+                if (period.toLowerCase() === 'pm' && hour < 12) hour += 12;
+                if (period.toLowerCase() === 'am' && hour === 12) hour = 0;
+
+                formattedTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
+            } else if (/^\d{1,2}:\d{2}$/.test(timeStr)) {
+                // 24-hour format
+                formattedTime = `${timeStr}:00`;
+            } else if (/^\d{1,2}$/.test(timeStr)) {
+                // Example: "14"
+                formattedTime = `${timeStr.padStart(2, '0')}:00:00`;
+            } else {
+                console.warn('Unrecognized time format:', timeStr);
+                return false;
             }
+
+            const plainDate = new Date(datePart).toISOString().split('T')[0]; // "YYYY-MM-DD"
+            const appointmentDateTime = new Date(`${plainDate}T${formattedTime}`);
+            if (isNaN(appointmentDateTime)) {
+                console.warn('Invalid appointment datetime:', `${plainDate}T${formattedTime}`);
+                return false;
+            }
+
+            const status = (appointment.status || '').toLowerCase();
+
+            if (type === 'upcoming') {
+                return appointmentDateTime >= now && status !== 'cancelled' && status !== 'completed';
+            }
+            if (type === 'past') {
+                return appointmentDateTime < now && (status === 'completed' || status === 'cancelled');
+            }
+            if (type === 'missed') {
+                return appointmentDateTime < now && status !== 'completed' && status !== 'cancelled';
+            }
+
+            return true; // 'all'
+        });
+
+        filtered.sort((a, b) => {
+            const aTime = new Date(`${a.date}T${a.time}`);
+            const bTime = new Date(`${b.date}T${b.time}`);
+            return aTime - bTime;
+        });
+
+        filtered.forEach(appointment => {
+            const appointmentElement = document.createElement('tr');
+
+            let appointmentDate = new Date(appointment.date);
+            let timeStr = appointment.time?.toString().trim().toLowerCase() || '';
+            let hours = 0, minutes = 0;
+
+            if (/^\d{1,2}$/.test(timeStr)) {
+                hours = parseInt(timeStr);
+            } else if (/^\d{1,2}\s?(am|pm)$/.test(timeStr)) {
+                let [, h, period] = timeStr.match(/(\d{1,2})\s?(am|pm)/i) || [];
+                hours = parseInt(h);
+                if (period === 'pm' && hours < 12) hours += 12;
+                if (period === 'am' && hours === 12) hours = 0;
+            } else if (/^\d{1,2}:\d{2}/.test(timeStr)) {
+                [hours, minutes] = timeStr.split(':').map(Number);
+            }
+
+            appointmentDate.setHours(hours, minutes, 0, 0);
+
+            // Determine effective status
+            let effectiveStatus = appointment.status?.toLowerCase() || '';
+            if (appointmentDate < now && effectiveStatus !== 'completed' && effectiveStatus !== 'cancelled') {
+                effectiveStatus = 'missed';
+            }
+
+            appointmentElement.innerHTML = `
+        <td>
+            <span style="cursor:pointer; color:red; font-weight:bold;" onclick="removeAppointmentFromUI('${appointment._id}')">❌</span>
+            ${appointment.doctorId?.name || 'Unknown Doctor'}
+        </td>
+        <td>${new Date(appointment.date).toLocaleDateString()}</td>
+        <td>${appointment.time || 'N/A'}</td>
+        <td>${effectiveStatus}</td>
+        <td>
+            <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
+            ${type === 'upcoming'
+                    ? `<span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>`
+                    : effectiveStatus === 'completed'
+                    ? `<button class="btn-feedback" onclick="giveFeedback('${appointment._id}', '${appointment.doctorId?._id}', '${appointment.doctorId?.name}')">Give Feedback</button>`
+
+                        : ''
+                }
+        </td>
+    `;
+
+            appointmentsBody.appendChild(appointmentElement);
+        });
+
+
+        if (filtered.length === 0) {
+            appointmentsBody.innerHTML = `<tr><td colspan="5">No ${type} appointments found.</td></tr>`;
+        }
+    }
+
+
+    function removeAppointmentFromUI(appointmentId) {
+            if (!confirm("Are you sure you want to hide this appointment from the list?")) return;
+
+            let removed = JSON.parse(localStorage.getItem('removedAppointments') || '[]');
+            if (!removed.includes(appointmentId)) {
+                removed.push(appointmentId);
+                localStorage.setItem('removedAppointments', JSON.stringify(removed));
+            }
+
+            // Rerender the current tab
+            const activeTab = document.querySelector('.tab-button.active');
+            const tabType = activeTab ? activeTab.textContent.toLowerCase() : 'upcoming';
+            renderAppointments(allAppointments, tabType);
+        }
+
+
 
             function giveFeedback(appointmentId, doctorId, doctorName) {
                     // Optional: Save data to localStorage or sessionStorage

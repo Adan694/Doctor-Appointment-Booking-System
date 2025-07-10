@@ -191,17 +191,6 @@ ul li a:hover {
     /* add margin to the bottom */
 }
 
-/*.card {
-    flex-basis: 300px;
-    max-width: 300px;
-    flex-grow: 1;
-    background-color: #fff;
-    margin-inline: 10px;
-    border-radius: 4px;
-    margin-top: 10px;
-    overflow: hidden;
-
-}*/
 .card {
     flex-basis: 300px;
     /* Base width of the card */
@@ -219,6 +208,9 @@ ul li a:hover {
     /* Prevent content overflow */
     text-align: center;
     /* Center text */
+    cursor: pointer;
+        /* 👈 adds pointer on hover */
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card img {
@@ -243,6 +235,11 @@ ul li a:hover {
     margin-bottom: 20px;
     /* Add extra space at the bottom of the paragraph */
 }
+.card:hover {
+    transform: translateY(-5px);
+    /* 👈 lift effect on hover */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    /* 👈 deeper shadow */ }
 
 .head {
     text-align: center;
@@ -326,6 +323,12 @@ ul li a:hover {
     /* Subtle shadow for depth */
     transition: transform 0.2s;
     /* Smooth scaling on hover */
+    text-decoration: none;
+        /* Remove underline */
+    color: inherit;
+            /* Use parent element's color */
+    font-weight: bold;
+            /* Optional: makes text bolder */
 }
 
 .icon:hover {
@@ -333,6 +336,8 @@ ul li a:hover {
     /* Change background color on hover */
     transform: scale(1.05);
     /* Scale up slightly on hover */
+    text-decoration: none;
+        color: #333;
 }
 
 .icon img {
@@ -600,13 +605,14 @@ ul li a:hover {
 
 
 .see-more {
-    display: inline-block;
+    display: block;
     /* Allow margin auto to work */
     margin: 20px auto;
     /* Center horizontally with auto margins */
+    width: fit-content;
     padding: 10px 20px;
     /* Add some padding */
-    background-color: #007BFF;
+    background-color: rgb(12, 95, 95);
     /* Button color */
     color: white;
     /* Text color */
@@ -622,21 +628,6 @@ ul li a:hover {
     background-color: #0056b3;
     /* Darker shade on hover */
 }
-
-/* .see-more {
-    display: inline-block;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 100px;
-    text-align: center;
-    margin: 20px auto;
-    padding: 10px 15px;
-}
-.see-more:hover {
-    background-color: #0056b3;
-
-} */
 
 .hidden {
     display: none;

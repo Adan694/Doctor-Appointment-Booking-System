@@ -92,6 +92,8 @@
 
             <button type="submit">Submit Feedback</button>
         </form>
+        <div id="feedbackContainer" class="feedback-list"></div>
+
 
         <a href="index.html" class="back-link">← Back to Home</a>
     </div>
@@ -114,6 +116,7 @@
                     console.log("Retrieved token:", token);
 
                     const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                        // const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`,{
                         headers: token ? { "Authorization": `Bearer ${token}` } : {}
                     });
 

@@ -9,6 +9,47 @@
         let slide = document.querySelectorAll(".patientCard"); // Patient cards for the slider
         let card = document.querySelectorAll(".card"); // Doctor cards for clicking events
         let count = 0;
+// ========== Dynamic Doctor Loading ========== //
+const doctorContainer = document.getElementById("doctorContainer");
+
+if (doctorContainer) {
+    const loadingMessage = document.createElement("p");
+    loadingMessage.textContent = "Loading doctors...";
+    doctorContainer.appendChild(loadingMessage);
+
+    fetch("http://localhost:3000/api/doctors/alldoctors")
+        .then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch doctors");
+            return res.json();
+        })
+        .then((doctors) => {
+            doctorContainer.innerHTML = "";
+
+            const displayedDoctors = doctors.slice(0, 3); // Only show first 4
+            displayedDoctors.forEach((doctor) => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <img src="${doctor.image}" alt="${doctor.name}" />
+                    <p><strong>${doctor.name}</strong></p>
+                    <p>${doctor.speciality}</p>
+                `;
+                
+                // Redirect to doctor's profile on click
+                card.addEventListener("click", () => {
+                    window.location.href = `doctor.html?id=${encodeURIComponent(doctor._id)}`;
+                });
+                
+                doctorContainer.appendChild(card);
+            });
+
+            // Optional: re-attach click events to new .card elements if needed
+        })
+        .catch((err) => {
+            doctorContainer.innerHTML = "<p style='color:red;'>Failed to load doctors.</p>";
+            console.error("Error:", err);
+        });
+}
 
         // Function to update the navbar based on user role
         function updateNavbar() {

@@ -5,6 +5,8 @@ const bookingSchema = new mongoose.Schema({
     doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', required: true },
     date: { type: Date, required: true },
     time: { type: String, required: true },
+    feedback: { type: String, default: "" },
+
     // status: { type: String, default: 'pending' } // or 'confirmed', 'canceled'
     status: { 
         type: String, 

@@ -460,84 +460,100 @@ ul li a:hover {
     </div>
 
     <script>
-        
         document.addEventListener("DOMContentLoaded", () => {
-                const doctorList = document.querySelector(".doctor-list");
-                const noDoctorsMessage = document.querySelector(".no-doctors-message");
-                const searchInput = document.getElementById("search-input");
-                const searchBtn = document.getElementById("search-btn");
+            const doctorList = document.querySelector(".doctor-list");
+            const noDoctorsMessage = document.querySelector(".no-doctors-message");
+            const searchInput = document.getElementById("search-input");
+            const searchBtn = document.getElementById("search-btn");
 
-                // Optional loading message
-                const loadingMessage = document.createElement("p");
-                loadingMessage.textContent = "Loading doctors...";
-                doctorList.appendChild(loadingMessage);
+            const loadingMessage = document.createElement("p");
+            loadingMessage.textContent = "Loading doctors...";
+            doctorList.appendChild(loadingMessage);
 
-                fetch("http://localhost:3000/api/doctors/alldoctors")
-                    .then((response) => {
-                        if (!response.ok) throw new Error("Network response was not ok");
-                        return response.json();
-                    })
-                    .then((doctors) => {
-                        doctorList.innerHTML = ""; // Clear loading message
+            // 🔸 Get speciality from URL query string
+            const params = new URLSearchParams(window.location.search);
+            const specialityParam = params.get("speciality")?.toLowerCase();  // 'dermatologist' etc.
 
-                        if (doctors.length === 0) {
-                            noDoctorsMessage.style.display = "block";
-                            return;
-                        } else {
-                            noDoctorsMessage.style.display = "none";
-                        }
+            fetch("http://localhost:3000/api/doctors/alldoctors")
+                .then((response) => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.json();
+                })
+                .then((doctors) => {
+                    doctorList.innerHTML = "";
 
-                        doctors.forEach((doctor) => {
-                            const card = document.createElement("div");
-                            card.className = "card";
-                            card.innerHTML = `
-                    <img src="${doctor.image}" alt="${doctor.name}" class="doctor-img" />
-                    <div class="card-content">
-                        <h3 class="doctor-name">${doctor.name}</h3>
-                        <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>
-                        <p><strong>Experience:</strong> ${doctor.experience} years</p>
-                        <p class="availability ${doctor.available ? "available" : "unavailable"}">
-                        ${doctor.available ? "Available" : "Not Available"}</p>
-                        <a href="doctor.html?id=${encodeURIComponent(doctor._id)}" class="book-btn">View Profile</a>
-                    </div>
-                `;
-                            card.addEventListener("click", () => {
-                                // window.location.href = `doctor.html?Id=${encodeURIComponent(doctor.Id)}`;
-                                window.location.href = `doctor.html?id=${doctor._id}`; // Use _id and ensure it exists
+                    if (doctors.length === 0) {
+                        noDoctorsMessage.style.display = "block";
+                        return;
+                    } else {
+                        noDoctorsMessage.style.display = "none";
+                    }
 
-                            });
+                    let foundSpecialityMatch = false;
 
-                            doctorList.appendChild(card);
+                    doctors.forEach((doctor) => {
+                        const card = document.createElement("div");
+                        card.className = "card";
+                        card.innerHTML = `
+                                <img src="${doctor.image}" alt="${doctor.name}" class="doctor-img" />
+                                <div class="card-content">
+                                    <h3 class="doctor-name">${doctor.name}</h3>
+                                    <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>
+                                    <p><strong>Experience:</strong> ${doctor.experience} years</p>
+                                    <p class="availability ${doctor.available ? "available" : "unavailable"}">
+                                    ${doctor.available ? "Available" : "Not Available"}</p>
+                                    <a href="doctor.html?id=${encodeURIComponent(doctor._id)}" class="book-btn">View Profile</a>
+                                </div>
+                            `;
+
+                        card.addEventListener("click", () => {
+                            window.location.href = `doctor.html?id=${doctor._id}`;
                         });
-                    })
-                    .catch((error) => {
-                        doctorList.innerHTML = "<p style='color: red;'>Failed to load doctors. Please try again later.</p>";
-                        console.error("Error fetching doctors:", error);
-                    });
 
-                // Move the search button event listener inside the DOMContentLoaded
-                searchBtn.addEventListener("click", () => {
-                    const query = searchInput.value.toLowerCase();
-                    const cards = document.querySelectorAll(".card");
-
-                    cards.forEach(card => {
-                        const name = card.querySelector(".doctor-name").textContent.toLowerCase();
-                        const speciality = card.querySelector(".specialty").textContent.toLowerCase();
-
-                        if (name.includes(query) || speciality.includes(query)) {
-                            card.style.display = ""; // Show card
+                        // 🔸 If there's a ?speciality param, filter cards accordingly
+                        if (specialityParam) {
+                            if (doctor.speciality.toLowerCase().includes(specialityParam)) {
+                                doctorList.appendChild(card);
+                                foundSpecialityMatch = true;
+                            }
                         } else {
-                            card.style.display = "none"; // Hide card
+                            doctorList.appendChild(card); // No filter — show all
                         }
                     });
+
+                    // 🔸 If no match found, show message
+                    if (specialityParam && !foundSpecialityMatch) {
+                        doctorList.innerHTML = `<p>No doctors found for ${specialityParam}.</p>`;
+                    }
+                })
+                .catch((error) => {
+                    doctorList.innerHTML = "<p style='color: red;'>Failed to load doctors. Please try again later.</p>";
+                    console.error("Error fetching doctors:", error);
                 });
 
-                searchInput.addEventListener("input", () => {
-                    searchBtn.click(); // Trigger search on input
+            // 🔸 Manual Search
+            searchBtn.addEventListener("click", () => {
+                const query = searchInput.value.toLowerCase();
+                const cards = document.querySelectorAll(".card");
+
+                cards.forEach(card => {
+                    const name = card.querySelector(".doctor-name").textContent.toLowerCase();
+                    const speciality = card.querySelector(".specialty").textContent.toLowerCase();
+
+                    if (name.includes(query) || speciality.includes(query)) {
+                        card.style.display = "";
+                    } else {
+                        card.style.display = "none";
+                    }
                 });
             });
-        </script>
 
+            searchInput.addEventListener("input", () => {
+                searchBtn.click();
+            });
+        });
+    </script>
+        
 
 </body>
 
