@@ -170,89 +170,71 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody id="appointments-table">
-        <!-- Appointments will be dynamically populated here -->
-<tr>
-    <td>1</td>
-    <td>Avinash Kr</td>
-    <td>31</td>
-    <td>5 Oct 2024, 12:00 PM</td>
-    <td>Dr. Richard James</td>
-    <td>$50</td>
-    <td class="action">
-        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
-    </td>
-</tr>
-<tr>
-    <td>2</td>
-    <td>GreatStack</td>
-    <td>24</td>
-    <td>26 Sep 2024, 11:00 AM</td>
-    <td>Dr. Richard James</td>
-    <td>$40</td>
-    <td class="action cancelled">
-        <span class="cancelled">Cancelled</span>
-        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
-    </td>
-</tr>
-<tr>
-    <td>3</td>
-    <td>GreatStack</td>
-    <td>24</td>
-    <td>23 Sep 2024, 01:00 PM</td>
-    <td>Dr. Christopher Davis</td>
-    <td>$30</td>
-    <td class="action completed">
-        <span class="completed">Completed</span>
-        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
-    </td>
-</tr>
-<tr>
-    <td>4</td>
-    <td>GreatStack</td>
-    <td>24</td>
-    <td>22 Sep 2024, 02:00 PM</td>
-    <td>Dr. Richard James</td>
-    <td>$40</td>
-    <td class="action completed">
-        <span class="completed">Completed</span>
-        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
-    </td>
-</tr>
-<tr>
-    <td>5</td>
-    <td>GreatStack</td>
-    <td>24</td>
-    <td>21 Sep 2024, 11:00 AM</td>
-    <td>Dr. Richard James</td>
-    <td>$40</td>
-    <td class="action completed">
-        <span class="completed">Completed</span>
-        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
-    </td>
-</tr>
-<tr>
-    <td>6</td>
-    <td>GreatStack</td>
-    <td>24</td>
-    <td>20 Sep 2024, 06:00 PM</td>
-    <td>Dr. Emily Larson</td>
-    <td>$60</td>
-    <td class="action completed">
-        <span class="completed">Completed</span>
-        <button class="delete-btn" onclick="deleteAppointment(this)">✖</button>
-    </td>
-</tr>
+           
+        <tbody id="appointments-table"></tbody>
 </tbody>
 </table>
 </div>
 
 <script>
-    function deleteAppointment(button) {
-        const row = button.closest('tr'); // Get the closest row
-        row.remove(); // Remove the row from the table
+    async function fetchAppointments() {
+        try {
+            // const response = await fetch('/api/admin/appointments'); // Adjust based on your route
+            const response = await fetch("http://localhost:3000/api/appointments/all");
+
+            if (!response.ok) {
+                throw new Error('Failed to load appointments');
+            }
+            const appointments = await response.json();
+
+            const tableBody = document.getElementById('appointments-table');
+            tableBody.innerHTML = ''; // Clear old rows
+
+            appointments.forEach((appointment, index) => {
+                const row = document.createElement('tr');
+
+                const dateObj = new Date(appointment.date);
+                const formattedDate = dateObj.toLocaleDateString('en-US', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                const formattedTime = appointment.time;
+
+                const statusClass = appointment.status === 'cancelled' ? 'cancelled' :
+                    appointment.status === 'completed' ? 'completed' : '';
+
+                row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${appointment.patientId?.name || 'Unknown'}</td>
+            <td>${appointment.patientId?.age || '-'}</td>
+            <td>${formattedDate}, ${formattedTime}</td>
+            <td>${appointment.doctorId?.name || 'Unknown'}</td>
+            <td>$${appointment.fees || '-'}</td>
+            <td class="action ${statusClass}">
+              <span class="${statusClass}">${appointment.status || 'pending'}</span>
+              <button class="delete-btn" onclick="deleteAppointment(this, '${appointment._id}')">✖</button>
+            </td>
+          `;
+                tableBody.appendChild(row);
+            });
+
+        } catch (error) {
+            console.error("❌ Error fetching appointments:", error);
+        }
     }
+
+    function deleteAppointment(button, appointmentId) {
+        // You can send a DELETE request to your backend if needed
+        console.log("Deleting appointment:", appointmentId);
+        const row = button.closest('tr');
+        row.remove();
+    }
+
+    window.onload = fetchAppointments;
 </script>
+    
+
 </body>
 
 </html>

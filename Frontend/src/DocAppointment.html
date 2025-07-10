@@ -157,7 +157,9 @@
 
     </div>
 
-    <script>
+<script>
+        console.log("Script loaded"); // add this at the top of your script
+
         function markAppointmentAsMissed(appointmentId) {
             const token = localStorage.getItem('authToken');
             return fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
@@ -165,7 +167,7 @@
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
-                },
+                    },
                 body: JSON.stringify({ status: 'Missed' })
             })
                 .then(response => {
@@ -202,6 +204,7 @@
 
                         if (status === 'cancelled') {
                             addCancelledAppointmentRow({
+                                id: appointment._id, // ✅ pass the appointment ID
                                 patientName: appointment.patientId.name,
                                 appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
                                 phone: appointment.patientId.phone || 'N/A',  // ✅ ADD THIS
@@ -217,24 +220,8 @@
 
                         else if (status === 'completed') {
                             // Skip here – completed appointments are handled separately
-                        } else if (appointmentDateTime < now && ['missed', 'completed', 'cancelled'].indexOf(status) === -1) {
-                            // Immediately show it as missed
-                            addMissedAppointmentRow({
-                                patientName: appointment.patientId.name,
-                                appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                phone: appointment.patientId.phone || 'N/A'
-                            });
-
-                            // Try updating backend in background
-                            markAppointmentAsMissed(appointment._id)
-                                .then(() => {
-                                    console.log(`✅ Backend marked appointment ${appointment._id} as Missed`);
-                                })
-                                .catch(err => {
-                                    console.error(`❌ Backend update failed for appointment ${appointment._id}`, err);
-                                    // Optionally show user a warning or retry later
-                                });
-                        } else if (status !== 'missed') {
+                         } 
+                        else if (status !== 'missed') {
                             // Only add to new if not marked missed
                             addNewAppointmentRow({
                                 id: appointment._id,
@@ -290,19 +277,6 @@
             loadPatientAppointments();
             loadDoctorAppointments();
         };
-
-        //     function addNewAppointmentRow(appointment) {
-        //             const row = `<tr data-appointment-id="${appointment.id}"> <!-- Add appointment ID here -->
-        //     <td>${appointment.patientName}</td>
-        //     <td>${appointment.appointmentTime}</td>
-        //     <td>${appointment.status}</td>
-        //     <td>
-        //         <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
-        //         <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
-        //     </td>
-        // </tr>`;
-        //             document.getElementById('newAppointments').insertAdjacentHTML('beforeend', row);
-        //         }
         function addNewAppointmentRow(appointment) {
             // Ensure that appointment.id exists and is not undefined
             console.log('Adding new appointment:', appointment); // Log for debugging
@@ -314,6 +288,7 @@
         <td>${appointment.status}</td>
         <td>
             <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
+             <button class="btn btn-warning" onclick="markAsMissed(this)">Missed</button> 
             <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
         </td>
     </tr>`;
@@ -321,21 +296,6 @@
             // Insert the row into the new appointments table
             document.getElementById('newAppointments').insertAdjacentHTML('beforeend', row);
         }
-
-        // function addCancelledAppointmentRow(appointment) {
-
-
-        //     const row = `<tr>
-        //         <td>${appointment.patientName}</td>
-        //         <td>${appointment.appointmentTime}</td>
-        //         <td>${appointment.phone || 'N/A'}</td>
-        //         <td>
-        //             <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
-        //             <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
-        //         </td>
-        //     </tr>`;
-        //     document.getElementById('cancelledAppointments').insertAdjacentHTML('beforeend', row);
-        // }
         function addCancelledAppointmentRow(appointment) {
             const formattedTime = new Date(appointment.appointmentTime).toLocaleString();
 
@@ -413,76 +373,72 @@
                 });
         }
 
-        // function rescheduleAppointment(button) {
-        //     const row = button.parentElement.parentElement;
-        //     const patientName = row.cells[0].innerText;
-        //     const appointmentTime = row.cells[1].innerText;
-
-        //     // Logic to reschedule the appointment
-        //     const newDateTime = prompt("Enter new date and time for the appointment:", appointmentTime);
-        //     if (newDateTime) {
-        //         console.log(`Rescheduling appointment for ${patientName} to ${newDateTime}`);
-        //         row.remove(); // Optionally remove from cancelled section
-        //         // addNewAppointmentRow({ patientName, appointmentTime: newDateTime, status: 'Pending' });
-        //         addNewAppointmentRow({
-        //             id: appointmentId, // you should pass or retrieve this from local state or storage
-        //             patientName,
-        //             appointmentTime: newDateTime,
-        //             status: 'Pending'
-        //         });
-        //         updateLocalStorage();
-        //     }
-        // }
+       
         function rescheduleAppointment(button) {
-            const row = button.closest('tr');
-            const appointmentId = row.getAttribute('data-appointment-id');
-            const patientName = row.cells[0].innerText;
-            const oldTime = row.cells[1].innerText;
-            const phone = row.cells[2].innerText;
-            const token = localStorage.getItem('authToken');
+            console.log(" rescheduleAppointment triggered"); // <- This MUST show up
 
-            const newDateTime = prompt("Enter new date and time for the appointment (e.g., 2025-07-10 14:30):", oldTime);
+                const row = button.closest('tr');
+                const appointmentId = row.getAttribute('data-appointment-id');
+                console.log("Appointment ID to reschedule:", appointmentId);
 
-            if (newDateTime && appointmentId) {
-                const [newDate, newTime] = newDateTime.split(' ');
+                const patientName = row.cells[0].innerText;
+                const oldTime = row.cells[1].innerText;
+                const phone = row.cells[2].innerText;
+                const token = localStorage.getItem('authToken');
 
-                fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        date: newDate,
-                        time: newTime,
-                        status: 'Pending'
+                const isoPrompt = (() => {
+                    const oldDate = new Date(oldTime);
+                    console.log("🕒 Old date parsed as:", oldDate);
+                    const yyyy = oldDate.getFullYear();
+                    const mm = (oldDate.getMonth() + 1).toString().padStart(2, '0');
+                    const dd = oldDate.getDate().toString().padStart(2, '0');
+                    const hh = oldDate.getHours().toString().padStart(2, '0');
+                    const min = oldDate.getMinutes().toString().padStart(2, '0');
+                    return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+                })();
+
+                const newDateTime = prompt("Enter new date and time (YYYY-MM-DD HH:MM)", isoPrompt);
+
+                if (newDateTime && appointmentId) {
+                    const [newDate, newTime] = newDateTime.split(' ');
+                    console.log("❌ User cancelled rescheduling.");
+                    console.log("📅 Rescheduling appointment ID:", appointmentId);
+                    console.log("📆 New datetime:", newDate, newTime);
+
+                    // fetch(`http://localhost:3000/api/appointments/${appointmentId}/reschedule`, {
+                    fetch(`http://localhost:3000/api/appointments/${appointmentId}/reschedule`, {
+                            method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            newDate: newDate,   // 👈 match backend
+                            newTime: newTime
+                        })
                     })
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error("Failed to reschedule appointment");
-                        return response.json();
-                    })
-                    .then(updated => {
-                        // Remove from cancelled
-                        row.remove();
-
-                        // Add to new appointments
-                        addNewAppointmentRow({
-                            id: appointmentId,
-                            patientName,
-                            appointmentTime: `${new Date(newDate).toLocaleDateString()} ${newTime}`,
-                            phone,
-                            status: 'Pending'
+                        .then(res => {
+                            if (!res.ok) throw new Error("Failed to reschedule");
+                            return res.json();
+                        })
+                        .then(() => {
+                            row.remove();
+                            addNewAppointmentRow({
+                                id: appointmentId,
+                                patientName,
+                                appointmentTime: `${new Date(newDate).toLocaleDateString()} ${newTime}`,
+                                phone,
+                                status: 'Pending'
+                            });
+                            updateLocalStorage();
+                            console.log("✅ Appointment rescheduled");
+                        })
+                        .catch(err => {
+                            console.error("❌ Failed to reschedule:", err);
+                            alert("Failed to reschedule appointment.");
                         });
-
-                        updateLocalStorage();
-                        console.log("✅ Rescheduled successfully");
-                    })
-                    .catch(err => {
-                        console.error("❌ Error rescheduling:", err);
-                    });
+                }
             }
-        }
 
         function cancelAppointment(button) {
             const row = button.parentElement.parentElement;
@@ -491,7 +447,7 @@
 
             // Update the appointment status in the database
             fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-                method: 'DELETE',
+                method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -504,9 +460,11 @@
                     const patientName = row.cells[0].innerText;
                     const appointmentTime = row.cells[1].innerText;
                     const phone = row.cells[2].innerText;  // ✅ Correctly extract phone
+                    const id = row.getAttribute('data-appointment-id'); // ✅ Get the ID
 
                     // Move appointment to cancelled section
                     addCancelledAppointmentRow({
+                        id,
                         patientName,
                         appointmentTime,
                         phone
@@ -520,6 +478,39 @@
                     console.error('Error cancelling appointment:', err);
                 });
         }
+
+        function markAsMissed(button) {
+                const row = button.closest('tr');
+                const appointmentId = row.getAttribute('data-appointment-id');
+                const patientName = row.cells[0].innerText;
+                const appointmentTime = row.cells[1].innerText;
+                const phone = row.cells[2].innerText;
+                const token = localStorage.getItem('authToken');
+
+                fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: 'Missed' })
+            })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to mark as missed');
+                        return response.json();
+                    })
+                    .then(() => {
+                        row.remove(); // Remove from current table
+                        addMissedAppointmentRow({ patientName, appointmentTime, phone });
+                        updateLocalStorage();
+                        console.log(`✅ Marked appointment ${appointmentId} as missed`);
+                    })
+                    .catch(err => {
+                        console.error('❌ Error marking as missed:', err);
+                        alert("Failed to mark appointment as missed.");
+                    });
+            }
+
         function addMissedAppointmentRow(appointment) {
             const row = `<tr data-appointment-id="${appointment.id || ''}">
         <td>${appointment.patientName}</td>
@@ -568,8 +559,10 @@
             }));
 
             const cancelledAppointments = Array.from(document.querySelectorAll('#cancelledAppointments tr')).map(row => ({
+                id: row.getAttribute('data-appointment-id'), // ✅ save ID
                 patientName: row.cells[0].innerText,
-                appointmentTime: row.cells[1].innerText
+                appointmentTime: row.cells[1].innerText,
+                phone: row.cells[2]?.innerText || 'N/A'  // ✅ capture the phone value
             }));
 
             const completedAppointments = Array.from(document.querySelectorAll('#completedAppointments tr')).map(row => ({

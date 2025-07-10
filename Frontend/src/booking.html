@@ -287,46 +287,6 @@
                             `<p>Error fetching availability: ${err.message}</p>`;
                     });                   
             }
-
-            // function addBookButtonIfMissing() {
-            //     let bookBtn = document.querySelector('.book-btn:not([onclick])');
-            //     if (!bookBtn) {
-            //         bookBtn = document.createElement('button');
-            //         bookBtn.className = 'book-btn';
-            //         bookBtn.textContent = 'Book Appointment';
-            //         bookBtn.disabled = true;
-
-            //         bookBtn.addEventListener('click', function () {
-            //             const selectedSlot = document.querySelector('.time-slot.selected');
-            //             if (selectedSlot) {
-            //                 const date = selectedSlot.dataset.date;
-            //                 const time = selectedSlot.dataset.time;
-
-            //                 fetch(`http://localhost:3000/api/appointments`, {
-            //                     method: 'POST',
-            //                     headers: { 'Content-Type': 'application/json' },
-            //                     body: JSON.stringify({ doctorId, date, time })
-            //                 })
-            //                     .then(response => response.json())
-            //                     .then(data => {
-            //                         alert(`Appointment booked successfully for ${date} at ${time}`);
-            //                     })
-            //                     .catch(err => {
-            //                         alert('Error booking appointment: ' + err.message);
-            //                     });
-            //             }
-            //         });
-
-            //         document.addEventListener('click', function (e) {
-            //             if (e.target.classList.contains('time-slot')) {
-            //                 bookBtn.disabled = false;
-            //             }
-            //         });
-
-            //         document.getElementById('booking-info').appendChild(bookBtn);
-            //     }
-            // }
-
             // // Automatically load slots when page opens
             // document.addEventListener('DOMContentLoaded', loadAvailability);
             function addBookButtonIfMissing() {

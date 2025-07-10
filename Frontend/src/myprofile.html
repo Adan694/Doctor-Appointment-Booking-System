@@ -719,7 +719,16 @@ input, select {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                     }
                 })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) {
+                            // Log the raw response to debug
+                            return res.text().then(text => {
+                                console.error("Non-JSON error response:", text);
+                                throw new Error(`Failed to fetch appointment details (status: ${res.status})`);
+                            });
+                        }
+                        return res.json(); // Only parse if OK
+                    })
                     .then(data => {
                         const contentDetail = document.querySelector('.contentDetail');
                         contentDetail.innerHTML = `
@@ -737,6 +746,7 @@ input, select {
                         alert("Unable to load appointment details.");
                     });
             }
+
 
 
 

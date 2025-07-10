@@ -1,6 +1,8 @@
 const Doctor = require('../models/doctors');
 const Booking = require('../models/booking');
 const { User } = require('../models/users');
+const mongoose = require('mongoose');
+
 
 const bookAppointment = async (req, res) => {
   const { patientId, doctorId, date, time } = req.body;
@@ -81,7 +83,9 @@ const cancelAppointment = async (req, res) => {
         }
 
         // Delete from database
-        await Booking.findByIdAndDelete(id);
+        appointment.status = 'cancelled';
+        await appointment.save();
+
         
         res.status(200).json({ 
             success: true, 
@@ -162,12 +166,24 @@ const getAllAppointments = async (req, res) => {
     }
 };
 const rescheduleAppointment = async (req, res) => {
+  console.log("⚡ Reached rescheduleAppointment route"); // Add this!
+
     const { id } = req.params;
-    const { newDate, newTime } = req.body; // Expecting { newDate: 'YYYY-MM-DD', newTime: 'HH:MM' }
+  const { newDate, newTime } = req.body; // Expecting { newDate: 'YYYY-MM-DD', newTime: 'HH:MM' }
+  console.log("Reschedule Request Body:", req.body);
+    console.log("Appointment ID:", id);
 
     try {
-        const updatedAppointment = await Booking.findByIdAndUpdate(id, { date: newDate, time: newTime }, { new: true });
-        if (!updatedAppointment) {
+      const updatedAppointment = await Booking.findByIdAndUpdate(
+        id,
+        {
+          date: newDate,
+          time: newTime,
+          status: 'pending' // Reset status
+        },
+        { new: true }
+      );
+              if (!updatedAppointment) {
             return res.status(404).json({ success: false, message: "Appointment not found" });
         }
         res.status(200).json({ success: true, message: "Appointment rescheduled successfully", appointment: updatedAppointment });
@@ -176,5 +192,29 @@ const rescheduleAppointment = async (req, res) => {
         res.status(500).json({ success: false, message: "Failed to reschedule appointment" });
     }
 };
+const getSingleAppointment = async (req, res) => {
+    const { id } = req.params;
+  
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid appointment ID' });
+    }
+  
+    try {
+      const appointment = await Booking.findById(id)
+        .populate('patientId', 'name email')
+        .populate('doctorId', 'name specialty');
+  
+      if (!appointment) {
+        return res.status(404).json({ error: 'Appointment not found' });
+      }
+  
+      res.json(appointment);
+    } catch (err) {
+      console.error('Error fetching appointment:', err);
+      res.status(500).json({ error: 'Server error' });
+    }
+  };
+  
 
-module.exports = { bookAppointment, getPatientBookings, getDoctorAppointments, cancelAppointment, updateAppointmentStatus, getAllAppointmentsForDoctor, getAllAppointments, rescheduleAppointment};
+module.exports = { bookAppointment, getPatientBookings, getDoctorAppointments, cancelAppointment, updateAppointmentStatus, getAllAppointmentsForDoctor, getAllAppointments, rescheduleAppointment,   getSingleAppointment, // add this
+};
