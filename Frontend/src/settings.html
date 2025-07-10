@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            background-color: #f7f9fc;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            margin: 0;
+            font-size: 24px;
+            color: rgb(9, 102, 102);
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar ul li:hover {
+            background: #e8f0fe;
+            font-weight: bold;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #343a40;
+            display: block;
+            padding: 10px;
+        }
+
+        .sidebar ul li a:hover {
+            background: #e8f0fe;
+            color: #007bff;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+            border-radius: 8px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .logout-btn {
+            padding: 10px 15px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #007bff;
+        }
+
+        .message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>DocAssist</h2>
+        <ul>
+            <li><a href="Adminpanel.html">Dashboard</a></li>
+            <li><a href="adminappoint.html">Appointments</a></li>
+            <li><a href="add-doctors.html">Add Doctor</a></li>
+            <li><a href="Alldoctorsreal.html">Doctors List</a></li>
+            <li><a href="patients-list.html">Patients List</a></li>
+            <li><a href="settings.html">Settings</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="header">
+            <h1>Admin Profile Settings</h1>
+            <button class="logout-btn" id="logout-btn">Logout</button>
+        </div>
+        <form id="profile-form">
+            <h2>Profile Information</h2>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" name="phone" />
+            <button type="submit">Update Profile</button>
+            <div id="profile-message" class="message"></div>
+        </form>
+        <form id="password-form">
+            <h2>Change Password</h2>
+            <label for="oldPassword">Old Password</label>
+            <input type="password" id="oldPassword" name="oldPassword" required />
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" required />
+            <button type="submit">Change Password</button>
+            <div id="password-message" class="message"></div>
+        </form>
+    </div>
+    <script>
+        const adminId = localStorage.getItem('adminId'); // Get admin ID from localStorage
+        const token = localStorage.getItem('authToken'); // Get auth token from localStorage
+
+        async function fetchProfile() {
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${adminId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) throw new Error('Failed to fetch profile');
+                const data = await response.json();
+                document.getElementById('name').value = data.name || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('phone').value = data.phone || '';
+            } catch (error) {
+                document.getElementById('profile-message').textContent = error.message;
+                document.getElementById('profile-message').className = 'message error';
+            }
+        }
+
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${adminId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, email, phone }),
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to update profile');
+                document.getElementById('profile-message').textContent = data.message;
+                document.getElementById('profile-message').className = 'message success';
+            } catch (error) {
+                document.getElementById('profile-message').textContent = error.message;
+                document.getElementById('profile-message').className = 'message error';
+            }
+        });
+
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const oldPassword = document.getElementById('oldPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/${adminId}/change-password`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ oldPassword, newPassword }),
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Failed to change password');
+                document.getElementById('password-message').textContent = data.message;
+                document.getElementById('password-message').className = 'message success';
+                document.getElementById('password-form').reset();
+            } catch (error) {
+                document.getElementById('password-message').textContent = error.message;
+                document.getElementById('password-message').className = 'message error';
+            }
+        });
+
+        fetchProfile();
+
+        // Add logout button functionality
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('adminId');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+
+</html>
