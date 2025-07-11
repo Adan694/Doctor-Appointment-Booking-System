@@ -6,161 +6,289 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Doctor</title>
     <style>
-        /* Basic styling */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            background-color: #f8f9fa;
-        }
+       /* Basic styling */
+/* Base reset & layout */
+/* Reset & base styles */
+* {
+  box-sizing: border-box;
+}
 
-        .sidebar {
-            width: 220px;
-            background-color: #ffffff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+  color: #333;
+}
 
-        .sidebar h2 {
-            margin: 0;
-            font-size: 24px;
-            color: rgb(9, 102, 102);
-        }
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: rgb(9, 102, 102);
+  padding: 20px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
+.sidebar h2 {
+  font-size: 30px;
+  color: white;
+  margin: 0 0 40px 20px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
 
-        .sidebar ul li {
-            margin: 15px 0;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s;
-            cursor: pointer;
-        }
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
 
-        .sidebar ul li:hover {
-            background: #e8f0fe;
-            font-weight: bold;
-        }
+.sidebar ul li {
+  padding: 12px 20px;
+  margin: 10px 0;
+}
 
-        .sidebar ul li a {
-            text-decoration: none;
-            color: #343a40;
-            display: block;
-            padding: 10px;
-        }
+.sidebar ul li a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  display: block;
+  border-radius: 6px;
+  padding: 10px 15px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-        .sidebar ul li a:hover {
-            background: #e8f0fe;
-            color: #007bff;
-        }
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+  background-color: #e8f0fe;
+  color: #007bff;
+  font-weight: bold;
+}
 
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+/* Main layout */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: rgb(9, 102, 102);
-            color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+/* Header */
+.header {
+  background-color: rgb(9, 102, 102);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
 
-        .logout-btn {
-            padding: 10px 15px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
+.logout-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 22px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-        .logout-btn:hover {
-            background-color: #c82333;
-        }
+.logout-btn:hover {
+  background-color: #c82333;
+}
 
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+/* Form container */
+.form-container {
+  background-color: white;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(9, 102, 102, 0.1);
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+.form-group {
+  margin-bottom: 20px;
+}
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-            color: #333;
-        }
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #333;
+}
 
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            transition: border-color 0.3s;
-        }
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fdfdfd;
+  transition: border-color 0.3s;
+}
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #007BFF;
-            outline: none;
-        }
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgb(9, 102, 102);
+  outline: none;
+}
 
-        .upload-button {
-            padding: 20px;
-            border: 2px dashed #007BFF;
-            background-color: #f0f8ff;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
+/* Upload button style */
+.upload-button {
+  padding: 20px;
+  text-align: center;
+  background-color: #eaf6f6;
+  border: 2px dashed rgb(9, 102, 102);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-        .upload-button:hover {
-            background-color: #e7f0ff;
-        }
+.upload-button:hover {
+  background-color: #d3eeee;
+}
 
-        .btn {
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.3s;
-        }
+.upload-button label {
+  color: rgb(9, 102, 102);
+  font-weight: bold;
+  cursor: pointer;
+}
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
+/* Submit button */
+.btn {
+  background-color: rgb(9, 102, 102);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #075b5b;
+}
+
+.success-message {
+  margin-top: 15px;
+  color: #28a745;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .form-container {
+    padding: 25px;
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .sidebar h2 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .sidebar ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .sidebar ul li {
+    margin: 0;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .form-container {
+    max-width: 95%;
+    padding: 20px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .logout-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    padding: 15px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .btn,
+  .logout-btn {
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+
+  label {
+    font-size: 14px;
+  }
+
+  .sidebar ul li a {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
     </style>
 </head>
 

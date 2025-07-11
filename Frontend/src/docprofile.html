@@ -73,12 +73,14 @@
             margin: 0;
         }
 
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 100px;
-        }
+       .container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 100px;
+    padding: 10px; /* optional: adds padding around all blocks */
+}
+
 
         .profile-section,
         .availability-section {
@@ -180,6 +182,14 @@
         .add-slot-btn:hover {
             background: #1e7e34;
         }
+        .section-title {
+    color: rgb(9, 102, 102);
+    font-size: 24px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+}
+
 
         @media (max-width: 768px) {
             body {
@@ -205,6 +215,35 @@
     0%   { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+  @media (max-width: 768px) {
+    .section-block {
+        flex: 1 1 100%;
+    }
+}
+.name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.title-label {
+    font-weight: bold;
+    font-size: 20px;
+    color: rgb(9, 102, 102);
+    white-space: nowrap;
+}
+
+.name-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+
     </style>
 </head>
 
@@ -224,50 +263,49 @@
 
     <div class="container">
         <div class="profile-section">
+            <h2 class="section-title">Profile Information</h2>
             <div class="profile-header">
                 <img src="https://via.placeholder.com/100" alt="Doctor Photo" id="profilePic">
-                <div>
-                    <h2>Dr. <input type="text" id="doctorName" value=""></h2>
+                <div class="name-row">
+                    <label class="title-label">Dr.</label>
+                    <input type="text" class="name-input" id="doctorName" value="Haniaa">
                 </div>
             </div>
-
+        
             <label for="fileUpload">Change Profile Picture:</label>
             <input type="file" id="fileUpload" accept="image/*" onchange="previewImage()">
-
+        
             <label>Specialization:</label>
-            <input type="text" id="specialization">
-
+            <input type="text" id="specialization" value="Dermatologist">
+        
             <label>Qualifications:</label>
-            <textarea id="qualifications"></textarea>
-
+            <textarea id="qualifications">MBBS</textarea>
+        
             <label>Services:</label>
-            <textarea id="services"></textarea>
-
+            <textarea id="services">Skin Care, Acne, Pimples</textarea>
+        
             <label>Conditions Treated:</label>
             <textarea id="conditions"></textarea>
-
+        
             <label>Experience:</label>
             <input type="text" id="experience">
-
+        
             <label>Memberships:</label>
             <textarea id="memberships"></textarea>
-
+        
             <label>Fees (in Rs.):</label>
             <input type="number" id="fees">
-
+        
             <label>Practice Locations:</label>
             <textarea id="locations"></textarea>
-
-            <!-- <button class="btn" onclick="saveProfile()">Save Profile</button> -->
+        
             <div id="buttonGroup">
                 <button class="btn" onclick="enableEditing()">Edit Profile</button>
             </div>
-
-                        
         </div>
 
         <div class="availability-section">
-            <h2>Availability</h2>
+<h2 class="section-title">Availability</h2>
             <table class="availability-table" id="availabilityTable">
                 <thead>
                     <tr>
@@ -623,6 +661,18 @@
                     toast.style.display = 'none';
                 }, duration);
             }
+            function previewImage() {
+                    const input = document.getElementById('fileUpload');
+                    const img = document.getElementById('profilePic');
+
+                    if (input.files && input.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
 
         window.onload = () => {
             loadDoctorProfile();

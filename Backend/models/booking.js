@@ -15,6 +15,6 @@ const bookingSchema = new mongoose.Schema({
     },
     reminderSent24hr: { type: Boolean, default: false },
 reminderSent30min: { type: Boolean, default: false },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Booking', bookingSchema);

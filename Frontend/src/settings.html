@@ -6,64 +6,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin Settings</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            display: flex;
             background-color: #f7f9fc;
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
         }
 
+        /* Sidebar */
         .sidebar {
-            width: 220px;
-            background-color: #ffffff;
-            padding: 20px;
+            width: 250px;
+            background-color: rgb(9, 102, 102);
+            padding: 20px 0;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex-shrink: 0;
         }
 
         .sidebar h2 {
-            margin: 0;
-            font-size: 24px;
-            color: rgb(9, 102, 102);
+            font-size: 30px;
+            color: white;
+            margin: 0 0 40px 20px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
         }
 
         .sidebar ul {
-            list-style-type: none;
+            list-style: none;
             padding: 0;
+            margin: 0;
+            width: 100%;
         }
 
         .sidebar ul li {
-            margin: 15px 0;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s;
-            cursor: pointer;
-        }
-
-        .sidebar ul li:hover {
-            background: #e8f0fe;
-            font-weight: bold;
+            padding: 12px 20px;
+            margin: 10px 0;
         }
 
         .sidebar ul li a {
             text-decoration: none;
-            color: #343a40;
+            color: white;
+            font-size: 16px;
             display: block;
-            padding: 10px;
+            border-radius: 6px;
+            padding: 10px 15px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .sidebar ul li a:hover {
-            background: #e8f0fe;
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #e8f0fe;
             color: #007bff;
+            font-weight: bold;
         }
 
+        /* Main Content */
         .main-content {
             flex: 1;
             padding: 20px;
             background-color: #ffffff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            max-width: 700px;
             margin: 20px auto;
             border-radius: 8px;
+            display: flex;
+            flex-direction: column;
         }
 
         .header {
@@ -100,6 +115,10 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
         }
 
         label {
@@ -141,6 +160,32 @@
         .success {
             color: green;
         }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                align-items: center;
+            }
+
+            .sidebar h2 {
+                margin-left: 0;
+            }
+
+            .main-content {
+                margin: 10px;
+                max-width: 100%;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 
@@ -156,11 +201,13 @@
             <li><a href="settings.html">Settings</a></li>
         </ul>
     </div>
+
     <div class="main-content">
         <div class="header">
             <h1>Admin Profile Settings</h1>
             <button class="logout-btn" id="logout-btn">Logout</button>
         </div>
+
         <form id="profile-form">
             <h2>Profile Information</h2>
             <label for="name">Name</label>
@@ -172,6 +219,7 @@
             <button type="submit">Update Profile</button>
             <div id="profile-message" class="message"></div>
         </form>
+
         <form id="password-form">
             <h2>Change Password</h2>
             <label for="oldPassword">Old Password</label>
@@ -182,9 +230,10 @@
             <div id="password-message" class="message"></div>
         </form>
     </div>
+
     <script>
-        const adminId = localStorage.getItem('adminId'); // Get admin ID from localStorage
-        const token = localStorage.getItem('authToken'); // Get auth token from localStorage
+        const adminId = localStorage.getItem('adminId');
+        const token = localStorage.getItem('authToken');
 
         async function fetchProfile() {
             try {
@@ -254,7 +303,6 @@
 
         fetchProfile();
 
-        // Add logout button functionality
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.removeItem('adminId');
             localStorage.removeItem('token');

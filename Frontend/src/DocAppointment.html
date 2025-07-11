@@ -2,15 +2,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Doctor Appointment Management</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <style>
-        .appointment-table {
-            margin-bottom: 40px;
-        }
-
         * {
             box-sizing: border-box;
         }
@@ -18,11 +14,12 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
+            background-color: #f0f4fb;
+            /* padding-top: 80px; */
             display: flex;
-            background-color: #f7f9fc;
         }
 
-        nav {
+          nav {
             display: flex;
             align-items: center;
             justify-content: space-around;
@@ -35,27 +32,7 @@
             z-index: 1000;
         }
 
-        ul {
-            display: flex;
-        }
-
-        ul li {
-            list-style: none;
-        }
-
-        ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 20px;
-            margin-inline: 20px;
-        }
-
-        ul li a:hover {
-            color: black;
-            border-bottom: 2px solid black;
-        }
-
-        .logo {
+          .logo {
             display: flex;
             align-items: center;
             font-size: 20px;
@@ -70,9 +47,63 @@
             object-fit: cover;
         }
 
-        .logo h1 {
+ .logo h1 {
             font-size: 30px;
             margin: 0;
+        }
+
+        nav ul {
+            display: flex;
+        }
+
+        nav ul li {
+            list-style: none;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            margin-inline: 20px;
+        }
+
+
+
+          nav ul li a:hover {
+            color: black;
+            border-bottom: 2px solid black;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+        }
+
+        .section-block {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .section-block h2 {
+            color: rgb(9, 102, 102);
+            margin-bottom: 20px;
+        }
+
+        .appointment-table thead th {
+            background-color: rgb(9, 102, 102);
+            color: white;
+        }
+
+        .appointment-table tbody tr:hover {
+            background-color: #f1f8ff;
+        }
+
+        h1.page-title {
+            color: rgb(9, 102, 102);
+            margin-bottom: 30px;
         }
     </style>
 </head>
@@ -89,73 +120,75 @@
             <li><a href="docprofile.html">Profile</a></li>
         </ul>
     </nav>
-    <div class="container" style="margin-top: 80px;">
-        <h1 class="mt-4">Appointment Management</h1>
+
+    <div class="container">
+        <h1 class="page-title">Appointment Management</h1>
 
         <!-- New Appointments Section -->
-        <h2>New Appointments</h2>
-        <table class="table appointment-table">
-            <thead>
-                <tr>
-                    <th>Patient Name</th>
-                    <th>Appointment Date & Time</th>
-                    <th>Phone Number</th> <!-- New column -->
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="newAppointments">
-                <!-- Dynamic content will go here -->
-            </tbody>
-        </table>
+        <div class="section-block">
+            <h2>New Appointments</h2>
+            <table class="table appointment-table">
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Appointment Date & Time</th>
+                        <th>Phone Number</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="newAppointments"></tbody>
+            </table>
+        </div>
 
         <!-- Cancelled Appointments Section -->
-        <h2>Cancelled Appointments</h2>
-        <table class="table appointment-table">
-            <thead>
-                <tr>
-                    <th>Patient Name</th>
-                    <th>Appointment Date & Time</th>
-                    <th>Phone Number</th> <!-- New column -->
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="cancelledAppointments">
-                <!-- Dynamic content will go here -->
-            </tbody>
-        </table>
+        <div class="section-block">
+            <h2>Cancelled Appointments</h2>
+            <table class="table appointment-table">
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Appointment Date & Time</th>
+                        <th>Phone Number</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="cancelledAppointments"></tbody>
+            </table>
+        </div>
 
         <!-- Completed Appointments Section -->
-        <h2>Completed Appointments</h2>
-        <table class="table appointment-table">
-            <thead>
-                <tr>
-                    <th>Patient Name</th>
-                    <th>Appointment Date & Time</th>
-                    <th>Phone Number</th> <!-- New column -->
-                    <th>Feedback</th>
-                </tr>
-            </thead>
-            <tbody id="completedAppointments">
-                <!-- Dynamic content will go here -->
-            </tbody>
-        </table>
-        <!-- Missed Appointments Section -->
-        <h2>Missed Appointments</h2>
-        <table class="table appointment-table">
-            <thead>
-                <tr>
-                    <th>Patient Name</th>
-                    <th>Appointment Date & Time</th>
-                    <th>Phone Number</th> <!-- New column -->
-                </tr>
-            </thead>
-            <tbody id="missedAppointments">
-                <!-- Dynamic content will go here -->
-            </tbody>
-        </table>
+        <div class="section-block">
+            <h2>Completed Appointments</h2>
+            <table class="table appointment-table">
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Appointment Date & Time</th>
+                        <th>Phone Number</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+                <tbody id="completedAppointments"></tbody>
+            </table>
+        </div>
 
+        <!-- Missed Appointments Section -->
+        <div class="section-block">
+            <h2>Missed Appointments</h2>
+            <table class="table appointment-table">
+                <thead>
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Appointment Date & Time</th>
+                        <th>Phone Number</th>
+                    </tr>
+                </thead>
+                <tbody id="missedAppointments"></tbody>
+            </table>
+        </div>
     </div>
+
 
 <script>
         console.log("Script loaded"); // add this at the top of your script
@@ -181,63 +214,140 @@
         }
 
 
+        // function loadPatientAppointments() {
+        //     const token = localStorage.getItem('authToken'); // Ensure token is available
+        //     const patientId = localStorage.getItem('patientId'); // Get the patient's ID from localStorage
+        //     const doctorId = localStorage.getItem('doctorId'); // Get the doctor's ID from localStorage
+
+        //     fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, { // Change this line
+        //         method: 'GET',
+        //         headers: {
+        //             'Authorization': `Bearer ${token}` // Include token for authentication
+        //         }
+        //     })
+        //         .then(response => {
+        //             if (!response.ok) throw new Error('Failed to fetch appointments');
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             data.forEach(appointment => {
+        //                 const status = appointment.status?.toLowerCase() || 'pending';
+        //                 const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
+        //                 const now = new Date();
+
+        //                 if (status === 'cancelled') {
+        //                     addCancelledAppointmentRow({
+        //                         id: appointment._id, // ✅ pass the appointment ID
+        //                         patientName: appointment.patientId.name,
+        //                         appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+        //                         phone: appointment.patientId.phone || 'N/A',  // ✅ ADD THIS
+        //                     });
+        //                 }
+        //                 else if (status === 'missed') {
+        //                     addMissedAppointmentRow({
+        //                         patientName: appointment.patientId.name,
+        //                         appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+        //                         phone: appointment.patientId.phone || 'N/A'
+        //                     });
+        //                 }
+
+        //                 else if (status === 'completed') {
+        //                     // Skip here – completed appointments are handled separately
+        //                  } 
+        //                 else if (status !== 'missed') {
+        //                     // Only add to new if not marked missed
+        //                     addNewAppointmentRow({
+        //                         id: appointment._id,
+        //                         patientName: appointment.patientId.name,
+        //                         appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+        //                         phone: appointment.patientId.phone || 'N/A',
+        //                         status: appointment.status || 'Pending'
+        //                     });
+        //                 }
+
+        //             });
+
+
+        //         })
+        //         .catch(err => console.error("Error fetching patient appointments:", err));
+        // }
         function loadPatientAppointments() {
-            const token = localStorage.getItem('authToken'); // Ensure token is available
-            const patientId = localStorage.getItem('patientId'); // Get the patient's ID from localStorage
-            const doctorId = localStorage.getItem('doctorId'); // Get the doctor's ID from localStorage
+                const token = localStorage.getItem('authToken');
+                const patientId = localStorage.getItem('patientId');
+                const doctorId = localStorage.getItem('doctorId');
 
-            fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, { // Change this line
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}` // Include token for authentication
+                if (!token || !patientId || !doctorId) {
+                    console.error("Missing required localStorage data.");
+                    return;
                 }
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to fetch appointments');
-                    return response.json();
-                })
-                .then(data => {
-                    data.forEach(appointment => {
-                        const status = appointment.status?.toLowerCase() || 'pending';
-                        const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
-                        const now = new Date();
 
-                        if (status === 'cancelled') {
-                            addCancelledAppointmentRow({
-                                id: appointment._id, // ✅ pass the appointment ID
-                                patientName: appointment.patientId.name,
-                                appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                phone: appointment.patientId.phone || 'N/A',  // ✅ ADD THIS
-                            });
-                        }
-                        else if (status === 'missed') {
-                            addMissedAppointmentRow({
-                                patientName: appointment.patientId.name,
-                                appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                phone: appointment.patientId.phone || 'N/A'
-                            });
-                        }
+                // Fetch both appointments and feedback
+                Promise.all([
+                     fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, { // Change this line
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    }).then(res => {
+                        if (!res.ok) throw new Error("Failed to fetch appointments");
+                        return res.json();
+                    }),
 
-                        else if (status === 'completed') {
-                            // Skip here – completed appointments are handled separately
-                         } 
-                        else if (status !== 'missed') {
-                            // Only add to new if not marked missed
-                            addNewAppointmentRow({
-                                id: appointment._id,
-                                patientName: appointment.patientId.name,
-                                appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                phone: appointment.patientId.phone || 'N/A',
-                                status: appointment.status || 'Pending'
-                            });
-                        }
+                    fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    }).then(res => {
+                        if (!res.ok) throw new Error("Failed to fetch feedback");
+                        return res.json();
+                    })
+                ])
+                    .then(([appointments, feedbackList]) => {
+                        appointments.forEach(appointment => {
+                            const status = appointment.status?.toLowerCase() || 'pending';
+                            const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
+                            const now = new Date();
 
+                            // Find feedback by this patient for this doctor
+                            const feedback = feedbackList.find(fb =>
+    fb.userId === appointment.patientId._id && fb.doctorId === doctorId
+);
+
+
+                            if (status === 'cancelled') {
+                                addCancelledAppointmentRow({
+                                    id: appointment._id,
+                                    patientName: appointment.patientId.name,
+                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+                                    phone: appointment.patientId.phone || 'N/A',
+                                });
+                            } else if (status === 'missed') {
+                                addMissedAppointmentRow({
+                                    patientName: appointment.patientId.name,
+                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+                                    phone: appointment.patientId.phone || 'N/A'
+                                });
+                            } else if (status === 'completed') {
+                                addCompletedAppointmentRow({
+                                    id: appointment._id,
+                                    patientName: appointment.patientId.name,
+                                    phone: appointment.patientId.phone || 'N/A',
+                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+                                    feedback: feedback
+                                        ? `<strong>Rating:</strong> ${feedback.rating}<br><strong>Comment:</strong> ${feedback.comment}`
+                                        : 'No feedback yet'
+                                });
+                            } else {
+                                addNewAppointmentRow({
+                                    id: appointment._id,
+                                    patientName: appointment.patientId.name,
+                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
+                                    phone: appointment.patientId.phone || 'N/A',
+                                    status: appointment.status || 'Pending'
+                                });
+                            }
+                        });
+                    })
+                    .catch(err => {
+                        console.error("Error fetching patient appointments or feedback:", err);
                     });
+            }
 
-
-                })
-                .catch(err => console.error("Error fetching patient appointments:", err));
-        }
 
         function loadDoctorAppointments() {
             const doctorId = localStorage.getItem('doctorId'); // Ensure doctor ID is stored

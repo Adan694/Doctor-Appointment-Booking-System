@@ -7,11 +7,11 @@
     <title> Admin Dashboard</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
+    
         * {
             box-sizing: border-box;
         }
-
+    
         body {
             margin: 0;
             font-family: 'Roboto', Arial, sans-serif;
@@ -20,57 +20,57 @@
             background-color: #f0f2f5;
             color: #333;
         }
-
+    
         /* Sidebar */
         .sidebar {
             width: 250px;
             min-width: 250px;
             max-width: 250px;
-            background-color: #fff;
+            background-color: rgb(9, 102, 102);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px 0;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
-
+    
         .sidebar h2 {
-            font-size: 24px;
-            color: rgb(9, 102, 102);
+            font-size: 30px;
+            color: white;
             margin: 0 0 40px 20px;
             font-weight: 900;
             letter-spacing: 1.5px;
         }
-
+    
         .sidebar ul {
             list-style: none;
             padding: 0;
             margin: 0;
             width: 100%;
         }
-
+    
         .sidebar ul li {
             padding: 12px 20px;
             margin: 10px 0;
         }
-
+    
         .sidebar ul li a {
             text-decoration: none;
-            color: black;
+            color: white;
             font-size: 16px;
             display: block;
             transition: background-color 0.3s ease, color 0.3s ease;
             border-radius: 6px;
             padding: 10px 15px;
         }
-
+    
         .sidebar ul li a:hover,
         .sidebar ul li a.active {
             background-color: #e8f0fe;
             color: #007bff;
             font-weight: bold;
         }
-
+    
         /* Main content */
         main {
             flex-grow: 1;
@@ -78,7 +78,7 @@
             box-sizing: border-box;
             overflow-y: auto;
         }
-
+    
         /* Header */
         header {
             background-color: #166e6b;
@@ -93,7 +93,7 @@
             border-bottom: 2px solid white;
             padding: 20px 30px;
         }
-
+    
         header button {
             background-color: #28a745;
             border: none;
@@ -104,79 +104,103 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-
+    
         header button:hover {
             background-color: #1e7e34;
         }
-
+    
         /* Dashboard cards */
         .dashboard-cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            display: flex;
+            flex-wrap: wrap;
             gap: 25px;
             margin-top: 30px;
             margin-bottom: 40px;
-            margin-left: 0;
-            padding-left: 0;
         }
-
+    
         .card {
             background-color: #fff;
             padding: 25px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.2);
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
             text-align: center;
             position: relative;
             overflow: hidden;
+            flex: 1;
+            min-width: 240px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
-
+    
+        .card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(22, 110, 107, 0.25);
+        }
+    
+        .card {
+            flex: 2;
+            background: linear-gradient(145deg, #e0f7f7, #ffffff);
+            border: 2px solid #166e6b;
+        }
+    
         .card .icon {
             font-size: 36px;
             color: #166e6b;
             margin-bottom: 15px;
         }
-
+    
         .card h2 {
             margin: 0;
             font-size: 36px;
             font-weight: 900;
             color: #222;
         }
-
+    
         .card p {
-            margin: 8px 0 0;
+            margin-top: 8px;
             font-size: 18px;
             color: #666;
             font-weight: 600;
         }
-
+    
         /* Chart section */
         .charts-section {
             display: flex;
-            gap: 40px;
+            flex-wrap: wrap;
+            gap: 30px;
             margin-bottom: 40px;
-            margin-left: 0;
-            padding-left: 0;
         }
-
+    
         .chart-container {
             background-color: #fff;
             flex: 1;
+            min-width: 280px;
             padding: 25px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.2);
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
+    
+        .chart-container:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 24px rgba(22, 110, 107, 0.25);
+        }
+    
+        .chart-container {
+            border: 2px solid #166e6b;
+            background: linear-gradient(145deg, #e8fafa, #ffffff);
+        }
+    
         .chart-container h3 {
             margin-top: 0;
             margin-bottom: 20px;
             color: #166e6b;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 22px;
             border-bottom: 2px solid #166e6b;
             padding-bottom: 8px;
+            letter-spacing: 0.3px;
         }
-
+    
         /* Today's appointments */
         .todays-appointments {
             background-color: #fff;
@@ -186,7 +210,7 @@
             margin-left: 0;
             padding-left: 10px;
         }
-
+    
         .todays-appointments h3 {
             margin-top: 0;
             margin-bottom: 25px;
@@ -196,7 +220,7 @@
             border-bottom: 2px solid #166e6b;
             padding-bottom: 8px;
         }
-
+    
         .appointment-item {
             display: flex;
             align-items: center;
@@ -204,11 +228,11 @@
             padding-bottom: 12px;
             border-bottom: 1px solid #eee;
         }
-
+    
         .appointment-item:last-child {
             border-bottom: none;
         }
-
+    
         .appointment-photo {
             width: 60px;
             height: 60px;
@@ -218,29 +242,29 @@
             flex-shrink: 0;
             border: 2px solid #166e6b;
         }
-
+    
         .appointment-photo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
+    
         .appointment-info {
             flex-grow: 1;
         }
-
+    
         .appointment-info .name {
             font-weight: 700;
             font-size: 18px;
             color: #222;
         }
-
+    
         .appointment-info .details {
             font-size: 14px;
             color: #666;
             margin-top: 4px;
         }
-
+    
         .appointment-time {
             font-weight: 700;
             color: #166e6b;
@@ -248,7 +272,61 @@
             min-width: 80px;
             text-align: right;
         }
+    
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                flex-direction: column;
+            }
+    
+            .charts-section {
+                flex-direction: column;
+            }
+    
+            .card,
+            .card.large {
+                flex: 1 !important;
+            }
+    
+            .chart-container {
+                flex: 1 1 100%;
+            }
+    
+            main {
+                padding: 20px;
+            }
+        }
+    
+        @media (max-width: 480px) {
+            header {
+                flex-direction: column;
+                gap: 10px;
+                font-size: 22px;
+                align-items: flex-start;
+            }
+    
+            header button {
+                width: 100%;
+            }
+    
+            .appointment-photo {
+                width: 50px;
+                height: 50px;
+            }
+    
+            .appointment-info .name {
+                font-size: 16px;
+            }
+    
+            .appointment-info .details {
+                font-size: 12px;
+            }
+    
+            .appointment-time {
+                font-size: 14px;
+            }
+        }
     </style>
+
 </head>
 
 <body>
@@ -344,7 +422,9 @@
                     headers: { Authorization: 'Bearer ' + token }
                 });
                 const appointmentsData = await appointmentsRes.json();
-                document.getElementById('appointmentsCount').textContent = appointmentsData.todaysAppointments || 0;
+                console.log('Appointments Data:', appointmentsData);
+
+                document.getElementById('appointmentsCount').textContent = appointmentsData.todaysAppointments.length || 0;
 
             } catch (error) {
                 console.error('Error fetching dashboard stats:', error);
@@ -354,10 +434,15 @@
         async function fetchTodaysAppointments() {
             const token = localStorage.getItem('authToken');
             try {
-                const res = await fetch('http://localhost:3000/api/admin/dashboard/todays-appointments-list', {
+                const res = await fetch('http://localhost:3000/api/admin/dashboard/todays-appointments', {
                     headers: { Authorization: 'Bearer ' + token }
                 });
-                const appointments = await res.json();
+                const data = await res.json();
+                console.log("Appointments Data:", data);
+
+                const appointments = Array.isArray(data.todaysAppointments)
+                    ? data.todaysAppointments
+                    : [];
                 const container = document.getElementById('todaysAppointmentsList');
                 container.innerHTML = '';
 
@@ -470,6 +555,8 @@
             });
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </body>
 
 </html>

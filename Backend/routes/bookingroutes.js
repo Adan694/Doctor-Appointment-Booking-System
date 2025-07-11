@@ -1,6 +1,6 @@
 const express = require('express');
 const { bookAppointment, getPatientBookings, getDoctorAppointments, cancelAppointment, updateAppointmentStatus,
-  getAllAppointmentsForDoctor, getAllAppointments, rescheduleAppointment, getSingleAppointment } = require('../Controllers/bookingController');
+  getAllAppointmentsForDoctor, getAllAppointments, rescheduleAppointment, getSingleAppointment, deleteAppointment } = require('../Controllers/bookingController');
 const router = express.Router();
 
 console.log('Booking routes initialized'); // Verify this shows in console
@@ -40,6 +40,7 @@ router.put('/:id/reschedule', rescheduleAppointment);
 
 router.get('/:id', getSingleAppointment);
 // router.get('/appointment/:id', getSingleAppointment);
+router.delete('/:id', deleteAppointment);
 
 
 module.exports = router;

@@ -136,16 +136,26 @@ const getUserCounts = async (req, res) => {
 // Get today's appointments count
 const getTodaysAppointments = async (req, res) => {
   try {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    const now = new Date();
+    const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
 
-    const count = await Booking.countDocuments({
-      date: { $gte: startOfDay, $lte: endOfDay },
-      status: { $in: ['pending', 'confirmed'] }
-    });
-    res.json({ todaysAppointments: count });
+    const appointments = await Booking.find({
+  date: { $gte: startOfDay, $lte: endOfDay },
+  status: { $in: ['pending', 'confirmed'] }
+})
+.populate('patientId doctorId', 'name photo') // populate names/photos
+.lean();
+
+const formattedAppointments = appointments.map(app => ({
+  patientName: app.patientId?.name || 'Unknown',
+  patientPhoto: app.patientId?.photo || 'images/default.jpg',
+  doctorName: app.doctorId?.name || 'Unknown',
+  time: app.time || 'N/A'
+}));
+
+res.json({ todaysAppointments: formattedAppointments });
+
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }
