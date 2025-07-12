@@ -214,63 +214,7 @@
         }
 
 
-        // function loadPatientAppointments() {
-        //     const token = localStorage.getItem('authToken'); // Ensure token is available
-        //     const patientId = localStorage.getItem('patientId'); // Get the patient's ID from localStorage
-        //     const doctorId = localStorage.getItem('doctorId'); // Get the doctor's ID from localStorage
-
-        //     fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, { // Change this line
-        //         method: 'GET',
-        //         headers: {
-        //             'Authorization': `Bearer ${token}` // Include token for authentication
-        //         }
-        //     })
-        //         .then(response => {
-        //             if (!response.ok) throw new Error('Failed to fetch appointments');
-        //             return response.json();
-        //         })
-        //         .then(data => {
-        //             data.forEach(appointment => {
-        //                 const status = appointment.status?.toLowerCase() || 'pending';
-        //                 const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
-        //                 const now = new Date();
-
-        //                 if (status === 'cancelled') {
-        //                     addCancelledAppointmentRow({
-        //                         id: appointment._id, // ✅ pass the appointment ID
-        //                         patientName: appointment.patientId.name,
-        //                         appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-        //                         phone: appointment.patientId.phone || 'N/A',  // ✅ ADD THIS
-        //                     });
-        //                 }
-        //                 else if (status === 'missed') {
-        //                     addMissedAppointmentRow({
-        //                         patientName: appointment.patientId.name,
-        //                         appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-        //                         phone: appointment.patientId.phone || 'N/A'
-        //                     });
-        //                 }
-
-        //                 else if (status === 'completed') {
-        //                     // Skip here – completed appointments are handled separately
-        //                  } 
-        //                 else if (status !== 'missed') {
-        //                     // Only add to new if not marked missed
-        //                     addNewAppointmentRow({
-        //                         id: appointment._id,
-        //                         patientName: appointment.patientId.name,
-        //                         appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-        //                         phone: appointment.patientId.phone || 'N/A',
-        //                         status: appointment.status || 'Pending'
-        //                     });
-        //                 }
-
-        //             });
-
-
-        //         })
-        //         .catch(err => console.error("Error fetching patient appointments:", err));
-        // }
+        
         function loadPatientAppointments() {
                 const token = localStorage.getItem('authToken');
                 const patientId = localStorage.getItem('patientId');
@@ -298,15 +242,22 @@
                     })
                 ])
                     .then(([appointments, feedbackList]) => {
+                            console.log("Loaded feedbackList:", feedbackList); // 👈 Add this
+
                         appointments.forEach(appointment => {
+                                    console.log("Checking appointment:", appointment); // 👈 Add this
+
                             const status = appointment.status?.toLowerCase() || 'pending';
                             const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
                             const now = new Date();
 
                             // Find feedback by this patient for this doctor
-                            const feedback = feedbackList.find(fb =>
-    fb.userId === appointment.patientId._id && fb.doctorId === doctorId
-);
+                          const feedback = feedbackList.find(fb =>
+                                fb.userId?.toString() === appointment.patientId?._id?.toString() &&
+                                fb.doctorId?.toString() === doctorId?.toString()
+                            );
+
+                            console.log("Looking for feedback: userId", appointment.patientId?._id, "doctorId", doctorId);
 
 
                             if (status === 'cancelled') {

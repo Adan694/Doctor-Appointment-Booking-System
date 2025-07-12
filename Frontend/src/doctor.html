@@ -6,33 +6,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Doctor Profile</title>
     <style>
-        body {
-            font-family: Arial;
-            padding: 20px;
-        }
+       body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    padding: 40px 20px;
+    margin: 0;
+    color: #333;
+}
 
-        .profile-card {
-            max-width: 600px;
-            margin: auto;
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .profile-card img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-        .book-button {
+.back-link {
     display: inline-block;
-    margin-top: 15px;
-    padding: 12px 24px;
-    background: linear-gradient(to right, #28a745, #218838);
+    margin-bottom: 25px;
+    padding: 10px 20px;
+    background-color: rgb(9, 102, 102);
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-link:hover {
+    background-color: #23272b;
+    transform: translateY(-2px);
+}
+
+.profile-card {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.profile-card img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+
+h2 {
+    margin: 0 0 10px;
+    color: rgb(9, 102, 102);
+    font-size: 25px;
+}
+
+p {
+    margin: 6px 0;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.book-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 26px;
+    background: rgb(9, 102, 102);
     color: white;
     text-decoration: none;
     font-weight: bold;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-size: 16px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
@@ -41,92 +83,80 @@
     transform: translateY(-2px);
 }
 
+.availability {
+    font-weight: bold;
+    margin-top: 10px;
+}
 
-        .availability {
-            font-weight: bold;
-        }
+.available {
+    color: #28a745;
+}
 
-        .available {
-            color: green;
-        }
+.unavailable {
+    color: #dc3545;
+}
 
-        .unavailable {
-            color: red;
-        }
+/* Feedback Styles */
+h3 {
+    text-align: center;
+    margin-top: 60px;
+    font-size: 30px;
+    color: rgb(9, 102, 102);
+}
 
-        .slots {
-            margin-top: 10px;
-        }
+#feedback-list {
+    max-width: 600px;
+    margin: 20px auto;
+}
 
-        /* Feedback Form Styles */
-        #feedback-form {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 8px;
-        }
+.feedback-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
 
-        #feedback-form label {
-            display: block;
-            margin-bottom: 5px;
-        }
+.feedback-item strong {
+    font-size: 14px;
+    color: #555;
+}
 
-        #feedback-form input,
-        #feedback-form textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
+.feedback-actions {
+    margin-top: 12px;
+}
 
-        #feedback-form button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+.feedback-actions button {
+    background-color: rgb(9, 102, 102);
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 6px;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
 
-        /* Feedback List Styles */
-        .feedback-item {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            margin: 10px 0;
-            background-color: #f9f9f9;
-        }
+.feedback-actions button.delete {
+    background-color:rgb(9, 102, 102);
+}
 
-        .feedback-item strong {
-            display: block;
-        }
+.feedback-actions button:hover {
+    opacity: 0.9;
+}
 
-        .feedback-actions {
-            margin-top: 10px;
-        }
-
-        .feedback-actions button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .feedback-actions button.delete {
-            background-color: #dc3545;
-        }
-    </style>
+</style>
 </head>
 
 <body>
+    <a class="back-link" href="Alldoctorsreal.html">← Back to Doctors Page</a>
+
     <div class="profile-card" id="profile"></div>
-    
+
     <h3>Feedback:</h3>
-    <div id="feedback-list"></div> <!-- Div to display feedback -->
+    <div id="feedback-list"></div>
 
     <script>
         (function () {
@@ -187,6 +217,9 @@
                         const feedbackElem = document.createElement("div");
                         feedbackElem.className = "feedback-item";
                         feedbackElem.dataset.feedbackId = feedback._id;
+                        console.log('From feedback:', feedback.patientId, typeof feedback.patientId);
+                        console.log('From storage:', loggedInPatientId, typeof loggedInPatientId);
+
 
                         let feedbackHTML = `
                                <h4>${feedback.userName || "Anonymous"}</h4>
@@ -196,7 +229,9 @@
 
                             `;
 
-                        if (feedback.patientId === loggedInPatientId) {
+                        // if (feedback.patientId === loggedInPatientId) {
+                        if (String(feedback.patientId) === String(loggedInPatientId)){
+
                             feedbackHTML += `
                                     <div class="feedback-actions">
                                         <button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${feedback.comment}')">Edit</button>

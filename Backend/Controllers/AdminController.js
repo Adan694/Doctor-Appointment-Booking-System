@@ -195,6 +195,134 @@ const getLatestBookings = async (req, res) => {
   }
 };
 
+const getTotalAppointmentsCount = async (req, res) => {
+  try {
+    const count = await Booking.countDocuments();
+    res.json({ totalAppointments: count });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+// Get patients count time series for last 7 days
+const getPatientsTimeSeries = async (req, res) => {
+  try {
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 6);
+    // Aggregate patients created in last 7 days grouped by date
+    const data = await User.aggregate([
+      {
+        $match: {
+          role: 'patient',
+          createdAt: { $gte: sevenDaysAgo, $lte: today }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: '%Y-%m-%d', date: '$createdAt' }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+
+const getTodaysAppointmentsList = async (req, res) => {
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const appointments = await Booking.find({
+      date: { $gte: startOfDay, $lte: endOfDay },
+      status: { $in: ['pending', 'confirmed'] }
+    })
+      .populate('patientId', 'name photo')
+      .populate('doctorId', 'name');
+
+    const formattedAppointments = appointments.map(app => ({
+      patientName: app.patientId ? app.patientId.name : 'Unknown Patient',
+      patientPhoto: app.patientId && app.patientId.photo ? app.patientId.photo : 'images/default.jpg',
+      doctorName: app.doctorId ? app.doctorId.name : 'Unknown Doctor',
+      time: app.time
+    }));
+
+    res.json(formattedAppointments);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+const mongoose = require('mongoose');
+
+
+const getDoctorsTimeSeries = async (req, res) => {
+  try {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const doctorsData = await Doctor.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sevenDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: '%Y-%m-%d', date: '$createdAt' }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.json(doctorsData);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+const getAppointmentsTimeSeries = async (req, res) => {
+  try {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const appointmentsData = await Booking.aggregate([
+      {
+        $match: {
+          date: { $gte: sevenDaysAgo }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: '%Y-%m-%d', date: '$date' }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.json(appointmentsData);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
 module.exports = {
   getAdminProfile,
   getCurrentAdminProfile,
@@ -203,8 +331,28 @@ module.exports = {
   getAllPatients,
   deletePatient,
   getTotalUsers,
-  getUserCounts,
   getTodaysAppointments,
   getFeedbackAlerts,
   getLatestBookings,
+  getUserCounts,
+  getTotalAppointmentsCount,
+  getTodaysAppointmentsList,
+  getPatientsTimeSeries,
+  getDoctorsTimeSeries,
+  getAppointmentsTimeSeries
 };
+
+
+// module.exports = {
+//   getAdminProfile,
+//   getCurrentAdminProfile,
+//   updateAdminProfile,
+//   changeAdminPassword,
+//   getAllPatients,
+//   deletePatient,
+//   getTotalUsers,
+//   getUserCounts,
+//   getTodaysAppointments,
+//   getFeedbackAlerts,
+//   getLatestBookings,
+// };

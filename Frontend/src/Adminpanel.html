@@ -483,77 +483,120 @@
             }
         }
 
-        function renderCharts() {
+       
+        async function renderCharts() {
+            const token = localStorage.getItem('authToken');
             const patientsCtx = document.getElementById('patientsChart').getContext('2d');
             const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
             const doctorsCtx = document.getElementById('doctorsChart').getContext('2d');
 
-            // Sample data for charts - replace with real API data if available
-            const labels = ['12 Jan', '13 Jan', '14 Jan', '15 Jan', '16 Jan', '17 Jan', '18 Jan'];
-            const patientsData = [50, 60, 70, 80, 90, 100, 120];
-            const appointmentsData = [40, 50, 60, 70, 80, 90, 110];
-            const doctorsData = [20, 25, 30, 35, 40, 45, 50];
+            try {
+                // Fetch time series data from backend
+                const [patientsRes, appointmentsRes, doctorsRes] = await Promise.all([
+                    fetch('http://localhost:3000/api/admin/dashboard/patients-time-series', {
+                        headers: { Authorization: 'Bearer ' + token }
+                    }),
+                    fetch('http://localhost:3000/api/admin/dashboard/appointments-time-series', {
+                        headers: { Authorization: 'Bearer ' + token }
+                    }),
+                    fetch('http://localhost:3000/api/admin/dashboard/doctors-time-series', {
+                        headers: { Authorization: 'Bearer ' + token }
+                    })
+                ]);
 
-            new Chart(patientsCtx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Patients',
-                        data: patientsData,
-                        backgroundColor: 'rgb(9, 102, 102)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                const patientsData = await patientsRes.json();
+                const appointmentsData = await appointmentsRes.json();
+                const doctorsData = await doctorsRes.json();
+
+                // Helper function to process data into labels and counts for last 7 days
+                function processTimeSeriesData(data) {
+                    const labels = [];
+                    const counts = [];
+                    const dateMap = new Map();
+                    data.forEach(item => {
+                        dateMap.set(item._id, item.count);
+                    });
+
+                    // Generate last 7 days labels
+                    for (let i = 6; i >= 0; i--) {
+                        const date = new Date();
+                        date.setDate(date.getDate() - i);
+                        const dateStr = date.toISOString().split('T')[0];
+                        labels.push(dateStr);
+                        counts.push(dateMap.get(dateStr) || 0);
+                    }
+                    return { labels, counts };
+                }
+
+                const patientsProcessed = processTimeSeriesData(patientsData);
+                const appointmentsProcessed = processTimeSeriesData(appointmentsData);
+                const doctorsProcessed = processTimeSeriesData(doctorsData);
+
+                new Chart(patientsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: patientsProcessed.labels,
+                        datasets: [{
+                            label: 'Patients',
+                            data: patientsProcessed.counts,
+                            backgroundColor: 'rgb(9, 102, 102)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            new Chart(appointmentsCtx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Appointments',
-                        data: appointmentsData,
-                        backgroundColor: 'rgb(9, 102, 102)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                new Chart(appointmentsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: appointmentsProcessed.labels,
+                        datasets: [{
+                            label: 'Appointments',
+                            data: appointmentsProcessed.counts,
+                            backgroundColor: 'rgb(9, 102, 102)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            new Chart(doctorsCtx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Doctors',
-                        data: doctorsData,
-                        backgroundColor: 'rgb(9, 102, 102)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                new Chart(doctorsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: doctorsProcessed.labels,
+                        datasets: [{
+                            label: 'Doctors',
+                            data: doctorsProcessed.counts,
+                            backgroundColor: 'rgb(9, 102, 102)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
+                });
+
+            } catch (error) {
+                console.error('Error fetching or rendering charts:', error);
+            }
         }
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

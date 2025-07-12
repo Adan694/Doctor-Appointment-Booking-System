@@ -17,10 +17,10 @@ const submitFeedback = async (req, res) => {
 
         const feedback = new Feedback({
             doctorId,
-            userId: user._id, 
+            patientId: user._id, 
             userName: user.name, 
             rating,
-            comment
+            comment,
         });
 
         await feedback.save();

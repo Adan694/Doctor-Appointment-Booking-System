@@ -7,7 +7,7 @@ const feedbackSchema = new mongoose.Schema({
         required: true,
         ref: 'Doctor',
     },
-    userId: {
+    patientId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true, // Ensure this is required
         ref: 'User', // Reference to the User model

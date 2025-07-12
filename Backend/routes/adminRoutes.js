@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAdminProfile, updateAdminProfile, changeAdminPassword, getAllPatients, deletePatient, getTotalUsers, getTodaysAppointments, getFeedbackAlerts, getLatestBookings, getCurrentAdminProfile, getUserCounts } = require('../Controllers/AdminController');
+const { getAdminProfile, updateAdminProfile, changeAdminPassword, getAllPatients, deletePatient, getTotalUsers, getTodaysAppointments, getFeedbackAlerts, getLatestBookings, getCurrentAdminProfile, getUserCounts,getTotalAppointmentsCount, getTodaysAppointmentsList, getPatientsTimeSeries, getDoctorsTimeSeries, getAppointmentsTimeSeries  } = require('../Controllers/AdminController');
 const { authenticateToken, authorizeAdmin } = require('../middlewares/auth');
 const router = express.Router();
 
@@ -26,5 +26,12 @@ router.get('/dashboard/user-counts', authenticateToken, authorizeAdmin, getUserC
 router.get('/dashboard/todays-appointments', authenticateToken, authorizeAdmin, getTodaysAppointments);
 router.get('/dashboard/feedback-alerts', authenticateToken, authorizeAdmin, getFeedbackAlerts);
 router.get('/dashboard/latest-bookings', authenticateToken, authorizeAdmin, getLatestBookings);
+router.get('/dashboard/total-appointments', authenticateToken, authorizeAdmin, getTotalAppointmentsCount);
+router.get('/dashboard/todays-appointments-list', authenticateToken, authorizeAdmin, getTodaysAppointmentsList);
+
+// New routes for time series data
+router.get('/dashboard/patients-time-series', authenticateToken, authorizeAdmin, getPatientsTimeSeries);
+router.get('/dashboard/doctors-time-series', authenticateToken, authorizeAdmin, getDoctorsTimeSeries);
+router.get('/dashboard/appointments-time-series', authenticateToken, authorizeAdmin, getAppointmentsTimeSeries);
 
 module.exports = router;
