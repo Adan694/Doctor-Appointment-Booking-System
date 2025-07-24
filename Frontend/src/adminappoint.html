@@ -208,6 +208,7 @@
             <button class="logout-btn">Logout</button>
         </div>
 
+        <h2>Upcoming Appointments</h2>
         <table>
             <thead>
                 <tr>
@@ -216,68 +217,222 @@
                     <th>Age</th>
                     <th>Date & Time</th>
                     <th>Doctor</th>
-                    <th>Fees</th>
-                    <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
-            <tbody id="appointments-table"></tbody>
+            <tbody id="upcoming-appointments-table">
+                <!-- Upcoming appointments will be dynamically populated here -->
+            </tbody>
         </table>
-    </div>
+        
+        <h2>Completed Appointments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Patient</th>
+                    <th>Age</th>
+                    <th>Date & Time</th>
+                    <th>Doctor</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="completed-appointments-table">
+                <!-- Completed appointments will be dynamically populated here -->
+            </tbody>
+        </table>
+        
+        <h2>Missed/Cancelled Appointments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Patient</th>
+                    <th>Age</th>
+                    <th>Date & Time</th>
+                    <th>Doctor</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="missed-cancelled-appointments-table">
+                <!-- Missed/Cancelled appointments will be dynamically populated here -->
+            </tbody>
+        </table>
+        
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        async function fetchAppointments() {
-            try {
-                const response = await fetch("http://localhost:3000/api/appointments/all");
-                if (!response.ok) {
-                    throw new Error('Failed to load appointments');
-                }
-                const appointments = await response.json();
 
-                const tableBody = document.getElementById('appointments-table');
-                tableBody.innerHTML = '';
-
-                appointments.forEach((appointment, index) => {
-                    const row = document.createElement('tr');
-
-                    const dateObj = new Date(appointment.date);
-                    const formattedDate = dateObj.toLocaleDateString('en-US', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                    });
-                    const formattedTime = appointment.time;
-
-                    const statusClass = appointment.status === 'cancelled' ? 'cancelled' :
-                        appointment.status === 'completed' ? 'completed' : '';
-
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${appointment.patientId?.name || 'Unknown'}</td>
-                        <td>${appointment.patientId?.age || '-'}</td>
-                        <td>${formattedDate}, ${formattedTime}</td>
-                        <td>${appointment.doctorId?.name || 'Unknown'}</td>
-                        <td>$${appointment.fees || '-'}</td>
-                        <td class="action ${statusClass}">
-                            <span class="${statusClass}">${appointment.status || 'pending'}</span>
-                            <button class="delete-btn" onclick="deleteAppointment(this, '${appointment._id}')">✖</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-
-            } catch (error) {
-                console.error("❌ Error fetching appointments:", error);
+   <script>
+    async function fetchAppointments() {
+        try {
+            const response = await fetch('http://localhost:3000/api/appointments/all'); // Adjusted to correct backend port and route
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
+            const appointments = await response.json();
+
+            const upcomingTableBody = document.getElementById('upcoming-appointments-table');
+            const completedTableBody = document.getElementById('completed-appointments-table');
+            const missedCancelledTableBody = document.getElementById('missed-cancelled-appointments-table');
+
+            upcomingTableBody.innerHTML = '';
+            completedTableBody.innerHTML = '';
+            missedCancelledTableBody.innerHTML = '';
+
+            let upcomingIndex = 1;
+            let completedIndex = 1;
+            let missedCancelledIndex = 1;
+
+            appointments.forEach((appointment) => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', appointment._id);
+
+                const statusClass = appointment.status === 'cancelled'
+                    ? 'cancelled'
+                    : (appointment.status === 'completed' ? 'completed' : '');
+
+                let actionButtons = `<button class="delete-btn" onclick="deleteAppointment(this)">❌</button>`;
+
+                if (appointment.status === 'cancelled' || appointment.status === 'missed') {
+                    actionButtons = `
+            <button class="reschedule-btn" onclick="rescheduleAppointment(this)">Reschedule</button>
+            <button class="delete-btn" onclick="deleteAppointment(this)">❌</button>`;
+                }
+
+                row.innerHTML = `
+        <td></td>
+        <td>${appointment.patientId?.name || 'N/A'}</td>
+        <td>${appointment.patientId?.age || 'N/A'}</td>
+        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
+        <td>${appointment.doctorId?.name || 'N/A'}</td>
+        <td class="action ${statusClass}">
+            ${actionButtons}
+        </td>
+    `;
+
+                if (appointment.status === 'completed') {
+                    row.querySelector('td').textContent = completedIndex++;
+                    completedTableBody.appendChild(row);
+                } else if (appointment.status === 'cancelled' || appointment.status === 'missed') {
+                    row.querySelector('td').textContent = missedCancelledIndex++;
+                    missedCancelledTableBody.appendChild(row);
+                } else {
+                    row.querySelector('td').textContent = upcomingIndex++;
+                    upcomingTableBody.appendChild(row);
+                }
+            });
+
+        } catch (error) {
+            console.error('Failed to fetch appointments:', error);
+        }
+    }
+   async function deleteAppointment(button) {
+        const row = button.closest('tr');
+        const appointmentId = row.getAttribute('data-id');
+
+        if (!appointmentId) {
+            alert('Appointment ID not found');
+            return;
         }
 
-        function deleteAppointment(button, appointmentId) {
-            console.log("Deleting appointment:", appointmentId);
-            const row = button.closest('tr');
-            row.remove();
+        const confirmed = confirm('Are you sure you want to permanently delete this appointment?');
+        if (!confirmed) return;
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Appointment deleted successfully.');
+                row.remove(); // Remove from UI
+            } else {
+                alert('Failed to delete appointment: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error deleting appointment: ' + error.message);
+        }
+    }
+
+
+
+   
+
+    async function rescheduleAppointment(button) {
+        const row = button.closest('tr');
+        const appointmentId = row.getAttribute('data-id');
+        if (!appointmentId) {
+            alert('Appointment ID not found');
+            return;
         }
 
-        window.onload = fetchAppointments;
-    </script>
+        // Prompt user for new date and time
+        const newDate = prompt('Enter new date (YYYY-MM-DD):');
+        if (!newDate) {
+            alert('Reschedule cancelled: No date entered');
+            return;
+        }
+        const newTime = prompt('Enter new time (HH:MM):');
+        if (!newTime) {
+            alert('Reschedule cancelled: No time entered');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date: newDate, time: newTime })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert('Appointment rescheduled successfully');
+                // Refresh the appointments list
+                fetchAppointments();
+            } else {
+                alert('Failed to reschedule appointment: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error rescheduling appointment: ' + error.message);
+        }
+    }
+
+    async function cancelAppointment(button) {
+        const row = button.closest('tr');
+        const appointmentId = row.getAttribute('data-id');
+        if (!appointmentId) {
+            alert('Appointment ID not found');
+            return;
+        }
+
+        if (!confirm('Are you sure you want to cancel this appointment?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert('Appointment cancelled successfully');
+                // Remove the row from the table
+                row.remove();
+            } else {
+                alert('Failed to cancel appointment: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error cancelling appointment: ' + error.message);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAppointments();
+    });
+</script>
 </body>
 
 </html>
