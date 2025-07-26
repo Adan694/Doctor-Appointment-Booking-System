@@ -22,10 +22,8 @@ router.get('/', getDoctors);
 router.put('/:id', upload.single('photo'), updateDoctor);
 router.delete('/:id', deleteDoctor);
 router.get('/alldoctors', getDoctors);
-router.get('/:id', getDoctorById); // Add this line
-// router.put('/:id/availability', auth, updateDoctorAvailability);  // Add this line
-router.put('/:id/availability', updateDoctorAvailability);  // Add this line
-// router.get('/doctors/:id/availability', getDoctorAvailability);
+router.get('/:id', getDoctorById); 
+router.put('/:id/availability', updateDoctorAvailability);  
 router.get('/:id/availability', getDoctorAvailability);
 router.delete("/:id/availability/:date", deleteDoctorAvailabilitySlot);
 

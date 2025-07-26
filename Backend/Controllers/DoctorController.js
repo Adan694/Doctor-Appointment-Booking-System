@@ -34,7 +34,7 @@ const addDoctor = async (req, res) => {
       about,
       photo: req.file.filename,
       available: req.body.available === 'true',
-      role: req.body.role || 'doctor' // Store the role from the request
+      role: req.body.role || 'doctor' 
     });
 
     await newDoctor.save();
@@ -69,12 +69,11 @@ const getDoctorById = async (req, res) => {
       if (!doctor) {
           return res.status(404).json({ message: 'Doctor not found.' });
       }
-      // res.status(200).json(doctor);
 // Clean out past availability slots before sending
 const today = new Date().toISOString().split('T')[0]; // format: YYYY-MM-DD
 doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => slot.date >= today);
 
-   // 🔥 Fetch feedback for this doctor
+   //  Fetch feedback for this doctor
    const feedback = await Feedback.find({ doctorId: doctor._id });
 
    res.status(200).json({
@@ -88,31 +87,11 @@ doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => slot.date >= 
       res.status(500).json({ message: 'Internal server error.' });
   }
 };
-// const getDoctorById = async (req, res) => {
-//   const { id } = req.params;
 
-//   // Validate if ID is present and a valid MongoDB ObjectId
-//   if (!id || id === 'null' || id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
-//     return res.status(400).json({ message: 'Invalid doctor ID' });
-//   }
-
-//   try {
-//     const doctor = await Doctor.findById(id);
-//     if (!doctor) {
-//       return res.status(404).json({ message: 'Doctor not found.' });
-//     }
-//     res.status(200).json(doctor);
-//   } catch (error) {
-//     console.error('Error fetching doctor:', error);
-//     res.status(500).json({ message: 'Internal server error.' });
-//   }
-// };
 // Update a doctor by ID
 const updateDoctor = async (req, res) => {
   try {
     const updateFields = req.body;
-
-    // Optional: prevent password/email from being updated by doctor directly
     delete updateFields.password;
     delete updateFields.email;
 
@@ -192,9 +171,8 @@ const getDoctorAvailability = async (req, res) => {
     if (!doctor) {
       return res.status(404).json({ error: 'Doctor not found' }); 
     }
-    // res.json({ availability: doctor.availability });
-    // res.json({ availabilitySlots: doctor.availabilitySlots });
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    
+    const today = new Date().toISOString().split('T')[0]; 
     const futureSlots = doctor.availabilitySlots.filter(slot => slot.date >= today);
     
     res.json({ availabilitySlots: futureSlots });
@@ -222,8 +200,5 @@ const deleteDoctorAvailabilitySlot = async (req, res) => {
     res.status(500).json({ message: "Failed to delete availability slot" });
   }
 };
-
-
-
 
 module.exports = { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, updateDoctorAvailability, getDoctorAvailability, deleteDoctorAvailabilitySlot};

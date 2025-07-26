@@ -11,7 +11,7 @@ const doctorSchema = new mongoose.Schema({
   experience: { type: String, required: true },
   fees: { type: Number, required: true },
   about: { type: String, required: true },
-  photo: { type: String }, // filename of uploaded image
+  photo: { type: String }, 
 
   // Optional fields for profile updates:
   qualifications: String,

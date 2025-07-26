@@ -9,8 +9,8 @@ const feedbackSchema = new mongoose.Schema({
     },
     patientId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true, // Ensure this is required
-        ref: 'User', // Reference to the User model
+        required: true, 
+        ref: 'User', 
     },
     rating: {
         type: Number,

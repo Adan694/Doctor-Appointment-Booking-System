@@ -148,15 +148,7 @@
         <div class="registration form">
             <header>Signup</header>
             <form id="signup-form" onsubmit="event.preventDefault(); handleSignup();">
-                <!-- <select id="signup-role" required>
-                    <option value="" disabled selected>Select your role</option>
-                    <option value="admin">Admin</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="patient">Patient</option>
-                </select> -->
-                <!-- Role is hardcoded to patient -->
-<input type="hidden" id="signup-role" value="patient">
-
+                <input type="hidden" id="signup-role" value="patient">
                 <input type="text" id="signup-email" placeholder="Enter your email" required>
                 <input type="password" id="signup-password" placeholder="Create a password" required>
                 <input type="password" id="confirm-password" placeholder="Confirm your password" required>
@@ -316,8 +308,6 @@
         }
         async function requestOtp(email) {
                 const response = await fetch('http://localhost:3000/auth/request-otp', {
-
-                // const response = await fetch('http://localhost:3000/auth/request-otp', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })

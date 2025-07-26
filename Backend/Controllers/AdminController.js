@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-
 const { User } = require('../models/users');
 const Feedback = require('../models/feedback');
 const Booking = require('../models/booking');
@@ -342,17 +341,3 @@ module.exports = {
   getAppointmentsTimeSeries
 };
 
-
-// module.exports = {
-//   getAdminProfile,
-//   getCurrentAdminProfile,
-//   updateAdminProfile,
-//   changeAdminPassword,
-//   getAllPatients,
-//   deletePatient,
-//   getTotalUsers,
-//   getUserCounts,
-//   getTodaysAppointments,
-//   getFeedbackAlerts,
-//   getLatestBookings,
-// };

@@ -1,4 +1,3 @@
-// controllers/usercontroller.js
 const { User } = require('../models/users');
 
 const getUserProfile = async (req, res) => {
@@ -33,7 +32,6 @@ const updateUserProfile = async (req, res) => {
 
 const submitFeedback = async (req, res) => {
     try {
-        // Save feedback to DB, or send to admin email – implement based on your schema
         const { message } = req.body;
         console.log(`Feedback from ${req.user.email}:`, message);
 
@@ -42,9 +40,6 @@ const submitFeedback = async (req, res) => {
         res.status(500).json({ message: 'Error submitting feedback' });
     }
 };
-
-
-
 module.exports = {
     getUserProfile,
     updateUserProfile,

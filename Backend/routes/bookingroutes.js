@@ -13,9 +13,6 @@ router.get('/test', (req, res) => {
 router.post('/', bookAppointment);
 router.put('/:id', cancelAppointment);
 
-// router.get('/appointments/patient/:patientId', getPatientBookings);
-
-// router.get('/appointments/doctor/:doctorId', getDoctorAppointments);
 // Route for fetching patient bookings
 router.get('/patient/:patientId', getPatientBookings);
 
@@ -23,23 +20,15 @@ router.get('/patient/:patientId', getPatientBookings);
 router.get('/doctor/:doctorId', getDoctorAppointments);
 
 // Route to update the status of an appointment
-// router.put('/appointments/:id/status', updateAppointmentStatus);
-// router.put('/appointments/:id', updateAppointmentStatus); // Add this line
 router.put('/:id/status', updateAppointmentStatus);
-
 
 // Route to get all appointments for a specific doctor
 router.get('/appointments/doctor/all/:doctorId', getAllAppointmentsForDoctor);
-
-// router.get('/appointments/all', getAllAppointments);
 router.get('/all', getAllAppointments);
 
 // Route to reschedule an appointment
-// router.put('/appointments/:id/reschedule', rescheduleAppointment);
 router.put('/:id/reschedule', rescheduleAppointment);
-
 router.get('/:id', getSingleAppointment);
-// router.get('/appointment/:id', getSingleAppointment);
 router.delete('/:id', deleteAppointment);
 
 

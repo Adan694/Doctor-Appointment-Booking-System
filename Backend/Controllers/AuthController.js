@@ -249,5 +249,5 @@ module.exports = {
     requestOtp,
     verifyOtp: verifyOtpController,
     forgotPassword,
-resetPassword,
+    resetPassword,
 };

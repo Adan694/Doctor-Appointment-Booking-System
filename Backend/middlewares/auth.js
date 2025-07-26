@@ -1,4 +1,3 @@
-// middlewares/auth.js
 const jwt = require('jsonwebtoken');
 
 function authenticateToken(req, res, next) {
@@ -8,14 +7,14 @@ function authenticateToken(req, res, next) {
         return res.status(401).json({ message: 'Access token required' });
     }
 
-    const token = authHeader.split(' ')[1]; // Bearer <token>
+    const token = authHeader.split(' ')[1]; 
 
     if (!token) {
         return res.status(403).json({ message: 'Token not found' });
     }
     jwt.verify(token, 'secret-123', (err, user) => {
         if (err) {
-            console.log('JWT Error:', err); // Add this
+            console.log('JWT Error:', err); 
             return res.status(403).json({ message: 'Invalid or expired token' });
         }
 

@@ -1,5 +1,4 @@
 const Feedback = require('../models/feedback');
-// const User = require('../models/users'); // Import User model
 const { User } = require('../models/users'); 
 
 const submitFeedback = async (req, res) => {
