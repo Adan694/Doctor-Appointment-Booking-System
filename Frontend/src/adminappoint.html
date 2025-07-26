@@ -74,9 +74,9 @@
     padding: 20px;
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 0; /* Ensures no extra gap */
-    height: 100vh;  /* Full viewport height if needed */
-    overflow-y: auto; /* Scrollable if content overflows */
+    margin-top: 0;
+    height: 100vh; 
+    overflow-y: auto; 
 }
 
 
@@ -348,7 +348,7 @@
 
             if (response.ok) {
                 alert('Appointment deleted successfully.');
-                row.remove(); // Remove from UI
+                row.remove(); 
             } else {
                 alert('Failed to delete appointment: ' + result.message);
             }
@@ -356,10 +356,6 @@
             alert('Error deleting appointment: ' + error.message);
         }
     }
-
-
-
-   
 
     async function rescheduleAppointment(button) {
         const row = button.closest('tr');

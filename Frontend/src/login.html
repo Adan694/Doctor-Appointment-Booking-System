@@ -205,18 +205,15 @@
                 return res.json();
             })
             .then(data => {
-                // const { token, role } = data;
-                const { token, role, patientId } = data; // Ensure that patientId is included in the response
-
-                // Store token and role
+                const { token, role, patientId } = data; 
                 localStorage.setItem('authToken', token);
                 console.log('Saved token:', localStorage.getItem('authToken'));
 
                 localStorage.setItem('userRole', role);
                 sessionStorage.setItem('userRole', role);
-                localStorage.setItem('patientId', patientId); // Store the patient ID
+                localStorage.setItem('patientId', patientId); 
 
-                console.log("Stored Patient ID:", localStorage.getItem('patientId')); // Log the patient ID
+                console.log("Stored Patient ID:", localStorage.getItem('patientId')); 
 
                 // Store doctorId if role is doctor
                 if (role === 'doctor') {

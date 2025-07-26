@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Feedback - DocAssist</title>
     <style>
-        /* SAME STYLES AS BEFORE (truncated here for clarity) */
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: #f9f9f9;
@@ -109,14 +108,13 @@
                     return;
                 }
 
-                const token = localStorage.getItem("authToken"); // optional if not required
+                const token = localStorage.getItem("authToken"); 
 
                 try {
                     console.log("Fetching doctor with ID:", doctorId);
                     console.log("Retrieved token:", token);
 
                     const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                        // const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`,{
                         headers: token ? { "Authorization": `Bearer ${token}` } : {}
                     });
 
@@ -130,7 +128,7 @@
                     doctorNameEl.innerText = `Doctor: ${doctor.name}`;
                     doctorIdInput.value = doctorId;
                     document.getElementById("feedbackForm").classList.remove("hidden");
-                    loadFeedback(doctorId); // ✅ Show feedback when page loads
+                    loadFeedback(doctorId); 
 
                 } catch (error) {
                     console.error("Doctor fetch failed:", error);
@@ -142,9 +140,9 @@
         document.getElementById("feedbackForm").addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const token = localStorage.getItem("authToken"); // or get it however you store JWT
+            const token = localStorage.getItem("authToken"); 
             if (!token) return alert("You must be logged in.");
-            console.log("Stored Patient ID:", localStorage.getItem('patientId')); // Log the patient ID
+            console.log("Stored Patient ID:", localStorage.getItem('patientId')); 
 
 
             const payload = {

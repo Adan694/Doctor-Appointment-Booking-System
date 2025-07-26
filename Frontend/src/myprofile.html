@@ -37,7 +37,7 @@
     nav {
     display: flex;
     align-items: center;
-    justify-content: space-around; /* Spread items perimeters */  
+    justify-content: space-around;  
   padding: 20px;
     position: fixed;
     top: 0%;
@@ -46,7 +46,6 @@
     color: white;
     z-index: 1000;
     padding: 10px 20px;
-    /* Reduced padding */
 }
 
    
@@ -73,29 +72,20 @@ ul li a:hover {
     display: flex;
     align-items: center;
     font-size: 20px;
-    /* Increased font size */
     margin: 0;
-    /* Remove extra margin */
 }
 
 .logo img {
     width: 60px;
-    /* Set a fixed width */
     height: 60px;
-    /* Set a fixed height to match width */
     border-radius: 50%;
-    /* Make the image round */
     margin-right: 10px;
-    /* Space between image and text */
     object-fit: cover;
-    /* Ensure the image covers the area */
 }
 
 .logo h1 {
     font-size: 30px;
-    /* Increase the font size of the text */
     margin: 0;
-    /* Remove default margin */
 }
 
     .main-container {
@@ -362,7 +352,7 @@ ul li a:hover {
 </head>
 
 <body>
-    <div class="wrapper">    <!-- Navigation -->
+    <div class="wrapper">  
     <nav>
         <div class="logo">
             <img src="images/Da.png" alt="DocAssist Logo">
@@ -378,7 +368,6 @@ ul li a:hover {
 
     <div class="main-container">
         
-        <!-- Appointments Section -->
         <div class="appointments">
             <div id="appointment-tabs" style="margin-bottom: 1em;">
                 <button onclick="showAppointments('upcoming')" class="tab-button active">Upcoming</button>
@@ -403,7 +392,6 @@ ul li a:hover {
                 </tbody>
             </table>
         </div>
-        <!-- <div class="main-container"> -->
             <div class="profile-container">
                 <h2>My Profile</h2>
                 <div class="profile-info">
@@ -510,7 +498,6 @@ ul li a:hover {
     <div class="content" id="popupContent">
         <button id="close" onclick="document.getElementById('popupContent').style.display='none'">Close</button>
         <div class="contentDetail">
-            <!-- Additional content will be populated here -->
         </div>
     </div>
 
@@ -532,7 +519,7 @@ ul li a:hover {
             fetch('http://localhost:3000/user/profile', {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}` // Include token for authentication
+                    'Authorization': `Bearer ${token}` 
                 }
             })
                 .then(response => {
@@ -570,31 +557,29 @@ ul li a:hover {
         // Fetch patient appointments
         function fetchPatientAppointments(token) {
             const patientId = localStorage.getItem('patientId');
-            console.log("Retrieved patientId from localStorage:", patientId); // ✅ Add this line
+            console.log("Retrieved patientId from localStorage:", patientId); 
             showLoader();
 
 
             fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}` // Include token for authentication
+                    'Authorization': `Bearer ${token}` 
                 }
             })
                 .then(response => {
-                    console.log("Raw response:", response); // ✅ Log raw response
+                    console.log("Raw response:", response); 
 
                     if (!response.ok) throw new Error('Failed to fetch appointments');
                     return response.json();
                 })
                 // .then(data => renderAppointments(data))
                 .then(data => {
-                    allAppointments = data; // <-- define and assign
+                    allAppointments = data; 
                     renderAppointments(allAppointments, 'upcoming');
                     hideLoader();
 
                 })
-                // .catch(err => console.error("Error fetching patient appointments:", err));
-                // hideLoader();
                 .catch(err => {
     console.error("Error fetching patient appointments:", err);
     hideLoader();
@@ -615,7 +600,6 @@ ul li a:hover {
             let timeStr = appointment.time?.toString().trim().toLowerCase() || '';
             let formattedTime = '00:00:00';
 
-            // 🔍 Validate and parse AM/PM time correctly
             if (/am|pm/i.test(timeStr)) {
                 const match = timeStr.match(/^(\d{1,2})(?::(\d{2}))?\s?(am|pm)$/i);
                 if (!match) {
@@ -632,17 +616,15 @@ ul li a:hover {
 
                 formattedTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
             } else if (/^\d{1,2}:\d{2}$/.test(timeStr)) {
-                // 24-hour format
                 formattedTime = `${timeStr}:00`;
             } else if (/^\d{1,2}$/.test(timeStr)) {
-                // Example: "14"
                 formattedTime = `${timeStr.padStart(2, '0')}:00:00`;
             } else {
                 console.warn('Unrecognized time format:', timeStr);
                 return false;
             }
 
-            const plainDate = new Date(datePart).toISOString().split('T')[0]; // "YYYY-MM-DD"
+            const plainDate = new Date(datePart).toISOString().split('T')[0]; 
             const appointmentDateTime = new Date(`${plainDate}T${formattedTime}`);
             if (isNaN(appointmentDateTime)) {
                 console.warn('Invalid appointment datetime:', `${plainDate}T${formattedTime}`);
@@ -661,7 +643,7 @@ ul li a:hover {
                 return appointmentDateTime < now && status !== 'completed' && status !== 'cancelled';
             }
 
-            return true; // 'all'
+            return true; 
         });
 
         filtered.sort((a, b) => {
@@ -744,18 +726,14 @@ ul li a:hover {
 
 
             function giveFeedback(appointmentId, doctorId, doctorName) {
-                    // Optional: Save data to localStorage or sessionStorage
                     sessionStorage.setItem('feedbackDoctorId', doctorId);
                     sessionStorage.setItem('feedbackDoctorName', doctorName);
                     sessionStorage.setItem('feedbackAppointmentId', appointmentId);
-
-                    // Redirect to feedback form
                     window.location.href = 'feedback.html';
                 }
 
 
                 function showAppointments(type) {
-                    // Toggle button highlighting
                     document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
                     document.querySelector(`.tab-button[onclick*="${type}"]`).classList.add('active');
 
@@ -764,7 +742,6 @@ ul li a:hover {
 
                    
 
-        // Add this helper function
             function formatTime(timeString) {
                 if (!timeString) return 'N/A';
                 const [hours, minutes] = timeString.split(':');
@@ -774,9 +751,9 @@ ul li a:hover {
 
         // Handle profile form submission
         document.getElementById('profile-form').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault();
 
-            const token = localStorage.getItem('authToken'); // Retrieve the stored token
+            const token = localStorage.getItem('authToken'); 
 
             const updatedData = {
                 name: document.getElementById('name').value,
@@ -792,7 +769,7 @@ ul li a:hover {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, // Add token for authentication
+                    'Authorization': `Bearer ${token}`, 
                 },
                 body: JSON.stringify(updatedData),
             })
@@ -801,8 +778,7 @@ ul li a:hover {
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message); // Notify user of successful update
-                    // Update the displayed profile information
+                    alert(data.message); 
                     document.getElementById('displayName').innerText = updatedData.name;
                     document.getElementById('displayEmail').innerText = updatedData.email;
                     document.getElementById('displayPhone').innerText = updatedData.phone;
@@ -830,13 +806,12 @@ ul li a:hover {
                 })
                     .then(res => {
                         if (!res.ok) {
-                            // Log the raw response to debug
                             return res.text().then(text => {
                                 console.error("Non-JSON error response:", text);
                                 throw new Error(`Failed to fetch appointment details (status: ${res.status})`);
                             });
                         }
-                        return res.json(); // Only parse if OK
+                        return res.json(); 
                     })
                     .then(data => {
                         const contentDetail = document.querySelector('.contentDetail');
@@ -861,10 +836,8 @@ ul li a:hover {
 
         function openFeedbackForm() {
             alert("Feedback form would open here.");
-            // Extend this to show a modal form
         }
 
-        // Add to your JavaScript
             function cancelAppointment(appointmentId) {
                 if (!confirm("Are you sure you want to cancel this appointment?")) return;
 
@@ -880,7 +853,6 @@ ul li a:hover {
                     })
                     .then(data => {
                         alert(data.message);
-                        // Refresh appointments
                         fetchPatientAppointments(localStorage.getItem('authToken'));
                     })
                     .catch(error => {

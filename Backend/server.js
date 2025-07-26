@@ -1,6 +1,5 @@
 const express = require('express');
-// const User = require('./models/users'); 
-const { User } = require('./models/users'); // ✅ CORRECT
+const { User } = require('./models/users'); 
 const Doctor = require('./models/doctors');
 const cors = require('cors');
 const multer = require('multer');
@@ -25,7 +24,6 @@ const port = process.env.PORT || 3000;
 
 require('dotenv').config();  // Load environment variables
 
-// Enable CORS for all origins 
 app.use(cors({
   origin: ['http://localhost:5501', 'http://127.0.0.1:5501'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -45,13 +43,11 @@ app.use('/api', feedbackroute);
 app.use('/', contactRoutes);
 app.use('/api/admin', adminRoutes);
 app.use(express.static(path.join(__dirname, 'Frontend')));
-
-
 app.use(session({
-  secret: 'yourSecretKey', // Change this to a strong secret
+  secret: 'yourSecretKey', 
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // Set to true if using HTTPS
+  cookie: { secure: false } 
 }));
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
@@ -116,8 +112,6 @@ async function createInitialAdmin() {
     console.error('Error creating initial admin user:', error);
   }
 }
-
-// Call the function inside an async IIFE (Immediately Invoked Function Expression)
 (async () => {
   await createInitialAdmin();
 })();

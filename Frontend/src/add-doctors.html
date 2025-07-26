@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Doctor</title>
     <style>
-       /* Basic styling */
-/* Base reset & layout */
-/* Reset & base styles */
 * {
   box-sizing: border-box;
 }
@@ -447,25 +444,6 @@ textarea:focus {
                 submitBtn.textContent = 'Add Doctor';
             }
         });
-
-        // Helper functions
-        // function showError(element, message) {
-        //     const errorElement = document.createElement('div');
-        //     errorElement.className = 'error-message';
-        //     errorElement.textContent = message;
-        //     errorElement.style.color = 'red';
-        //     errorElement.style.marginTop = '5px';
-
-        //     if (element) {
-        //         const existingError = element.querySelector('.error-message');
-        //         if (existingError) existingError.remove();
-
-        //         element.appendChild(errorElement);
-        //         element.style.borderColor = 'red';
-        //     } else {
-        //         alert(message);
-        //     }
-        // }
 
         function showSuccess(message) {
             const successElement = document.createElement('div');

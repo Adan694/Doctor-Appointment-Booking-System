@@ -206,7 +206,6 @@
     <div id="toast">
         </div>
         <!-- Booking Confirmation Modal -->
-        <!-- Booking Confirmation Modal -->
         <div id="bookingModal" class="modal-overlay">
             <div class="modal-content">
                 <h2>Confirm Appointment</h2>
@@ -237,7 +236,7 @@
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const doctorId = params.get("doctorId"); // Changed from doctor to doctorId
+        const doctorId = params.get("doctorId"); 
 
        
         function loadAvailability() {
@@ -288,11 +287,10 @@
                     });                   
             }
             // // Automatically load slots when page opens
-            // document.addEventListener('DOMContentLoaded', loadAvailability);
             function addBookButtonIfMissing() {
-                //added
-                const patientId = localStorage.getItem('patientId'); // Retrieve patient ID
-                console.log("Retrieved Patient ID for Booking:", patientId); // Log the patient ID
+                
+                const patientId = localStorage.getItem('patientId'); 
+                console.log("Retrieved Patient ID for Booking:", patientId); 
 
                     let bookBtn = document.querySelector('.book-btn:not([onclick])');
                     if (!bookBtn) {
@@ -316,14 +314,14 @@
                                     return;
                                 }
 
-                                showBookingModal(date, time);  // << Show the popup modal here
+                                showBookingModal(date, time);  
                             }
                         });
 
 
                         document.addEventListener('click', function (e) {
                             if (e.target.classList.contains('time-slot')) {
-                                bookBtn.disabled = false; // Enable the booking button when a time slot is selected
+                                bookBtn.disabled = false; 
                             }
                         });
 

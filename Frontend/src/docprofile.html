@@ -74,12 +74,12 @@
         }
 
        .container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 100px;
-    padding: 10px; /* optional: adds padding around all blocks */
-}
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 100px;
+            padding: 10px; 
+       }
 
 
         .profile-section,
@@ -320,7 +320,6 @@
             <button class="btn add-slot-btn" onclick="addSlot()">+ Add Slot</button>
         </div>
     </div>
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" style="
     display: none;
     position: fixed;
@@ -341,7 +340,6 @@
         </div>
     </div>
     
-    <!-- Toast Notification -->
     <div id="toast" style="
     display: none;
     position: fixed;
@@ -453,7 +451,7 @@
                     .then(res => res.json())
                     .then(data => {
                         alert("Slot deleted!");
-                        loadAvailability();  // refresh table
+                        loadAvailability();  
                     })
                     .catch(err => {
                         console.error("Failed to delete slot", err);
@@ -470,7 +468,6 @@
             }
 
             const newSlots = getCurrentAvailabilitySlots();
-            // showSpinner();
                 showLoadingOverlay();
             fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
                 headers: { "Authorization": `Bearer ${token}` }
@@ -532,10 +529,8 @@
                     responses.forEach(res => {
                         if (!res.ok) throw new Error("Update failed");
                     });
-                    // hideSpinner();
                     hideLoadingOverlay();
                     showToast("Profile updated successfully!");
-                    // alert("Profile and availability updated successfully!");
                     isEditing = false;
                     toggleEditFields(false);
                     document.getElementById("buttonGroup").innerHTML = `
@@ -544,11 +539,9 @@
                     loadAvailability();
                 })
                 .catch(err => {
-                    // hideSpinner();
                     hideLoadingOverlay();
                     showToast("An error occurred while saving.");
                     console.error("Update error:", err);
-                    // alert("Failed to update profile: " + err.message);
                 });
         }
 

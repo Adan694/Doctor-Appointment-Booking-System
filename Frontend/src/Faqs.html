@@ -149,9 +149,8 @@ h1 {
                 <li><a href="index.html">Home</a></li>
                 <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
                 <li><a href="Contactus.html">Contact Us</a></li>
-                <li><a href="faqs.html">FAQs</a></li> <!-- New FAQs link -->
+                <li><a href="faqs.html">FAQs</a></li> 
                 <li id="myAppointments" style="display: none;"><a href="myappointments.html">My Appointments</a></li>
-                <!-- Updated Login Button -->
             </ul>
         </nav>
 
@@ -238,17 +237,14 @@ h1 {
                     answer.style.display = answer.style.display === 'none' || answer.style.display === '' ? 'block' : 'none';
                 });
             });
+
+             document.getElementById('bar').addEventListener('click', function () {
+                    const menu = document.querySelector('nav ul');
+                    menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
+                });
         </script>
 
     </div>
-
-<script> // JavaScript to toggle the hamburger menu
-    document.getElementById('bar').addEventListener('click', function () {
-        const menu = document.querySelector('nav ul');
-        menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
-    });
-
-</script>
 </body>
 
 

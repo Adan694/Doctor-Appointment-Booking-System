@@ -228,8 +228,6 @@ h3 {
                                <p><strong>Submitted on:</strong> ${new Date(feedback.timestamp).toLocaleDateString()}</p>
 
                             `;
-
-                        // if (feedback.patientId === loggedInPatientId) {
                         if (String(feedback.patientId) === String(loggedInPatientId)){
 
                             feedbackHTML += `
@@ -285,7 +283,7 @@ h3 {
                     .then(data => {
                         console.log("Feedback updated:", data);
                         fetchFeedbackForDoctor(doctorId);
-                        feedbackForm.onsubmit = null; // reset default
+                        feedbackForm.onsubmit = null; 
                         feedbackForm.reset();
                     })
                     .catch(err => {

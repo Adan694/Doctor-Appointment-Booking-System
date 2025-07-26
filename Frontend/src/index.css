@@ -1,7 +1,4 @@
-/* why choose
-doctor slider
-surgery availables
-services : ambulance */
+
 * {
     margin: 0%;
     padding: 0%;
@@ -15,7 +12,7 @@ body {
 nav {
     display: flex;
     align-items: center;
-    justify-content: space-around; /* Spread items perimeters */  
+    justify-content: space-around;   
   padding: 20px;
     position: fixed;
     top: 0%;
@@ -24,7 +21,6 @@ nav {
     color: white;
     z-index: 1000;
     padding: 10px 20px;
-    /* Reduced padding */
 }
 
 ul {
@@ -49,54 +45,35 @@ ul li a:hover {
 
 #bar {
     display: none;
-    /* Hidden by default */
     font-size: 30px;
-    /* Hamburger icon size */
     cursor: pointer;
-    /* Pointer cursor on hover */
 }
 
 .logo {
     display: flex;
     align-items: center;
     font-size: 20px;
-    /* Increased font size */
     margin: 0;
-    /* Remove extra margin */
 }
 
 .logo img {
     width: 60px;
-    /* Set a fixed width */
     height: 60px;
-    /* Set a fixed height to match width */
     border-radius: 50%;
-    /* Make the image round */
     margin-right: 10px;
-    /* Space between image and text */
     object-fit: cover;
-    /* Ensure the image covers the area */
 }
 
 .logo h1 {
     font-size: 30px;
-    /* Increase the font size of the text */
     margin: 0;
-    /* Remove default margin */
 }
-
-  
-
    .show {
        display: block;
-       /* Show dropdown when it has the 'show' class */
    }
    .hidden {
        display: none;
-       /* This can still be useful if you want extra control */
    }
-
-   
 
  .main {
     display: flex;
@@ -146,7 +123,6 @@ ul li a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Center items horizontally */
 }
 
 .search-bar {
@@ -157,9 +133,7 @@ ul li a:hover {
     background-color: #fff;
     border: 1px solid #ddd;
     width: 50%;
-    /* adjust the width to your liking */
     margin: 0 auto;
-    /* this will center the search bar */
     margin-bottom: 20px;
 }
 
@@ -169,7 +143,6 @@ ul li a:hover {
     font-size: 16px;
     border: none;
     margin-right: 10px;
-    /* Space between input and button */
     width: 300px;
 }
 
@@ -188,59 +161,39 @@ ul li a:hover {
     flex-wrap: wrap;
     justify-content: center;
     margin-bottom: 50px;
-    /* add margin to the bottom */
 }
 
 .card {
     flex-basis: 300px;
-    /* Base width of the card */
     max-width: 300px;
-    /* Maximum width of the card */
     flex-grow: 1;
     background-color: #fff;
     margin: 10px;
-    /* Uniform margin for spacing */
     border-radius: 8px;
-    /* Rounded corners */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow */
     overflow: hidden;
-    /* Prevent content overflow */
     text-align: center;
-    /* Center text */
     cursor: pointer;
-        /* 👈 adds pointer on hover */
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card img {
     width: 100%;
     height: 200px;
-    /* Fixed height for consistency */
     object-fit: cover;
-    /* Maintain aspect ratio */
     border-bottom: 2px solid #f0f0f0;
-    /* Divider line */
 }
 
 .card p {
-    /** margin-top: 11px;
-    margin-left: 11px;*/
     margin: 11px;
-    /* Add margin for all sides */
     font-size: 16px;
-    /* Font size for the paragraph */
     color: #333;
-    /* Text color */
     margin-bottom: 20px;
-    /* Add extra space at the bottom of the paragraph */
 }
 .card:hover {
     transform: translateY(-5px);
-    /* 👈 lift effect on hover */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    /* 👈 deeper shadow */ }
-
+}
 .head {
     text-align: center;
     padding: 80px;
@@ -276,7 +229,6 @@ ul li a:hover {
     overflow: hidden;
     margin: auto;
     z-index: 1;
-    /* add this line */
 }
 
 .patientCard {
@@ -298,59 +250,37 @@ ul li a:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    /* Center the icons */
     margin: 20px 0;
-    /* Add margin around the icon container */
 }
 
 .icon {
     width: 120px;
-    /* Set a fixed width for icon boxes */
     height: 120px;
-    /* Set a fixed height for icon boxes */
     text-align: center;
-    /* Center text and images */
     margin: 10px;
-    /* Space between icons */
     padding: 10px;
-    /* Padding inside the icon boxes */
     border-radius: 15px;
-    /* Rounded corners */
     background-color: #f0f0f0;
-    /* Light background color */
-    /* Light background color */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    /* Subtle shadow for depth */
     transition: transform 0.2s;
-    /* Smooth scaling on hover */
     text-decoration: none;
-        /* Remove underline */
     color: inherit;
-            /* Use parent element's color */
     font-weight: bold;
-            /* Optional: makes text bolder */
 }
 
 .icon:hover {
     background-color: #d1e7dd;
-    /* Change background color on hover */
     transform: scale(1.05);
-    /* Scale up slightly on hover */
     text-decoration: none;
         color: #333;
 }
 
 .icon img {
     width: 100px;
-    /* Set a fixed width for the icon image */
     height: 100px;
-    /* Set a fixed height for uniformity */
     object-fit: cover;
-    /* Maintain aspect ratio and cover the space */
     border-radius: 50px;
-    /* Slightly rounded corners for the image */
     margin-bottom: 5px;
-    /* Space between image and text */
 }
 
 .contact {
@@ -475,32 +405,22 @@ ul li a:hover {
 @media screen and (max-width:900px) {
     ul {
         display: none;
-        /* Hide menu by default on small screens */
         flex-direction: column;
-        /* Stack items vertically */
         width: 100%;
-        /* Full width */
         position: absolute;
-        /* Positioning for dropdown */
         top: 60px;
-        /* Position below the navbar */
         left: 0;
-        /* Align left */
         background-color: rgb(9, 102, 102);
-        /* Match background color */
     }
 
     ul.active {
         display: flex;
-        /* Show menu when active */
     }
 
     #bar {
 
         z-index: 1001;
-        /* Higher than the navbar */
         display: block;
-        /* Show hamburger icon */
     }
 
 
@@ -565,15 +485,9 @@ ul li a:hover {
         font-size: 15bpx;
     }
 }
-
-
-
-
 .section {
     margin-top: 80px;
     font-size: 20px;
-
-
 }
 
 .section h2 {
@@ -606,27 +520,18 @@ ul li a:hover {
 
 .see-more {
     display: block;
-    /* Allow margin auto to work */
     margin: 20px auto;
-    /* Center horizontally with auto margins */
     width: fit-content;
     padding: 10px 20px;
-    /* Add some padding */
     background-color: rgb(12, 95, 95);
-    /* Button color */
     color: white;
-    /* Text color */
     text-align: center;
-    /* Center text */
     border-radius: 5px;
-    /* Rounded corners */
     text-decoration: none;
-    /* Remove underline */
 }
 
 .see-more:hover {
     background-color: #0056b3;
-    /* Darker shade on hover */
 }
 
 .hidden {
@@ -640,7 +545,6 @@ ul li a:hover {
 
 .dropbtn {
     color: white;
-    /* Change to match your navbar color */
     padding: 10px;
     text-decoration: none;
 }
@@ -664,7 +568,6 @@ ul li a:hover {
 .dropdown-content a:hover {
     background-color: white;
 }
-
 
 .show {
     display: block;

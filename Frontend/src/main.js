@@ -1,15 +1,13 @@
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Initialize user role and other DOM elements
-        const userRole = localStorage.getItem('userRole'); // Retrieve role from localStorage
-        const authButton = document.getElementById('authButton'); // Get the auth button
-        const myAppointmentsTab = document.getElementById('myprofile'); // Tab for appointments
-        const closeBtn = document.getElementById("close"); // Close button for patient cards
-        const connectBtn = document.getElementById("connectBtn"); // Connect button
-        let slide = document.querySelectorAll(".patientCard"); // Patient cards for the slider
-        let card = document.querySelectorAll(".card"); // Doctor cards for clicking events
+        const userRole = localStorage.getItem('userRole'); 
+        const authButton = document.getElementById('authButton'); 
+        const myAppointmentsTab = document.getElementById('myprofile'); 
+        const closeBtn = document.getElementById("close"); 
+        const connectBtn = document.getElementById("connectBtn"); 
+        let slide = document.querySelectorAll(".patientCard"); 
+        let card = document.querySelectorAll(".card"); 
         let count = 0;
-// ========== Dynamic Doctor Loading ========== //
 const doctorContainer = document.getElementById("doctorContainer");
 
 if (doctorContainer) {
@@ -25,7 +23,7 @@ if (doctorContainer) {
         .then((doctors) => {
             doctorContainer.innerHTML = "";
 
-            const displayedDoctors = doctors.slice(0, 3); // Only show first 4
+            const displayedDoctors = doctors.slice(0, 3); 
             displayedDoctors.forEach((doctor) => {
                 const card = document.createElement("div");
                 card.className = "card";
@@ -34,16 +32,12 @@ if (doctorContainer) {
                     <p><strong>${doctor.name}</strong></p>
                     <p>${doctor.speciality}</p>
                 `;
-                
-                // Redirect to doctor's profile on click
-                card.addEventListener("click", () => {
+                                card.addEventListener("click", () => {
                     window.location.href = `doctor.html?id=${encodeURIComponent(doctor._id)}`;
                 });
                 
                 doctorContainer.appendChild(card);
             });
-
-            // Optional: re-attach click events to new .card elements if needed
         })
         .catch((err) => {
             doctorContainer.innerHTML = "<p style='color:red;'>Failed to load doctors.</p>";
@@ -54,27 +48,25 @@ if (doctorContainer) {
         // Function to update the navbar based on user role
         function updateNavbar() {
             if (userRole === 'patient') {
-                myAppointmentsTab.style.display = 'block'; // Show the tab for patients
+                myAppointmentsTab.style.display = 'block'; 
                 authButton.innerHTML = '<a href="#" class="logout-button" onclick="logout()">Logout</a>'; // Change to Logout
             } else {
-                myAppointmentsTab.style.display = 'none'; // Hide for others
-                authButton.innerHTML = '<a href="login.html" class="login-button">Login</a>'; // Change back to Login
+                myAppointmentsTab.style.display = 'none'; 
+                authButton.innerHTML = '<a href="login.html" class="login-button">Login</a>'; 
             }
         }
-
-        // Call the function to update the navbar
         updateNavbar();
 
         // Function to handle logout
         window.logout = function () {
-            localStorage.removeItem('userRole'); // Clear the user role from localStorage
-            location.reload(); // Reload the page to update the navbar
+            localStorage.removeItem('userRole'); 
+            location.reload(); 
         };
 
         // JavaScript to toggle the hamburger menu
         document.getElementById('bar').addEventListener('click', function () {
             const menu = document.querySelector('nav ul');
-            menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
+            menu.classList.toggle('active'); 
         });
 
         // Initialize slides position
@@ -148,10 +140,9 @@ if (doctorContainer) {
             if (email.value === "" || pass.value === "" || contact.value === "") {
                 alert("Please Enter Details");
             } else {
-                // Assuming email and password are valid and user is authenticated
                 alert("You Logged In");
-                localStorage.setItem('userRole', 'patient'); // Set user role to 'patient'
-                updateNavbar(); // Update navbar after login
+                localStorage.setItem('userRole', 'patient'); 
+                updateNavbar(); 
             }
         });
     });

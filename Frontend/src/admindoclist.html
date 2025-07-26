@@ -17,10 +17,7 @@
         display: flex;
         height: 100vh;
         background-color: #f5f7fa;
-    }
-
-    /* Sidebar */
-    
+    }    
 /* Sidebar */
 .sidebar {
   width: 250px;
@@ -433,13 +430,13 @@
         <script>
             const apiBaseUrl = 'http://localhost:3000/api/doctors';
             // Get user role from localStorage or token (example assumes localStorage)
-            const userRole = localStorage.getItem('userRole') || 'patient'; // default to patient if not set
+            const userRole = localStorage.getItem('userRole') || 'patient'; 
 
             // Logout button handler
             document.getElementById('logoutBtn').addEventListener('click', () => {
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('userRole');
-                window.location.href = 'login.html'; // Redirect to login page
+                window.location.href = 'login.html'; 
             });
 
             // Fetch and render doctors
@@ -480,7 +477,7 @@
                                 <button class="btn btn-delete" onclick="deleteDoctor('${doctor._id}')">Delete</button>
                             </div>`;
                     } else {
-                        buttonsHtml = ''; // No buttons for non-admin users
+                        buttonsHtml = ''; 
                     }
 
                     card.innerHTML = `

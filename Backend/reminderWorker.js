@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const cron = require('node-cron');
 require('dotenv').config();
 
-const sendEmail = require('./utils/sendEmail');
+const sendEmail = require('./Utils/sendEmail');
 const Booking = require('./models/booking'); // Adjust path if your file is named differently
 const {User} = require('./models/users');
 const Doctor = require('./models/doctors');
