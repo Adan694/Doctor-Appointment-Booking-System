@@ -25,7 +25,6 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-                <!---- <li><a href="index.html#speciality">Specialities</a></li>-->
                 <li><a href="Contactus.html">Contact Us</a></li>
                 <li><a href="faqs.html">FAQs</a></li> 
         
@@ -44,8 +43,8 @@
             <div class="contact">
                 <h1>Connect With Us</h1>
                 <form id="contactForm">
+                    <input type="text" placeholder="Enter Full Name" id="name" required>
                     <input type="email" placeholder="Enter Email" id="email" required>
-                    <input type="password" placeholder="Enter Password" id="pass" required>
                     <input type="tel" placeholder="Enter Contact Number" id="phone" required>
                     <textarea id="message" placeholder="Your Message..." required></textarea>
                     <button type="submit" id="connectBtn">Connect</button>
@@ -54,68 +53,114 @@
 
         <!-- Footer Section -->
         <div class="footer">
-            <div class="text">
-                <h3>About Us</h3>
-                <p>24 Hours</p>
-                <p>Top Doctors</p>
-                <p>Best Care</p>
-                <p>Patient</p>
+            <div class="contact-info">
+                <h3>Contact Us</h3>
+                <p>Hospital Name</p>
+                <p>123 Main St, City, State, Zip</p>
+                <p>Phone: (123) 456-7890</p>
+                <p>Email: support@hospital.com</p>
+            </div>
+            <div class="quick-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="">Home</a></li>
+                    <li><a href="Aboutus.html">About Us</a></li>
+                    <li><a href="">Services</a></li>
+                    <li><a href="Alldoctorsreal.html">Doctors</a></li>
+                    <li><a href="Faqs.html">FAQS</a></li>
+                </ul>
             </div>
             <div class="text">
-                <h3>Specialties</h3>
-                <p>Spine Surgery</p>
-                <p>Knee Surgery</p>
-                <p>Leg Surgery</p>
-                <p>Tendon Surgery</p>
+                <h3>Doctors' Specialties</h3>
+                <div class="specialties-columns">
+                    <p>Cardiology</p>
+                    <p>Dermatology</p>
+                    <p>Pediatrics</p>
+                    <p>Orthopedics</p>
+                    <p>Gynecology</p>
+                    <p>Neurology</p>
+                    <p>Gastroenterology</p>
+                    <p>Oncology</p>
+                    <p>Radiology</p>
+                    <p>Psychiatry</p>
+                </div>
             </div>
-            <div class="text">
-                <h3>Best Teams</h3>
-                <p>Doctors</p>
-                <p>Nursing</p>
-                <p>Staff</p>
-                <p>Hospital</p>
-            </div>
-            <div class="text">
-                <h3>Address</h3>
-                <p>Near MG Road</p>
-                <p>Galaxy Care</p>
-                <p>333-00222</p>
-                <p>2222-4334</p>
+            <div class="Legal">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="Privacy.html">Privacy Policy</a></li>
+                    <li><a href="TOS.html">Terms of Services</a></li>
+                </ul>
             </div>
         </div>
+        </div>
+
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('contactForm').addEventListener('submit', async function (e) {
-                e.preventDefault(); 
+   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const nav = document.querySelector('nav');
+        const bar = document.getElementById('bar');
 
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('pass').value;
-                const phone = document.getElementById('phone').value;
-                const message = document.getElementById('message').value;
-
-                const data = { email, password, phone, message };
-
-                try {
-                    const response = await fetch('http://localhost:3000/contact', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    });
-
-                    const result = await response.json();
-                    alert(result.message || 'Form submitted successfully!');
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Failed to submit. Try again.');
-                }
-            });
+        bar.addEventListener('click', () => {
+            nav.classList.toggle('active'); // Toggle the 'active' class
         });
-    </script>
-    
+        document.getElementById('contactForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("Please enter a valid email address.");
+                return;
+            }
+
+            
+            // Name validation
+            if (name.length < 2) {
+                alert("Please enter your full name.");
+                return;
+            }
+
+            // Phone number validation (exactly 11 digits)
+            const phoneRegex = /^[0-9]{11}$/;
+            if (!phoneRegex.test(phone)) {
+                alert("Phone number must be exactly 11 digits.");
+                return;
+            }
+
+            // Message validation
+            if (message.length === 0) {
+                alert("Please enter a message.");
+                return;
+            }
+
+            const data = { email, name, phone, message };
+
+            try {
+                const response = await fetch('http://localhost:3000/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                alert(result.message || 'Form submitted successfully!');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to submit. Try again.');
+            }
+        });
+    });
+</script>
+
 </body>
 
 </html>

@@ -2,17 +2,17 @@ const nodemailer = require('nodemailer');
 const Contact = require('../models/contact');
 
 const handleContactForm = async (req, res) => {
-    const { email, password, phone, message } = req.body;
+    const { email, name, phone, message } = req.body;
     console.log('Received contact form submission:', req.body);
 
 
-    if (!email || !password || !phone || !message) {
+    if (!email || !name || !phone || !message) {
         return res.status(400).json({ message: "All fields are required." });
     }
 
     try {
         // 1. Save to database
-        const newContact = new Contact({ email, password, phone, message });
+        const newContact = new Contact({ email, name, phone, message });
         console.log('Saving to DB:', newContact);
 
         await newContact.save();
@@ -33,13 +33,13 @@ const handleContactForm = async (req, res) => {
             html: `
                 <h2>New Contact Submission</h2>
                 <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Password:</strong> ${password}</p>
+                <p><strong>name:</strong> ${name}</p>
                 <p><strong>Phone:</strong> ${phone}</p>
                 <p><strong>Message:</strong><br>${message}</p>
 
             `
         };
-        console.log('Email content being sent:', mailOptions);
+        // console.log('Email content being sent:', mailOptions.html);
 
 
         await transporter.sendMail(mailOptions);

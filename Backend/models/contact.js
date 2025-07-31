@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const contactSchema = new mongoose.Schema({
     email: String,
-    password: String,
+    name: String,
     phone: String,
     message: String,
     createdAt: { type: Date, default: Date.now }

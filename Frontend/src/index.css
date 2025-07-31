@@ -246,43 +246,87 @@ ul li a:hover {
     border-radius: 5px;
 }
 
-.icon-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 20px 0;
-}
-
+/* 
 .icon {
-    width: 120px;
-    height: 120px;
-    text-align: center;
-    margin: 10px;
-    padding: 10px;
-    border-radius: 15px;
-    background-color: #f0f0f0;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s;
-    text-decoration: none;
-    color: inherit;
-    font-weight: bold;
-}
-
+    text-align: justify;
+    font-size: 14px;
+    padding: 10px;
+    margin-bottom: 20px;
+} */
 .icon:hover {
     background-color: #d1e7dd;
     transform: scale(1.05);
-    text-decoration: none;
-        color: #333;
 }
-
+/* 
 .icon img {
     width: 100px;
     height: 100px;
     object-fit: cover;
     border-radius: 50px;
     margin-bottom: 5px;
+} */
+.icon a {
+    display: block;
+    /* Ensures the link takes the whole area */
 }
-
+.icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 120px;
+    margin: 10px;
+}
+.icon-label {
+    font-size: 16px;
+    color: #555;
+        margin-top: 7px;
+    text-align: center;
+    font-weight: bold;
+}
+/* 
+.icon p {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+} */
+.icon-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+.icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    /* if using icon + text */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0px;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+.icon img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    /* margin-bottom: 5px; */
+}
 .contact {
     width: 300px;
     background-color: #fff;
@@ -332,15 +376,71 @@ ul li a:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    padding: 66px;
+    padding: 40px;
     color: white;
     margin-top: 66px;
-    background-color: rgb(6, 51, 51);
-
+    background-color: rgb(9, 102, 102);
 }
 
+.contact-info,
+.text {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+    flex-direction: column;
+}
+
+.specialties-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+.footer h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.footer p {
+    margin: 15px ;
+    font-size: 16px;
+}
+.quick-links , .Legal{
+    flex: 1;
+    margin: 10px;
+}
+
+.quick-links ul, .Legal ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-links li , .Legal li{
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.quick-links a , .Legal a {
+    color: white;
+    text-decoration: none;
+}
+
+.quick-links a:hover , .Legal a:hover{
+    text-decoration:underline;
+}
 .text p {
     margin-top: 12px;
+}
+
+.footer>div {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.footer>div:last-child {
+    border-right: none;
 }
 
 .content {
@@ -495,28 +595,6 @@ ul li a:hover {
     text-align: center;
 }
 
-.icon-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-}
-
-.icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    text-align: justify;
-    font-size: 14px;
-    padding: 10px;
-    margin-bottom: 20px;
-}
-
 
 .see-more {
     display: block;
@@ -571,4 +649,53 @@ ul li a:hover {
 
 .show {
     display: block;
+}
+
+
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        display: none;
+        /* Hide the menu initially */
+    }
+
+    nav #bar {
+        display: block;
+        /* Show menu icon */
+        cursor: pointer;
+    }
+
+    nav.active ul {
+        display: flex;
+        /* Show menu on click */
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .contact {
+        padding: 10px;
+    }
+
+    .footer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer .text {
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    #contactForm input,
+    #contactForm textarea {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    #connectBtn {
+        width: 100%;
+    }
 }

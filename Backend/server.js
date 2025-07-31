@@ -73,7 +73,7 @@ app.post('/contact', async (req, res) => {
   const { email, password, phone } = req.body;
 
   try {
-      const newContact = new Contact({ email, password, phone });
+      const newContact = new Contact({ email, name, phone });
       await newContact.save();
       res.json({ message: 'Contact form submitted and saved!' });
   } catch (error) {

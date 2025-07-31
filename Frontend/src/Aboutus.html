@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Doctor Appointment Booking System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            z-index: 1000;
+        }
+
+        ul {
+            display: flex;
+        }
+
+        ul li {
+            list-style: none;
+        }
+
+        ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            margin-inline: 20px;
+        }
+
+        ul li a:hover {
+            color: black;
+            border-bottom: 2px solid black;
+        }
+
+        #bar {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .logo h1 {
+            font-size: 30px;
+            margin: 0;
+        }
+
+        header {
+            background: white;
+            color: White;
+            padding: 20px;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        main {
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        header h1 {
+            color: Black;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-members {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .doctor-list {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .doctor-card {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 250px;
+        }
+
+        .doctor-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #007bff;
+            margin-bottom: 10px;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .see-more {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .see-more:hover {
+            background-color: #0056b3;
+        }
+
+        .footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 40px;
+            color: white;
+            margin-top: 66px;
+            background-color: rgb(9, 102, 102);
+        }
+
+        .contact-info,
+        .text {
+            flex: 1;
+            min-width: 200px;
+            margin: 10px;
+            flex-direction: column;
+        }
+
+        .specialties-columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .footer h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .footer p {
+            margin: 15px;
+            font-size: 16px;
+        }
+
+        .quick-links,
+        .Legal {
+            flex: 1;
+            margin: 10px;
+        }
+
+        .quick-links ul,
+        .Legal ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .quick-links li,
+        .Legal li {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .quick-links a,
+        .Legal a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .quick-links a:hover,
+        .Legal a:hover {
+            text-decoration: underline;
+        }
+
+        .text p {
+            margin-top: 12px;
+        }
+
+        .footer>div {
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .footer>div:last-child {
+            border-right: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">
+                <img src="images/Da.png" alt="DocAssist Logo">
+                <h1>DocAssist</h1>
+            </div>
+            <i id="bar" class="fa-solid fa-bars"></i>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
+                <li><a href="Contactus.html">Contact Us</a></li>
+                <li><a href="faqs.html">FAQs</a></li>
+                <li id="myProfileTab" style="display: none;"><a href="myprofile.html">My Profile</a></li>
+                <li id="authButton"><a href="login.html" class="login-button">Login</a></li>
+            </ul>
+        </nav>
+
+        <header>
+            <h1>About Us</h1>
+        </header>
+
+        <main>
+            <section class="introduction">
+                <h2>Welcome to Our Hospital</h2>
+                <p>At [Hospital Name], we are dedicated to providing quality healthcare services to our community. Our
+                    team of experienced professionals is committed to ensuring that every patient receives personalized
+                    care
+                    and attention.</p>
+            </section>
+
+            <section class="mission">
+                <h2>Our Mission</h2>
+                <p>To deliver exceptional healthcare services with compassion, integrity, and respect for every
+                    individual.</p>
+            </section>
+
+            <section class="values">
+                <h2>Our Values</h2>
+                <ul style="list-style: none; padding: 0;">
+                    <li>Compassion</li>
+                    <li>Integrity</li>
+                    <li>Excellence</li>
+                    <li>Teamwork</li>
+                    <li>Innovation</li>
+                </ul>
+            </section>
+
+            <section class="team">
+                <h2>Meet Our Team</h2>
+                <p>Our team consists of skilled doctors, nurses, and support staff who are dedicated to your health and
+                    well-being.</p>
+                <div class="doctor-list">
+                    <div class="card-container" id="doctorContainer">
+                        <!-- Dynamic doctor cards will be injected here -->
+                    </div>
+                    <a href="alldoctorsreal.html" class="see-more">SEE MORE</a>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer Section -->
+        <div class="footer">
+            <div class="contact-info">
+                <h3>Contact Us</h3>
+                <p>Hospital Name</p>
+                <p>123 Main St, City, State, Zip</p>
+                <p>Phone: (123) 456-7890</p>
+                <p>Email: support@hospital.com</p>
+            </div>
+            <div class="quick-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="">Home</a></li>
+                    <li><a href="Aboutus.html">About Us</a></li>
+                    <li><a href="">Services</a></li>
+                    <li><a href="Alldoctorsreal.html">Doctors</a></li>
+                    <li><a href="Faqs.html">FAQS</a></li>
+                </ul>
+            </div>
+            <div class="text">
+                <h3>Doctors' Specialties</h3>
+                <div class="specialties-columns">
+                    <p>Cardiology</p>
+                    <p>Dermatology</p>
+                    <p>Pediatrics</p>
+                    <p>Orthopedics</p>
+                    <p>Gynecology</p>
+                    <p>Neurology</p>
+                    <p>Gastroenterology</p>
+                    <p>Oncology</p>
+                    <p>Radiology</p>
+                    <p>Psychiatry</p>
+                </div>
+            </div>
+            <div class="Legal">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="Privacy.html">Privacy Policy</a></li>
+                    <li><a href="TOS.html">Terms of Services</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to update the navbar based on user role
+        function updateNavbar() {
+            const userRole = localStorage.getItem('userRole'); // Get user role from localStorage
+            const myProfileTab = document.getElementById('myProfileTab');
+            const authButton = document.getElementById('authButton');
+
+            if (userRole === 'patient') {
+                myProfileTab.style.display = 'block';
+                authButton.innerHTML = '<a href="#" class="logout-button" onclick="logout()">Logout</a>';
+            } else {
+                myProfileTab.style.display = 'none';
+                authButton.innerHTML = '<a href="login.html" class="login-button">Login</a>';
+            }
+        }
+
+        // Function to handle logout
+        window.logout = function () {
+            localStorage.removeItem('userRole'); // Remove user role from localStorage
+            location.reload(); // Refresh the page
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const doctorContainer = document.getElementById("doctorContainer");
+
+            if (doctorContainer) {
+                const loadingMessage = document.createElement("p");
+                loadingMessage.textContent = "Loading doctors...";
+                doctorContainer.appendChild(loadingMessage);
+
+                fetch("http://localhost:3000/api/doctors/alldoctors")
+                    .then((res) => {
+                        if (!res.ok) throw new Error("Failed to fetch doctors");
+                        return res.json();
+                    })
+                    .then((doctors) => {
+                        doctorContainer.innerHTML = "";
+
+                        const displayedDoctors = doctors.slice(0, 3);
+                        displayedDoctors.forEach((doctor) => {
+                            const card = document.createElement("div");
+                            card.className = "doctor-card";
+                            card.innerHTML = `
+                                <img src="${doctor.image}" alt="${doctor.name}" />
+                                <p><strong>${doctor.name}</strong></p>
+                                <p>${doctor.speciality}</p>
+                            `;
+                            card.addEventListener("click", () => {
+                                window.location.href = `doctor.html?id=${encodeURIComponent(doctor._id)}`;
+                            });
+
+                            doctorContainer.appendChild(card);
+                        });
+                    })
+                    .catch((err) => {
+                        doctorContainer.innerHTML = "<p style='color:red;'>Failed to load doctors.</p>";
+                        console.error("Error:", err);
+                    });
+            }
+            updateNavbar(); // Update navbar on page load
+        });
+    </script>
+</body>
+
+</html>
