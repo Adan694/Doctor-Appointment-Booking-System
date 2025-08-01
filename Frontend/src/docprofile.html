@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Doctor Profile Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -189,6 +190,29 @@
     border-bottom: 2px solid #eee;
     padding-bottom: 5px;
 }
+.name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.title-label {
+    font-weight: bold;
+    font-size: 20px;
+    color: rgb(9, 102, 102);
+    white-space: nowrap;
+}
+
+.name-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
 
 
         @media (max-width: 768px) {
@@ -219,30 +243,54 @@
     .section-block {
         flex: 1 1 100%;
     }
-}
-.name-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-}
+     nav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
 
-.title-label {
-    font-weight: bold;
-    font-size: 20px;
-    color: rgb(9, 102, 102);
-    white-space: nowrap;
-}
+    .logo h1 {
+        font-size: 22px;
+    }
+     
 
-.name-input {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-}
+     nav ul {
+        display: none; 
+        flex-direction: column; 
+        width: 100%; 
+        position: absolute; 
+        top: 60px;
+        left: 0;
+        background-color: rgb(9, 102, 102);
+        transition: max-height 0.3s ease;
+        overflow: hidden;
+        max-height: 0;
+    }
 
+    nav ul.active {
+        display: flex; 
+        max-height: 300px; 
+    }
+
+    nav ul li {
+        padding: 10px 0;
+        text-align: left;   
+    }
+
+    nav ul li a {
+        font-size: 16px;
+        margin: 5px 0;
+    }
+  #bar {
+        display: block;
+        position: absolute;
+        right: 50px;
+        top: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+}
 
     </style>
 </head>
@@ -356,6 +404,14 @@
     "></div>
 
     <script>
+          document.addEventListener('DOMContentLoaded', () => {
+                const bar = document.getElementById('bar');
+                const menu = document.querySelector('nav ul');
+
+                bar.addEventListener('click', function () {
+                    menu.classList.toggle('active');
+                });
+            });
         const doctorId = localStorage.getItem("doctorId");
         let saveTimeout = null;
         let isEditing = false;

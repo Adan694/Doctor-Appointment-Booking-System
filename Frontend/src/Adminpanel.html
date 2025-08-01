@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Admin Dashboard</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
     
@@ -69,6 +70,11 @@
             background-color: #e8f0fe;
             color: #007bff;
             font-weight: bold;
+        }
+        #bar {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
         }
     
         /* Main content */
@@ -272,7 +278,21 @@
             min-width: 80px;
             text-align: right;
         }
-    
+    #overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 900;
+    display: none;
+}
+
+#overlay.active {
+    display: block;
+}
+
         @media (max-width: 768px) {
             .dashboard-cards {
                 flex-direction: column;
@@ -294,6 +314,34 @@
             main {
                 padding: 20px;
             }
+            .sidebar {
+                display: none;
+        position: fixed;
+        top: 0;
+        left: -250px;
+        height: 100%;
+        z-index: 1000;
+        transition: left 0.3s ease-in-out;
+    }
+
+    .sidebar.active {
+        display: flex;
+        left: 0;
+    }
+
+    #bar {
+        display: block;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 26px;
+        cursor: pointer;
+    }
+
+    #bar:focus {
+        outline: none;
+    }
+
         }
     
         @media (max-width: 480px) {
@@ -341,8 +389,10 @@
             <li><a href="settings.html">Settings</a></li>
         </ul>
     </div>
+    <div id="overlay"></div>
     <main>
         <header>
+        <i id="bar" class="fa-solid fa-bars"></i>
             <div>Admin Dashboard</div>
             <button id="logoutBtn">Logout</button>
         </header>
@@ -386,6 +436,20 @@
     </main>
 
     <script>
+        const bar = document.getElementById('bar');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('overlay');
+
+            bar.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function () {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
         // Logout functionality
         document.getElementById('logoutBtn').addEventListener('click', function () {
             localStorage.removeItem('authToken');

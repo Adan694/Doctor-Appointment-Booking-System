@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Catamaran:wght@200&family=Courgette&family=Dancing+Script:wght@700&family=Edu+TAS+Beginner:wght@700&family=Lato:wght@300;900&family=Mukta:wght@700&family=Mulish:wght@300&family=Open+Sans&family=PT+Sans:ital,wght@1,700&family=Poppins:wght@300&family=Raleway:wght@100&family=Roboto&family=Roboto+Condensed:wght@700&family=Roboto+Slab&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>About Us - Doctor Appointment Booking System</title>
     <style>
         body {
@@ -27,22 +31,22 @@
             z-index: 1000;
         }
 
-        ul {
+        nav ul {
             display: flex;
         }
 
-        ul li {
+        nav ul li {
             list-style: none;
         }
 
-        ul li a {
+       nav  ul li a {
             text-decoration: none;
             color: white;
             font-size: 20px;
             margin-inline: 20px;
         }
 
-        ul li a:hover {
+        nav ul li a:hover {
             color: black;
             border-bottom: 2px solid black;
         }
@@ -239,6 +243,65 @@
         .footer>div:last-child {
             border-right: none;
         }
+        /* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column; 
+        align-items: flex-start;
+    }
+
+    nav ul {
+        display: none; 
+        flex-direction: column; 
+        width: 100%; 
+        position: absolute; 
+        top: 60px;
+        left: 0;
+        background-color: rgb(9, 102, 102);
+    }
+
+    nav ul.active {
+        display: flex; 
+    }
+
+    #bar {
+        display: block;
+        position: absolute;
+        right: 50px;
+        top: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    .footer {
+        flex-direction: column; 
+    }
+
+    .footer > div {
+        width: 100%; 
+        margin: 10px 0; 
+        border-right: none; 
+    }
+}
+
+@media (max-width: 480px) {
+    ul li a {
+        font-size: 18px; 
+    }
+
+    header h1 {
+        font-size: 24px; 
+    }
+
+    .footer h3 {
+        font-size: 16px; 
+    }
+
+    .footer p {
+        font-size: 14px; 
+    }
+}
     </style>
 </head>
 
@@ -370,6 +433,13 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('bar'); 
+            const menu = document.querySelector('nav ul');
+
+            hamburger.addEventListener('click', function () {
+                menu.classList.toggle('active'); 
+            });
+
             const doctorContainer = document.getElementById("doctorContainer");
 
             if (doctorContainer) {
@@ -406,7 +476,7 @@
                         console.error("Error:", err);
                     });
             }
-            updateNavbar(); // Update navbar on page load
+            updateNavbar(); 
         });
     </script>
 </body>

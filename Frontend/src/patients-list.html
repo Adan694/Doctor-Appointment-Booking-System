@@ -5,90 +5,256 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Patients List - DocAssist</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            display: flex;
-            height: 100vh;
-            background-color: #f5f7fa;
+            padding: 0;
         }
-        /* Sidebar */
-.sidebar {
-  width: 250px;
-  background-color: rgb(9, 102, 102);
-  padding: 20px 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
 
-.sidebar h2 {
-  font-size: 30px;
-  color: white;
-  margin: 0 0 40px 20px;
-  font-weight: 900;
-  letter-spacing: 1.5px;
-}
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            color: #333;
+            overflow-x: hidden;
+        }
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            background-color: rgb(9, 102, 102);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
 
-.sidebar ul li {
-  padding: 12px 20px;
-  margin: 10px 0;
-}
+        .sidebar h2 {
+            font-size: 30px;
+            color: white;
+            margin: 0 0 40px 20px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+        }
 
-.sidebar ul li a {
-  text-decoration: none;
-  color: white;
-  font-size: 16px;
-  display: block;
-  border-radius: 6px;
-  padding: 10px 15px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
 
-.sidebar ul li a:hover,
-.sidebar ul li a.active {
-  background-color: #e8f0fe;
-  color: #007bff;
-  font-weight: bold;
-}
+        .sidebar ul li {
+            padding: 12px 20px;
+            margin: 10px 0;
+        }
 
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            display: block;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            border-radius: 6px;
+            padding: 10px 15px;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #e8f0fe;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #166e6b;
+            color: white;
+            padding: 20px 16px;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            border-bottom: 2px solid white;
+        }
+
+        header button {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            padding: 10px 22px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        header button:hover {
+            background-color: #1e7e34;
+        }
+
+        #bar {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
 
         h1 {
-            color: rgb(9, 102, 102);
+            color: #166e6b;
+            margin-bottom: 20px;
         }
 
+        /* Table Styles */
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            margin-top: 30px;
+            background-color: #fff;
+            border-radius: 14px;
             overflow: hidden;
-        }
-
-        th,
-        td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
+            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
         }
 
         th {
-            background-color: rgb(9, 102, 102);
+            background-color: #166e6b;
             color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
         }
 
         tr:hover {
-            background-color: #e0f2f1;
+            background-color: #f9f9f9;
+        }
+
+        .delete-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #166e6b;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            color: #dc3545;
+        }
+
+        /* Overlay for mobile */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 250px;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 900;
+            display: none;
+             
+        }
+        .sidebar.active + #overlay {
+    left: 0;
+    width: 100%;
+}
+
+        #overlay.active {
+            display: block;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            table {
+                font-size: 14px;
+                
+            }
+
+            th,
+            td {
+                padding: 12px;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            #bar {
+                display: block;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 26px;
+                cursor: pointer;
+            }
+
+            header {
+                flex-direction: row;
+                gap: 20px;
+                font-size: 22px;
+                align-items: center;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 15px;
+                font-size: 20px;
+            }
+
+            header button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -105,41 +271,44 @@
             <li><a href="settings.html">Settings</a></li>
         </ul>
     </div>
-    <script>
-        // Load shared sidebar HTML into the container
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('admin-sidebar.html')
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('sidebar-container').innerHTML = html;
-                })
-                .catch(err => {
-                    console.error('Failed to load sidebar:', err);
-                });
-        });
-    </script>
+    <div id="overlay"></div>
 
-    <main style="flex-grow: 1; padding: 20px; background-color: #f5f7fa; min-height: 100vh; overflow-y: auto;">
-        <h1 style="color: #00796b;">Patients List</h1>
-        <table id="patientsTable"
-            style="width: 100%; border-collapse: collapse; background-color: white; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; overflow: hidden;">
+    <div class="main-content">
+        <header>
+            <i id="bar" class="fa-solid fa-bars"></i>
+            <div>Patients List</div>
+            <button id="logoutBtn">Logout</button>
+        </header>
+
+        <table id="patientsTable">
             <thead>
                 <tr>
-                    <th
-                        style="padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; background-color: #00796b; color: white;">
-                        Email</th>
-                    <th
-                        style="padding: 12px 15px; border-bottom: 1px solid #ddd; text-align: left; background-color: #00796b; color: white;">
-                        Actions</th>
+                    <th>Email</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Patient rows will be inserted here -->
             </tbody>
         </table>
-    </main>
+    </div>
 
     <script>
+        // Mobile sidebar toggle
+        const bar = document.getElementById('bar');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('overlay');
+
+        bar.addEventListener('click', function () {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function () {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
         // Access control: redirect to login if not admin
         window.addEventListener('DOMContentLoaded', () => {
             const role = localStorage.getItem('userRole');
@@ -149,6 +318,13 @@
                 return;
             }
             fetchPatients();
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+            window.location.href = 'login.html';
         });
 
         async function fetchPatients() {
@@ -174,7 +350,7 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${patient.email || ''}</td>
-                        <td><button class="delete-btn" data-id="${patient._id}">Delete</button></td>
+                        <td><button class="delete-btn" data-id="${patient._id}"><i class="fas fa-trash-alt"></i></button></td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -182,7 +358,7 @@
                 // Add event listeners for delete buttons
                 document.querySelectorAll('.delete-btn').forEach(button => {
                     button.addEventListener('click', async (e) => {
-                        const patientId = e.target.getAttribute('data-id');
+                        const patientId = e.currentTarget.getAttribute('data-id');
                         if (confirm('Are you sure you want to delete this patient profile?')) {
                             await deletePatient(patientId);
                         }
@@ -212,9 +388,8 @@
                 alert('Error deleting patient profile.');
             }
         }
-    </script>
-    <script>
-        // Scroll to top on page load to ensure patients list is visible
+
+        // Scroll to top on page load
         window.addEventListener('load', () => {
             window.scrollTo(0, 0);
         });
