@@ -8,9 +8,9 @@ const addDoctor = async (req, res) => {
     console.log('Request body:', req.body);
     console.log('Uploaded file:', req.file);
 
-    if (!req.file) {
-      return res.status(400).json({ success: false, message: 'Doctor photo is required' });
-    }
+    // if (!req.file) {
+    //   return res.status(400).json({ success: false, message: 'Doctor photo is required' });
+    // }
 
     const { name, email, password, speciality, degree, address1, address2, experience, fees, about } = req.body;
 
@@ -32,7 +32,7 @@ const addDoctor = async (req, res) => {
       experience,
       fees,
       about,
-      photo: req.file.filename,
+      photo: req.file?.filename || null,
       available: req.body.available === 'true',
       role: req.body.role || 'doctor' 
     });
@@ -94,7 +94,9 @@ const updateDoctor = async (req, res) => {
     const updateFields = req.body;
     delete updateFields.password;
     delete updateFields.email;
-
+if (req.file) {
+  updateFields.photo = req.file.filename;  // Save filename to DB
+}
     const updatedDoctor = await Doctor.findByIdAndUpdate(
       req.params.id,
       { $set: updateFields },

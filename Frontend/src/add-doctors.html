@@ -2,515 +2,518 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Doctor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Doctor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <style>
-* {
-  box-sizing: border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body {
-  font-family: 'Roboto', Arial, sans-serif;
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  background-color: #f0f2f5;
-  min-height: 100vh;
-  color: #333;
-}
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: row;
+      background-color: #f0f2f5;
+      min-height: 100vh;
+      color: #333;
+    }
 
-/* Sidebar */
-.sidebar {
-  width: 250px;
-  background-color: rgb(9, 102, 102);
-  padding: 20px 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: rgb(9, 102, 102);
+      padding: 20px 0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
 
-.sidebar h2 {
-  font-size: 30px;
-  color: white;
-  margin: 0 0 40px 20px;
-  font-weight: 900;
-  letter-spacing: 1.5px;
-}
+    .sidebar h2 {
+      font-size: 30px;
+      color: white;
+      margin: 0 0 40px 20px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+    }
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+    }
 
-.sidebar ul li {
-  padding: 12px 20px;
-  margin: 10px 0;
-}
+    .sidebar ul li {
+      padding: 12px 20px;
+      margin: 10px 0;
+    }
 
-.sidebar ul li a {
-  text-decoration: none;
-  color: white;
-  font-size: 16px;
-  display: block;
-  border-radius: 6px;
-  padding: 10px 15px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+    .sidebar ul li a {
+      text-decoration: none;
+      color: white;
+      font-size: 16px;
+      display: block;
+      border-radius: 6px;
+      padding: 10px 15px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-.sidebar ul li a:hover,
-.sidebar ul li a.active {
-  background-color: #e8f0fe;
-  color: #007bff;
-  font-weight: bold;
-}
+    .sidebar ul li a:hover,
+    .sidebar ul li a.active {
+      background-color: #e8f0fe;
+      color: #007bff;
+      font-weight: bold;
+    }
 
-/* Main layout */
-.main-content {
-  flex: 1;
-  padding: 20px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-}
+    /* Main layout */
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+    }
 
-/* Header */
-.header {
-  background-color: rgb(9, 102, 102);
-  color: white;
-  padding: 15px 25px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
+    /* Header */
+    .header {
+      background-color: rgb(9, 102, 102);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
 
-.header h1 {
-  margin: 0;
-  font-size: 24px;
-}
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
 
-.logout-btn {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 22px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+    .logout-btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 22px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-.logout-btn:hover {
-  background-color: #c82333;
-}
- #bar {
-            display: none;
-            font-size: 30px;
-            cursor: pointer;
-        }
-/* Form container */
-.form-container {
-  background-color: white;
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(9, 102, 102, 0.1);
-}
+    .logout-btn:hover {
+      background-color: #c82333;
+    }
 
-.form-group {
-  margin-bottom: 20px;
-}
+    #bar {
+      display: none;
+      font-size: 30px;
+      cursor: pointer;
+    }
 
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 700;
-  color: #333;
-}
+    /* Form container */
+    .form-container {
+      background-color: white;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(9, 102, 102, 0.1);
+    }
 
-input,
-select,
-textarea {
-  width: 100%;
-  padding: 12px;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #fdfdfd;
-  transition: border-color 0.3s;
-}
+    .form-group {
+      margin-bottom: 20px;
+    }
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: rgb(9, 102, 102);
-  outline: none;
-}
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #333;
+    }
 
-/* Upload button style */
-.upload-button {
-  padding: 20px;
-  text-align: center;
-  background-color: #eaf6f6;
-  border: 2px dashed rgb(9, 102, 102);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fdfdfd;
+      transition: border-color 0.3s;
+    }
 
-.upload-button:hover {
-  background-color: #d3eeee;
-}
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgb(9, 102, 102);
+      outline: none;
+    }
 
-.upload-button label {
-  color: rgb(9, 102, 102);
-  font-weight: bold;
-  cursor: pointer;
-}
+    /* Upload button style */
+    .upload-button {
+      padding: 20px;
+      text-align: center;
+      background-color: #eaf6f6;
+      border: 2px dashed rgb(9, 102, 102);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-/* Submit button */
-.btn {
-  background-color: rgb(9, 102, 102);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+    .upload-button:hover {
+      background-color: #d3eeee;
+    }
 
-.btn:hover {
-  background-color: #075b5b;
-}
+    .upload-button label {
+      color: rgb(9, 102, 102);
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-.success-message {
-  margin-top: 15px;
-  color: #28a745;
-  font-weight: bold;
-  text-align: center;
-}
- #overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 900;
-    display: none;
-}
+    /* Submit button */
+    .btn {
+      background-color: rgb(9, 102, 102);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-#overlay.active {
-    display: block;
-}
+    .btn:hover {
+      background-color: #075b5b;
+    }
 
-/* Responsive styles */
-@media (max-width: 1024px) {
-  .sidebar {
-    width: 220px;
-  }
+    .success-message {
+      margin-top: 15px;
+      color: #28a745;
+      font-weight: bold;
+      text-align: center;
+    }
 
-  .form-container {
-    padding: 25px;
-    max-width: 90%;
-  }
-}
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 900;
+      display: none;
+    }
 
-@media (max-width: 768px) {
-  body {
-    flex-direction: column;
-  }
+    #overlay.active {
+      display: block;
+    }
 
-  .main-content {
-    padding: 20px;
-  }
+    /* Responsive styles */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 220px;
+      }
 
-  .form-container {
-    max-width: 95%;
-    padding: 20px;
-  }
+      .form-container {
+        padding: 25px;
+        max-width: 90%;
+      }
+    }
 
-  
-  .sidebar {
-                display: none;
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+
+      .form-container {
+        max-width: 95%;
+        padding: 20px;
+      }
+
+
+      .sidebar {
+        display: none;
         position: fixed;
         top: 0;
         left: -250px;
         height: 100%;
         z-index: 1000;
         transition: left 0.3s ease-in-out;
-    }
+      }
 
-    .sidebar.active {
+      .sidebar.active {
         display: flex;
         left: 0;
-    }
+      }
 
-    #bar {
+      #bar {
         display: block;
         background: none;
         border: none;
         color: white;
         font-size: 26px;
         cursor: pointer;
-    }
+      }
 
-    #bar:focus {
+      #bar:focus {
         outline: none;
+      }
+
+      .logout-btn {
+        margin-left: auto;
+      }
     }
-    .logout-btn{
-      margin-left: auto;
+
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 15px;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 10px;
+        font-size: 22px;
+        align-items: flex-start;
+      }
+
+      input,
+      select,
+      textarea {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .btn,
+      .logout-btn {
+        font-size: 14px;
+        padding: 10px 14px;
+      }
+
+      label {
+        font-size: 14px;
+      }
+
+      .sidebar ul li a {
+        font-size: 14px;
+        padding: 8px 12px;
+      }
+
     }
-  }
-
-@media (max-width: 480px) {
-  .form-container {
-    padding: 15px;
-  }
-  .header {
-                flex-direction: column;
-                gap: 10px;
-                font-size: 22px;
-                align-items: flex-start;
-            }
-
-  input,
-  select,
-  textarea {
-    font-size: 14px;
-    padding: 10px;
-  }
-
-  .btn,
-  .logout-btn {
-    font-size: 14px;
-    padding: 10px 14px;
-  }
-
-  label {
-    font-size: 14px;
-  }
-
-  .sidebar ul li a {
-    font-size: 14px;
-    padding: 8px 12px;
-  }
- 
-}
-
-    </style>
+  </style>
 </head>
 
 <body>
-    <div class="sidebar">
-        <h2>DocAssist</h2>
-        <ul>
-            <li><a href="Adminpanel.html">Dashboard</a></li>
-            <li><a href="adminappoint.html">Appointments</a></li>
-            <li><a href="add-doctors.html">Add Doctor</a></li>
-            <li><a href="admindoclist.html">Doctors List</a></li>
-            <li><a href="patients-list.html">Patients List</a></li>
-            <li><a href="settings.html">Settings</a></li>
-        </ul>
-    </div>
-    <div id="overlay"></div>
+  <div class="sidebar">
+    <h2>DocAssist</h2>
+    <ul>
+      <li><a href="Adminpanel.html">Dashboard</a></li>
+      <li><a href="adminappoint.html">Appointments</a></li>
+      <li><a href="add-doctors.html">Add Doctor</a></li>
+      <li><a href="admindoclist.html">Doctors List</a></li>
+      <li><a href="patients-list.html">Patients List</a></li>
+      <li><a href="settings.html">Settings</a></li>
+    </ul>
+  </div>
+  <div id="overlay"></div>
 
-    <div class="main-content">
-        <div class="header">
-            <i id="bar" class="fa-solid fa-bars"></i>
-            <h1>Admin Dashboard</h1>
-            <button class="logout-btn">Logout</button>
-        </div>
-
-        <div class="form-container">
-            <form id="doctor-form" enctype="multipart/form-data">
-                <div class="form-group">
-                    <div class="upload-button">
-                        <input type="file" id="photo" name="photo"
-                            style="opacity: 0; position: absolute; width: 0.1px; height: 0.1px" required />
-                        <label for="photo" style="cursor: pointer;">Upload Doctor Picture</label>
-                        <label for="photo" style="cursor: pointer;">
-                            <span id="file-name">Upload Doctor Picture</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="name">Your Name</label>
-                    <input type="text" id="name" name="name" placeholder="Name" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Doctor Email</label>
-                    <input type="email" id="email" name="email" placeholder="Email" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Set Password</label>
-                    <input type="password" id="password" name="password" placeholder="Password" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="speciality">Speciality</label>
-                    <select id="speciality" name="speciality" required>
-                        <option value="general">General Physician</option>
-                        <option value="cardiologist">Cardiologist</option>
-                        <option value="dermatologist">Dermatologist</option>
-                        <option value="orthopedist">Orthopedist</option>
-                        <option value="Surgeon">Surgeon</option>
-                        <option value="Opthamologist">Opthamologist</option>
-
-
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="degree">Degree</label>
-                    <input type="text" id="degree" name="degree" placeholder="Degree" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="address1">Address 1</label>
-                    <input type="text" id="address1" name="address1" placeholder="Address 1" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="address2">Address 2</label>
-                    <input type="text" id="address2" name="address2" placeholder="Address 2 (optional)">
-                </div>
-
-                <div class="form-group">
-                    <label for="experience">Experience</label>
-                    <input type="text" id="experience" name="experience" placeholder="e.g., 1 Year" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="fees">Doctor Fees</label>
-                    <input type="number" id="fees" name="fees" placeholder="Doctor Fees" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="about-doctor">About Doctor</label>
-                    <textarea id="about-doctor" name="about" placeholder="Write about the doctor" rows="4"
-                        required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="available">Availability</label>
-                    <select id="available" name="available" required>
-                        <option value="true">Available</option>
-                        <option value="false">Not Available</option>
-                    </select>
-                </div>
-
-                <input type="hidden" id="doctor-role" value="doctor"> <!-- Hidden field for role -->
-
-                <button type="submit" class="btn">Add Doctor</button>
-            </form>
-        </div>
+  <div class="main-content">
+    <div class="header">
+      <i id="bar" class="fa-solid fa-bars"></i>
+      <h1>Admin Dashboard</h1>
+      <button class="logout-btn">Logout</button>
     </div>
 
-    <script>
-      const bar = document.getElementById('bar');
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('overlay');
+    <div class="form-container">
+      <form id="doctor-form" enctype="multipart/form-data">
+        <!-- <div class="form-group">
+          <div class="upload-button">
+            <input type="file" id="photo" name="photo"
+              style="opacity: 0; position: absolute; width: 0.1px; height: 0.1px" required />
+            <label for="photo" style="cursor: pointer;">Upload Doctor Picture</label>
+            <label for="photo" style="cursor: pointer;">
+              <span id="file-name">Upload Doctor Picture</span>
+            </label>
+          </div>
+        </div> -->
 
-        bar.addEventListener('click', function () {
-          sidebar.classList.toggle('active');
-          overlay.classList.toggle('active');
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="Name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Doctor Email</label>
+          <input type="email" id="email" name="email" placeholder="Email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Set Password</label>
+          <input type="password" id="password" name="password" placeholder="Password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="speciality">Speciality</label>
+          <select id="speciality" name="speciality" required>
+            <option value="general">General Physician</option>
+            <option value="cardiologist">Cardiologist</option>
+            <option value="dermatologist">Dermatologist</option>
+            <option value="orthopedist">Orthopedist</option>
+            <option value="Surgeon">Surgeon</option>
+            <option value="Opthamologist">Opthamologist</option>
+
+
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="degree">Degree</label>
+          <input type="text" id="degree" name="degree" placeholder="Degree" required>
+        </div>
+
+        <div class="form-group">
+          <label for="address1">Address 1</label>
+          <input type="text" id="address1" name="address1" placeholder="Address 1" required>
+        </div>
+
+        <div class="form-group">
+          <label for="address2">Address 2</label>
+          <input type="text" id="address2" name="address2" placeholder="Address 2 (optional)">
+        </div>
+
+        <div class="form-group">
+          <label for="experience">Experience</label>
+          <input type="text" id="experience" name="experience" placeholder="e.g., 1 Year" required>
+        </div>
+
+        <div class="form-group">
+          <label for="fees">Doctor Fees</label>
+          <input type="number" id="fees" name="fees" placeholder="Doctor Fees" required>
+        </div>
+
+        <div class="form-group">
+          <label for="about-doctor">About Doctor</label>
+          <textarea id="about-doctor" name="about" placeholder="Write about the doctor" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="available">Availability</label>
+          <select id="available" name="available" required>
+            <option value="true">Available</option>
+            <option value="false">Not Available</option>
+          </select>
+        </div>
+
+        <input type="hidden" id="doctor-role" value="doctor"> <!-- Hidden field for role -->
+
+        <button type="submit" class="btn">Add Doctor</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const bar = document.getElementById('bar');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('overlay');
+
+    bar.addEventListener('click', function () {
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', function () {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+
+    document.getElementById('doctor-form').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const form = document.getElementById('doctor-form');
+      const formData = new FormData(form);
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      // Validate required fields
+      // const photoInput = document.getElementById('photo');
+      // if (!photoInput.files.length) {
+      //   showError(photoInput.parentElement, 'Please upload a doctor picture');
+      //   return;
+      // }
+      // Append the role to the formData
+      formData.append('role', document.getElementById('doctor-role').value);
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      try {
+        // Test connection first
+        const ping = await fetch('http://localhost:3000');
+        if (!ping.ok) throw new Error('Backend not responding');
+
+        // Submit form data
+        const response = await fetch('http://localhost:3000/api/doctors/add', {
+          method: 'POST',
+          body: formData
         });
 
-        overlay.addEventListener('click', function () {
-          sidebar.classList.remove('active');
-          overlay.classList.remove('active');
-        });
+        const data = await response.json();
 
-        document.getElementById('doctor-form').addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            const form = document.getElementById('doctor-form');
-            const formData = new FormData(form);
-            const submitBtn = form.querySelector('button[type="submit"]');
-
-            // Validate required fields
-            const photoInput = document.getElementById('photo');
-            if (!photoInput.files.length) {
-                showError(photoInput.parentElement, 'Please upload a doctor picture');
-                return;
-            }
-            // Append the role to the formData
-            formData.append('role', document.getElementById('doctor-role').value);
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-
-            try {
-                // Test connection first
-                const ping = await fetch('http://localhost:3000');
-                if (!ping.ok) throw new Error('Backend not responding');
-
-                // Submit form data
-                const response = await fetch('http://localhost:3000/api/doctors/add', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Server error');
-                }
-
-                showSuccess('Doctor added successfully!');
-                form.reset();
-                document.getElementById('file-name').textContent = 'Upload Doctor Picture';
-            } catch (err) {
-                console.error('Error:', err);
-                showError(null, err.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Add Doctor';
-            }
-        });
-
-        function showSuccess(message) {
-            const successElement = document.createElement('div');
-            successElement.className = 'success-message';
-            successElement.textContent = message;
-            successElement.style.color = 'green';
-            successElement.style.marginTop = '10px';
-            successElement.style.textAlign = 'center';
-
-            const formContainer = document.querySelector('.form-container');
-            const existingSuccess = formContainer.querySelector('.success-message');
-            if (existingSuccess) existingSuccess.remove();
-
-            formContainer.appendChild(successElement);
-
-            // Auto-remove after 3 seconds and redirect
-            setTimeout(() => {
-                successElement.remove();
-                window.location.href = 'alldoctors.html'; // Redirect to the list of doctors
-            }, 3000);
+        if (!response.ok) {
+          throw new Error(data.message || 'Server error');
         }
 
-        // File input display
-        document.getElementById('photo').addEventListener('change', function (e) {
-            const fileName = e.target.files[0] ? e.target.files[0].name : 'Upload Doctor Picture';
-            document.getElementById('file-name').textContent = fileName;
-        });
-    </script>
+        showSuccess('Doctor added successfully!');
+        form.reset();
+        // document.getElementById('file-name').textContent = 'Upload Doctor Picture';
+      } catch (err) {
+        console.error('Error:', err);
+        showError(null, err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Add Doctor';
+      }
+    });
+
+    function showSuccess(message) {
+      const successElement = document.createElement('div');
+      successElement.className = 'success-message';
+      successElement.textContent = message;
+      successElement.style.color = 'green';
+      successElement.style.marginTop = '10px';
+      successElement.style.textAlign = 'center';
+
+      const formContainer = document.querySelector('.form-container');
+      const existingSuccess = formContainer.querySelector('.success-message');
+      if (existingSuccess) existingSuccess.remove();
+
+      formContainer.appendChild(successElement);
+
+      // Auto-remove after 3 seconds and redirect
+      setTimeout(() => {
+        successElement.remove();
+        window.location.href = 'alldoctors.html'; // Redirect to the list of doctors
+      }, 3000);
+    }
+
+    // File input display
+    // document.getElementById('photo').addEventListener('change', function (e) {
+    //   const fileName = e.target.files[0] ? e.target.files[0].name : 'Upload Doctor Picture';
+    //   document.getElementById('file-name').textContent = fileName;
+    // });
+  </script>
 </body>
 
 </html>

@@ -459,7 +459,8 @@ ul li a:hover {
                         const card = document.createElement("div");
                         card.className = "card";
                         card.innerHTML = `
-                                <img src="${doctor.image}" alt="${doctor.name}" class="doctor-img" />
+                                <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" class="doctor-img" />
+
                                 <div class="card-content">
                                     <h3 class="doctor-name">${doctor.name}</h3>
                                     <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>

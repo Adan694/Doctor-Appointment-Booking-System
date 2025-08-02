@@ -8,399 +8,404 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        display: flex;
-        height: 100vh;
-        background-color: #f5f7fa;
-    }    
-/* Sidebar */
-.sidebar {
-  width: 250px;
-  background-color: rgb(9, 102, 102);
-  padding: 20px 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #f5f7fa;
+        }
 
-.sidebar h2 {
-  font-size: 30px;
-  color: white;
-  margin: 0 0 40px 20px;
-  font-weight: 900;
-  letter-spacing: 1.5px;
-}
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: rgb(9, 102, 102);
+            padding: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
+        .sidebar h2 {
+            font-size: 30px;
+            color: white;
+            margin: 0 0 40px 20px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+        }
 
-.sidebar ul li {
-  padding: 12px 20px;
-  margin: 10px 0;
-}
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
 
-.sidebar ul li a {
-  text-decoration: none;
-  color: white;
-  font-size: 16px;
-  display: block;
-  border-radius: 6px;
-  padding: 10px 15px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+        .sidebar ul li {
+            padding: 12px 20px;
+            margin: 10px 0;
+        }
 
-.sidebar ul li a:hover,
-.sidebar ul li a.active {
-  background-color: #e8f0fe;
-  color: #007bff;
-  font-weight: bold;
-}
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            display: block;
+            border-radius: 6px;
+            padding: 10px 15px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #e8f0fe;
+            color: #007bff;
+            font-weight: bold;
+        }
 
 
-    /* Content */
-    .content {
-        flex: 1;
-  padding: 20px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-    }
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
 
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px 24px;
-        background-color: rgb(9, 102, 102);
-        color: white;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
 
-    .header h1 {
-        font-size: 24px;
-    }
- #bar {
+        .header h1 {
+            font-size: 24px;
+        }
+
+        #bar {
             display: none;
             font-size: 30px;
             cursor: pointer;
         }
-    .logout-button {
-        background-color: #28a745;
-        color: #fff;
-        padding: 10px 16px;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
 
-    .logout-button:hover {
-        background-color: #b02a37;
-    }
+        .logout-button {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    /* Doctor Cards */
-    .doctor-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        padding: 20px 24px;
-    }
+        .logout-button:hover {
+            background-color: #b02a37;
+        }
 
-    .card {
-        background: #fff;
-        border-radius: 10px;
-        border: 1px solid #ddd;
-        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.07);
-        padding: 20px;
-        max-width: calc(33.333% - 20px);
-        flex: 1 1 calc(33.333% - 20px);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+        /* Doctor Cards */
+        .doctor-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px 24px;
+        }
 
-    .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.1);
-    }
-
-    .card img {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-bottom: 15px;
-    }
-
-    .doctor-info {
-        flex-grow: 1;
-    }
-
-    .doctor-name {
-        font-size: 20px;
-        font-weight: 700;
-        color: #333;
-        margin-bottom: 5px;
-    }
-
-    .specialty {
-        font-size: 16px;
-        color: #555;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
-
-    .experience,
-    .rating,
-    .about {
-        font-size: 14px;
-        color: #777;
-        margin-bottom: 5px;
-    }
-
-    .rating {
-        color: #f5c518;
-        font-weight: 600;
-    }
-
-    .btn-group {
-        margin-top: 10px;
-        display: flex;
-        gap: 10px;
-    }
-
-    .btn {
-        padding: 8px 12px;
-        border: none;
-        border-radius: 4px;
-        color: #fff;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-
-    .btn-edit {
-        background-color: #007bff;
-    }
-
-    .btn-edit:hover {
-        background-color: #0056b3;
-    }
-
-    .btn-delete {
-        background-color: #dc3545;
-    }
-
-    .btn-delete:hover {
-        background-color: #a71d2a;
-    }
-
-    /* Modal */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
-    }
-
-    .modal-content {
-        background-color: white;
-        padding: 25px;
-        border-radius: 8px;
-        width: 400px;
-        position: relative;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .modal-header {
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 15px;
-        color: #333;
-    }
-
-    .modal-close {
-        position: absolute;
-        right: 15px;
-        top: 10px;
-        font-size: 24px;
-        color: #888;
-        cursor: pointer;
-    }
-
-    .modal-close:hover {
-        color: #000;
-    }
-
-    .modal form label {
-        font-weight: 600;
-        margin-bottom: 5px;
-        display: block;
-    }
-
-    .modal form input,
-    .modal form textarea {
-        width: 100%;
-        padding: 8px 10px;
-        margin-bottom: 15px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-    }
-
-    .modal form textarea {
-        resize: vertical;
-    }
-
-    .modal form button {
-        background-color: #007bff;
-        color: white;
-        padding: 10px 16px;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.2s ease;
-    }
-
-    .modal form button:hover {
-        background-color: #0056b3;
-    }
-
-    /* Scrollbar for sidebar */
-    nav::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    nav::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.1);
-        border-radius: 6px;
-    }
-       #overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 900;
-    display: none;
-}
-
-#overlay.active {
-    display: block;
-}
-@media (max-width: 1024px) {
         .card {
-            max-width: calc(50% - 20px);
-            flex: 1 1 calc(50% - 20px);
-        }
-    }
-
-    @media (max-width: 768px) {
-        body {
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.07);
+            padding: 20px;
+            max-width: calc(33.333% - 20px);
+            flex: 1 1 calc(33.333% - 20px);
+            display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-       
-         .sidebar {
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.1);
+        }
+
+        .card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .doctor-info {
+            flex-grow: 1;
+        }
+
+        .doctor-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .specialty {
+            font-size: 16px;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .experience,
+        .rating,
+        .about {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        .rating {
+            color: #f5c518;
+            font-weight: 600;
+        }
+
+        .btn-group {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-edit {
+            background-color: #007bff;
+        }
+
+        .btn-edit:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background-color: #a71d2a;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 400px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 24px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #000;
+        }
+
+        .modal form label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .modal form input,
+        .modal form textarea {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .modal form textarea {
+            resize: vertical;
+        }
+
+        .modal form button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+
+        .modal form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Scrollbar for sidebar */
+        nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        nav::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 900;
+            display: none;
+        }
+
+        #overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .card {
+                max-width: calc(50% - 20px);
+                flex: 1 1 calc(50% - 20px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+
+            .sidebar {
                 display: none;
-        position: fixed;
-        top: 0;
-        left: -250px;
-        height: 100%;
-        z-index: 1000;
-        transition: left 0.3s ease-in-out;
-    }
+                position: fixed;
+                top: 0;
+                left: -250px;
+                height: 100%;
+                z-index: 1000;
+                transition: left 0.3s ease-in-out;
+            }
 
-    .sidebar.active {
-        display: flex;
-        left: 0;
-    }
+            .sidebar.active {
+                display: flex;
+                left: 0;
+            }
 
-    #bar {
-        display: block;
-        background: none;
-        border: none;
-        color: white;
-        font-size: 26px;
-        cursor: pointer;
-    }
+            #bar {
+                display: block;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 26px;
+                cursor: pointer;
+            }
 
-    #bar:focus {
-        outline: none;
-    }
+            #bar:focus {
+                outline: none;
+            }
 
-        .header {
+            .header {
                 flex-direction: row;
                 gap: 20px;
                 font-size: 22px;
                 align-items: flex-start;
             }
 
-        .doctor-list {
-            padding: 10px;
+            .doctor-list {
+                padding: 10px;
+            }
+
+            .card {
+                max-width: 100%;
+                flex: 1 1 100%;
+            }
+
+            .modal-content {
+                width: 90%;
+            }
+
+            #logoutBtn {
+                margin-left: auto;
+            }
+
         }
 
-        .card {
-            max-width: 100%;
-            flex: 1 1 100%;
-        }
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 20px;
+            }
 
-        .modal-content {
-            width: 90%;
-        }
-        #logoutBtn {
-        margin-left: auto;
-    }
-       
-    }
+            .logout-button {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
 
-    @media (max-width: 480px) {
-        .header h1 {
-            font-size: 20px;
-        }
+            .card {
+                padding: 15px;
+            }
 
-        .logout-button {
-            padding: 8px 12px;
-            font-size: 14px;
-        }
+            .doctor-name {
+                font-size: 18px;
+            }
 
-        .card {
-            padding: 15px;
+            .specialty,
+            .experience,
+            .rating,
+            .about {
+                font-size: 13px;
+            }
         }
-
-        .doctor-name {
-            font-size: 18px;
-        }
-
-        .specialty,
-        .experience,
-        .rating,
-        .about {
-            font-size: 13px;
-        }
-    }
-
     </style>
 </head>
 
@@ -416,7 +421,7 @@
             <li><a href="settings.html">Settings</a></li>
         </ul>
     </div>
-        <div id="overlay"></div>
+    <div id="overlay"></div>
 
     <div class="content">
         <div class="header">
@@ -424,105 +429,108 @@
             <h1>All Doctors</h1>
             <button id="logoutBtn" class="logout-button">Logout</button>
         </div>
-    
+
         <div class="doctor-list" id="doctorList">
-            
+
             <!-- Doctor cards will be dynamically inserted here -->
         </div>
     </div>
-    
-        
-        <!-- Edit Doctor Modal -->
-        <div id="editModal" class="modal">
-            <div class="modal-content">
-                <span class="modal-close" id="modalClose">&times;</span>
-                <div class="modal-header">Edit Doctor Profile</div>
-                <form id="editDoctorForm">
-                    <input type="hidden" id="doctorId" />
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" required />
-                    <label for="speciality">Speciality</label>
-                    <input type="text" id="speciality" name="speciality" required />
-                    <label for="experience">Experience</label>
-                    <input type="text" id="experience" name="experience" required />
-                    <label for="rating">Rating</label>
-                    <input type="number" step="0.1" min="0" max="5" id="rating" name="rating" required />
-                    <input type="text" id="hospital" name="hospital" required />
-                    <label for="about">About</label>
-                    <textarea id="about" name="about" rows="3" required></textarea>
-                    <button type="submit">Save Changes</button>
-                </form>
-            </div>
+
+
+    <!-- Edit Doctor Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <div class="modal-header">Edit Doctor Profile</div>
+            <form id="editDoctorForm">
+                <input type="hidden" id="doctorId" />
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required />
+                <label for="speciality">Speciality</label>
+                <input type="text" id="speciality" name="speciality" required />
+                <label for="experience">Experience</label>
+                <input type="text" id="experience" name="experience" required />
+                <label for="rating">Rating</label>
+                <input type="number" step="0.1" min="0" max="5" id="rating" name="rating" required />
+                <input type="text" id="hospital" name="hospital" required />
+                <label for="about">About</label>
+                <textarea id="about" name="about" rows="3" required></textarea>
+                <button type="submit">Save Changes</button>
+            </form>
         </div>
-        
-        <script>
-            const bar = document.getElementById('bar');
-                const sidebar = document.querySelector('.sidebar');
-                const overlay = document.getElementById('overlay');
+    </div>
 
-                bar.addEventListener('click', function () {
-                    sidebar.classList.toggle('active');
-                    overlay.classList.toggle('active');
-                });
+    <script>
+        const bar = document.getElementById('bar');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('overlay');
 
-                overlay.addEventListener('click', function () {
-                    sidebar.classList.remove('active');
-                    overlay.classList.remove('active');
-                });
-            const apiBaseUrl = 'http://localhost:3000/api/doctors';
-            // Get user role from localStorage or token (example assumes localStorage)
-            const userRole = localStorage.getItem('userRole') || 'patient'; 
+        bar.addEventListener('click', function () {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
 
-            // Logout button handler
-            document.getElementById('logoutBtn').addEventListener('click', () => {
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('userRole');
-                window.location.href = 'login.html'; 
+        overlay.addEventListener('click', function () {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+        const apiBaseUrl = 'http://localhost:3000/api/doctors';
+        // Get user role from localStorage or token (example assumes localStorage)
+        const userRole = localStorage.getItem('userRole') || 'patient';
+
+        // Logout button handler
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+            window.location.href = 'login.html';
+        });
+
+        // Fetch and render doctors
+        async function fetchDoctors() {
+            try {
+                const response = await fetch(apiBaseUrl);
+                if (!response.ok) throw new Error('Failed to fetch doctors');
+                const doctors = await response.json();
+                renderDoctors(doctors);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // Render doctor cards with role-based UI and search filter
+        function renderDoctors(doctors) {
+            const doctorList = document.getElementById('doctorList');
+            doctorList.innerHTML = '';
+            const searchInput = document.getElementById('search-input');
+            const filterText = searchInput ? searchInput.value.toLowerCase() : '';
+
+            const filteredDoctors = doctors.filter(doctor => {
+                const nameMatch = doctor.name && doctor.name.toLowerCase().includes(filterText);
+                const specialityMatch = doctor.speciality && doctor.speciality.toLowerCase().includes(filterText);
+                return nameMatch || specialityMatch;
             });
 
-            // Fetch and render doctors
-            async function fetchDoctors() {
-                try {
-                    const response = await fetch(apiBaseUrl);
-                    if (!response.ok) throw new Error('Failed to fetch doctors');
-                    const doctors = await response.json();
-                    renderDoctors(doctors);
-                } catch (error) {
-                    alert(error.message);
-                }
-            }
+            filteredDoctors.forEach((doctor) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.id = doctor._id;
 
-            // Render doctor cards with role-based UI and search filter
-            function renderDoctors(doctors) {
-                const doctorList = document.getElementById('doctorList');
-                doctorList.innerHTML = '';
-                const searchInput = document.getElementById('search-input');
-                const filterText = searchInput ? searchInput.value.toLowerCase() : '';
-
-                const filteredDoctors = doctors.filter(doctor => {
-                    const nameMatch = doctor.name && doctor.name.toLowerCase().includes(filterText);
-                    const specialityMatch = doctor.speciality && doctor.speciality.toLowerCase().includes(filterText);
-                    return nameMatch || specialityMatch;
-                });
-
-                filteredDoctors.forEach((doctor) => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.dataset.id = doctor._id;
-
-                    let buttonsHtml = '';
-                    if (userRole === 'admin') {
-                        buttonsHtml = `
+                let buttonsHtml = '';
+                if (userRole === 'admin') {
+                    buttonsHtml = `
                             <div class="btn-group">
                                 <button class="btn btn-edit" onclick="openEditModal('${doctor._id}')">Edit</button>
                                 <button class="btn btn-delete" onclick="deleteDoctor('${doctor._id}')">Delete</button>
                             </div>`;
-                    } else {
-                        buttonsHtml = ''; 
-                    }
+                } else {
+                    buttonsHtml = '';
+                }
 
-                    card.innerHTML = `
-                            <img src="http://localhost:3000/uploads/${doctor.photo || 'default.jpg'}" alt="${doctor.name}" />
+                card.innerHTML = `
+                           
+                          ${doctor.photo ? `<img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" />` : ''}
+
+
                             <div class="doctor-info">
                                 <p class="doctor-name">${doctor.name}</p>
                                 <p class="specialty">${doctor.speciality}</p>
@@ -532,138 +540,138 @@
                             </div>
                             ${buttonsHtml}
                         `;
-                    doctorList.appendChild(card);
-                });
-            }
-
-            // Open edit modal and populate form
-            async function openEditModal(doctorId) {
-                try {
-                    const response = await fetch(`${apiBaseUrl}/${doctorId}`);
-                    if (!response.ok) throw new Error('Failed to fetch doctor details');
-                    const doctor = await response.json();
-
-                    document.getElementById('doctorId').value = doctor._id;
-                    document.getElementById('name').value = doctor.name || '';
-                    document.getElementById('speciality').value = doctor.speciality || '';
-                    document.getElementById('experience').value = doctor.experience || '';
-                    document.getElementById('rating').value = doctor.rating || '';
-                    document.getElementById('about').value = doctor.about || '';
-
-                    document.getElementById('editModal').style.display = 'block';
-                } catch (error) {
-                    alert(error.message);
-                }
-            }
-
-            // Close modal
-            document.getElementById('modalClose').onclick = function () {
-                document.getElementById('editModal').style.display = 'none';
-            };
-
-            window.onclick = function (event) {
-                const modal = document.getElementById('editModal');
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            };
-
-            // Handle edit form submission
-            document.getElementById('editDoctorForm').addEventListener('submit', async function (e) {
-                e.preventDefault();
-
-                const doctorId = document.getElementById('doctorId').value;
-                const updatedDoctor = {
-                    name: document.getElementById('name').value,
-                    speciality: document.getElementById('speciality').value,
-                    experience: document.getElementById('experience').value,
-                    rating: parseFloat(document.getElementById('rating').value),
-                    about: document.getElementById('about').value,
-                };
-
-                try {
-                    const token = localStorage.getItem('authToken');
-                    if (!token) {
-                        alert('Authentication token missing. Please login again.');
-                        window.location.href = 'login.html';
-                        return;
-                    }
-
-                    const response = await fetch(`${apiBaseUrl}/${doctorId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(updatedDoctor),
-                    });
-
-                    if (response.status === 403) {
-                        alert('Session expired or unauthorized. Please login again.');
-                        localStorage.removeItem('authToken');
-                        localStorage.removeItem('userRole');
-                        window.location.href = 'login.html';
-                        return;
-                    }
-
-                    if (!response.ok) throw new Error('Failed to update doctor');
-
-                    alert('Doctor profile updated successfully');
-                    document.getElementById('editModal').style.display = 'none';
-                    fetchDoctors();
-                } catch (error) {
-                    alert(error.message);
-                }
+                doctorList.appendChild(card);
             });
+        }
 
-            // Delete doctor
-            async function deleteDoctor(doctorId) {
-                if (!confirm('Are you sure you want to delete this doctor?')) return;
+        // Open edit modal and populate form
+        async function openEditModal(doctorId) {
+            try {
+                const response = await fetch(`${apiBaseUrl}/${doctorId}`);
+                if (!response.ok) throw new Error('Failed to fetch doctor details');
+                const doctor = await response.json();
 
-                try {
-                    const token = localStorage.getItem('authToken');
-                    if (!token) {
-                        alert('Authentication token missing. Please login again.');
-                        window.location.href = 'login.html';
-                        return;
-                    }
+                document.getElementById('doctorId').value = doctor._id;
+                document.getElementById('name').value = doctor.name || '';
+                document.getElementById('speciality').value = doctor.speciality || '';
+                document.getElementById('experience').value = doctor.experience || '';
+                document.getElementById('rating').value = doctor.rating || '';
+                document.getElementById('about').value = doctor.about || '';
 
-                    const response = await fetch(`${apiBaseUrl}/${doctorId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
+                document.getElementById('editModal').style.display = 'block';
+            } catch (error) {
+                alert(error.message);
+            }
+        }
 
-                    if (response.status === 403) {
-                        alert('Session expired or unauthorized. Please login again.');
-                        localStorage.removeItem('authToken');
-                        localStorage.removeItem('userRole');
-                        window.location.href = 'login.html';
-                        return;
-                    }
+        // Close modal
+        document.getElementById('modalClose').onclick = function () {
+            document.getElementById('editModal').style.display = 'none';
+        };
 
-                    if (!response.ok) throw new Error('Failed to delete doctor');
+        window.onclick = function (event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
 
-                    alert('Doctor deleted successfully');
-                    fetchDoctors();
-                } catch (error) {
-                    alert(error.message);
+        // Handle edit form submission
+        document.getElementById('editDoctorForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const doctorId = document.getElementById('doctorId').value;
+            const updatedDoctor = {
+                name: document.getElementById('name').value,
+                speciality: document.getElementById('speciality').value,
+                experience: document.getElementById('experience').value,
+                rating: parseFloat(document.getElementById('rating').value),
+                about: document.getElementById('about').value,
+            };
+
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert('Authentication token missing. Please login again.');
+                    window.location.href = 'login.html';
+                    return;
                 }
-            }
 
-            // Initial fetch
-            fetchDoctors();
-
-            // Add event listener for search input to filter doctors dynamically
-            const searchInput = document.getElementById('search-input');
-            if (searchInput) {
-                searchInput.addEventListener('input', () => {
-                    fetchDoctors();
+                const response = await fetch(`${apiBaseUrl}/${doctorId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updatedDoctor),
                 });
-            }
-        </script>
 
-                </body>
-                
-                </html>
+                if (response.status === 403) {
+                    alert('Session expired or unauthorized. Please login again.');
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userRole');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                if (!response.ok) throw new Error('Failed to update doctor');
+
+                alert('Doctor profile updated successfully');
+                document.getElementById('editModal').style.display = 'none';
+                fetchDoctors();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        // Delete doctor
+        async function deleteDoctor(doctorId) {
+            if (!confirm('Are you sure you want to delete this doctor?')) return;
+
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert('Authentication token missing. Please login again.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/${doctorId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 403) {
+                    alert('Session expired or unauthorized. Please login again.');
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userRole');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                if (!response.ok) throw new Error('Failed to delete doctor');
+
+                alert('Doctor deleted successfully');
+                fetchDoctors();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // Initial fetch
+        fetchDoctors();
+
+        // Add event listener for search input to filter doctors dynamically
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                fetchDoctors();
+            });
+        }
+    </script>
+
+</body>
+
+</html>

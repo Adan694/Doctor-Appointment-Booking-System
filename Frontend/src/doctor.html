@@ -157,6 +157,8 @@ h3 {
 
     <h3>Feedback:</h3>
     <div id="feedback-list"></div>
+    <!-- Feedback submission / edit form -->
+    
 
     <script>
         (function () {
@@ -232,7 +234,7 @@ h3 {
 
                             feedbackHTML += `
                                     <div class="feedback-actions">
-                                        <button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${feedback.comment}')">Edit</button>
+<button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${encodeURIComponent(feedback.comment)}')">Edit</button>
                                         <button class="delete" onclick="deleteFeedback('${feedback._id}')">Delete</button>
                                     </div>
                                 `;
@@ -248,53 +250,102 @@ h3 {
         }
 
       
-        function editFeedback(feedbackId, currentRating, currentComment) {
-            document.getElementById("rating").value = currentRating;
-            document.getElementById("comment").value = currentComment;
+        // function editFeedback(feedbackId, currentRating, currentComment) {
+        //     document.getElementById("rating").value = currentRating;
+        //     document.getElementById("comment").value = currentComment;
 
-            const feedbackItem = document.querySelector(`[data-feedback-id="${feedbackId}"]`);
-            if (feedbackItem) {
-                feedbackItem.remove();
+        //     const feedbackItem = document.querySelector(`[data-feedback-id="${feedbackId}"]`);
+        //     if (feedbackItem) {
+        //         feedbackItem.remove();
+        //     }
+
+        //     const feedbackForm = document.getElementById("feedback-form");
+        //     feedbackForm.onsubmit = function (event) {
+        //         event.preventDefault();
+
+        //         const rating = document.getElementById("rating").value;
+        //         const comment = document.getElementById("comment").value;
+        //         const doctorId = new URLSearchParams(window.location.search).get("id");
+        //         const token = localStorage.getItem('token');
+
+        //         const updatedFeedbackData = { rating, comment };
+
+        //         fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
+        //             method: "PUT",
+        //             headers: {
+        //                 "Content-Type": "application/json",
+        //                 "Authorization": `Bearer ${token}`
+        //             },
+        //             body: JSON.stringify(updatedFeedbackData),
+        //         })
+        //             .then(response => {
+        //                 if (!response.ok) throw new Error("Failed to update feedback");
+        //                 return response.json();
+        //             })
+        //             .then(data => {
+        //                 console.log("Feedback updated:", data);
+        //                 fetchFeedbackForDoctor(doctorId);
+        //                 feedbackForm.onsubmit = null; 
+        //                 feedbackForm.reset();
+        //             })
+        //             .catch(err => {
+        //                 console.error("Error:", err);
+        //             });
+        //     };
+        // }
+        function editFeedback(feedbackId, currentRating, encodedComment) {
+                const currentComment = decodeURIComponent(encodedComment);
+
+                const feedbackItem = document.querySelector(`[data-feedback-id="${feedbackId}"]`);
+                if (!feedbackItem) return;
+
+                feedbackItem.innerHTML = `
+        <label>Rating:</label><br>
+        <input type="number" id="edit-rating-${feedbackId}" value="${currentRating}" min="1" max="5" /><br><br>
+        
+        <label>Comment:</label><br>
+        <textarea id="edit-comment-${feedbackId}" rows="4">${currentComment}</textarea><br><br>
+        
+        <button onclick="submitEditedFeedback('${feedbackId}')">Save</button>
+        <button onclick="fetchFeedbackForDoctor('${new URLSearchParams(window.location.search).get("id")}')">Cancel</button>
+    `;
             }
 
-            const feedbackForm = document.getElementById("feedback-form");
-            feedbackForm.onsubmit = function (event) {
-                event.preventDefault();
+    function submitEditedFeedback(feedbackId) {
+        const doctorId = new URLSearchParams(window.location.search).get("id");
+        const token = localStorage.getItem('authToken');
+        const rating = document.getElementById(`edit-rating-${feedbackId}`).value;
+        const comment = document.getElementById(`edit-comment-${feedbackId}`).value;
 
-                const rating = document.getElementById("rating").value;
-                const comment = document.getElementById("comment").value;
-                const doctorId = new URLSearchParams(window.location.search).get("id");
-                const token = localStorage.getItem('token');
+        const updatedFeedback = { rating, comment };
 
-                const updatedFeedbackData = { rating, comment };
+        fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(updatedFeedback),
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to update feedback");
+                return response.json();
+            })
+            .then(data => {
+                console.log("Feedback updated:", data);
+                fetchFeedbackForDoctor(doctorId); // Reload updated feedback
+            })
+            .catch(err => {
+                console.error("Error updating feedback:", err);
+            });
+    }
 
-                fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify(updatedFeedbackData),
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error("Failed to update feedback");
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log("Feedback updated:", data);
-                        fetchFeedbackForDoctor(doctorId);
-                        feedbackForm.onsubmit = null; 
-                        feedbackForm.reset();
-                    })
-                    .catch(err => {
-                        console.error("Error:", err);
-                    });
-            };
-        }
 
         function deleteFeedback(feedbackId) {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             const doctorId = new URLSearchParams(window.location.search).get("id");
+            console.log("Token in deleteFeedback:", token);
+
 
             fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
                 method: "DELETE",

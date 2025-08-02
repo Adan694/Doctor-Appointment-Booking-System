@@ -452,13 +452,17 @@
                 .catch(err => console.error("Error fetching doctor appointments:", err));
         }
 
-        function loadFromLocalStorage() {
+       function loadFromLocalStorage() {
+            const doctorId = localStorage.getItem('doctorId');
             const cancelledAppointments = JSON.parse(localStorage.getItem('cancelledAppointments')) || [];
-            cancelledAppointments.forEach(appointment => {
-                addCancelledAppointmentRow(appointment);
-            });
-        
+
+            cancelledAppointments
+                .filter(appointment => appointment.doctorId === doctorId)  // Only show relevant ones
+                .forEach(appointment => {
+                    addCancelledAppointmentRow(appointment);
+                });
         }
+
         // Call this function on page load
         window.onload = function () {
             loadFromLocalStorage();

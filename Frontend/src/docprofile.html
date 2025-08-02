@@ -417,14 +417,14 @@
         let isEditing = false;
         let draggedRow = null;
 
-        function previewImage() {
-            const file = document.getElementById("fileUpload").files[0];
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById("profilePic").src = e.target.result;
-            };
-            if (file) reader.readAsDataURL(file);
-        }
+        // function previewImage() {
+        //     const file = document.getElementById("fileUpload").files[0];
+        //     const reader = new FileReader();
+        //     reader.onload = function (e) {
+        //         document.getElementById("profilePic").src = e.target.result;
+        //     };
+        //     if (file) reader.readAsDataURL(file);
+        // }
 
         function loadDoctorProfile() {
             const token = localStorage.getItem('authToken');
@@ -516,90 +516,97 @@
             }
 
         function saveProfile() {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                alert("You are not logged in. Redirecting to login page.");
-                window.location.href = 'login.html';
-                return;
-            }
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert("You are not logged in. Redirecting to login page.");
+                    window.location.href = 'login.html';
+                    return;
+                }
 
-            const newSlots = getCurrentAvailabilitySlots();
+                const fileInput = document.getElementById("fileUpload");
+                const file = fileInput.files[0];
+
+                const profile = new FormData();
+                profile.append("name", document.getElementById("doctorName").value);
+                profile.append("speciality", document.getElementById("specialization").value);
+                profile.append("qualifications", document.getElementById("qualifications").value);
+                profile.append("services", document.getElementById("services").value);
+                profile.append("conditions", document.getElementById("conditions").value);
+                profile.append("experience", document.getElementById("experience").value);
+                profile.append("memberships", document.getElementById("memberships").value);
+                profile.append("fees", document.getElementById("fees").value);
+                profile.append("locations", document.getElementById("locations").value);
+
+                if (file) {
+                    profile.append("photo", file);  
+                }
+
                 showLoadingOverlay();
-            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            })
-                .then(res => res.json())
-                .then(existingData => {
-                    const existingSlots = existingData.availabilitySlots || [];
-                    const mergedSlotsMap = {};
 
-                    existingSlots.forEach(slot => {
-                        mergedSlotsMap[slot.date] = new Set(slot.slots);
-                    });
+                // Get and merge availability slots
+                const newSlots = getCurrentAvailabilitySlots();
 
-                    newSlots.forEach(slot => {
-                        if (!mergedSlotsMap[slot.date]) {
-                            mergedSlotsMap[slot.date] = new Set();
-                        }
-                        slot.slots.forEach(s => mergedSlotsMap[slot.date].add(s));
-                    });
-
-                    const mergedSlots = Object.entries(mergedSlotsMap).map(([date, slotsSet]) => ({
-                        date,
-                        slots: Array.from(slotsSet)
-                    }));
-
-                    const profile = {
-                        name: document.getElementById("doctorName").value,
-                        speciality: document.getElementById("specialization").value,
-                        qualifications: document.getElementById("qualifications").value,
-                        services: document.getElementById("services").value,
-                        conditions: document.getElementById("conditions").value,
-                        experience: document.getElementById("experience").value,
-                        memberships: document.getElementById("memberships").value,
-                        fees: Number(document.getElementById("fees").value),
-                        locations: document.getElementById("locations").value,
-                        photo: document.getElementById("profilePic").src,
-                    };
-
-                    return Promise.all([
-                        fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`
-                            },
-                            body: JSON.stringify(profile)
-                        }),
-                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`
-                            },
-                            body: JSON.stringify({ availabilitySlots: mergedSlots })
-                        })
-                    ]);
+                fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                    headers: { "Authorization": `Bearer ${token}` }
                 })
-                .then(responses => {
-                    responses.forEach(res => {
-                        if (!res.ok) throw new Error("Update failed");
+                    .then(res => res.json())
+                    .then(existingData => {
+                        const existingSlots = existingData.availabilitySlots || [];
+                        const mergedSlotsMap = {};
+
+                        existingSlots.forEach(slot => {
+                            mergedSlotsMap[slot.date] = new Set(slot.slots);
+                        });
+
+                        newSlots.forEach(slot => {
+                            if (!mergedSlotsMap[slot.date]) {
+                                mergedSlotsMap[slot.date] = new Set();
+                            }
+                            slot.slots.forEach(s => mergedSlotsMap[slot.date].add(s));
+                        });
+
+                        const mergedSlots = Object.entries(mergedSlotsMap).map(([date, slotsSet]) => ({
+                            date,
+                            slots: Array.from(slotsSet)
+                        }));
+
+                        return Promise.all([
+                            fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                                method: "PUT",
+                                headers: {
+                                    "Authorization": `Bearer ${token}`
+                                },
+                                body: profile
+                            }),
+                            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ availabilitySlots: mergedSlots })
+                            })
+                        ]);
+                    })
+                    .then(responses => {
+                        responses.forEach(res => {
+                            if (!res.ok) throw new Error("Update failed");
+                        });
+                        hideLoadingOverlay();
+                        showToast("Profile updated successfully!");
+                        isEditing = false;
+                        toggleEditFields(false);
+                        document.getElementById("buttonGroup").innerHTML = `
+                <button class="btn" onclick="enableEditing()">Edit Profile</button>
+            `;
+                        loadAvailability();
+                    })
+                    .catch(err => {
+                        hideLoadingOverlay();
+                        showToast("An error occurred while saving.");
+                        console.error("Update error:", err);
                     });
-                    hideLoadingOverlay();
-                    showToast("Profile updated successfully!");
-                    isEditing = false;
-                    toggleEditFields(false);
-                    document.getElementById("buttonGroup").innerHTML = `
-                            <button class="btn" onclick="enableEditing()">Edit Profile</button>
-                        `;
-                    loadAvailability();
-                })
-                .catch(err => {
-                    hideLoadingOverlay();
-                    showToast("An error occurred while saving.");
-                    console.error("Update error:", err);
-                });
-        }
+            }
 
         function getCurrentAvailabilitySlots() {
             const availabilitySlots = [];
@@ -615,13 +622,13 @@
             return availabilitySlots;
         }
 
-        function autoSaveProfile() {
-            if (!isEditing) return;
-            if (saveTimeout) clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                saveProfile();
-            }, 3000);
-        }
+        // function autoSaveProfile() {
+        //     if (!isEditing) return;
+        //     if (saveTimeout) clearTimeout(saveTimeout);
+        //     saveTimeout = setTimeout(() => {
+        //         saveProfile();
+        //     }, 3000);
+        // }
 
         function enableEditing() {
             isEditing = true;
@@ -715,11 +722,7 @@
                     const img = document.getElementById('profilePic');
 
                     if (input.files && input.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            img.src = e.target.result;
-                        };
-                        reader.readAsDataURL(input.files[0]);
+                        img.src = URL.createObjectURL(input.files[0]); // ✅ Preview without base64
                     }
                 }
 
