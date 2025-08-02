@@ -654,12 +654,13 @@ ul li a:hover {
 
         }
     function renderAppointments(appointments, type = 'upcoming') {
+        const submittedFeedbacks = JSON.parse(localStorage.getItem('feedbackGiven') || '[]');
+
         const appointmentsBody = document.getElementById('appointments-body');
         appointmentsBody.innerHTML = '';
 
         const now = new Date();
         const removedIds = JSON.parse(localStorage.getItem('removedAppointments') || '[]');
-
         const filtered = appointments.filter(appointment => {
             if (removedIds.includes(appointment._id)) return false;
 
@@ -721,6 +722,8 @@ ul li a:hover {
 
         filtered.forEach(appointment => {
             const appointmentElement = document.createElement('tr');
+                    const feedbackGiven = submittedFeedbacks.includes(appointment._id);
+
 
             let appointmentDate = new Date(appointment.date);
             let timeStr = appointment.time?.toString().trim().toLowerCase() || '';
@@ -757,9 +760,10 @@ ul li a:hover {
             <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
             ${type === 'upcoming'
                     ? `<span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>`
-                    : effectiveStatus === 'completed'
+                    : (effectiveStatus === 'completed' && !submittedFeedbacks.includes(appointment._id))
                     ? `<button class="btn-feedback" onclick="giveFeedback('${appointment._id}', '${appointment.doctorId?._id}', '${appointment.doctorId?.name}')">Give Feedback</button>`
-
+                    : (effectiveStatus === 'completed' && submittedFeedbacks.includes(appointment._id))
+                        ? `<div style="margin-top: 4px; color: green; font-size: 0.9em;">Feedback Submitted</div>`
                         : ''
                 }
         </td>
@@ -793,6 +797,14 @@ ul li a:hover {
 
 
             function giveFeedback(appointmentId, doctorId, doctorName) {
+                    // Save this appointment as feedback submitted
+                    let submitted = JSON.parse(localStorage.getItem('feedbackGiven') || '[]');
+                    if (!submitted.includes(appointmentId)) {
+                        submitted.push(appointmentId);
+                        localStorage.setItem('feedbackGiven', JSON.stringify(submitted));
+                    }
+
+                    // Pass doctor info via sessionStorage
                     sessionStorage.setItem('feedbackDoctorId', doctorId);
                     sessionStorage.setItem('feedbackDoctorName', doctorName);
                     sessionStorage.setItem('feedbackAppointmentId', appointmentId);

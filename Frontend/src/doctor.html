@@ -342,6 +342,9 @@ h3 {
 
 
         function deleteFeedback(feedbackId) {
+
+            const confirmFeedback = confirm("Are you sure you want to delete this feedback?");
+            if (!confirmFeedback) return;
             const token = localStorage.getItem('authToken');
             const doctorId = new URLSearchParams(window.location.search).get("id");
             console.log("Token in deleteFeedback:", token);
