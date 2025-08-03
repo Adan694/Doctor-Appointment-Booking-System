@@ -5,7 +5,7 @@ const submitFeedback = async (req, res) => {
     console.log('Decoded JWT user:', req.user); 
 
     try {
-        const { doctorId, rating, comment } = req.body;
+const { doctorId, appointmentId, rating, comment } = req.body;
 
         const user = await User.findOne({ email: req.user.email });
 
@@ -15,6 +15,7 @@ const submitFeedback = async (req, res) => {
 
         const feedback = new Feedback({
             doctorId,
+            appointmentId,
             patientId: user._id, 
             userName: user.name, 
             rating,

@@ -360,6 +360,7 @@
                         return res.json();
                     }),
 
+                    
                     fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     }).then(res => {
@@ -378,10 +379,24 @@
                             const now = new Date();
 
                             // Find feedback by this patient for this doctor
-                          const feedback = feedbackList.find(fb =>
-                                fb.userId?.toString() === appointment.patientId?._id?.toString() &&
-                                fb.doctorId?.toString() === doctorId?.toString()
-                            );
+                        //  const feedback = feedbackList.find(fb =>
+                        //         fb.userId?.toString() === appointment.patientId?._id?.toString() &&
+                        //         fb.doctorId?.toString() === doctorId?.toString() &&
+                        //         fb.appointmentId?.toString() === appointment._id?.toString()
+                        //     );
+                        const feedback = feedbackList.find(fb => {
+                                const apptPatientId = typeof appointment.patientId === "object"
+                                    ? appointment.patientId._id
+                                    : appointment.patientId;
+
+                                return (
+                                    fb.patientId?.toString() === apptPatientId?.toString() &&
+                                    fb.doctorId?.toString() === doctorId?.toString() &&
+                                    fb.appointmentId?.toString() === appointment._id?.toString()
+                                );
+                            });
+
+
 
                             console.log("Looking for feedback: userId", appointment.patientId?._id, "doctorId", doctorId);
 
@@ -467,7 +482,7 @@
         window.onload = function () {
             loadFromLocalStorage();
             loadPatientAppointments();
-            loadDoctorAppointments();
+            // loadDoctorAppointments();
         };
         function addNewAppointmentRow(appointment) {
             console.log('Adding new appointment:', appointment); 

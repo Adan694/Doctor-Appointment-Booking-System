@@ -30,6 +30,7 @@ const feedbackSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    appointmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment', required: true },
     
 });
 

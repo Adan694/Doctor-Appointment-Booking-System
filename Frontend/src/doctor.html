@@ -178,7 +178,7 @@ h3 {
                 })
                 .then(doctor => {
                     profileDiv.innerHTML = `
-                            <img src="${doctor.image}" alt="${doctor.name}">
+<img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}">
                             <h2>${doctor.name}</h2>
                             <p class="availability ${doctor.available ? "available" : "unavailable"}">
                                 ${doctor.available ? "Available" : "Not Available"}

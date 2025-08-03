@@ -75,6 +75,7 @@
         <p id="doctorName"></p>
         <form id="feedbackForm" class="hidden">
             <input type="hidden" id="doctorId" />
+<input type="hidden" id="appointmentId" />
 
             <label for="rating">Rate Your Experience</label>
             <select id="rating" required>
@@ -102,6 +103,8 @@
                 const doctorId = sessionStorage.getItem('feedbackDoctorId');
                 const doctorNameEl = document.getElementById("doctorName");
                 const doctorIdInput = document.getElementById("doctorId");
+            const appointmentId = sessionStorage.getItem("feedbackAppointmentId");
+            document.getElementById("appointmentId").value = appointmentId;
 
                 if (!doctorId) {
                     doctorNameEl.innerText = "Invalid or missing doctor ID.";
@@ -146,6 +149,7 @@
 
 
             const payload = {
+                    appointmentId: document.getElementById("appointmentId").value,
                 doctorId: document.getElementById("doctorId").value,
                 rating: document.getElementById("rating").value,
                 comment: document.getElementById("comments").value
