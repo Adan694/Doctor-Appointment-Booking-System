@@ -5,11 +5,269 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us</title>
-    <link rel="stylesheet" href="index.css">
+    <!-- <link rel="stylesheet" href="index.css"> -->
     <link
         href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Catamaran:wght@200&family=Courgette&family=Dancing+Script:wght@700&family=Edu+TAS+Beginner:wght@700&family=Lato:wght@300;900&family=Mukta:wght@700&family=Mulish:wght@300&family=Open+Sans&family=PT+Sans:ital,wght@1,700&family=Poppins:wght@300&family=Raleway:wght@100&family=Roboto&family=Roboto+Condensed:wght@700&family=Roboto+Slab&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    
+* {
+    margin: 0%;
+    padding: 0%;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #e2e2e2;
+    
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;   
+  padding: 20px;
+    position: fixed;
+    top: 0%;
+    width: 100%;
+    background-color: rgb(9, 102, 102);
+    color: white;
+    z-index: 1000;
+    padding: 10px 20px;
+}
+
+nav ul {
+    display: flex;
+}
+
+nav ul li {
+    list-style: none;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    margin-inline: 20px;
+}
+
+nav ul li a:hover {
+    color: black;
+    border-bottom: 2px solid black;
+}
+
+#bar {
+    display: none;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin: 0;
+}
+
+.logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.logo h1 {
+    font-size: 30px;
+    margin: 0;
+}
+    .contact {
+    width: 300px;
+    background-color: #fff;
+    padding: 60px;
+    margin: auto;
+    text-align: center;
+    border-radius: 5px;
+    margin-top: 80px;
+}
+
+.contact h1 {
+
+    color: rgb(9, 77, 77);
+}
+
+.contact input {
+    width: 90%;
+    padding: 9px;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: #e2e2e2;
+    border-radius: 2px;
+    margin-top: 20px;
+}
+.contact textarea {
+    width: 90%;
+        padding: 9px;
+        font-size: 18px;
+        border: none;
+        outline: none;
+        background-color: #e2e2e2;
+        border-radius: 2px;
+        margin-top: 20px;
+}
+
+.contact button {
+    width: 90px;
+    height: 30px;
+    margin-top: 23px;
+    background-color: rgb(12, 95, 95);
+    color: white;
+    font-size: 17px;
+    border: none;
+}
+
+.footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 40px;
+    color: white;
+    margin-top: 66px;
+    background-color: rgb(9, 102, 102);
+}
+
+.contact-info,
+.text {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+    flex-direction: column;
+}
+
+.footer p {
+    margin: 15px ;
+    font-size: 16px;
+}
+.quick-links , .Legal{
+    flex: 1;
+    margin: 10px;
+}
+
+.quick-links ul, .Legal ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-links li , .Legal li{
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.quick-links a , .Legal a {
+    color: white;
+    text-decoration: none;
+}
+
+.quick-links a:hover , .Legal a:hover{
+    text-decoration:underline;
+}
+.text p {
+    margin-top: 12px;
+}
+
+.footer>div {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.footer>div:last-child {
+    border-right: none;
+}
+
+#bar {
+    align-items: center;
+    display: none;
+    font-size: 30px;
+}
+
+@media screen and (max-width: 900px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 20px;
+    }
+
+   nav ul {
+       position: absolute;
+       top: 70px;
+       left: 0;
+       width: 100%;
+       background-color: rgb(9, 102, 102);
+       flex-direction: column;
+       overflow: hidden;
+       max-height: 0;
+       transition: max-height 0.3s ease;
+       z-index: 999;
+   }
+
+   nav ul.active {
+       max-height: 300px;
+   }
+
+    nav ul li {
+        text-align: center;
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    #bar {
+        display: block;
+        position: absolute;
+        right: 50px;
+        top: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+}
+@media screen and (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer>div {
+        width: 100%;
+        border-right: none;
+        margin-bottom: 20px;
+    }
+
+    .quick-links ul,
+    .Legal ul {
+        align-items: center;
+    }
+
+    .quick-links li,
+    .Legal li {
+        margin: 5px 0;
+    }
+}
+
+
+    @media screen and (max-width: 600px) {
+        .contact-form {
+            padding: 30px 20px;
+        }
+
+        .contact-form h2 {
+            font-size: 24px;
+        }
+    }
+</style>
 
 </head>
 
@@ -32,8 +290,6 @@
             </ul>
         
         </nav>
-        
-                
 
         <!-- Contact Section -->
         <div id="contact">
@@ -103,7 +359,7 @@
         const bar = document.getElementById('bar');
 
         bar.addEventListener('click', () => {
-            nav.classList.toggle('active'); // Toggle the 'active' class
+            document.querySelector('nav ul').classList.toggle('active');
         });
         document.getElementById('contactForm').addEventListener('submit', async function (e) {
             e.preventDefault();

@@ -246,36 +246,13 @@ nav ul li a:hover {
     border-radius: 5px;
 }
 
-/* 
-.icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    text-align: justify;
-    font-size: 14px;
-    padding: 10px;
-    margin-bottom: 20px;
-} */
 .icon:hover {
     background-color: #d1e7dd;
     transform: scale(1.05);
 }
-/* 
-.icon img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 50px;
-    margin-bottom: 5px;
-} */
+
 .icon a {
     display: block;
-    /* Ensures the link takes the whole area */
 }
 .icon-wrapper {
     display: flex;
@@ -291,12 +268,7 @@ nav ul li a:hover {
     text-align: center;
     font-weight: bold;
 }
-/* 
-.icon p {
-    font-size: 14px;
-    color: #555;
-    margin-top: 5px;
-} */
+
 .icon-container {
     display: flex;
     flex-wrap: wrap;
@@ -325,7 +297,6 @@ nav ul li a:hover {
     height: 100px;
     object-fit: cover;
     border-radius: 50%;
-    /* margin-bottom: 5px; */
 }
 .contact {
     width: 300px;
@@ -510,21 +481,21 @@ nav ul li a:hover {
     }
 
    nav ul {
-        position: absolute;
-        top: 60px;
-        left: 0;
-        width: 100%;
-        background-color: rgb(9, 102, 102);
-        flex-direction: column;
-        display: none;
-        padding: 10px 0;
-        z-index: 999;
-        /* Sit above other content */
-    }
+       position: absolute;
+       top: 70px;
+       left: 0;
+       width: 100%;
+       background-color: rgb(9, 102, 102);
+       flex-direction: column;
+       overflow: hidden;
+       max-height: 0;
+       transition: max-height 0.3s ease;
+       z-index: 999;
+   }
 
-    nav ul.active {
-        display: flex;
-    }
+   nav ul.active {
+       max-height: 300px;
+   }
 
     nav ul li {
         text-align: center;
@@ -626,6 +597,7 @@ nav ul li a:hover {
         margin: 5px 0;
     }
 }
+
 .section {
     margin-top: 80px;
     font-size: 20px;

@@ -4,32 +4,15 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Doctor Profile</title>
     <style>
        body {
     font-family: 'Roboto', sans-serif;
     background-color: #f8f9fa;
-    padding: 40px 20px;
+    padding: 80px 0px 40px; 
     margin: 0;
     color: #333;
-}
-
-.back-link {
-    display: inline-block;
-    margin-bottom: 25px;
-    padding: 10px 20px;
-    background-color: rgb(9, 102, 102);
-    color: #fff;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 15px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.back-link:hover {
-    background-color: #23272b;
-    transform: translateY(-2px);
 }
 
 .profile-card {
@@ -146,21 +129,318 @@ h3 {
 .feedback-actions button:hover {
     opacity: 0.9;
 }
+.profile-card input[type="text"],
+.profile-card input[type="number"],
+.profile-card textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.profile-card input[type="text"]:focus,
+.profile-card input[type="number"]:focus,
+.profile-card textarea:focus {
+    border-color: rgb(9, 102, 102);
+    outline: none;
+    background-color: #f4fdfd;
+}
+
+.profile-card textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    top: 0%;
+    width: 100%;
+    background-color: rgb(9, 102, 102);
+    color: white;
+    z-index: 1000;
+    padding: 10px 20px;
+    left: 0%;
+}
+
+ul {
+    display: flex;
+    transition: max-height 0.3s ease; 
+    overflow: hidden; 
+}
+ul.active {
+    max-height: 300px; 
+}
+
+ul li {
+    list-style: none;
+}
+
+ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    margin-inline: 20px;
+}
+
+ul li a:hover {
+    color: black;
+    border-bottom: 2px solid black;
+}
+#bar {
+    display: none; 
+    font-size: 30px; 
+    cursor: pointer; 
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin: 0;
+}
+
+.logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.logo h1 {
+    font-size: 30px;
+    margin: 0;
+}
+  .footer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 10px 0;
+            color: white;
+            margin-top: 66px;
+            background-color: rgb(9, 102, 102);
+        }
+
+        .contact-info,
+        .text {
+            flex: 1;
+            min-width: 200px;
+            margin: 10px;
+            flex-direction: column;
+        }
+
+        .specialties-columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .footer h3 {
+            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin-left: 0; /* or try -5px, -15px etc. */
+        }
+
+        .footer p {
+            margin: 15px;
+            font-size: 16px;
+        }
+
+        .quick-links,
+.Legal {
+    flex: 1;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+        .quick-links ul,
+        .Legal ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .quick-links li,
+        .Legal li {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .quick-links a,
+        .Legal a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .quick-links a:hover,
+        .Legal a:hover {
+            text-decoration: underline;
+        }
+
+        .text p {
+            margin-top: 12px;
+        }
+
+        .footer > div {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+.footer > div:last-child {
+    border-right: none;
+}
+
+
+
+@media (max-width: 900px) {
+    nav ul {
+    flex-direction: column;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    width: 100%;
+    background-color: rgb(9, 102, 102);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0;
+    margin: 0;
+    z-index: 999; 
+  }
+ nav ul.active {
+        max-height: 300px; 
+    }
+    nav ul li {
+        text-align: center; 
+        margin: 10px 0; 
+    }
+    #bar {
+        display: Block; 
+    }
+    
+}
+@media screen and (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;
+  }
+
+  .footer > div {
+    width: 100%;
+    border-right: none;
+    margin-bottom: 20px;
+  }
+
+  .quick-links ul,
+    .Legal ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+    }
+
+    .quick-links li,
+    .Legal li {
+        margin: 5px 0;
+    }
+   .footer > div {
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  .footer > div:last-child {
+      border-right: none;
+  }
+}
+
 
 </style>
 </head>
 
 <body>
-    <a class="back-link" href="Alldoctorsreal.html">← Back to Doctors Page</a>
+    <nav>
+        <div class="logo">
+            <img src="images/Da.png" alt="DocAssist Logo">
+            <h1>DocAssist</h1>
+        </div>
+        <i id="bar" class="fa-solid fa-bars"></i>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
+            <li><a href="Contactus.html">Contact Us</a></li>
+            <li><a href="faqs.html">FAQs</a></li> 
+        </ul>
+    
+    </nav>
+    <!-- <a class="back-link" href="Alldoctorsreal.html">← Back to Doctors Page</a> -->
 
     <div class="profile-card" id="profile"></div>
+<div id="edit-form-container" style="display: none; max-width: 800px; margin: 40px auto;"></div>
 
     <h3>Feedback:</h3>
     <div id="feedback-list"></div>
     <!-- Feedback submission / edit form -->
-    
+    <!-- Footer Section -->
+    <div class="footer">
+        <div class="contact-info">
+            <h3>Contact Us</h3>
+            <p>Hospital Name</p>
+            <p>123 Main St, City, State, Zip</p>
+            <p>Phone: (123) 456-7890</p>
+            <p>Email: support@hospital.com</p>
+        </div>
+        <div class="quick-links">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="">Home</a></li>
+                <li><a href="Aboutus.html">About Us</a></li>
+                <li><a href="">Services</a></li>
+                <li><a href="Alldoctorsreal.html">Doctors</a></li>
+                <li><a href="Faqs.html">FAQS</a></li>
+            </ul>
+        </div>
+        <div class="text">
+            <h3>Doctors' Specialties</h3>
+            <div class="specialties-columns">
+                <p>Cardiology</p>
+                <p>Dermatology</p>
+                <p>Pediatrics</p>
+                <p>Orthopedics</p>
+                <p>Gynecology</p>
+                <p>Neurology</p>
+                <p>Gastroenterology</p>
+                <p>Oncology</p>
+                <p>Radiology</p>
+                <p>Psychiatry</p>
+            </div>
+        </div>
+        <div class="Legal">
+            <h3>Legal</h3>
+            <ul>
+                <li><a href="Privacy.html">Privacy Policy</a></li>
+                <li><a href="TOS.html">Terms of Services</a></li>
+            </ul>
+        </div>
+    </div>
+
 
     <script>
+        const bar = document.getElementById('bar');
+            const menu = document.querySelector('nav ul');
+
+            bar.addEventListener('click', () => {
+                menu.classList.toggle('active');
+            });
         (function () {
             const params = new URLSearchParams(window.location.search);
             const doctorId = params.get("id");
@@ -196,6 +476,22 @@ h3 {
                             ${doctor.locations ? `<p><strong>Locations:</strong> ${doctor.locations}</p>` : ''}
                             <a class="book-button" href="booking.html?doctorId=${doctor._id}">Book Appointment</a>
                         `;
+                    
+                    if (localStorage.getItem("userRole") === "admin") {
+                        const editBtn = document.createElement("button");
+                        editBtn.textContent = "Edit Profile";
+                        editBtn.className = "book-button";
+                        editBtn.style.backgroundColor = "#007bff";
+                        editBtn.style.marginLeft = "20px";
+                        editBtn.onclick = () => enableInlineEditing(doctor);
+                        profileDiv.appendChild(editBtn);
+                        const bookBtn = document.querySelector('.book-button');
+                        if (bookBtn) bookBtn.style.display = 'none';
+                        const backlink = document.querySelector('.back-link');
+                        if (backlink) backlink.style.display= 'none';
+                    }
+
+
                     fetchFeedbackForDoctor(doctorId);
                 })
                 .catch(err => {
@@ -249,50 +545,6 @@ h3 {
                 });
         }
 
-      
-        // function editFeedback(feedbackId, currentRating, currentComment) {
-        //     document.getElementById("rating").value = currentRating;
-        //     document.getElementById("comment").value = currentComment;
-
-        //     const feedbackItem = document.querySelector(`[data-feedback-id="${feedbackId}"]`);
-        //     if (feedbackItem) {
-        //         feedbackItem.remove();
-        //     }
-
-        //     const feedbackForm = document.getElementById("feedback-form");
-        //     feedbackForm.onsubmit = function (event) {
-        //         event.preventDefault();
-
-        //         const rating = document.getElementById("rating").value;
-        //         const comment = document.getElementById("comment").value;
-        //         const doctorId = new URLSearchParams(window.location.search).get("id");
-        //         const token = localStorage.getItem('token');
-
-        //         const updatedFeedbackData = { rating, comment };
-
-        //         fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
-        //             method: "PUT",
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //                 "Authorization": `Bearer ${token}`
-        //             },
-        //             body: JSON.stringify(updatedFeedbackData),
-        //         })
-        //             .then(response => {
-        //                 if (!response.ok) throw new Error("Failed to update feedback");
-        //                 return response.json();
-        //             })
-        //             .then(data => {
-        //                 console.log("Feedback updated:", data);
-        //                 fetchFeedbackForDoctor(doctorId);
-        //                 feedbackForm.onsubmit = null; 
-        //                 feedbackForm.reset();
-        //             })
-        //             .catch(err => {
-        //                 console.error("Error:", err);
-        //             });
-        //     };
-        // }
         function editFeedback(feedbackId, currentRating, encodedComment) {
                 const currentComment = decodeURIComponent(encodedComment);
 
@@ -365,6 +617,64 @@ h3 {
                     console.error("Error:", err);
                 });
         }
+       
+            function enableInlineEditing(doctor) {
+                    const profileDiv = document.getElementById("profile");
+
+                    profileDiv.innerHTML = `
+        <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}">
+        <h2><input type="text" id="edit-name" value="${doctor.name}" /></h2>
+        <p><strong>Specialty:</strong> <input type="text" id="edit-speciality" value="${doctor.speciality}" /></p>
+        <p><strong>Experience:</strong> <input type="number" id="edit-experience" value="${doctor.experience}" /> years</p>
+        <p><strong>Degree:</strong> <input type="text" id="edit-degree" value="${doctor.degree}" /></p>
+        <p><strong>Fees:</strong> Rs. <input type="number" id="edit-fees" value="${doctor.fees}" /></p>
+        <p><strong>Address:</strong> 
+            <input type="text" id="edit-address1" value="${doctor.address1}" />
+            <input type="text" id="edit-address2" value="${doctor.address2 || ''}" />
+        </p>
+        <p><strong>About:</strong> <textarea id="edit-about">${doctor.about || ''}</textarea></p>
+
+        <button class="book-button" onclick="submitInlineEdit('${doctor._id}')">Save</button>
+        <button class="book-button" style="background:#6c757d;" onclick="window.location.reload()">Cancel</button>
+    `;
+                }
+    function submitInlineEdit(doctorId) {
+        const updatedDoctor = {
+            name: document.getElementById('edit-name').value,
+            speciality: document.getElementById('edit-speciality').value,
+            experience: parseInt(document.getElementById('edit-experience').value),
+            degree: document.getElementById('edit-degree').value,
+            fees: parseInt(document.getElementById('edit-fees').value),
+            address1: document.getElementById('edit-address1').value,
+            address2: document.getElementById('edit-address2').value,
+            about: document.getElementById('edit-about').value,
+        };
+
+        const token = localStorage.getItem("authToken");
+
+        fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(updatedDoctor)
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to update doctor profile");
+                return response.json();
+            })
+            .then(() => {
+                alert("Profile updated successfully");
+                window.location.reload();
+            })
+            .catch(err => {
+                console.error("Error updating profile:", err);
+                alert("Error saving profile");
+            });
+    }
+
+
     </script>
     
 </body>

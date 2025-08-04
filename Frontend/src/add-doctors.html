@@ -339,17 +339,6 @@
 
     <div class="form-container">
       <form id="doctor-form" enctype="multipart/form-data">
-        <!-- <div class="form-group">
-          <div class="upload-button">
-            <input type="file" id="photo" name="photo"
-              style="opacity: 0; position: absolute; width: 0.1px; height: 0.1px" required />
-            <label for="photo" style="cursor: pointer;">Upload Doctor Picture</label>
-            <label for="photo" style="cursor: pointer;">
-              <span id="file-name">Upload Doctor Picture</span>
-            </label>
-          </div>
-        </div> -->
-
         <div class="form-group">
           <label for="name">Your Name</label>
           <input type="text" id="name" name="name" placeholder="Name" required>
@@ -374,8 +363,6 @@
             <option value="orthopedist">Orthopedist</option>
             <option value="Surgeon">Surgeon</option>
             <option value="Opthamologist">Opthamologist</option>
-
-
           </select>
         </div>
 
@@ -417,8 +404,7 @@
           </select>
         </div>
 
-        <input type="hidden" id="doctor-role" value="doctor"> <!-- Hidden field for role -->
-
+        <input type="hidden" id="doctor-role" value="doctor"> 
         <button type="submit" class="btn">Add Doctor</button>
       </form>
     </div>
@@ -504,15 +490,11 @@
       // Auto-remove after 3 seconds and redirect
       setTimeout(() => {
         successElement.remove();
-        window.location.href = 'alldoctors.html'; // Redirect to the list of doctors
+        window.location.href = 'admindoclist.html'; 
       }, 3000);
     }
 
-    // File input display
-    // document.getElementById('photo').addEventListener('change', function (e) {
-    //   const fileName = e.target.files[0] ? e.target.files[0].name : 'Upload Doctor Picture';
-    //   document.getElementById('file-name').textContent = fileName;
-    // });
+  
   </script>
 </body>
 

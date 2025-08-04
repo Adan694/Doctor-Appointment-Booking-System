@@ -10,7 +10,6 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #e2e2e2;
-
             margin: 0;
             padding: 20px;
             display: flex;
@@ -224,28 +223,28 @@
     left: 0%;
 }
 
-ul {
+nav ul {
     display: flex;
     transition: max-height 0.3s ease; 
     overflow: hidden; 
     max-height: 0;
 }
-ul.active {
+nav ul.active {
     max-height: 300px; 
 }
 
-ul li {
+nav ul li {
     list-style: none;
 }
 
-ul li a {
+nav ul li a {
     text-decoration: none;
     color: white;
     font-size: 20px;
     margin-inline: 20px;
 }
 
-ul li a:hover {
+nav ul li a:hover {
     color: black;
     border-bottom: 2px solid black;
 }
@@ -286,22 +285,24 @@ ul li a:hover {
     }
 }
 @media (max-width: 900px) {
-    ul {
-         flex-direction: column; 
-        width: 100%;
-        background-color: rgb(9, 102, 102); 
-        position: absolute; 
-        top: 70px; 
-        left: 0; 
-        padding: 10px 0; 
-        max-height: 0; 
-        overflow: hidden; 
-        transition: max-height 0.3s ease; 
-    }
- ul.active {
+   nav ul {
+    flex-direction: column;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    width: 100%;
+    background-color: rgb(9, 102, 102);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0;
+    margin: 0;
+    z-index: 999; 
+  }
+ nav ul.active {
         max-height: 300px; 
     }
-    ul li {
+    nav ul li {
         text-align: center; 
         margin: 10px 0; 
     }
@@ -326,17 +327,30 @@ ul li a:hover {
         width: 25%; 
     }
 
-    nav {
-        flex-direction: column; 
+}
+@media screen and (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
 
-    ul {
-        flex-direction: column; 
+    .footer>div {
+        width: 100%;
+        border-right: none;
+        margin-bottom: 20px;
+    }
+
+     .quick-links ul,
+    .Legal ul {
+        display: flex;
+        flex-direction: column;
         align-items: center; 
     }
 
-    ul li {
-        margin: 10px 0; 
+    .quick-links li,
+    .Legal li {
+        margin: 5px 0;
     }
 }
     </style>
@@ -354,7 +368,6 @@ ul li a:hover {
         <ul>
             <li><a href="index.html">Home</a></li>
             <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-            <!---- <li><a href="index.html#speciality">Specialities</a></li>-->
             <li><a href="Contactus.html">Contact Us</a></li>
             <li><a href="faqs.html">FAQs</a></li> <!-- New FAQs link -->
          </ul>

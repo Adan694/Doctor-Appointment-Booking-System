@@ -3,6 +3,7 @@ const { User } = require('../models/users');
 const Feedback = require('../models/feedback');
 const Booking = require('../models/booking');
 const Doctor = require('../models/doctors');
+const mongoose = require('mongoose');
 
 // Get admin profile by ID
 const getAdminProfile = async (req, res) => {
@@ -260,8 +261,6 @@ const getTodaysAppointmentsList = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
-
-const mongoose = require('mongoose');
 
 
 const getDoctorsTimeSeries = async (req, res) => {
