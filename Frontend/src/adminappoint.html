@@ -14,18 +14,15 @@
         }
 
         body {
-    /* Remove these: */
-    /* display: flex; */
-    /* height: 100vh; */
-    /* Keep these: */
-    font-family: 'Roboto', Arial, sans-serif;
-    margin: 0;
-    background-color: #f0f2f5;
-    color: #333;
-    overflow-x: hidden;
-}
-       /* Sidebar */
-         .sidebar {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
             width: 250px;
             min-width: 250px;
             max-width: 250px;
@@ -35,13 +32,13 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            position: fixed; /* Add this */
-    height: 100vh; /* Add this */
-    top: 0; /* Add this */
-    left: 0; /* Add this */
-     z-index: 1000;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 1000;
         }
-    
+
         .sidebar h2 {
             font-size: 30px;
             color: white;
@@ -49,19 +46,19 @@
             font-weight: 900;
             letter-spacing: 1.5px;
         }
-    
+
         .sidebar ul {
             list-style: none;
             padding: 0;
             margin: 0;
             width: 100%;
         }
-    
+
         .sidebar ul li {
             padding: 12px 20px;
             margin: 10px 0;
         }
-    
+
         .sidebar ul li a {
             text-decoration: none;
             color: white;
@@ -71,32 +68,32 @@
             border-radius: 6px;
             padding: 10px 15px;
         }
-    
+
         .sidebar ul li a:hover,
         .sidebar ul li a.active {
             background-color: #e8f0fe;
             color: #007bff;
             font-weight: bold;
         }
+
         #bar {
             display: none;
             font-size: 30px;
             cursor: pointer;
         }
-    
-      main {
-    margin-left: 250px; /* Match sidebar width */
-    width: calc(100% - 250px); /* Calculate remaining width */
-    position: relative; /* Add this */
-    z-index: 1; /* Lower than sidebar */
-    padding: 20px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    min-height: 100vh; /* Ensure full height */
-}
-       
 
- header {
+        main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+        }
+
+        header {
             background-color: #166e6b;
             color: white;
             padding-bottom: 10px;
@@ -109,7 +106,7 @@
             border-bottom: 2px solid white;
             padding: 20px 16px;
         }
-    
+
         header button {
             background-color: #28a745;
             border: none;
@@ -120,7 +117,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-    
+
         header button:hover {
             background-color: #1e7e34;
         }
@@ -181,26 +178,26 @@
         .delete-btn:hover {
             color: #dc3545;
         }
-        #overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 900;
-    display: none;
-}
 
-#overlay.active {
-    display: block;
-}
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 900;
+            display: none;
+        }
+
+        #overlay.active {
+            display: block;
+        }
 
         @media (max-width: 768px) {
             .main-content {
                 padding: 20px;
             }
-
 
             table {
                 font-size: 14px;
@@ -210,39 +207,42 @@
             td {
                 padding: 12px;
             }
-             .sidebar {
-        transform: translateX(-100%);
-    }
-    .sidebar.active {
-        transform: translateX(0);
-    }
-    main {
-        margin-left: 0;
-        width: 100%;
-    }
 
-    #bar {
-        display: block;
-        background: none;
-        border: none;
-        color: white;
-        font-size: 26px;
-        cursor: pointer;
-    }
+            .sidebar {
+                transform: translateX(-100%);
+            }
 
-    #bar:focus {
-        outline: none;
-    }
+            .sidebar.active {
+                transform: translateX(0);
+            }
 
+            main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            #bar {
+                display: block;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 26px;
+                cursor: pointer;
+            }
+
+            #bar:focus {
+                outline: none;
+            }
         }
- @media (max-width: 480px) {
+
+        @media (max-width: 480px) {
             header {
                 flex-direction: column;
                 gap: 10px;
                 font-size: 22px;
                 align-items: flex-start;
             }
-    
+
             header button {
                 width: 100%;
             }
@@ -262,7 +262,9 @@
             <li><a href="settings.html">Settings</a></li>
         </ul>
     </div>
+
     <div id="overlay"></div>
+
     <main>
         <header>
             <i id="bar" class="fa-solid fa-bars"></i>
@@ -282,11 +284,9 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody id="upcoming-appointments-table">
-                <!-- Upcoming appointments will be dynamically populated here -->
-            </tbody>
+            <tbody id="upcoming-appointments-table"></tbody>
         </table>
-        
+
         <h2>Completed Appointments</h2>
         <table>
             <thead>
@@ -299,11 +299,9 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody id="completed-appointments-table">
-                <!-- Completed appointments will be dynamically populated here -->
-            </tbody>
+            <tbody id="completed-appointments-table"></tbody>
         </table>
-        
+
         <h2>Missed/Cancelled Appointments</h2>
         <table>
             <thead>
@@ -316,16 +314,14 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody id="missed-cancelled-appointments-table">
-                <!-- Missed/Cancelled appointments will be dynamically populated here -->
-            </tbody>
+            <tbody id="missed-cancelled-appointments-table"></tbody>
         </table>
     </main>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-   <script>
-    const bar = document.getElementById('bar');
+    <script>
+        const bar = document.getElementById('bar');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.getElementById('overlay');
 
@@ -338,171 +334,110 @@
             sidebar.classList.remove('active');
             overlay.classList.remove('active');
         });
-    async function fetchAppointments() {
-        try {
-            const response = await fetch('http://localhost:3000/api/appointments/all'); // Adjusted to correct backend port and route
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+
+        async function fetchAppointments() {
+            try {
+                const response = await fetch('http://localhost:3000/api/appointments/all');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const appointments = await response.json();
+
+                const upcomingTableBody = document.getElementById('upcoming-appointments-table');
+                const completedTableBody = document.getElementById('completed-appointments-table');
+                const missedCancelledTableBody = document.getElementById('missed-cancelled-appointments-table');
+
+                upcomingTableBody.innerHTML = '';
+                completedTableBody.innerHTML = '';
+                missedCancelledTableBody.innerHTML = '';
+
+                let upcomingIndex = 1, completedIndex = 1, missedCancelledIndex = 1;
+
+                appointments.forEach((appointment) => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-id', appointment._id);
+
+                    const statusClass = appointment.status === 'cancelled' ? 'cancelled'
+                        : (appointment.status === 'completed' ? 'completed' : '');
+
+                    let actionButtons = `<button class="delete-btn" onclick="deleteAppointment(this)">❌</button>`;
+
+                    row.innerHTML = `
+                        <td></td>
+                        <td>${appointment.patientId?.name || 'N/A'}</td>
+                        <td>${appointment.patientId?.age || 'N/A'}</td>
+                        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
+                        <td>${appointment.doctorId?.name || 'N/A'}</td>
+                        <td class="action ${statusClass}">${actionButtons}</td>
+                    `;
+
+                    if (appointment.status === 'Completed') {
+                        row.querySelector('td').textContent = completedIndex++;
+                        completedTableBody.appendChild(row);
+                    } else if (appointment.status === 'cancelled' || appointment.status === 'missed') {
+                        row.querySelector('td').textContent = missedCancelledIndex++;
+                        missedCancelledTableBody.appendChild(row);
+                    } else {
+                        row.querySelector('td').textContent = upcomingIndex++;
+                        upcomingTableBody.appendChild(row);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Failed to fetch appointments:', error);
             }
-            const appointments = await response.json();
+        }
 
-            const upcomingTableBody = document.getElementById('upcoming-appointments-table');
-            const completedTableBody = document.getElementById('completed-appointments-table');
-            const missedCancelledTableBody = document.getElementById('missed-cancelled-appointments-table');
+        async function deleteAppointment(button) {
+            const row = button.closest('tr');
+            const appointmentId = row.getAttribute('data-id');
+            if (!appointmentId) return alert('Appointment ID not found');
 
-            upcomingTableBody.innerHTML = '';
-            completedTableBody.innerHTML = '';
-            missedCancelledTableBody.innerHTML = '';
+            const confirmed = confirm('Are you sure you want to permanently delete this appointment?');
+            if (!confirmed) return;
 
-            let upcomingIndex = 1;
-            let completedIndex = 1;
-            let missedCancelledIndex = 1;
+            try {
+                const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
 
-            appointments.forEach((appointment) => {
-                const row = document.createElement('tr');
-                row.setAttribute('data-id', appointment._id);
-
-                const statusClass = appointment.status === 'cancelled'
-                    ? 'cancelled'
-                    : (appointment.status === 'completed' ? 'completed' : '');
-
-                let actionButtons = `<button class="delete-btn" onclick="deleteAppointment(this)">❌</button>`;
-
-                if (appointment.status === 'cancelled' || appointment.status === 'missed') {
-                    actionButtons = `
-            <button class="reschedule-btn" onclick="rescheduleAppointment(this)">Reschedule</button>
-            <button class="delete-btn" onclick="deleteAppointment(this)">❌</button>`;
-                }
-
-                row.innerHTML = `
-        <td></td>
-        <td>${appointment.patientId?.name || 'N/A'}</td>
-        <td>${appointment.patientId?.age || 'N/A'}</td>
-        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
-        <td>${appointment.doctorId?.name || 'N/A'}</td>
-        <td class="action ${statusClass}">
-            ${actionButtons}
-        </td>
-    `;
-
-                if (appointment.status === 'completed') {
-                    row.querySelector('td').textContent = completedIndex++;
-                    completedTableBody.appendChild(row);
-                } else if (appointment.status === 'cancelled' || appointment.status === 'missed') {
-                    row.querySelector('td').textContent = missedCancelledIndex++;
-                    missedCancelledTableBody.appendChild(row);
+                if (response.ok) {
+                    alert('Appointment deleted successfully.');
+                    row.remove();
                 } else {
-                    row.querySelector('td').textContent = upcomingIndex++;
-                    upcomingTableBody.appendChild(row);
+                    alert('Failed to delete appointment: ' + result.message);
                 }
-            });
-
-        } catch (error) {
-            console.error('Failed to fetch appointments:', error);
-        }
-    }
-   async function deleteAppointment(button) {
-        const row = button.closest('tr');
-        const appointmentId = row.getAttribute('data-id');
-
-        if (!appointmentId) {
-            alert('Appointment ID not found');
-            return;
-        }
-
-        const confirmed = confirm('Are you sure you want to permanently delete this appointment?');
-        if (!confirmed) return;
-
-        try {
-            const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-                method: 'DELETE'
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alert('Appointment deleted successfully.');
-                row.remove(); 
-            } else {
-                alert('Failed to delete appointment: ' + result.message);
+            } catch (error) {
+                alert('Error deleting appointment: ' + error.message);
             }
-        } catch (error) {
-            alert('Error deleting appointment: ' + error.message);
-        }
-    }
-
-    async function rescheduleAppointment(button) {
-        const row = button.closest('tr');
-        const appointmentId = row.getAttribute('data-id');
-        if (!appointmentId) {
-            alert('Appointment ID not found');
-            return;
         }
 
-        // Prompt user for new date and time
-        const newDate = prompt('Enter new date (YYYY-MM-DD):');
-        if (!newDate) {
-            alert('Reschedule cancelled: No date entered');
-            return;
-        }
-        const newTime = prompt('Enter new time (HH:MM):');
-        if (!newTime) {
-            alert('Reschedule cancelled: No time entered');
-            return;
-        }
+        async function cancelAppointment(button) {
+            const row = button.closest('tr');
+            const appointmentId = row.getAttribute('data-id');
+            if (!appointmentId) return alert('Appointment ID not found');
 
-        try {
-            const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ date: newDate, time: newTime })
-            });
-            const result = await response.json();
-            if (response.ok) {
-                alert('Appointment rescheduled successfully');
-                // Refresh the appointments list
-                fetchAppointments();
-            } else {
-                alert('Failed to reschedule appointment: ' + result.message);
+            if (!confirm('Are you sure you want to cancel this appointment?')) return;
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Appointment cancelled successfully');
+                    row.remove();
+                } else {
+                    alert('Failed to cancel appointment: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error cancelling appointment: ' + error.message);
             }
-        } catch (error) {
-            alert('Error rescheduling appointment: ' + error.message);
-        }
-    }
-
-    async function cancelAppointment(button) {
-        const row = button.closest('tr');
-        const appointmentId = row.getAttribute('data-id');
-        if (!appointmentId) {
-            alert('Appointment ID not found');
-            return;
         }
 
-        if (!confirm('Are you sure you want to cancel this appointment?')) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-                method: 'DELETE'
-            });
-            const result = await response.json();
-            if (response.ok) {
-                alert('Appointment cancelled successfully');
-                // Remove the row from the table
-                row.remove();
-            } else {
-                alert('Failed to cancel appointment: ' + result.message);
-            }
-        } catch (error) {
-            alert('Error cancelling appointment: ' + error.message);
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchAppointments();
-    });
-</script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAppointments();
+        });
+    </script>
 </body>
 
 </html>
