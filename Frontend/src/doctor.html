@@ -389,7 +389,6 @@ ul li a:hover {
 
     <h3>Feedback:</h3>
     <div id="feedback-list"></div>
-    <!-- Feedback submission / edit form -->
     <!-- Footer Section -->
     <div class="footer">
         <div class="contact-info">
@@ -478,6 +477,7 @@ ul li a:hover {
                         `;
                     
                     if (localStorage.getItem("userRole") === "admin") {
+                        
                         const editBtn = document.createElement("button");
                         editBtn.textContent = "Edit Profile";
                         editBtn.className = "book-button";
@@ -489,6 +489,13 @@ ul li a:hover {
                         if (bookBtn) bookBtn.style.display = 'none';
                         const backlink = document.querySelector('.back-link');
                         if (backlink) backlink.style.display= 'none';
+                        const navbar = document.querySelector('nav');
+                        const footer = document.querySelector('.footer');
+                        if (navbar) navbar.style.display = 'none';
+                        if (footer) footer.style.display = 'none';
+                        document.body.style.marginTop = '0';
+                        document.body.style.paddingTop = '0';
+                        
                     }
 
 
