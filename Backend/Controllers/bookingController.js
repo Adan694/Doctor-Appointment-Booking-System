@@ -145,13 +145,6 @@ const rescheduleAppointment = async (req, res) => {
   const { newDate, newTime, rescheduledBy } = req.body;
 
   try {
-    // const updatedAppointment = await Booking.findByIdAndUpdate(
-    //   id,
-    //   { date: newDate, time: newTime, status: 'pending' },
-    //   { new: true }
-    // );
-    // Format newDate
-    //updated
 const formattedDate = new Date(newDate).toISOString().split('T')[0];
 
 // Check if the doctor already has a booking at the new date and time
@@ -164,7 +157,7 @@ const conflict = await Booking.findOne({
   doctorId: currentAppointment.doctorId,
   date: new Date(formattedDate),
   time: newTime,
-  _id: { $ne: id } // exclude current booking
+  _id: { $ne: id } 
 });
 
 if (conflict) {
@@ -176,8 +169,12 @@ const updatedAppointment = await Booking.findByIdAndUpdate(
   id,
   { date: newDate, time: newTime, status: 'pending' },
   { new: true }
+    );
+    // Remove the selected slot from the doctor's availability
+await Doctor.updateOne(
+  { _id: currentAppointment.doctorId, "availabilitySlots.date": newDate },
+  { $pull: { "availabilitySlots.$.slots": newTime } }
 );
-// Updated
 
     if (!updatedAppointment) {
       return res.status(404).json({ success: false, message: "Appointment not found" });

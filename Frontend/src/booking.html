@@ -239,53 +239,67 @@
         const doctorId = params.get("doctorId"); 
 
        
-        function loadAvailability() {
+       function loadAvailability() {
             fetch(`http://localhost:3000/api/doctors/${doctorId}`)
-            .then(res => res.json())
-                    .then(data => {
-                        const bookingInfoDiv = document.getElementById('booking-info');
-                        bookingInfoDiv.innerHTML = '';
+                .then(res => res.json())
+                .then(data => {
+                    const bookingInfoDiv = document.getElementById('booking-info');
+                    bookingInfoDiv.innerHTML = '';
 
-                        if (!data.availabilitySlots || !data.availabilitySlots.length) {
-                            bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
-                            return;
-                        }
+                    if (!data.availabilitySlots || !data.availabilitySlots.length) {
+                        bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
+                        return;
+                    }
 
-                        data.availabilitySlots.forEach(slot => {
-                            const slotElem = document.createElement('div');
-                            slotElem.className = 'slot';
-                            const dateHeader = document.createElement('h3');
-                            dateHeader.textContent = slot.date;
-                            slotElem.appendChild(dateHeader);
+                    data.availabilitySlots.forEach(slot => {
+                        const slotElem = document.createElement('div');
+                        slotElem.className = 'slot';
+                        const dateHeader = document.createElement('h3');
+                        dateHeader.textContent = slot.date;
+                        slotElem.appendChild(dateHeader);
 
-                            const timesContainer = document.createElement('div');
+                        const timesContainer = document.createElement('div');
+                        let hasFutureSlot = false;
 
-                            slot.slots.forEach(time => {
-                                const timeSlot = document.createElement('span');
-                                timeSlot.className = 'time-slot';
-                                timeSlot.textContent = time;
-                                timeSlot.dataset.date = slot.date;
-                                timeSlot.dataset.time = time;
+                        slot.slots.forEach(time => {
+                            const dateTimeString = `${slot.date} ${time}`;
+                            const slotDateTime = new Date(dateTimeString);
+                            const now = new Date();
 
-                                timeSlot.addEventListener('click', function () {
-                                    document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
-                                    this.classList.add('selected');
-                                });
+                            if (slotDateTime < now) {
+                                return; // skip past time slots
+                            }
 
-                                timesContainer.appendChild(timeSlot);
+                            hasFutureSlot = true;
+
+                            const timeSlot = document.createElement('span');
+                            timeSlot.className = 'time-slot';
+                            timeSlot.textContent = time;
+                            timeSlot.dataset.date = slot.date;
+                            timeSlot.dataset.time = time;
+
+                            timeSlot.addEventListener('click', function () {
+                                document.querySelectorAll('.time-slot').forEach(t => t.classList.remove('selected'));
+                                this.classList.add('selected');
                             });
 
-                            slotElem.appendChild(timesContainer);
-                            bookingInfoDiv.appendChild(slotElem);
+                            timesContainer.appendChild(timeSlot);
                         });
 
-                        addBookButtonIfMissing();
-                    })
-                    .catch(err => {
-                        document.getElementById('booking-info').innerHTML =
-                            `<p>Error fetching availability: ${err.message}</p>`;
-                    });                   
-            }
+                        if (hasFutureSlot) {
+                            slotElem.appendChild(timesContainer);
+                            bookingInfoDiv.appendChild(slotElem);
+                        }
+                    });
+
+                    addBookButtonIfMissing();
+                })
+                .catch(err => {
+                    document.getElementById('booking-info').innerHTML =
+                        `<p>Error fetching availability: ${err.message}</p>`;
+                });
+        }
+
             // // Automatically load slots when page opens
             function addBookButtonIfMissing() {
                 

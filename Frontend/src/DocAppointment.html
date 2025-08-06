@@ -109,11 +109,12 @@
             margin-bottom: 30px;
         }
         @media screen and (max-width: 768px) {
-    nav {
+   nav {
         flex-direction: column;
         align-items: flex-start;
         padding: 10px;
     }
+
 
     .logo h1 {
         font-size: 22px;
@@ -147,9 +148,19 @@
         font-size: 16px;
         margin: 5px 0;
     }
+  #bar {
+        display: block;
+        position: absolute;
+        right: 50px;
+        top: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
 
     .container {
-        padding-top: 160px; 
+        padding-top: 100px; 
         }
 
     .page-title {
@@ -178,6 +189,7 @@
         font-size: 30px;
         cursor: pointer;
         z-index: 1001;
+        
     }
 }
 
@@ -222,6 +234,142 @@
         padding: 15px;
     }
 }
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+        align-items: center;
+        padding: 20px;
+
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px 30px;
+  border: 1px solid #888;
+  width: 400px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+}
+
+.modal-content button {
+  margin-top: 15px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #1565c0;
+}
+
+#availableSlots {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        outline: none;
+        transition: border 0.2s ease-in-out;
+    }
+
+    #availableSlots:focus {
+        border-color: #009999;
+    }
+    .modal-content button {
+        width: 100%;
+        background-color: #009999;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .modal-content button:hover {
+        background-color: #007777;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+.close {
+  color: #aaa;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #000;
+}
+/* Responsive Design */
+    @media (max-width: 768px) {
+        .modal-content {
+            padding: 25px 20px;
+            max-width: 90%;
+        }
+
+        .modal-content h3 {
+            font-size: 18px;
+        }
+
+        .modal-content button {
+            font-size: 14px;
+            padding: 10px 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .modal-content {
+            padding: 20px 15px;
+        }
+
+        .modal-content h3 {
+            font-size: 16px;
+        }
+
+        .modal-content .close {
+            font-size: 20px;
+        }
+
+        #availableSlots {
+            font-size: 13px;
+            padding: 8px 10px;
+        }
+
+        .modal-content button {
+            font-size: 13px;
+        }
+    }
 
     </style>
 </head>
@@ -307,6 +455,23 @@
             </table>
         </div>
     </div>
+<!-- MODAL -->
+<div id="rescheduleModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Choose a New Slot</h3>
+
+        <select id="availableSlots">
+            <option value="">Select a slot</option>
+        </select>
+
+        <input type="hidden" id="appointmentId">
+        <button onclick="confirmReschedule()">Confirm Reschedule</button>
+<!-- <button class="btn btn-warning" onclick="rescheduleAppointment('{{appointment._id}}')">Reschedule</button> -->
+
+    </div>
+</div>
+
 
 
 <script>
@@ -339,7 +504,6 @@
                     return data;
                 });
         }
-
         
         function loadPatientAppointments() {
                 const token = localStorage.getItem('authToken');
@@ -369,7 +533,7 @@
                     })
                 ])
                     .then(([appointments, feedbackList]) => {
-                            console.log("Loaded feedbackList:", feedbackList); // 👈 Add this
+                            console.log("Loaded feedbackList:", feedbackList); 
 
                         appointments.forEach(appointment => {
                                     console.log("Checking appointment:", appointment); 
@@ -378,12 +542,6 @@
                             const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
                             const now = new Date();
 
-                            // Find feedback by this patient for this doctor
-                        //  const feedback = feedbackList.find(fb =>
-                        //         fb.userId?.toString() === appointment.patientId?._id?.toString() &&
-                        //         fb.doctorId?.toString() === doctorId?.toString() &&
-                        //         fb.appointmentId?.toString() === appointment._id?.toString()
-                        //     );
                         const feedback = feedbackList.find(fb => {
                                 const apptPatientId = typeof appointment.patientId === "object"
                                     ? appointment.patientId._id
@@ -487,7 +645,7 @@
         function addNewAppointmentRow(appointment) {
             console.log('Adding new appointment:', appointment); 
 
-            const row = `<tr data-appointment-id="${appointment.id}"> <!-- Ensure appointment ID is set -->
+            const row = `<tr data-appointment-id="${appointment.id}"> 
         <td>${appointment.patientName}</td>
         <td>${appointment.appointmentTime}</td>
         <td>${appointment.phone || 'N/A'}</td>
@@ -498,10 +656,9 @@
             <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
         </td>
     </tr>`;
-
-            // Insert the row into the new appointments table
             document.getElementById('newAppointments').insertAdjacentHTML('beforeend', row);
         }
+        
         function addCancelledAppointmentRow(appointment) {
             const formattedTime = new Date(appointment.appointmentTime).toLocaleString();
             const row = `<tr data-appointment-id="${appointment.id || ''}">
@@ -572,94 +729,168 @@
                     console.error('Error updating appointment:', err);
                 });
         }
+        
+       async function rescheduleAppointment(buttonElement) {
+            const token = localStorage.getItem("token");
+            const row = buttonElement.closest('tr');
+            const appointmentId = row.dataset.appointmentId;
+            document.getElementById('appointmentId').value = appointmentId;
 
-       
-        function rescheduleAppointment(button) {
-            console.log(" rescheduleAppointment triggered");
-
-                const row = button.closest('tr');
-                const appointmentId = row.getAttribute('data-appointment-id');
-                console.log("Appointment ID to reschedule:", appointmentId);
-
-                const patientName = row.cells[0].innerText;
-                const oldTime = row.cells[1].innerText;
-                const phone = row.cells[2].innerText;
-                const token = localStorage.getItem('authToken');
-
-                const isoPrompt = (() => {
-                    const oldDate = new Date(oldTime);
-                    console.log("🕒 Old date parsed as:", oldDate);
-                    const yyyy = oldDate.getFullYear();
-                    const mm = (oldDate.getMonth() + 1).toString().padStart(2, '0');
-                    const dd = oldDate.getDate().toString().padStart(2, '0');
-                    const hh = oldDate.getHours().toString().padStart(2, '0');
-                    const min = oldDate.getMinutes().toString().padStart(2, '0');
-                    return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
-                })();
-
-                const newDateTime = prompt("Enter new date and time (YYYY-MM-DD HH:MM)", isoPrompt);
-
-                if (newDateTime && appointmentId) {
-                    const [newDate, newTime] = newDateTime.split(' ');
-                    console.log("❌ User cancelled rescheduling.");
-                    console.log("📅 Rescheduling appointment ID:", appointmentId);
-                    console.log("📆 New datetime:", newDate, newTime);
-
-                    fetch(`http://localhost:3000/api/appointments/${appointmentId}/reschedule`, {
-                            method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({
-                            newDate: newDate,  
-                            newTime: newTime
-                        })
-                    })
-                        .then(res => {
-                            if (!res.ok) throw new Error("Failed to reschedule");
-                            return res.json();
-                        })
-                        .then(() => {
-                            row.remove();
-                            addNewAppointmentRow({
-                                id: appointmentId,
-                                patientName,
-                                appointmentTime: `${new Date(newDate).toLocaleDateString()} ${newTime}`,
-                                phone,
-                                status: 'Pending'
-                            });
-                            updateLocalStorage();
-                            console.log("✅ Appointment rescheduled");
-                        })
-                        .catch(err => {
-                            console.error("❌ Failed to reschedule:", err);
-                            alert("Failed to reschedule appointment.");
-                        });
-                }
+            // Get doctorId
+            let doctorId = row.getAttribute('data-doctor-id');
+            if (!doctorId) {
+                const doctorData = JSON.parse(localStorage.getItem('user'));
+                doctorId = doctorData?._id || localStorage.getItem('doctorId');
             }
 
-        function cancelAppointment(button) {
+            if (!appointmentId || !doctorId) {
+                console.error("Missing appointment or doctor ID");
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) throw new Error("Failed to fetch availability");
+
+                const data = await res.json();
+                const slotsData = data.availabilitySlots || [];
+
+                const select = document.getElementById("availableSlots");
+                select.innerHTML = "<option value=''>Select a slot</option>";
+
+                let slotCount = 0;
+
+                slotsData.forEach(day => {
+                    const date = day.date;
+                    day.slots.forEach(time => {
+                        const option = document.createElement("option");
+                        option.value = `${date}|${time}`;
+                        option.textContent = `${date} at ${time}`;
+                        select.appendChild(option);
+                        slotCount++;
+                    });
+                });
+
+                if (slotCount === 0) {
+                    alert("No available slots for this doctor.");
+                    return;
+                }
+
+                // Show modal
+                document.getElementById("rescheduleModal").style.display = "block";
+
+            } catch (error) {
+                console.error("Reschedule error:", error);
+                alert("Could not load available slots.");
+            }
+        }
+          function confirmReschedule() {
+                const selectedSlot = document.getElementById('availableSlots').value;
+              const confirmBtn = document.querySelector('#rescheduleModal button[onclick="confirmReschedule()"]');
+                  const originalBtnText = confirmBtn.textContent;
+              // Set processing state
+              confirmBtn.disabled = true;
+              confirmBtn.textContent = "Processing...";
+                if (!selectedSlot) {
+                    alert("Please select a time slot.");
+                    return;
+                }
+
+                const [newDate, newTime] = selectedSlot.split('|');
+
+                // ❗️ Correctly get appointment ID
+              const appointmentId = document.getElementById('appointmentId').value;
+              console.log("Using appointmentId in confirmReschedule:", appointmentId);
+
+                if (!appointmentId || !newDate || !newTime) {
+                    alert("Missing data to reschedule.");
+                    return;
+                }
+              console.log("Using appointmentId:", appointmentId);
+
+                fetch(`http://localhost:3000/api/appointments/${appointmentId}/reschedule`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        newDate,
+                        newTime,
+                        rescheduledBy: 'doctor'  // or 'admin' if admin is rescheduling
+                    })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                            console.log("Reschedule response:", data); // 🔍 Log whole response
+
+                        if (data.success) {
+                            alert("Appointment successfully rescheduled!");
+                            document.getElementById('rescheduleModal').style.display = 'none';
+                                    location.reload();
+
+                        } else {
+                            alert("Failed to reschedule: " + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error during rescheduling:", err);
+                        alert("Error occurred. Try again.");
+                    });
+            }
+            
+    function rescheduleFromButton(buttonElement) {
+        const appointmentId = buttonElement.getAttribute('data-appointment-id');
+        rescheduleAppointment(appointmentId);
+    }
+    function closeModal() {
+        document.getElementById("rescheduleModal").style.display = "none";
+    }
+
+
+      function cancelAppointment(button) {
+            // Show confirmation dialog
+            const confirmed = confirm("Are you sure you want to cancel this appointment?");
+            if (!confirmed) {
+                return; // Exit if user cancels
+            }
+
             const row = button.parentElement.parentElement;
             const appointmentId = row.getAttribute('data-appointment-id');
-            const token = localStorage.getItem('authToken'); 
+            const token = localStorage.getItem('authToken');
 
-            // Update the appointment status in the database
-            fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+            // Show loading state
+            button.disabled = true;
+            const originalText = button.textContent;
+            button.textContent = 'Cancelling...';
+
+            fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    status: 'Cancelled',
+                    cancelledBy: 'doctor'
+                })
             })
                 .then(response => {
-                    if (!response.ok) throw new Error('Failed to cancel appointment');
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || 'Failed to cancel appointment');
+                        });
+                    }
                     return response.json();
                 })
                 .then(data => {
+                    // Success handling
                     const patientName = row.cells[0].innerText;
                     const appointmentTime = row.cells[1].innerText;
-                    const phone = row.cells[2].innerText;  
-                    const id = row.getAttribute('data-appointment-id'); 
+                    const phone = row.cells[2].innerText;
+                    const id = row.getAttribute('data-appointment-id');
 
                     addCancelledAppointmentRow({
                         id,
@@ -668,12 +899,20 @@
                         phone
                     });
 
-                    // Remove from new appointments
                     row.remove();
                     updateLocalStorage();
+
+                    // Show success notification
+                    alert('Appointment cancelled successfully');
                 })
                 .catch(err => {
                     console.error('Error cancelling appointment:', err);
+                    alert(`Error: ${err.message}`);
+                })
+                .finally(() => {
+                    // Restore button state
+                    button.disabled = false;
+                    button.textContent = originalText;
                 });
         }
 
@@ -684,6 +923,10 @@
                 const appointmentTime = row.cells[1].innerText;
                 const phone = row.cells[2].innerText;
                 const token = localStorage.getItem('authToken');
+                const confirmed = confirm("Are you sure you want to mark this appointment as Missed?");
+            if (!confirmed) {
+                return; // Exit if user cancels
+            }
 
                 fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
                 method: 'PUT',

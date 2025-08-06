@@ -26,14 +26,14 @@ const User = mongoose.model('User', userSchema);
 
 // Function to insert a user
 async function insertUser(userData) {
-  const user = new User(userData); // Create a new user instance
-  const savedUser = await user.save(); // Save the user to the database
-  return savedUser; // Return the saved user
+  const user = new User(userData); 
+  const savedUser = await user.save(); 
+  return savedUser; 
 }
 
 // Function to get all users
 async function getUsers() {
-  const users = await User.find({}); // Retrieve all users
+  const users = await User.find({}); 
   return users;
 }
 

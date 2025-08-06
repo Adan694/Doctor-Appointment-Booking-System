@@ -417,15 +417,6 @@
         let isEditing = false;
         let draggedRow = null;
 
-        // function previewImage() {
-        //     const file = document.getElementById("fileUpload").files[0];
-        //     const reader = new FileReader();
-        //     reader.onload = function (e) {
-        //         document.getElementById("profilePic").src = e.target.result;
-        //     };
-        //     if (file) reader.readAsDataURL(file);
-        // }
-
         function loadDoctorProfile() {
             const token = localStorage.getItem('authToken');
             if (!token) {
@@ -622,14 +613,6 @@
             return availabilitySlots;
         }
 
-        // function autoSaveProfile() {
-        //     if (!isEditing) return;
-        //     if (saveTimeout) clearTimeout(saveTimeout);
-        //     saveTimeout = setTimeout(() => {
-        //         saveProfile();
-        //     }, 3000);
-        // }
-
         function enableEditing() {
             isEditing = true;
             toggleEditFields(true);
@@ -722,7 +705,7 @@
                     const img = document.getElementById('profilePic');
 
                     if (input.files && input.files[0]) {
-                        img.src = URL.createObjectURL(input.files[0]); // ✅ Preview without base64
+                        img.src = URL.createObjectURL(input.files[0]); 
                     }
                 }
 

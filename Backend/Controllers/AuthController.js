@@ -5,7 +5,6 @@ const Otp = require('../models/otp');
 const nodemailer = require('nodemailer');
 const Doctor  = require('../models/doctors'); 
 
-
 // Function to insert a new user into MongoDB
 async function insertUser({ email, password, role }) {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,14 +35,26 @@ function generateToken(user) {
 
     return token;
 }
+// function generateToken(user) {
+//     const token = jwt.sign(
+//         { email: user.email, role: user.role },
+//         process.env.JWT_SECRET || 'secret-123', // More secure
+//         { expiresIn: '1h' }
+//     );
+
+//     console.log('\n================ JWT Token ================\n');
+//     console.log(token);
+//     console.log('\n===========================================\n');
+
+//     return token;
+// }
+
 
 async function sendOtpToEmail(email) {
     const otp = Math.floor(100000 + Math.random() * 900000);
     const expiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     await Otp.deleteMany({ email }); // Remove old OTPs
-
-    // const otpEntry = new Otp({ email, otp, expiration });
     const otpEntry = new Otp({ email, otp: Number(otp), expiration });
 
     try {
@@ -122,7 +133,6 @@ async function signup(req, res) {
     }
 }
 
-// Controller function for login
 async function login(req, res) {
     const { email, password, role } = req.body;
 

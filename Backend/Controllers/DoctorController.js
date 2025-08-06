@@ -2,15 +2,12 @@ const Doctor = require('../models/doctors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Feedback = require('../models/feedback');
+const Booking = require('../models/booking'); // make sure this is imported
 
 const addDoctor = async (req, res) => {
   try {
     console.log('Request body:', req.body);
     console.log('Uploaded file:', req.file);
-
-    // if (!req.file) {
-    //   return res.status(400).json({ success: false, message: 'Doctor photo is required' });
-    // }
 
     const { name, email, password, speciality, degree, address1, address2, experience, fees, about } = req.body;
 
@@ -63,28 +60,88 @@ const getDoctors = async (req, res) => {
 };
 
 // Get a doctor by ID
-const getDoctorById = async (req, res) => {
-  try {
-      const doctor = await Doctor.findById(req.params.id);
-      if (!doctor) {
-          return res.status(404).json({ message: 'Doctor not found.' });
-      }
-// Clean out past availability slots before sending
-const today = new Date().toISOString().split('T')[0]; // format: YYYY-MM-DD
-doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => slot.date >= today);
+// const getDoctorById = async (req, res) => {
+//   try {
+//       const doctor = await Doctor.findById(req.params.id);
+//       if (!doctor) {
+//           return res.status(404).json({ message: 'Doctor not found.' });
+//       }
+// // Clean out past availability slots before sending
+// const today = new Date().toISOString().split('T')[0];
+// doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => slot.date >= today);
 
-   //  Fetch feedback for this doctor
-   const feedback = await Feedback.find({ doctorId: doctor._id });
+//    //  Fetch feedback for this doctor
+//    const feedback = await Feedback.find({ doctorId: doctor._id });
 
-   res.status(200).json({
-     ...doctor.toObject(),
-     feedback: feedback.length ? feedback : [], // include feedback
-   });
+//    res.status(200).json({
+//      ...doctor.toObject(),
+//      feedback: feedback.length ? feedback : [],
+//    });
     
 
+//   } catch (error) {
+//       console.error('Error fetching doctor:', error);
+//       res.status(500).json({ message: 'Internal server error.' });
+//   }
+// };
+
+const getDoctorById = async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found.' });
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => slot.date >= today);
+
+    // Get all bookings for this doctor
+    const bookings = await Booking.find({
+      doctorId: doctor._id,
+      status: { $nin: ['Cancelled', 'missed'] } // only consider active bookings
+    });
+
+    // Build a map of booked slots per date for faster lookup
+    const bookedSlotsMap = new Map();
+    bookings.forEach(booking => {
+      const bookingDate = new Date(booking.date).toISOString().split('T')[0];
+      if (!bookedSlotsMap.has(bookingDate)) {
+        bookedSlotsMap.set(bookingDate, new Set());
+      }
+      bookedSlotsMap.get(bookingDate).add(booking.time);
+    });
+
+    // Filter out past slots and already booked slots
+    const filteredAvailability = doctor.availabilitySlots.filter(slot => {
+  return slot.date >= today;
+}).map(slot => {
+  const availableTimes = slot.slots.filter(time => {
+    const isBooked = bookings.some(booking =>
+      new Date(booking.date).toISOString().split('T')[0] === slot.date &&
+      booking.time === time
+    );
+    return !isBooked; // only keep unbooked (or cancelled) times
+  });
+
+  return {
+    date: slot.date,
+    slots: availableTimes
+  };
+}).filter(slot => slot.slots.length > 0);
+
+
+    // Fetch feedback for this doctor
+    const feedback = await Feedback.find({ doctorId: doctor._id });
+
+    res.status(200).json({
+      ...doctor.toObject(),
+      availabilitySlots: filteredAvailability,
+      feedback: feedback.length ? feedback : [],
+    });
+
   } catch (error) {
-      console.error('Error fetching doctor:', error);
-      res.status(500).json({ message: 'Internal server error.' });
+    console.error('Error fetching doctor:', error);
+    res.status(500).json({ message: 'Internal server error.' });
   }
 };
 
@@ -95,7 +152,7 @@ const updateDoctor = async (req, res) => {
     delete updateFields.password;
     delete updateFields.email;
 if (req.file) {
-  updateFields.photo = req.file.filename;  // Save filename to DB
+  updateFields.photo = req.file.filename;  
 }
     const updatedDoctor = await Doctor.findByIdAndUpdate(
       req.params.id,
@@ -145,7 +202,6 @@ const updateDoctorAvailability = async (req, res) => {
     newSlots.forEach(newSlot => {
       const existingIndex = existingSlots.findIndex(slot => slot.date === newSlot.date);
       if (existingIndex >= 0) {
-        // Merge slots for the same date
         existingSlots[existingIndex].slots = Array.from(new Set([
           ...existingSlots[existingIndex].slots,
           ...newSlot.slots

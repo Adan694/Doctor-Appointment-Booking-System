@@ -12,14 +12,11 @@ const doctorSchema = new mongoose.Schema({
   fees: { type: Number, required: true },
   about: { type: String, required: true },
   photo: { type: String,}, 
-
-  // Optional fields for profile updates:
   qualifications: String,
   services: String,
   conditions: String,
   memberships: String,
   locations: String,
-  // image: String,
   available: { type: Boolean, default: true },
   role: { type: String, default: 'doctor' },
   availabilitySlots: [
