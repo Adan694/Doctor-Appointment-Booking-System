@@ -5,294 +5,399 @@
     <meta charset="UTF-8">
     <title>Doctor Profile Editor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 30px;
-            background: #f4f4f4;
-            display: flex;
-            flex-direction: column;
-        }
-
-        nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgb(9, 102, 102);
-            color: white;
-            z-index: 1000;
-            padding: 10px 20px;
-        }
-
-        ul {
-            display: flex;
-        }
-
-        ul li {
-            list-style: none;
-        }
-
-        ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 20px;
-            margin-inline: 20px;
-        }
-
-        ul li a:hover {
-            color: black;
-            border-bottom: 2px solid black;
-        }
-
-        #bar {
-            display: none;
-            font-size: 30px;
-            cursor: pointer;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 20px;
-        }
-
-        .logo img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-
-        .logo h1 {
-            font-size: 30px;
-            margin: 0;
-        }
-
-       .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 100px;
-            padding: 10px; 
-       }
-
-
-        .profile-section,
-        .availability-section {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            flex: 1;
-            min-width: 300px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .profile-header img {
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            margin-right: 20px;
-            border: 2px solid rgb(9, 102, 102);
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-top: 12px;
-            color: rgb(9, 102, 102);
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: border 0.3s;
-        }
-
-        input:focus,
-        textarea:focus {
-            border-color: rgb(9, 102, 102);
-            outline: none;
-        }
-
-        .availability-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        .availability-table th,
-        .availability-table td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .availability-table th {
-            background: #e8f0fe;
-        }
-
-        .availability-table button {
-            background-color: transparent;
-            color: red;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .availability-table button:hover {
-            color: darkred;
-        }
-
-        .btn {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: rgb(9, 102, 102);
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn:hover {
-            background: #007BFF;
-        }
-
-        .add-slot-btn {
-            margin-top: 10px;
-            background: #28a745;
-        }
-
-        .add-slot-btn:hover {
-            background: #1e7e34;
-        }
-        .section-title {
-    color: rgb(9, 102, 102);
-    font-size: 24px;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 5px;
-}
-.name-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.title-label {
-    font-weight: bold;
-    font-size: 20px;
-    color: rgb(9, 102, 102);
-    white-space: nowrap;
-}
-
-.name-input {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-}
-
-
-
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                flex-direction: column;
-                margin-top: 120px;
-            }
-        }
-        .spinner {
-    width: 48px;
-    height: 48px;
-    border: 5px solid #d0f0f0;
-    border-top: 5px solid #009999;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: auto;
-  }
-
-  @keyframes spin {
-    0%   { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  @media (max-width: 768px) {
-    .section-block {
-        flex: 1 1 100%;
-    }
-     nav {
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 30px;
+        background: #f4f4f4;
+        display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        padding: 10px;
+    }
+
+    nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        z-index: 1000;
+        padding: 10px 20px;
+    }
+
+    ul {
+        display: flex;
+    }
+
+    ul li {
+        list-style: none;
+    }
+
+    ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 20px;
+        margin-inline: 20px;
+    }
+
+    ul li a:hover {
+        color: black;
+        border-bottom: 2px solid black;
+    }
+
+    #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+    }
+
+    .logo img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
     }
 
     .logo h1 {
-        font-size: 22px;
-    }
-     
-
-     nav ul {
-        display: none; 
-        flex-direction: column; 
-        width: 100%; 
-        position: absolute; 
-        top: 60px;
-        left: 0;
-        background-color: rgb(9, 102, 102);
-        transition: max-height 0.3s ease;
-        overflow: hidden;
-        max-height: 0;
-    }
-
-    nav ul.active {
-        display: flex; 
-        max-height: 300px; 
-    }
-
-    nav ul li {
-        padding: 10px 0;
-        text-align: left;   
-    }
-
-    nav ul li a {
-        font-size: 16px;
-        margin: 5px 0;
-    }
-  #bar {
-        display: block;
-        position: absolute;
-        right: 50px;
-        top: 20px;
         font-size: 30px;
-        cursor: pointer;
-        z-index: 1001;
+        margin: 0;
     }
+
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 100px;
+        padding: 10px;
+    }
+
+    .profile-section,
+    .availability-section {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        flex: 1;
+        min-width: 300px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-header img {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        margin-right: 20px;
+        border: 2px solid rgb(9, 102, 102);
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 12px;
+        color: rgb(9, 102, 102);
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: border 0.3s;
+    }
+
+    input:focus,
+    textarea:focus {
+        border-color: rgb(9, 102, 102);
+        outline: none;
+    }
+
+    .availability-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .availability-table th,
+    .availability-table td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .availability-table th {
+        background: #e8f0fe;
+    }
+
+    .availability-table button {
+        background-color: transparent;
+        color: red;
+        font-size: 18px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .availability-table button:hover {
+        color: darkred;
+    }
+
+    #buttonGroup {
+        margin: 20px auto;
+        width: 220px;
+        text-align: center;
+    }
+
+    #buttonGroup .btn {
+        width: 100%;
+        padding: 12px 0;
+        background: rgb(9, 102, 102);
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+
+    #buttonGroup .btn:hover {
+        background: #007BFF;
+    }
+
+    #buttonGroup .btn {
+        color: white;
+    }
+
+     .add-slot-btn {
+  background: #28a745 !important;  /* force green if .btn overrides it */
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  user-select: none;
 }
 
-    </style>
+.add-slot-btn:hover {
+  background: #218838 !important;  /* dark green on hover */
+  box-shadow: 0 6px 12px rgba(33, 136, 56, 0.6);
+}
+
+
+
+    .section-title {
+        color: rgb(9, 102, 102);
+        font-size: 24px;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 5px;
+    }
+
+    .name-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .title-label {
+        font-weight: bold;
+        font-size: 20px;
+        color: rgb(9, 102, 102);
+        white-space: nowrap;
+    }
+
+    .name-input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .spinner {
+        width: 48px;
+        height: 48px;
+        border: 5px solid #d0f0f0;
+        border-top: 5px solid #009999;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: auto;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .slots-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        /* 3 columns by default */
+        gap: 10px 20px;
+        max-width: 600px;
+        /* Optional max width */
+        margin: 0 auto;
+    }
+
+    .slots-container>label {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .slots-container>label input[type="checkbox"] {
+        margin-right: 6px;
+    }
+
+    #loadingOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    #loadingOverlay>div>div:last-child {
+        margin-top: 12px;
+        font-size: 18px;
+        color: #004d4d;
+        font-weight: 500;
+    }
+
+    #toast {
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #009999;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        z-index: 3000;
+        font-size: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+
+        .container {
+            flex-direction: column;
+            margin-top: 120px;
+        }
+
+        nav {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 10px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+        }
+
+        nav ul {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            background-color: rgb(9, 102, 102);
+            transition: max-height 0.3s ease;
+            overflow: hidden;
+            max-height: 0;
+        }
+
+        nav ul.active {
+            display: flex;
+            max-height: 300px;
+        }
+
+        nav ul li {
+            padding: 10px 0;
+            text-align: left;
+        }
+
+        nav ul li a {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        #bar {
+            display: block;
+            position: absolute;
+            right: 50px;
+            top: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+    }
+
+    @media (max-width: 900px) {
+        .slots-container {
+            grid-template-columns: repeat(2, 1fr);
+            /* 2 columns on medium screens */
+            max-width: 400px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .slots-container {
+            grid-template-columns: 1fr;
+            /* 1 column on small screens */
+            max-width: 300px;
+        }
+
+        .slots-container>label {
+            white-space: normal;
+            /* allow wrapping */
+        }
+    }
+</style>
+
 </head>
 
 <body>
@@ -347,9 +452,6 @@
             <label>Practice Locations:</label>
             <textarea id="locations"></textarea>
         
-            <div id="buttonGroup">
-                <button class="btn" onclick="enableEditing()">Edit Profile</button>
-            </div>
         </div>
 
         <div class="availability-section">
@@ -368,42 +470,49 @@
             <button class="btn add-slot-btn" onclick="addSlot()">+ Add Slot</button>
         </div>
     </div>
-    <div id="loadingOverlay" style="
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(255, 255, 255, 0.7);
-    z-index: 2000;
-    backdrop-filter: blur(4px);
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    ">
+    <div id="loadingOverlay">
         <div>
             <div class="spinner"></div>
-            <div style="margin-top: 12px; font-size: 18px; color: #004d4d; font-weight: 500;">
+            <div>
                 Saving, please wait...
             </div>
         </div>
     </div>
     
-    <div id="toast" style="
-    display: none;
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #009999;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 5px;
-    z-index: 3000;
-    font-size: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    "></div>
+    <div id="toast"></div>
 
+<div id="buttonGroup">
+    <button class="btn" onclick="enableEditing()">Edit Profile</button>
+</div>
     <script>
+        const standardSlots = [
+                "12:00 AM", "12:30 AM",
+                "01:00 AM", "01:30 AM",
+                "02:00 AM", "02:30 AM",
+                "03:00 AM", "03:30 AM",
+                "04:00 AM", "04:30 AM",
+                "05:00 AM", "05:30 AM",
+                "06:00 AM", "06:30 AM",
+                "07:00 AM", "07:30 AM",
+                "08:00 AM", "08:30 AM",
+                "09:00 AM", "09:30 AM",
+                "10:00 AM", "10:30 AM",
+                "11:00 AM", "11:30 AM",
+                "12:00 PM", "12:30 PM",
+                "01:00 PM", "01:30 PM",
+                "02:00 PM", "02:30 PM",
+                "03:00 PM", "03:30 PM",
+                "04:00 PM", "04:30 PM",
+                "05:00 PM", "05:30 PM",
+                "06:00 PM", "06:30 PM",
+                "07:00 PM", "07:30 PM",
+                "08:00 PM", "08:30 PM",
+                "09:00 PM", "09:30 PM",
+                "10:00 PM", "10:30 PM",
+                "11:00 PM", "11:30 PM"
+            ];
+
+
           document.addEventListener('DOMContentLoaded', () => {
                 const bar = document.getElementById('bar');
                 const menu = document.querySelector('nav ul');
@@ -471,40 +580,82 @@
                 .catch(err => console.error("Failed to load availability", err));
         }
 
-        function addSlot() {
+       function addSlot() {
             const tbody = document.querySelector("#availabilityTable tbody");
             const tr = document.createElement("tr");
-            tr.innerHTML = `
-                    <td><input type="date"></td>
-                    <td><input type="text" placeholder="e.g. 10:00 AM, 11:00 AM"></td>
-                    <td><button onclick="removeRow(this)">❌</button></td>
-                `;
+
+            // Date input cell
+            const dateCell = document.createElement("td");
+            const dateInput = document.createElement("input");
+            dateInput.type = "date";
+            dateCell.appendChild(dateInput);
+
+            // Slots cell
+            const slotsCell = document.createElement("td");
+
+            // Create container div with class 'slots-container'
+            const slotsContainer = document.createElement("div");
+            slotsContainer.classList.add("slots-container");
+
+            // Add checkboxes wrapped in labels inside the container
+            standardSlots.forEach(slot => {
+                const label = document.createElement("label");
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = slot;
+
+                label.appendChild(checkbox);
+                label.append(` ${slot}`);
+
+                slotsContainer.appendChild(label);
+            });
+
+            // Append container to the cell
+            slotsCell.appendChild(slotsContainer);
+
+            // Remove button cell (unchanged)
+            const removeCell = document.createElement("td");
+            removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
+
+            tr.appendChild(dateCell);
+            tr.appendChild(slotsCell);
+            tr.appendChild(removeCell);
+
             tbody.appendChild(tr);
-            assignDragEvents();
         }
-        function removeRow(button) {
-                const row = button.closest("tr");
-                const date = row.querySelector("input[type='date']").value;
-                const token = localStorage.getItem("authToken");
 
-                if (!confirm(`Are you sure you want to delete availability for ${date}?`)) return;
+       function removeRow(button) {
+            const row = button.closest("tr");
+            const dateInput = row.querySelector("input[type='date']");
 
-                fetch(`http://localhost:3000/api/doctors/${doctorId}/availability/${date}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        alert("Slot deleted!");
-                        loadAvailability();  
-                    })
-                    .catch(err => {
-                        console.error("Failed to delete slot", err);
-                        alert("Failed to delete slot");
-                    });
+            if (!dateInput || !dateInput.value) {
+                alert("Invalid or missing date.");
+                return;
             }
+
+            const rawDate = dateInput.value;
+            const formattedDate = rawDate; // Already in "yyyy-MM-dd" format from input[type='date']
+            const token = localStorage.getItem("authToken");
+
+            if (!confirm(`Are you sure you want to delete availability for ${formattedDate}?`)) return;
+
+            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability/${formattedDate}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    alert("Slot deleted!");
+                    loadAvailability();
+                })
+                .catch(err => {
+                    console.error("Failed to delete slot", err);
+                    alert("Failed to delete slot");
+                });
+        }
 
         function saveProfile() {
                 const token = localStorage.getItem('authToken');
@@ -597,36 +748,40 @@
                         showToast("An error occurred while saving.");
                         console.error("Update error:", err);
                     });
+                    saveAvailabilityOrder();
             }
 
         function getCurrentAvailabilitySlots() {
-            const availabilitySlots = [];
-            const rows = document.querySelectorAll("#availabilityTable tbody tr");
-            rows.forEach(row => {
-                const date = row.querySelector("td:nth-child(1) input").value;
-                const slotsText = row.querySelector("td:nth-child(2) input").value;
-                if (date && slotsText) {
-                    const slots = slotsText.split(',').map(s => s.trim()).filter(s => s.length > 0);
-                    availabilitySlots.push({ date, slots });
-                }
-            });
-            return availabilitySlots;
-        }
+                const availabilitySlots = [];
+                const rows = document.querySelectorAll("#availabilityTable tbody tr");
 
-        function enableEditing() {
-            isEditing = true;
-            toggleEditFields(true);
-            const buttonGroup = document.getElementById("buttonGroup");
-            buttonGroup.innerHTML = `
-                    <button class="btn" onclick="saveProfile()">Save Profile</button>
-                    <div id="saveStatus" style="margin-top: 10px; font-size: 14px; color: green;"></div>
-                `;
-            ["input", "textarea"].forEach(tag => {
-                document.querySelectorAll(`.profile-section ${tag}`).forEach(el => {
-                    el.addEventListener("input", autoSaveProfile);
+                rows.forEach(row => {
+                    const date = row.querySelector("td:nth-child(1) input[type='date']").value;
+                    if (!date) return;
+
+                    const checkedSlots = [];
+                    const checkboxes = row.querySelectorAll("td:nth-child(2) input[type='checkbox']");
+                    checkboxes.forEach(cb => {
+                        if (cb.checked) checkedSlots.push(cb.value);
+                    });
+
+                    if (checkedSlots.length > 0) {
+                        availabilitySlots.push({ date, slots: checkedSlots });
+                    }
                 });
-            });
-        }
+
+                return availabilitySlots;
+            }
+
+    function enableEditing() {
+        isEditing = true;
+        toggleEditFields(true);
+        const buttonGroup = document.getElementById("buttonGroup");
+        buttonGroup.innerHTML = `
+        <button class="btn" onclick="saveProfile()">Save Profile</button>
+        <div id="saveStatus" style="margin-top: 10px; font-size: 14px; color: green;"></div>
+    `;
+    }
 
         function toggleEditFields(enabled) {
             const fields = [
@@ -669,7 +824,7 @@
             if (draggedRow && draggedRow !== e.currentTarget) {
                 const tbody = draggedRow.parentNode;
                 tbody.insertBefore(draggedRow, e.currentTarget.nextSibling);
-                autoSaveProfile();
+                // autoSaveProfile();
             }
         }
 
@@ -708,6 +863,29 @@
                         img.src = URL.createObjectURL(input.files[0]); 
                     }
                 }
+                function saveAvailabilityOrder() {
+                        const rows = document.querySelectorAll("#availabilityTable tbody tr");
+                        const newOrder = Array.from(rows).map(row => row.dataset.date); // or data-id
+
+                        const doctorId = localStorage.getItem("doctorId");
+                        const token = localStorage.getItem("authToken");
+
+                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability/order`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ order: newOrder })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                console.log("Availability order saved!");
+                            })
+                            .catch(err => {
+                                console.error("Failed to save availability order", err);
+                            });
+                    }
 
         window.onload = () => {
             loadDoctorProfile();

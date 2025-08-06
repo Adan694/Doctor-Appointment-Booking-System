@@ -244,19 +244,70 @@ const getDoctorAvailability = async (req, res) => {
 const deleteDoctorAvailabilitySlot = async (req, res) => {
   try {
     const doctorId = req.params.id;
-    const slotDate = req.params.date;
+    const slotDate = req.params.date; // e.g., "2025-08-07"
 
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-    doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => slot.date !== slotDate);
+    // Normalize dates to ensure proper comparison
+    doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => {
+      const slotDateOnly = new Date(slot.date).toISOString().split('T')[0];
+      return slotDateOnly !== slotDate;
+    });
+
     await doctor.save();
 
-    res.status(200).json({ message: "Availability slot deleted", availabilitySlots: doctor.availabilitySlots });
+    res.status(200).json({
+      message: "Availability slot deleted",
+      availabilitySlots: doctor.availabilitySlots
+    });
   } catch (error) {
     console.error("Error deleting slot:", error);
     res.status(500).json({ message: "Failed to delete availability slot" });
   }
 };
+const updateAvailabilityOrder = async (req, res) => {
+  try {
+    const doctorId = req.params.id;
+    const newOrder = req.body.order; // Array of dates in new order
 
-module.exports = { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, updateDoctorAvailability, getDoctorAvailability, deleteDoctorAvailabilitySlot};
+    if (!Array.isArray(newOrder)) {
+      return res.status(400).json({ message: "Invalid order format" });
+    }
+
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+
+    // Create a map from date to slot object for quick lookup
+    const slotsMap = {};
+    doctor.availabilitySlots.forEach(slot => {
+      slotsMap[slot.date] = slot;
+    });
+
+    // Reorder availabilitySlots according to newOrder array
+    const reorderedSlots = [];
+    newOrder.forEach(date => {
+      if (slotsMap[date]) {
+        reorderedSlots.push(slotsMap[date]);
+      }
+    });
+
+    // Optional: If there are any slots not included in newOrder, append them at the end
+    doctor.availabilitySlots.forEach(slot => {
+      if (!newOrder.includes(slot.date)) {
+        reorderedSlots.push(slot);
+      }
+    });
+
+    doctor.availabilitySlots = reorderedSlots;
+    await doctor.save();
+
+    res.status(200).json({ message: "Availability order updated successfully" });
+  } catch (error) {
+    console.error("Error updating availability order:", error);
+    res.status(500).json({ message: "Failed to update availability order" });
+  }
+};
+
+
+module.exports = { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, updateDoctorAvailability, getDoctorAvailability, deleteDoctorAvailabilitySlot,updateAvailabilityOrder,};

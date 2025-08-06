@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, updateDoctorAvailability, getDoctorAvailability, deleteDoctorAvailabilitySlot } = require('../Controllers/DoctorController');
+const { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, updateDoctorAvailability, getDoctorAvailability, deleteDoctorAvailabilitySlot , updateAvailabilityOrder} = require('../Controllers/DoctorController');
 const auth = require('../middlewares/auth');
 
 const router = express.Router();
@@ -26,6 +26,7 @@ router.get('/:id', getDoctorById);
 router.put('/:id/availability', updateDoctorAvailability);  
 router.get('/:id/availability', getDoctorAvailability);
 router.delete("/:id/availability/:date", deleteDoctorAvailabilitySlot);
+router.put('/:id/availability/order', updateAvailabilityOrder);
 
 
 
