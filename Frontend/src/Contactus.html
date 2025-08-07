@@ -11,23 +11,25 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-    
-* {
-    margin: 0%;
-    padding: 0%;
-}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #e2e2e2;
-    
-}
+    body {
+        font-family: 'Roboto', sans-serif;
+    background-color: #e6f2ff;
+        color: #333;
+        line-height: 1.6;
+    }
 
+    
 nav {
     display: flex;
     align-items: center;
     justify-content: space-around;   
-  padding: 20px;
+    padding: 20px;
     position: fixed;
     top: 0%;
     width: 100%;
@@ -63,211 +65,205 @@ nav ul li a:hover {
     cursor: pointer;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-    margin: 0;
-}
+    .logo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+    }
 
-.logo img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: cover;
-}
+    .logo img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+    }
 
-.logo h1 {
-    font-size: 30px;
-    margin: 0;
-}
+    .logo h1 {
+        font-size: 26px;
+    }
+
     .contact {
-    width: 300px;
-    background-color: #fff;
-    padding: 60px;
-    margin: auto;
-    text-align: center;
-    border-radius: 5px;
-    margin-top: 80px;
-}
+        max-width: 500px;
+        background-color: #fff;
+        padding: 40px;
+        margin: 120px auto 60px auto;
+        text-align: center;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    }
 
-.contact h1 {
+    .contact h1 {
+        color: rgb(9, 77, 77);
+        margin-bottom: 20px;
+        font-size: 28px;
+    }
 
-    color: rgb(9, 77, 77);
-}
+    .contact input,
+    .contact textarea {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 16px;
+        margin-top: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f1f1f1;
+        transition: border 0.3s ease;
+    }
 
-.contact input {
-    width: 90%;
-    padding: 9px;
-    font-size: 18px;
-    border: none;
-    outline: none;
-    background-color: #e2e2e2;
-    border-radius: 2px;
-    margin-top: 20px;
-}
-.contact textarea {
-    width: 90%;
-        padding: 9px;
+    .contact input:focus,
+    .contact textarea:focus {
+        border-color: rgb(9, 102, 102);
+        background-color: #fff;
+        outline: none;
+    }
+
+    .contact button {
+        width: 100%;
+        padding: 12px;
+        background-color: rgb(9, 102, 102);
+        color: white;
         font-size: 18px;
         border: none;
-        outline: none;
-        background-color: #e2e2e2;
-        border-radius: 2px;
-        margin-top: 20px;
-}
-
-.contact button {
-    width: 90px;
-    height: 30px;
-    margin-top: 23px;
-    background-color: rgb(12, 95, 95);
-    color: white;
-    font-size: 17px;
-    border: none;
-}
-
-.footer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 40px;
-    color: white;
-    margin-top: 66px;
-    background-color: rgb(9, 102, 102);
-}
-
-.contact-info,
-.text {
-    flex: 1;
-    min-width: 200px;
-    margin: 10px;
-    flex-direction: column;
-}
-
-.footer p {
-    margin: 15px ;
-    font-size: 16px;
-}
-.quick-links , .Legal{
-    flex: 1;
-    margin: 10px;
-}
-
-.quick-links ul, .Legal ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.quick-links li , .Legal li{
-    margin: 5px 0;
-    font-size: 16px;
-}
-
-.quick-links a , .Legal a {
-    color: white;
-    text-decoration: none;
-}
-
-.quick-links a:hover , .Legal a:hover{
-    text-decoration:underline;
-}
-.text p {
-    margin-top: 12px;
-}
-
-.footer>div {
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.footer>div:last-child {
-    border-right: none;
-}
-
-#bar {
-    align-items: center;
-    display: none;
-    font-size: 30px;
-}
-
-@media screen and (max-width: 900px) {
-    nav {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px 20px;
-    }
-
-   nav ul {
-       position: absolute;
-       top: 70px;
-       left: 0;
-       width: 100%;
-       background-color: rgb(9, 102, 102);
-       flex-direction: column;
-       overflow: hidden;
-       max-height: 0;
-       transition: max-height 0.3s ease;
-       z-index: 999;
-   }
-
-   nav ul.active {
-       max-height: 300px;
-   }
-
-    nav ul li {
-        text-align: center;
-        width: 100%;
-        padding: 10px 0;
-    }
-
-    #bar {
-        display: block;
-        position: absolute;
-        right: 50px;
-        top: 20px;
-        font-size: 30px;
+        border-radius: 5px;
+        margin-top: 25px;
         cursor: pointer;
-        z-index: 1001;
-    }
-}
-@media screen and (max-width: 768px) {
-    .footer {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+        transition: background-color 0.3s ease;
     }
 
-    .footer>div {
-        width: 100%;
-        border-right: none;
-        margin-bottom: 20px;
+    .contact button:hover {
+        background-color: rgb(6, 80, 80);
+    }
+
+    /* Footer */
+    .footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 40px 20px;
+        color: white;
+        background-color: rgb(9, 102, 102);
+    }
+
+    .footer h3 {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .footer p {
+        margin: 8px 0;
+        font-size: 15px;
+    }
+
+    .quick-links,
+    .Legal,
+    .contact-info,
+    .text {
+        flex: 1;
+        min-width: 200px;
+        margin: 10px;
     }
 
     .quick-links ul,
     .Legal ul {
-        align-items: center;
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
     }
 
-    .quick-links li,
-    .Legal li {
-        margin: 5px 0;
+    .quick-links a,
+    .Legal a {
+        color: white;
+        text-decoration: none;
+        font-size: 15px;
+        transition: all 0.2s ease;
     }
-}
 
+    .quick-links a:hover,
+    .Legal a:hover {
+        text-decoration: underline;
+        color: #ffd700;
+    }
+
+    .specialties-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+        font-size: 14px;
+    }
+
+    .footer>div {
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        padding-right: 10px;
+    }
+
+    .footer>div:last-child {
+        border-right: none;
+    }
+
+    /* Responsive Nav & Footer */
+    @media screen and (max-width: 900px) {
+        nav {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        nav ul {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            flex-direction: column;
+            background-color: rgb(9, 102, 102);
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+
+        nav ul.active {
+            max-height: 300px;
+        }
+
+        nav ul li {
+            padding: 10px 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        #bar {
+            display: block;
+            position: absolute;
+            right: 30px;
+            top: 18px;
+        }
+
+        .footer {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .footer>div {
+            border-right: none;
+            margin-bottom: 20px;
+        }
+    }
 
     @media screen and (max-width: 600px) {
-        .contact-form {
+        .contact {
             padding: 30px 20px;
         }
 
-        .contact-form h2 {
+        .contact h1 {
             font-size: 24px;
+        }
+
+        .contact button {
+            font-size: 16px;
         }
     }
 </style>
+
 
 </head>
 
@@ -281,12 +277,12 @@ nav ul li a:hover {
             <i id="bar" class="fa-solid fa-bars"></i>
 
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-                <li><a href="Contactus.html">Contact Us</a></li>
-                <li><a href="faqs.html">FAQs</a></li> 
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="Alldoctorsreal.html"><i class="fas fa-user-md"></i> Find a Doctor</a></li>
+                <li><a href="Contactus.html"><i class="fas fa-envelope"></i> Contact Us</a></li>
+                <li><a href="faqs.html"><i class="fas fa-question-circle"></i> FAQs</a></li> 
         
-                <li><a href="login.html" class="login-button">Login</a></li>
+<li><a href="login.html" class="login-button" id="authButton">Login</a></li>
             </ul>
         
         </nav>
@@ -414,7 +410,40 @@ nav ul li a:hover {
                 alert('Failed to submit. Try again.');
             }
         });
+            updateNavbar();
+
     });
+     function updateNavbar() {
+            const authButton = document.getElementById('authButton');
+
+            const userRole = localStorage.getItem('userRole');
+
+            if (!authButton) {
+                console.warn("⚠️ authButton not found in DOM.");
+                return;
+            }
+
+            if ( userRole === 'patient') {
+                authButton.innerHTML = 'Logout';
+                authButton.href = '#';
+                authButton.onclick = logout;
+            } else {
+                authButton.innerHTML = 'Login';
+                authButton.href = 'login.html';
+                authButton.onclick = null;
+            }
+        }
+
+
+
+        function logout() {
+                console.log("🚪 Logging out...");
+                localStorage.removeItem('userRole');
+                alert('Logged out successfully.');
+                location.reload(); // refresh page to update UI
+            }
+
+
 </script>
 
 </body>

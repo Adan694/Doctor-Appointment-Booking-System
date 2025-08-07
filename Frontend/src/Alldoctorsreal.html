@@ -8,8 +8,8 @@
     <title>All Doctors</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #e2e2e2;
+            font-family: 'Roboto', sans-serif;
+    background-color: #e6f2ff;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -64,25 +64,27 @@
         }
 
         .card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: calc(33.333% - 20px);
-            max-width: 350px;
-            padding: 20px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-bottom: 20px;
-        }
+    display: flex;
+    align-items: center;
+    width: calc(33.333% - 20px);
+    max-width: 360px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    margin-bottom: 24px;
+    gap: 16px;
+}
 
-        .card:hover {
-            transform: scale(1.02); 
-            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
-        }
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    border: 1px solid #0f8080;
+    cursor: pointer;
+}
+
 
         .card img {
             width: 100px;
@@ -91,122 +93,143 @@
             margin-right: 15px;
         }
 
-        .doctor-info {
-            flex-grow: 1;
-        }
+      .doctor-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
 
-        .doctor-name {
-            font-size: 22px;
-            font-weight: bold;
-            color: #333;
-        }
+.doctor-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #222;
+}
 
-        .specialty {
-            color: #666;
-            font-weight: 600;
-        }
+.specialty {
+    color: #0f8080;
+    font-weight: 600;
+    font-size: 14px;
+}
 
-        .experience,
-        .hospital,
-        .availability {
-            color: #999;
-        }
+.experience,
+.hospital,
+.availability {
+    font-size: 13px;
+    color: #777;
+}
 
-        .availability {
-            font-weight: bold;
-        }
+.availability {
+    color: #4CAF50;
+    font-weight: 600;
+}
 
-        .rating {
-            color: gold;
-        }
+.rating {
+    color: #f9a825;
+    font-size: 15px;
+}
 
-         .footer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            padding: 40px;
-            color: white;
-            margin-top: 66px;
-            background-color: rgb(9, 102, 102);
-        }
+       .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 50px 40px;
+    color: white;
+    background-color: rgb(9, 102, 102);
+    margin-top: 80px;
+    gap: 20px;
+    font-family: 'Arial', sans-serif;
+}
 
-        .contact-info,
-        .text {
-            flex: 1;
-            min-width: 200px;
-            margin: 10px;
-            flex-direction: column;
-        }
+.footer > div {
+    flex: 1 1 200px;
+    min-width: 220px;
+    padding: 10px 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
 
-        .specialties-columns {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-        }
+.footer > div:last-child {
+    border-right: none;
+}
 
-        .footer h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+.footer h3 {
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+}
 
-        .footer p {
-            margin: 15px;
-            font-size: 16px;
-        }
+.footer p {
+    margin: 10px 0;
+    font-size: 15px;
+    color: #e0e0e0;
+}
 
-        .quick-links,
-        .Legal {
-            flex: 1;
-            margin: 10px;
-        }
+.text p {
+    margin-top: 12px;
+    line-height: 1.5;
+}
 
-        .quick-links ul,
-        .Legal ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
+.quick-links ul,
+.Legal ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
-        .quick-links li,
-        .Legal li {
-            margin: 5px 0;
-            font-size: 16px;
-        }
+.quick-links a,
+.Legal a {
+    color: #dcdcdc;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
 
-        .quick-links a,
-        .Legal a {
-            color: white;
-            text-decoration: none;
-        }
+.quick-links a:hover,
+.Legal a:hover {
+    color: #ffd700;
+    text-decoration: underline;
+}
 
-        .quick-links a:hover,
-        .Legal a:hover {
-            text-decoration: underline;
-        }
+.specialties-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
 
-        .text p {
-            margin-top: 12px;
-        }
+.availability {
+    font-weight: bold;
+    color: #66ff66;
+}
 
-        .footer>div {
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
-        }
+.availability.not-available {
+    color: #ff4c4c;
+}
 
-        .footer>div:last-child {
-            border-right: none;
-        }
+            .book-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #0f8080;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(15, 128, 128, 0.2);
+}
 
-        .availability {
-            font-weight: bold;
-            color: green;
-        }
+.book-btn:hover {
+    background-color: #0c6b6b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(15, 128, 128, 0.3);
+}
 
-        .availability.not-available {
-            color: red;
-        }
 
        
           nav {
@@ -279,7 +302,7 @@ nav ul li a:hover {
         display: none; 
     }
 
-    ul {
+    nav ul {
         display: flex; 
         max-height: none; 
     }
@@ -365,12 +388,28 @@ nav ul li a:hover {
         </div>
         <i id="bar" class="fa-solid fa-bars"></i> 
 
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-            <li><a href="Contactus.html">Contact Us</a></li>
-            <li><a href="faqs.html">FAQs</a></li> <!-- New FAQs link -->
-         </ul>
+    <ul>
+        <li>
+            <a href="index.html">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+        </li>
+        <li>
+            <a href="Alldoctorsreal.html">
+                <i class="fa-solid fa-user-doctor"></i> Find a Doctor
+            </a>
+        </li>
+        <li>
+            <a href="Contactus.html">
+                <i class="fa-solid fa-envelope"></i> Contact Us
+            </a>
+        </li>
+        <li>
+            <a href="faqs.html">
+                <i class="fa-solid fa-circle-question"></i> FAQs
+            </a>
+        </li>
+    </ul>
            
     </nav>
     <div id="loading" style="text-align:center; color: gray; font-size: 18px;">Loading doctors...</div>

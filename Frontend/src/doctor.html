@@ -5,35 +5,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <title>Doctor Profile</title>
     <style>
        body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f8f9fa;
+    background-color: #e6f2ff;
     padding: 80px 0px 40px; 
     margin: 0;
     color: #333;
 }
 
 .profile-card {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 40px auto;
     padding: 20px;
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 
+}
 .profile-card img {
-    width: 100%;
-    max-height: 400px;
+    border-radius: 16px;
     object-fit: cover;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
+
+.profile-card:hover,
+.feedback-item:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
 
 h2 {
     margin: 0 0 10px;
@@ -81,25 +86,98 @@ p {
 
 /* Feedback Styles */
 h3 {
-    text-align: center;
-    margin-top: 60px;
-    font-size: 30px;
+    font-size: 26px;
     color: rgb(9, 102, 102);
+    margin-top: 40px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
 }
 
 #feedback-list {
-    max-width: 600px;
+    margin: 30px auto;
+     max-width: 1000px;
     margin: 20px auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
 }
 
+
+
+
 .feedback-item {
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 18px;
+    display: flex;
+    gap: 15px;
+    padding: 20px;
     margin-bottom: 16px;
     background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+    border: 1px solid #e3e3e3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    align-items: flex-start;
 }
+
+.feedback-avatar {
+    width: 50px;
+    height: 50px;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.feedback-content {
+    flex: 1;
+}
+
+.feedback-content h4 {
+    margin: 0 0 6px;
+    font-size: 18px;
+    color: #094;
+}
+
+.star-rating {
+    color: #ffc107;
+    margin-bottom: 8px;
+}
+
+.feedback-content p {
+    margin: 4px 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.feedback-actions {
+    margin-top: 10px;
+}
+
+.feedback-actions button {
+    background-color: #096666;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.feedback-actions button:hover {
+    background-color: #0b7b7b;
+}
+.feedback-item:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
 
 .feedback-item strong {
     font-size: 14px;
@@ -170,27 +248,27 @@ h3 {
     left: 0%;
 }
 
-ul {
+nav ul {
     display: flex;
     transition: max-height 0.3s ease; 
     overflow: hidden; 
 }
-ul.active {
+nav ul.active {
     max-height: 300px; 
 }
 
-ul li {
+nav ul li {
     list-style: none;
 }
 
-ul li a {
+nav ul li a {
     text-decoration: none;
     color: white;
     font-size: 20px;
     margin-inline: 20px;
 }
 
-ul li a:hover {
+nav ul li a:hover {
     color: black;
     border-bottom: 2px solid black;
 }
@@ -220,88 +298,76 @@ ul li a:hover {
     margin: 0;
 }
   .footer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            padding: 10px 0;
-            color: white;
-            margin-top: 66px;
-            background-color: rgb(9, 102, 102);
-        }
-
-        .contact-info,
-        .text {
-            flex: 1;
-            min-width: 200px;
-            margin: 10px;
-            flex-direction: column;
-        }
-
-        .specialties-columns {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-        }
-
-        .footer h3 {
-            margin-bottom: 5px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            margin-left: 0; /* or try -5px, -15px etc. */
-        }
-
-        .footer p {
-            margin: 15px;
-            font-size: 16px;
-        }
-
-        .quick-links,
-.Legal {
-    flex: 1;
-    margin: 10px;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 50px 40px;
+    color: white;
+    background-color: rgb(9, 102, 102);
+    margin-top: 80px;
+    gap: 20px;
+    font-family: 'Arial', sans-serif;
 }
 
-
-        .quick-links ul,
-        .Legal ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .quick-links li,
-        .Legal li {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-
-        .quick-links a,
-        .Legal a {
-            color: white;
-            text-decoration: none;
-        }
-
-        .quick-links a:hover,
-        .Legal a:hover {
-            text-decoration: underline;
-        }
-
-        .text p {
-            margin-top: 12px;
-        }
-
-        .footer > div {
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
+.footer > div {
+    flex: 1 1 200px;
+    min-width: 220px;
+    padding: 10px 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
+
 .footer > div:last-child {
     border-right: none;
 }
 
+.footer h3 {
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.footer p {
+    margin: 10px 0;
+    font-size: 15px;
+    color: #e0e0e0;
+}
+
+.text p {
+    margin-top: 12px;
+    line-height: 1.5;
+}
+
+.quick-links ul,
+.Legal ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.quick-links a,
+.Legal a {
+    color: #dcdcdc;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+.quick-links a:hover,
+.Legal a:hover {
+    color: #ffd700;
+    text-decoration: underline;
+}
+
+.specialties-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
 
 
 @media (max-width: 900px) {
@@ -383,7 +449,7 @@ ul li a:hover {
     
     </nav>
     <!-- <a class="back-link" href="Alldoctorsreal.html">← Back to Doctors Page</a> -->
-
+<h3>Profile:</h3>
     <div class="profile-card" id="profile"></div>
 <div id="edit-form-container" style="display: none; max-width: 800px; margin: 40px auto;"></div>
 
@@ -431,9 +497,13 @@ ul li a:hover {
             </ul>
         </div>
     </div>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
 
 
     <script>
+            dayjs.extend(dayjs_plugin_relativeTime);
+
         const bar = document.getElementById('bar');
             const menu = document.querySelector('nav ul');
 
@@ -526,24 +596,31 @@ ul li a:hover {
                         console.log('From storage:', loggedInPatientId, typeof loggedInPatientId);
 
 
+                        let initials = (feedback.userName || "A").split(' ').map(w => w[0]).join('').toUpperCase();
+                        let stars = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+
                         let feedbackHTML = `
-                               <h4>${feedback.userName || "Anonymous"}</h4>
-                               <p><strong>Rating:</strong> ${feedback.rating}</p>
-                               <p><strong>Comment:</strong> ${feedback.comment}</p>
-                               <p><strong>Submitted on:</strong> ${new Date(feedback.timestamp).toLocaleDateString()}</p>
-
-                            `;
-                        if (String(feedback.patientId) === String(loggedInPatientId)){
-
+    <div class="feedback-avatar">${initials}</div>
+    <div class="feedback-content">
+        <h4>${feedback.userName || "Anonymous"}</h4>
+        <div class="star-rating">${stars}</div>
+        <p>${feedback.comment}</p>
+<p><small><strong>Submitted:</strong> ${dayjs(feedback.timestamp).fromNow()}</small></p>
+    
+`;
+                        if (String(feedback.patientId) === String(loggedInPatientId)) {
                             feedbackHTML += `
-                                    <div class="feedback-actions">
-<button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${encodeURIComponent(feedback.comment)}')">Edit</button>
-                                        <button class="delete" onclick="deleteFeedback('${feedback._id}')">Delete</button>
-                                    </div>
-                                `;
+        <div class="feedback-actions">
+            <button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${encodeURIComponent(feedback.comment)}')">Edit</button>
+            <button class="delete" onclick="deleteFeedback('${feedback._id}')">Delete</button>
+        </div>
+    `;
                         }
 
-                        feedbackElem.innerHTML = feedbackHTML + `<hr>`;
+                        feedbackHTML += `</div>`; // Close .feedback-content
+
+                        feedbackElem.innerHTML = feedbackHTML;
+
                         feedbackDiv.appendChild(feedbackElem);
                     });
                 })
@@ -576,7 +653,11 @@ ul li a:hover {
         const rating = document.getElementById(`edit-rating-${feedbackId}`).value;
         const comment = document.getElementById(`edit-comment-${feedbackId}`).value;
 
-        const updatedFeedback = { rating, comment };
+        // const updatedFeedback = { rating, comment };
+        const updatedFeedback = {
+            rating: parseInt(rating, 10),
+            comment: comment.trim()
+        };
 
         fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
             method: "PUT",

@@ -182,3 +182,66 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+// Word-by-word animation function
+function animateWords(selector, delay = 300) {
+    const el = document.querySelector(selector);
+    
+    // Replace <br> with a placeholder token
+    const rawHTML = el.innerHTML.replace(/<br\s*\/?>/gi, '[[BR]]');
+    const words = rawHTML.split(' ');
+
+    el.innerHTML = ''; // Clear existing content
+
+    let index = 0;
+
+    words.forEach((word) => {
+        if (word.includes('[[BR]]')) {
+            // If word has [[BR]], split and handle both parts
+            const parts = word.split('[[BR]]');
+            if (parts[0]) {
+                const span = document.createElement('span');
+                span.textContent = parts[0] + ' ';
+                span.style.animationDelay = `${index * delay}ms`;
+                el.appendChild(span);
+                index++;
+            }
+            el.appendChild(document.createElement('br'));
+            if (parts[1]) {
+                const span = document.createElement('span');
+                span.textContent = parts[1] + ' ';
+                span.style.animationDelay = `${index * delay}ms`;
+                el.appendChild(span);
+                index++;
+            }
+        } else {
+            const span = document.createElement('span');
+            span.textContent = word + ' ';
+            span.style.animationDelay = `${index * delay}ms`;
+            el.appendChild(span);
+            index++;
+        }
+    });
+}
+
+// Apply to your headings
+animateWords('#heading1', 200);
+animateWords('#heading3', 300);
+
+// Logout functionality
+// document.getElementById('logoutBtn').addEventListener('click', logout);
+
+// function logout() {
+//     localStorage.removeItem('token');
+//     localStorage.removeItem('patientId');
+//     localStorage.removeItem('doctorId');
+//     localStorage.removeItem('role');
+//     showToast("Logged out successfully!");
+//     setTimeout(() => {
+//         window.location.href = 'login.html';
+//     }, 1500);
+// }
+
+// Dummy showToast function (you can replace it with your own)
+function showToast(msg) {
+    alert(msg); // Replace with a fancier toast if needed
+}

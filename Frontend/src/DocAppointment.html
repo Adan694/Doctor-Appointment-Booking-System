@@ -15,7 +15,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background-color: #f0f4fb;
+            background-color: #e6f2ff;
             display: flex;
         }
 
@@ -108,6 +108,42 @@
             color: rgb(9, 102, 102);
             margin-bottom: 30px;
         }
+
+         /* Shared pagination styling for all sections */
+  .pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+  }
+
+  .pagination-controls button {
+    padding: 6px 14px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .pagination-controls button:hover {
+    background-color: #0056b3;
+  }
+
+  .pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .pagination-controls span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
         @media screen and (max-width: 768px) {
    nav {
         flex-direction: column;
@@ -406,7 +442,14 @@
                 </thead>
                 <tbody id="newAppointments"></tbody>
             </table>
+            <div id="newAppointmentsPagination" class="pagination-controls">
+                <button onclick="prevPage('newAppointments')">Prev</button>
+                <span id="newAppointmentsPageInfo"></span>
+                <button onclick="nextPage('newAppointments')">Next</button>
+            </div>
         </div>
+        
+
 
         <!-- Cancelled Appointments Section -->
         <div class="section-block">
@@ -422,6 +465,12 @@
                 </thead>
                 <tbody id="cancelledAppointments"></tbody>
             </table>
+            <div id="cancelledAppointmentsPagination" class="pagination-controls">
+                <button onclick="prevPage('cancelledAppointments')">Prev</button>
+                <span id="cancelledAppointmentsPageInfo"></span>
+                <button onclick="nextPage('cancelledAppointments')">Next</button>
+            </div>
+
         </div>
 
         <!-- Completed Appointments Section -->
@@ -438,6 +487,13 @@
                 </thead>
                 <tbody id="completedAppointments"></tbody>
             </table>
+
+            <div id="completedAppointmentsPagination" class="pagination-controls">
+                <button onclick="prevPage('completedAppointments')">Prev</button>
+                <span id="completedAppointmentsPageInfo"></span>
+                <button onclick="nextPage('completedAppointments')">Next</button>
+            </div>
+
         </div>
 
         <!-- Missed Appointments Section -->
@@ -453,6 +509,12 @@
                 </thead>
                 <tbody id="missedAppointments"></tbody>
             </table>
+            <div id="missedAppointmentsPagination" class="pagination-controls">
+                <button onclick="prevPage('missedAppointments')">Prev</button>
+                <span id="missedAppointmentsPageInfo"></span>
+                <button onclick="nextPage('missedAppointments')">Next</button>
+            </div>
+
         </div>
     </div>
 <!-- MODAL -->
@@ -562,21 +624,21 @@
                             if (status === 'cancelled') {
                                 addCancelledAppointmentRow({
                                     id: appointment._id,
-                                    patientName: appointment.patientId.name,
+                                    patientName: appointment.name || appointment.patientId.name,
                                     appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                    phone: appointment.patientId.phone || 'N/A',
+                                    phone: appointment.phone || appointment.patientId.phone,
                                 });
                             } else if (status === 'missed') {
                                 addMissedAppointmentRow({
-                                    patientName: appointment.patientId.name,
+                                    patientName: appointment.name || appointment.patientId.name,
                                     appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                    phone: appointment.patientId.phone || 'N/A'
+                                    phone: appointment.phone || appointment.patientId.phone
                                 });
                             } else if (status === 'completed') {
                                 addCompletedAppointmentRow({
                                     id: appointment._id,
-                                    patientName: appointment.patientId.name,
-                                    phone: appointment.patientId.phone || 'N/A',
+                                    patientName: appointment.name || appointment.patientId.name,
+                                    phone: appointment.phone || appointment.patientId.phone,
                                     appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
                                     feedback: feedback
                                         ? `<strong>Rating:</strong> ${feedback.rating}<br><strong>Comment:</strong> ${feedback.comment}`
@@ -585,9 +647,9 @@
                             } else {
                                 addNewAppointmentRow({
                                     id: appointment._id,
-                                    patientName: appointment.patientId.name,
+                                    patientName: appointment.name || appointment.patientId.name,
                                     appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                    phone: appointment.patientId.phone || 'N/A',
+                                    phone: appointment.phone || appointment.patientId.phone,
                                     status: appointment.status || 'Pending'
                                 });
                             }
@@ -642,26 +704,27 @@
             loadPatientAppointments();
             // loadDoctorAppointments();
         };
-        function addNewAppointmentRow(appointment) {
-            console.log('Adding new appointment:', appointment); 
-
-            const row = `<tr data-appointment-id="${appointment.id}"> 
+       function addNewAppointmentRow(appointment) {
+            const rowHTML = `<tr data-appointment-id="${appointment.id}"> 
         <td>${appointment.patientName}</td>
         <td>${appointment.appointmentTime}</td>
         <td>${appointment.phone || 'N/A'}</td>
         <td>${appointment.status}</td>
         <td>
             <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
-             <button class="btn btn-warning" onclick="markAsMissed(this)">Missed</button> 
+            <button class="btn btn-warning" onclick="markAsMissed(this)">Missed</button> 
             <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
         </td>
     </tr>`;
-            document.getElementById('newAppointments').insertAdjacentHTML('beforeend', row);
+
+            paginationState.newAppointments.rows.push(rowHTML);
+            paginateTable('newAppointments');
         }
+
         
-        function addCancelledAppointmentRow(appointment) {
+       function addCancelledAppointmentRow(appointment) {
             const formattedTime = new Date(appointment.appointmentTime).toLocaleString();
-            const row = `<tr data-appointment-id="${appointment.id || ''}">
+            const rowHTML = `<tr data-appointment-id="${appointment.id || ''}">
         <td>${appointment.patientName}</td>
         <td>${formattedTime}</td>
         <td>${appointment.phone || 'N/A'}</td>
@@ -669,11 +732,12 @@
             <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
             <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
             <button class="btn btn-danger" onclick="deleteAppointment(this)">❌</button>
-
         </td>
     </tr>`;
-            document.getElementById('cancelledAppointments').insertAdjacentHTML('beforeend', row);
+            paginationState.cancelledAppointments.rows.push(rowHTML);
+            paginateTable('cancelledAppointments');
         }
+
 
 
         function addCompletedAppointmentRow(appointment) {
@@ -681,7 +745,7 @@
                     ? appointment.feedback
                     : 'No feedback yet';
 
-                const row = `<tr data-appointment-id="${appointment.id || ''}">
+                const rowHTML = `<tr data-appointment-id="${appointment.id || ''}">
         <td>${appointment.patientName}</td>
         <td>${appointment.appointmentTime}</td>
         <td>${appointment.phone || 'N/A'}</td>
@@ -690,9 +754,10 @@
             <button class="btn btn-danger btn-sm ml-2" onclick="deleteAppointment(this)">❌</button>
         </td>
     </tr>`;
-
-                document.getElementById('completedAppointments').insertAdjacentHTML('beforeend', row);
+                paginationState.completedAppointments.rows.push(rowHTML);
+                paginateTable('completedAppointments');
             }
+
 
 
         function completeAppointment(button) {
@@ -928,7 +993,7 @@
                 return; // Exit if user cancels
             }
 
-                fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
+                fetch(`http://localhost:3000/api/appointments/${appointmentId}/cancel`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -953,13 +1018,19 @@
             }
 
         function addMissedAppointmentRow(appointment) {
-            const row = `<tr data-appointment-id="${appointment.id || ''}">
+                const rowHTML = `<tr data-appointment-id="${appointment.id || ''}">
         <td>${appointment.patientName}</td>
         <td>${appointment.appointmentTime}</td>
         <td>${appointment.phone || 'N/A'}</td>
     </tr>`;
-            document.getElementById('missedAppointments').insertAdjacentHTML('beforeend', row);
-        }
+
+                // Push the row into pagination data
+                paginationState.missedAppointments.rows.push(rowHTML);
+
+                // Refresh the visible table
+                paginateTable('missedAppointments');
+            }
+
 
 
         function deleteAppointment(button) {
@@ -987,6 +1058,47 @@
                 }
             }
         }
+
+        const pageSize = 6; // Number of rows per page
+            const paginationState = {
+                newAppointments: { currentPage: 1, rows: [] },
+                cancelledAppointments: { currentPage: 1, rows: [] },
+                completedAppointments: { currentPage: 1, rows: [] },
+                missedAppointments: { currentPage: 1, rows: [] },
+            };
+
+            function paginateTable(sectionId) {
+                    const state = paginationState[sectionId];
+                    const tableBody = document.getElementById(sectionId);
+
+                    const start = (state.currentPage - 1) * pageSize;
+                    const end = start + pageSize;
+                    tableBody.innerHTML = "";
+                    state.rows.slice(start, end).forEach(rowHTML => {
+                        tableBody.insertAdjacentHTML('beforeend', rowHTML);
+                    });
+
+                    const totalPages = Math.ceil(state.rows.length / pageSize);
+                    document.getElementById(`${sectionId}PageInfo`).textContent = `Page ${state.currentPage} of ${totalPages}`;
+                }
+
+                function nextPage(sectionId) {
+                    const state = paginationState[sectionId];
+                    const totalPages = Math.ceil(state.rows.length / pageSize);
+                    if (state.currentPage < totalPages) {
+                        state.currentPage++;
+                        paginateTable(sectionId);
+                    }
+                }
+
+                function prevPage(sectionId) {
+                    const state = paginationState[sectionId];
+                    if (state.currentPage > 1) {
+                        state.currentPage--;
+                        paginateTable(sectionId);
+                    }
+                }
+
         function updateLocalStorage() {
             const newAppointments = Array.from(document.querySelectorAll('#newAppointments tr')).map(row => ({
                 patientName: row.cells[0].innerText,

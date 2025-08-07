@@ -11,7 +11,8 @@ router.get('/test', (req, res) => {
   
 // Route for booking an appointment
 router.post('/', bookAppointment);
-router.put('/:id', cancelAppointment);
+//router.put('/:id', cancelAppointment);
+router.put('/:id/cancel', cancelAppointment);
 
 // Route for fetching patient bookings
 router.get('/patient/:patientId', getPatientBookings);

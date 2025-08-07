@@ -5,15 +5,29 @@
 }
 
 body {
+    background-color: #e6f2ff;
+        font-family: 'Roboto', sans-serif;
+    /* background-color: #e2e2e2; */
+    
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: 'Roboto', sans-serif;
-    background-color: #e2e2e2;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: bold;
+    line-height: 1.3;
 }
 
 nav {
     display: flex;
     align-items: center;
     justify-content: space-around;   
-  padding: 20px;
+    padding: 20px;
     position: fixed;
     top: 0%;
     width: 100%;
@@ -74,186 +88,388 @@ nav ul li a:hover {
    .hidden {
        display: none;
    }
-
- .main {
+.main {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    background-color: rgb(15, 128, 128);
+    background: linear-gradient(135deg, #0f8080, #0c5c5c);
     color: white;
-    padding: 8px;
+    padding: 40px 20px;
     height: 600px;
     margin-top: 55px;
+    transition: background 0.5s ease;
 }
 
 .mainText h1 {
     font-size: 55px;
+    transition: color 0.4s ease, transform 0.4s ease;
 }
 
 .mainText h3 {
     font-size: 35px;
     margin-top: 12px;
+    transition: color 0.4s ease, transform 0.4s ease;
 }
 
 .mainText button {
-    width: 140px;
-    height: 40px;
+    width: 160px;
+    height: 45px;
     border: none;
-    margin-top: 22px;
+    margin-top: 25px;
     background-color: black;
     color: white;
-    font-size: 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
 }
 
 .mainText button:hover {
-    border: 2px solid black;
+    border: 2px solid white;
     background-color: transparent;
-    color: rgb(255, 255, 255);
+    color: white;
     cursor: pointer;
-
+    transform: scale(1.05);
 }
 
-.doctors {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+.mainText h1:hover,
+.mainText h3:hover {
+    color: #d1d1d1;
+    transform: translateY(-3px);
 }
 
-.doctor-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.mainText h1,
+.mainText h3 {
+    display: block;
+    line-height: 1.3;
+    word-break: break-word;
+}
+.mainText h1 span,
+.mainText h3 span {
+    display: inline;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: wordFadeIn 0.6s forwards;
 }
 
+@keyframes wordFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* Container for whole section */
+#doctors {
+    background-color: #e6f2ff;    padding: 60px 20px;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    margin-bottom: -30px;
+}
+
+/* Section title */
+#doctors .head h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #0f8080;
+    position: relative;
+}
+
+#doctors .head h1::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 4px;
+    background-color: #0f8080;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -8px;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#doctors .head h1:hover::after {
+    opacity: 1;
+}
+
+/* Search Bar */
 .search-bar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    width: 50%;
-    margin: 0 auto;
-    margin-bottom: 20px;
+    background: #fff;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 12px 20px;
+    width: 60%;
+    margin: 0 auto 40px;
+    transition: all 0.3s ease;
 }
 
 #search-input {
-    width: 70%;
-    padding: 10px;
-    font-size: 16px;
     border: none;
-    margin-right: 10px;
-    width: 300px;
+    outline: none;
+    font-size: 16px;
+    padding: 10px;
+    flex: 1;
+    border-radius: 50px;
+    background: transparent;
 }
 
 #search-btn {
-    width: 20%;
-    padding: 10px;
-    font-size: 16px;
     background-color: #4CAF50;
-    color: #fff;
     border: none;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 30px;
     cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
+#search-btn:hover {
+    background-color: #45a049;
+}
+
+/* Doctor Cards Container */
 .card-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 50px;
-}
-
-.card {
-    flex-basis: 300px;
-    max-width: 300px;
-    flex-grow: 1;
-    background-color: #fff;
-    margin: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-bottom: 2px solid #f0f0f0;
-}
-
-.card p {
-    margin: 11px;
-    font-size: 16px;
-    color: #333;
+    gap: 24px;
     margin-bottom: 20px;
 }
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-.head {
+
+/* Individual Doctor Card */
+.card {
+    width: 280px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border 0.3s ease;
     text-align: center;
-    padding: 80px;
+    margin: 20px;
 }
 
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    border: 1.5px solid #1abc9c;
+    /* light teal border on hover */
+}
+
+/* Doctor Image */
+.card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.card:hover img {
+    transform: scale(1.03);
+}
+
+/* Doctor Name & Info */
+.card p {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #333;
+}
+
+.card p:first-of-type {
+    font-weight: bold;
+    font-size: 18px;
+    color: #0f8080;
+}
+/* See More Button */
+.see-more {
+    display: block;
+    width: fit-content;
+    margin: 30px auto;
+    background-color: #00b894;
+    color: #fff;
+    padding: 12px 36px;
+    font-size: 17px;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.see-more:hover {
+    background-color: #019875;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+/* ======== SURGERY SECTION ======== */
 .surgery {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 24px;
+    padding: 20px;
 }
 
 .surgeryCard {
-    text-align: center;
     width: 300px;
-    background-color: white;
-    margin-inline: 20px;
-    padding: 20px;
-    margin-top: 22px;
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    text-align: center;
+    padding: 25px 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    position: relative;
+    overflow: hidden;
+}
+
+.surgeryCard::before {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom right, #4CAF50, #00b894);
+    opacity: 0.05;
+    transition: top 0.4s ease;
+    z-index: 0;
+}
+
+.surgeryCard:hover::before {
+    top: 0;
+}
+
+.surgeryCard:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
 }
 
 .surgeryCard img {
-    width: 100px;
+    width: 80px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+    z-index: 1;
+    position: relative;
+}
+
+.surgeryCard img:hover {
+    transform: scale(1.1);
 }
 
 .surgeryCard p {
-    margin-top: 12px;
+    font-size: 15px;
+    margin-top: 10px;
+    color: #333;
+    z-index: 1;
+    position: relative;
 }
 
+/* Universal heading styling for consistency */
+.head h1,
+.section h2, .section h1{
+    font-size: 36px;
+    text-align: center;
+    color: #0a5050;
+    margin-bottom: 20px;
+    position: relative;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: all 0.4s ease-in-out;
+}
+
+/* Optional hover effect to make headings more interactive */
+.head h1:hover,
+.section h2:hover, .section h1:hover {
+    color: #0f8080;
+    transform: scale(1.03);
+}
+
+/* Decorative underline using pseudo-elements */
+.head h1::after,
+.section h2::after,
+.section h1::after {
+    content: "";
+    width: 80px;
+    height: 4px;
+    background-color: #0f8080;
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+    opacity: 0;
+        /* Hidden by default */
+        transition: opacity 0.3s ease;
+}
+.head h1:hover::after,
+.section h2:hover::after,
+.section h1:hover::after {
+    opacity: 1;
+}
+
+/* Give some breathing space around sections */
+#speciality,
+#patient,
+.section {
+    padding: 60px 20px;
+    background-color: #e6f2ff;}
+
+/* Optional light background separation */
+#patient {
+    background-color: #e6f2ff;}
+
+
+/* ======== PATIENTS SECTION ======== */
 .patients {
-    width: 900px;
-    height: 300px;
+    width: 90%;
+    max-width: 1000px;
+    height: 320px;
+    margin: 60px auto;
     position: relative;
     overflow: hidden;
-    margin: auto;
-    z-index: 1;
+    border-radius: 16px;
+    padding: 20px;
+        margin-top: 5px;
+        margin-bottom: 10px;
 }
 
 .patientCard {
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 20px;
     width: 100%;
     height: 100%;
     position: absolute;
-    transition: all 1s ease;
+    transition: all 0.8s ease-in-out;
+    padding: 10px;
+
 }
 
 .patientCard img {
-    width: 350px;
-    margin-inline: 11px;
-    border-radius: 5px;
+    width: 330px;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
 }
 
-.icon:hover {
-    background-color: #d1e7dd;
+.patientCard img:hover {
     transform: scale(1.05);
 }
 
-.icon a {
-    display: block;
-}
+/* ======== ICON SECTION ======== */
 .icon-wrapper {
     display: flex;
     flex-direction: column;
@@ -261,10 +477,11 @@ nav ul li a:hover {
     width: 120px;
     margin: 10px;
 }
+
 .icon-label {
     font-size: 16px;
     color: #555;
-        margin-top: 7px;
+    margin-top: 7px;
     text-align: center;
     font-weight: bold;
 }
@@ -279,70 +496,125 @@ nav ul li a:hover {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background-color: #f0f0f0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: #e6f2ff;    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     display: flex;
-    flex-direction: column;
-    /* if using icon + text */
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 0px;
-    transition: transform 0.2s ease;
+    transition:
+        transform 0.3s ease,
+        background-color 0.3s ease,
+        box-shadow 0.3s ease,
+        rotate 0.3s ease;
     cursor: pointer;
     overflow: hidden;
+    position: relative;
 }
+
+.icon:hover {
+    background-color: #e0f7f1;
+    transform: scale(1.1) rotate(3deg);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.icon::before {
+    content: "";
+    position: absolute;
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(circle, rgba(0, 255, 179, 0.15) 20%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.icon:hover::before {
+    opacity: 1;
+}
+
+.icon>* {
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.icon:hover>* {
+    transform: scale(1.1);
+}
+
 .icon img {
     width: 100px;
     height: 100px;
     object-fit: cover;
     border-radius: 50%;
 }
+
+.icon a {
+    display: block;
+}
+
+#contact{
+    margin-top: 40px;
+}
+/* ======== CONTACT FORM ======== */
 .contact {
-    width: 300px;
-    background-color: #fff;
-    padding: 40px;
+    width: 320px;
+    background-color: #f0f0f0;
+    padding: 50px;
     margin: auto;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
 }
 
+.contact:hover {
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+}
+/* 
 .contact h1 {
-
     color: rgb(9, 77, 77);
-}
+    margin-bottom: 20px;
+} */
 
-.contact input {
+.contact input,
+.contact textarea {
     width: 90%;
-    padding: 9px;
-    font-size: 18px;
+    padding: 10px;
+    font-size: 16px;
     border: none;
     outline: none;
     background-color: #e2e2e2;
-    border-radius: 2px;
-    margin-top: 20px;
+    border-radius: 5px;
+    margin-top: 15px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
-.contact textarea {
-    width: 90%;
-        padding: 9px;
-        font-size: 18px;
-        border: none;
-        outline: none;
-        background-color: #e2e2e2;
-        border-radius: 2px;
-        margin-top: 20px;
+
+.contact input:focus,
+.contact textarea:focus {
+    background-color: #f9f9f9;
+    box-shadow: 0 0 8px rgba(12, 95, 95, 0.4);
 }
 
 .contact button {
-    width: 90px;
-    height: 30px;
+    width: 100px;
+    height: 35px;
     margin-top: 23px;
     background-color: rgb(12, 95, 95);
     color: white;
-    font-size: 17px;
+    font-size: 16px;
     border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
+.contact button:hover {
+    background-color: rgb(9, 77, 77);
+}
+
+
+/* ======== FOOTER ======== */
 .footer {
     display: flex;
     flex-wrap: wrap;
@@ -350,15 +622,65 @@ nav ul li a:hover {
     padding: 40px;
     color: white;
     margin-top: 66px;
-    background-color: rgb(9, 102, 102);
+    background: linear-gradient(135deg, #096666, #064949);
+    border-top: 4px solid #0f8080;
+}
+
+.footer>div {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0 20px;
+}
+
+.footer>div:last-child {
+    border-right: none;
+}
+
+.footer h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.footer p {
+    margin: 15px 0;
+    font-size: 15px;
 }
 
 .contact-info,
-.text {
+.text,
+.quick-links,
+.Legal {
     flex: 1;
     min-width: 200px;
     margin: 10px;
     flex-direction: column;
+}
+
+.quick-links ul,
+.Legal ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-links li,
+.Legal li {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.quick-links a,
+.Legal a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.quick-links a:hover,
+.Legal a:hover {
+    color: #ffd700;
+    text-decoration: underline;
 }
 
 .specialties-columns {
@@ -367,53 +689,13 @@ nav ul li a:hover {
     gap: 5px;
     margin-top: 10px;
 }
-.footer h3 {
-    margin-bottom: 15px;
-    font-size: 18px;
-    font-weight: bold;
-}
 
-.footer p {
-    margin: 15px ;
-    font-size: 16px;
-}
-.quick-links , .Legal{
-    flex: 1;
-    margin: 10px;
-}
-
-.quick-links ul, .Legal ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.quick-links li , .Legal li{
-    margin: 5px 0;
-    font-size: 16px;
-}
-
-.quick-links a , .Legal a {
-    color: white;
-    text-decoration: none;
-}
-
-.quick-links a:hover , .Legal a:hover{
-    text-decoration:underline;
-}
 .text p {
     margin-top: 12px;
 }
 
-.footer>div {
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
-}
 
-.footer>div:last-child {
-    border-right: none;
-}
-
+/* ======== POPUP ======== */
 .content {
     display: none;
     position: fixed;
@@ -424,23 +706,39 @@ nav ul li a:hover {
     transform: translate(-50%, 40%);
     background-color: #fff;
     border-radius: 11px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    animation: popupFade 0.4s ease;
+}
 
+@keyframes popupFade {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 60%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 40%);
+    }
 }
 
 .contentDetail {
     display: flex;
     padding: 23px;
     gap: 22px;
-
 }
 
 .contentDetail img {
     width: 50%;
     height: 300px;
+    object-fit: cover;
+    border-radius: 6px;
 }
 
 .contentDetail p {
     margin-top: 22px;
+    font-size: 16px;
+    color: #333;
 }
 
 .content button {
@@ -452,15 +750,25 @@ nav ul li a:hover {
     font-size: 18px;
     color: white;
     cursor: pointer;
-
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
+/* ======== RESPONSIVE MENU BAR ICON ======== */
 #bar {
     align-items: center;
     display: none;
     font-size: 30px;
+    color: #0f8080;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
+
+#bar:hover {
+    transform: scale(1.1);
+}
 @media screen and (max-width:1100px) {
     .main {
         text-align: center;
@@ -597,7 +905,7 @@ nav ul li a:hover {
         margin: 5px 0;
     }
 }
-
+/* 
 .section {
     margin-top: 80px;
     font-size: 20px;
@@ -606,7 +914,7 @@ nav ul li a:hover {
 .section h2 {
     margin-bottom: 40px;
     text-align: center;
-}
+} */
 
 
 .see-more {
@@ -627,39 +935,4 @@ nav ul li a:hover {
 
 .hidden {
     display: none;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropbtn {
-    color: white;
-    padding: 10px;
-    text-decoration: none;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: white;
-    min-width: 160px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {
-    background-color: white;
-}
-
-.show {
-    display: block;
 }

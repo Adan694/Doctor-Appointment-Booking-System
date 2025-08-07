@@ -10,7 +10,7 @@
     <style>
       body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #e6f2ff;
     margin: 0;
     padding: 20px;
 }
@@ -62,8 +62,8 @@ ul li a:hover {
 }
 h1 {
     text-align: center;
-    color: #f4f4f4;
-    margin-top: 20px;
+    color: rgb(9, 102, 102);
+    margin-top: 100px;
 }
 .faq-container {
     max-width: 800px;
@@ -114,84 +114,73 @@ h1 {
         display: block;
     }
 }
- .footer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            padding: 40px;
-            color: white;
-            margin-top: 66px;
-            background-color: rgb(9, 102, 102);
-        }
+ /* Footer */
+    .footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 40px 20px;
+        color: white;
+        background-color: rgb(9, 102, 102);
+    }
 
-        .contact-info,
-        .text {
-            flex: 1;
-            min-width: 200px;
-            margin: 10px;
-            flex-direction: column;
-        }
+    .footer h3 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
 
-        .specialties-columns {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-        }
+    .footer p {
+        margin: 8px 0;
+        font-size: 20px;
+    }
 
-        .footer h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+    .quick-links,
+    .Legal,
+    .contact-info,
+    .text {
+        flex: 1;
+        min-width: 200px;
+        margin: 10px;
+    }
 
-        .footer p {
-            margin: 15px;
-            font-size: 16px;
-        }
+    .quick-links ul,
+    .Legal ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
 
-        .quick-links,
-        .Legal {
-            flex: 1;
-            margin: 10px;
-        }
+    .quick-links a,
+    .Legal a {
+        color: white;
+        text-decoration: none;
+        font-size: 15px;
+        transition: all 0.2s ease;
+    }
 
-        .quick-links ul,
-        .Legal ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
+    .quick-links a:hover,
+    .Legal a:hover {
+        text-decoration: underline;
+        color: #ffd700;
+    }
 
-        .quick-links li,
-        .Legal li {
-            margin: 5px 0;
-            font-size: 16px;
-        }
+    .specialties-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+        font-size: 14px;
+    }
 
-        .quick-links a,
-        .Legal a {
-            color: white;
-            text-decoration: none;
-        }
+    .footer>div {
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        padding-right: 10px;
+    }
 
-        .quick-links a:hover,
-        .Legal a:hover {
-            text-decoration: underline;
-        }
+    .footer>div:last-child {
+        border-right: none;
+    }
 
-        .text p {
-            margin-top: 12px;
-        }
-
-        .footer>div {
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .footer>div:last-child {
-            border-right: none;
-        }
 
 
 
@@ -208,10 +197,10 @@ h1 {
             </div>
             <i id="bar" class="fa-solid fa-bars"></i>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-                <li><a href="Contactus.html">Contact Us</a></li>
-                <li><a href="faqs.html">FAQs</a></li> 
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="Alldoctorsreal.html"><i class="fas fa-user-md"></i> Find a Doctor</a></li>
+                <li><a href="Contactus.html"><i class="fas fa-envelope"></i> Contact Us</a></li>
+                <li><a href="faqs.html"><i class="fas fa-question-circle"></i> FAQs</a></li> 
                 <li id="myAppointments" style="display: none;"><a href="myappointments.html">My Appointments</a></li>
             </ul>
         </nav>

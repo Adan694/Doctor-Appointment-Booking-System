@@ -34,7 +34,8 @@ const bookAppointment = async (req, res) => {
       return res.status(400).json({ success: false, message: "Slot not available" });
     }
 
-    const newBooking = new Booking({ patientId, doctorId, date: new Date(formattedDate), time });
+    const newBooking = new Booking({ patientId, doctorId, date: new Date(formattedDate), time, name: req.body.name, 
+  phone: req.body.phone  });
     await newBooking.save();
 
     slotDay.slots = slotDay.slots.filter(t => t !== time);
@@ -78,38 +79,60 @@ const bookAppointment = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
-
-// Cancel Appointment
 const cancelAppointment = async (req, res) => {
   try {
+    console.log("📍 Cancel appointment triggered");
+
     const bookingId = req.params.id;
     const { canceledBy } = req.body;
 
     const booking = await Booking.findById(bookingId);
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+    if (!booking) {
+      console.log("❌ Booking not found");
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
     if (booking.status === 'cancelled') {
+      console.log("⚠️ Booking already cancelled");
       return res.status(400).json({ message: 'Booking already cancelled' });
     }
 
     booking.status = 'cancelled';
     await booking.save();
+    console.log("✅ Booking status updated");
 
     const doctor = await Doctor.findById(booking.doctorId);
-    if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
+    if (!doctor) {
+      console.log("❌ Doctor not found");
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
 
     const bookingDate = booking.date.toISOString().split('T')[0];
-    const bookingTime = booking.time;
+    const bookingTime = booking.time?.trim();
+    console.log("📆 Booking date:", bookingDate, "⏰ time:", bookingTime);
 
-    const availabilityForDate = doctor.availabilitySlots.find(slot => slot.date === bookingDate);
-    if (availabilityForDate) {
-      if (!availabilityForDate.slots.includes(bookingTime)) {
-        availabilityForDate.slots.push(bookingTime);
+    let slot = doctor.availabilitySlots.find(s => {
+      const slotDate = new Date(s.date).toISOString().split('T')[0];
+      return slotDate === bookingDate;
+    });
+
+    if (slot) {
+      if (!slot.slots.includes(bookingTime)) {
+        console.log("➕ Adding time to existing slot");
+        slot.slots.push(bookingTime);
+      } else {
+        console.log("✅ Time already present in slot");
       }
     } else {
-      doctor.availabilitySlots.push({ date: bookingDate, slots: [bookingTime] });
+      console.log("🆕 Creating new slot for:", bookingDate);
+      doctor.availabilitySlots.push({
+        date: bookingDate,
+        slots: [bookingTime]
+      });
     }
 
     await doctor.save();
+    console.log("💾 Doctor saved with updated availability:", doctor.availabilitySlots);
 
     const patient = await User.findById(booking.patientId);
     const admin = await User.findOne({ role: 'admin' });
@@ -133,11 +156,13 @@ const cancelAppointment = async (req, res) => {
     await notifyAll({ patient, doctor: formattedDoctor, admin, message });
 
     return res.status(200).json({ message: 'Booking cancelled and slot restored' });
+
   } catch (err) {
-    console.error('Cancel booking error:', err);
+    console.error('❌ Cancel booking error:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 // Reschedule Appointment
 const rescheduleAppointment = async (req, res) => {

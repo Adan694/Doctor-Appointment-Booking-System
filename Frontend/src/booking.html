@@ -9,43 +9,72 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+                background-color: #e6f2ff;
+
         }
 
-        .slot {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+       .slot {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.3s ease;
+}
 
-        .time-slot {
-            display: inline-block;
-            margin: 5px;
-            padding: 5px 10px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            cursor: pointer;
-        }
+.slot:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
 
-        .time-slot.selected {
-            background-color: #4CAF50;
-            color: white;
-        }
+.time-slot {
+    display: inline-block;
+    margin: 6px;
+    padding: 8px 14px;
+    border: 1px solid #009999;
+    border-radius: 6px;
+    background-color: white;
+    color: #009999;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.time-slot:hover {
+    background-color: #e6fafa;
+}
+
+.time-slot.selected {
+    background-color: #009999;
+    color: white;
+    border-color: #007d7d;
+}
 
         .book-btn {
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: linear-gradient(to right, #009999, #007d7d);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
-        .book-btn:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
+.book-btn:hover {
+    background: linear-gradient(to right, #007d7d, #005f5f);
+    transform: translateY(-2px);
+}
+
+.book-btn:disabled {
+    background-color: #ccc;
+    color: #333;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
          /* Spinner Overlay */
     #loadingOverlay {
         display: none;
@@ -120,16 +149,22 @@
     padding: 20px;
     backdrop-filter: blur(4px);
 }
-
 .modal-content {
-    background: white;
-    padding: 25px 30px;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    animation: fadeIn 0.3s ease-in-out;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    animation: fadeInScale 0.3s ease-out;
 }
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+body {
+    background: linear-gradient(to bottom, #f2fefe, #e6fafa);
+}
+
 
 .modal-content h2 {
     margin-top: 0;
@@ -375,11 +410,14 @@
                             const timeField = document.getElementById('modalTime');
 
                             // Fetch user info from localStorage or API if available
-                            const patientName = localStorage.getItem('patientName') || '';
-                            const patientPhone = localStorage.getItem('patientPhone') || '';
+                            // const patientName = localStorage.getItem('patientName') || '';
+                            // const patientPhone = localStorage.getItem('patientPhone') || '';
 
-                            nameField.value = patientName;
-                            phoneField.value = patientPhone;
+                            // nameField.value = patientName;
+                            // phoneField.value = patientPhone;
+                            nameField.value = '';
+                            phoneField.value = '';
+
                             dateField.value = date;
                             timeField.value = time;
 
@@ -388,6 +426,9 @@
 
                         function closeModal() {
                             document.getElementById('bookingModal').style.display = 'none';
+                            document.getElementById('modalName').value = '';
+                            document.getElementById('modalPhone').value = '';
+
                         }
 
                         function confirmAppointment() {

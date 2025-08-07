@@ -9,8 +9,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Catamaran:wght@200&family=Courgette&family=Dancing+Script:wght@700&family=Edu+TAS+Beginner:wght@700&family=Lato:wght@300;900&family=Mukta:wght@700&family=Mulish:wght@300&family=Open+Sans&family=PT+Sans:ital,wght@1,700&family=Poppins:wght@300&family=Raleway:wght@100&family=Roboto&family=Roboto+Condensed:wght@700&family=Roboto+Slab&display=swap"
         rel="stylesheet">
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
@@ -22,30 +23,49 @@
             </div>
             <i id="bar" class="fa-solid fa-bars"></i>
             <ul>
-                <li><a href="">Home</a></li>
-                <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-                <li><a href="Contactus.html">Contact Us</a></li>
-                <li><a href="faqs.html">FAQs</a></li> 
+                <li>
+                    <a href="">
+                        <i class="fa-solid fa-house"></i> Home
+                    </a>
+                </li>
+                <li>
+                    <a href="Alldoctorsreal.html">
+                        <i class="fa-solid fa-user-doctor"></i> Find a Doctor
+                    </a>
+                </li>
+                <li>
+                    <a href="Contactus.html">
+                        <i class="fa-solid fa-envelope"></i> Contact Us
+                    </a>
+                </li>
+                <li>
+                    <a href="faqs.html">
+                        <i class="fa-solid fa-circle-question"></i> FAQs
+                    </a>
+                </li>
                 <li id="myprofile" style="display: none;">
-                  <a href="myprofile.html">
-                     <i class="fa-solid fa-user"></i> My Profile
-                 </a>
-                 </li>                
-                 <li id="authButton"><a href="login.html" class="login-button">Login</a></li>
-
-
+                    <a href="myprofile.html">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li id="authButton">
+                    <a href="login.html" class="login-button">
+                        <i class="fa-solid fa-right-to-bracket"></i> Login
+                    </a>
+                </li>
             </ul>
+
         </nav>
 
         <!-- Main Section -->
         <div class="main">
             <div class="mainText">
-                <h1>Find The Best Doctors<br> Who Care for You</h1>
-                <h3>Best Teams</h3>
+                <h1 id="heading1">Find The Best Doctors<br> Who Care for You</h1>
+                <h3 id="heading3">Best Teams</h3>
             </div>
             <img src="images/mains.png" alt="Main Image">
-
         </div>
+
 
         <!-- Doctors Section -->
         <div id="doctors">
@@ -58,6 +78,7 @@
             </div>
 
             <div class="doctor-list">
+                        <div class="doctor-card-wrapper">
                     <div class="card-container" id="doctorContainer">
                         <!-- Dynamic doctor cards will be injected here -->
                     </div>
@@ -114,7 +135,7 @@
 
         <!-- Conditions Section -->
         <div class="section">
-            <h2>Search by Condition</h2>
+            <h1>Search by Condition</h1>
             <div class="icon-container">
         
                 <div class="icon-wrapper">
@@ -193,7 +214,7 @@
         </div>
         <!-- Diseases Section -->
         <div class="section">
-            <h2>Diseases</h2>
+            <h1>Diseases</h1>
             <div class="icon-container">
         
                 <div class="icon-wrapper">
@@ -357,6 +378,7 @@
                     window.location.href = 'login.html';
                 }, 1500);
             }
+            
 
     </script>
   

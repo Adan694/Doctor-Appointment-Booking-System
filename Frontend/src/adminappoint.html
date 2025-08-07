@@ -16,7 +16,7 @@
         body {
             font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
-            background-color: #f0f2f5;
+            background-color: #e6f2ff;
             color: #333;
             overflow-x: hidden;
         }
@@ -88,7 +88,7 @@
             position: relative;
             z-index: 1;
             padding: 20px;
-            background-color: #ffffff;
+            background-color: #e6f2ff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             min-height: 100vh;
         }
@@ -193,6 +193,44 @@
         #overlay.active {
             display: block;
         }
+        /* General Pagination Style */
+.pagination-controls,
+#pagination-missed {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+    padding: 10px 0;
+}
+
+/* Pagination Buttons */
+.pagination-controls button,
+#pagination-missed button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff; /* Bootstrap blue */
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:hover,
+#pagination-missed button:hover {
+    background-color: #0056b3;
+}
+
+/* Page Info Styling */
+.pagination-controls span,
+#pagination-missed span {
+    font-weight: 500;
+    color: #333;
+    font-size: 16px;
+}
+
+        
 
         @media (max-width: 768px) {
             .main-content {
@@ -286,6 +324,11 @@
             </thead>
             <tbody id="upcoming-appointments-table"></tbody>
         </table>
+        <div class="pagination-controls" data-table="upcoming-appointments-table">
+            <button onclick="prevPage('upcoming')">Previous</button>
+<span id="page-info-upcoming">Page 1</span>
+            <button onclick="nextPage('upcoming')">Next</button>
+        </div>
 
         <h2>Completed Appointments</h2>
         <table>
@@ -301,6 +344,11 @@
             </thead>
             <tbody id="completed-appointments-table"></tbody>
         </table>
+        <div class="pagination-controls" data-table="completed-appointments-table">
+            <button onclick="prevPage('completed')">Previous</button>
+<span id="page-info-completed">Page 1</span>
+            <button onclick="nextPage('completed')">Next</button>
+        </div>
 
         <h2>Missed/Cancelled Appointments</h2>
         <table>
@@ -316,6 +364,11 @@
             </thead>
             <tbody id="missed-cancelled-appointments-table"></tbody>
         </table>
+    <div class="pagination" id="pagination-missed">
+        <button onclick="prevPage('missed')">Previous</button>
+        <span id="page-info-missed">Page 1</span>
+        <button onclick="nextPage('missed')">Next</button>
+    </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -351,28 +404,30 @@
 
                 let upcomingIndex = 1, completedIndex = 1, missedCancelledIndex = 1;
 
-                appointments.forEach((appointment) => {
+               appointments.forEach((appointment) => {
                     const row = document.createElement('tr');
                     row.setAttribute('data-id', appointment._id);
 
-                    const statusClass = appointment.status === 'cancelled' ? 'cancelled'
-                        : (appointment.status === 'completed' ? 'completed' : '');
+                    const status = appointment.status?.trim().toLowerCase(); // normalize
+
+                    const statusClass = status === 'cancelled' ? 'cancelled'
+                        : (status === 'completed' ? 'completed' : '');
 
                     let actionButtons = `<button class="delete-btn" onclick="deleteAppointment(this)">❌</button>`;
 
                     row.innerHTML = `
-                        <td></td>
-                        <td>${appointment.patientId?.name || 'N/A'}</td>
-                        <td>${appointment.patientId?.age || 'N/A'}</td>
-                        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
-                        <td>${appointment.doctorId?.name || 'N/A'}</td>
-                        <td class="action ${statusClass}">${actionButtons}</td>
-                    `;
+        <td></td>
+        <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
+        <td>${appointment.patientId?.age || 'N/A'}</td>
+        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
+        <td>${appointment.doctorId?.name || 'N/A'}</td>
+        <td class="action ${statusClass}">${actionButtons}</td>
+    `;
 
-                    if (appointment.status === 'Completed') {
+                    if (status === 'completed') {
                         row.querySelector('td').textContent = completedIndex++;
                         completedTableBody.appendChild(row);
-                    } else if (appointment.status === 'cancelled' || appointment.status === 'missed') {
+                    } else if (status === 'cancelled' || status === 'missed') {
                         row.querySelector('td').textContent = missedCancelledIndex++;
                         missedCancelledTableBody.appendChild(row);
                     } else {
@@ -384,7 +439,63 @@
             } catch (error) {
                 console.error('Failed to fetch appointments:', error);
             }
+            paginateTable('upcoming');
+            paginateTable('completed');
+            paginateTable('missed');
+
         }
+    const paginationState = {
+        upcoming: { page: 1, perPage: 6 },
+        completed: { page: 1, perPage: 6 },
+        missed: { page: 1, perPage: 6 },
+    };
+
+    function paginateTable(type) {
+        const tableId = {
+            upcoming: 'upcoming-appointments-table',
+            completed: 'completed-appointments-table',
+            missed: 'missed-cancelled-appointments-table'
+        }[type];
+
+        const table = document.getElementById(tableId);
+        const rows = table.querySelectorAll('tr');
+        const state = paginationState[type];
+
+        const start = (state.page - 1) * state.perPage;
+        const end = state.page * state.perPage;
+
+        rows.forEach((row, i) => {
+            row.style.display = (i >= start && i < end) ? '' : 'none';
+        });
+
+        const pageInfo = document.getElementById(`page-info-${type}`);
+        pageInfo.textContent = `Page ${state.page} of ${Math.ceil(rows.length / state.perPage)}`;
+    }
+
+    function nextPage(type) {
+        const tableId = {
+            upcoming: 'upcoming-appointments-table',
+            completed: 'completed-appointments-table',
+            missed: 'missed-cancelled-appointments-table'
+        }[type];
+
+        const totalRows = document.getElementById(tableId).querySelectorAll('tr').length;
+        const state = paginationState[type];
+        const totalPages = Math.ceil(totalRows / state.perPage);
+
+        if (state.page < totalPages) {
+            state.page++;
+            paginateTable(type);
+        }
+    }
+
+    function prevPage(type) {
+        const state = paginationState[type];
+        if (state.page > 1) {
+            state.page--;
+            paginateTable(type);
+        }
+    }
 
         async function deleteAppointment(button) {
             const row = button.closest('tr');

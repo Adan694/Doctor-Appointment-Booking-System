@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <title>Doctor Appointment</title>
 <style>
     :root {
@@ -25,7 +26,7 @@
     }
     body {
     font-family: 'Roboto', sans-serif;
-    background-color: #e2e2e2;
+    background-color: #e6f2ff;
 }
 
     .wrapper {
@@ -49,22 +50,22 @@
 }
 
    
-ul {
+nav ul {
     display: flex;
 }
 
-ul li {
+nav ul li {
     list-style: none;
 }
 
-ul li a {
+nav ul li a {
     text-decoration: none;
     color: white;
     font-size: 20px;
     margin-inline: 20px;
 }
 
-ul li a:hover {
+nav ul li a:hover {
     color: black;
     border-bottom: 2px solid black;
 }
@@ -201,83 +202,85 @@ ul li a:hover {
     }
 
      .footer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            padding: 40px;
-            color: white;
-            margin-top: 66px;
-            background-color: rgb(9, 102, 102);
-        }
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 40px;
+    color: white;
+    margin-top: 66px;
+    background: linear-gradient(135deg, #096666, #064949);
+    border-top: 4px solid #0f8080;
+}
 
-        .contact-info,
-        .text {
-            flex: 1;
-            min-width: 200px;
-            margin: 10px;
-            flex-direction: column;
-        }
+.footer>div {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0 20px;
+}
 
-        .specialties-columns {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-        }
+.footer>div:last-child {
+    border-right: none;
+}
 
-        .footer h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+.footer h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
 
-        .footer p {
-            margin: 15px;
-            font-size: 16px;
-        }
+.footer p {
+    margin: 15px 0;
+    font-size: 15px;
+}
 
-        .quick-links,
-        .Legal {
-            flex: 1;
-            margin: 10px;
-        }
+.contact-info,
+.text,
+.quick-links,
+.Legal {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+    flex-direction: column;
+}
 
-        .quick-links ul,
-        .Legal ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
+.quick-links ul,
+.Legal ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
 
-        .quick-links li,
-        .Legal li {
-            margin: 5px 0;
-            font-size: 16px;
-        }
+.quick-links li,
+.Legal li {
+    margin: 6px 0;
+    font-size: 15px;
+}
 
-        .quick-links a,
-        .Legal a {
-            color: white;
-            text-decoration: none;
-        }
+.quick-links a,
+.Legal a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
 
-        .quick-links a:hover,
-        .Legal a:hover {
-            text-decoration: underline;
-        }
+.quick-links a:hover,
+.Legal a:hover {
+    color: #ffd700;
+    text-decoration: underline;
+}
 
-        .text p {
-            margin-top: 12px;
-        }
+.specialties-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
 
-        .footer>div {
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
-        }
+.text p {
+    margin-top: 12px;
+}
 
-        .footer>div:last-child {
-            border-right: none;
-        }
+
     .btn-cancel {
         background: #d9534f;
         color: white;
@@ -385,6 +388,40 @@ ul li a:hover {
         }
     }
 
+#pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+    font-family: Arial, sans-serif;
+}
+
+#pagination-controls button {
+    background-color: #004c4c;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#pagination-controls button:hover {
+    background-color: #0056b3;
+}
+
+#pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#page-info {
+    font-weight: bold;
+    font-size: 15px;
+}
+
     @media (max-width: 768px) {
         .main-container {
             flex-direction: column;
@@ -411,22 +448,23 @@ ul li a:hover {
             <img src="images/Da.png" alt="DocAssist Logo">
             <h1>DocAssist</h1>
         </div>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-            <li><a href="Contactus.html">Contact Us</a></li>
-            <li><a href="faqs.html">FAQs</a></li>
-        </ul>
+    <ul>
+        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="Alldoctorsreal.html"><i class="fas fa-user-md"></i> Find a Doctor</a></li>
+        <li><a href="Contactus.html"><i class="fas fa-envelope"></i> Contact Us</a></li>
+        <li><a href="faqs.html"><i class="fas fa-question-circle"></i> FAQs</a></li>
+    </ul>
+
     </nav>
 
     <div class="main-container">
         
         <div class="appointments">
             <div id="appointment-tabs" style="margin-bottom: 1em;">
-                <button onclick="showAppointments('upcoming')" class="tab-button active">Upcoming</button>
-                <button onclick="showAppointments('past')" class="tab-button">Past</button> 
-                <button onclick="showAppointments('all')" class="tab-button">All</button>
-                <button onclick="showAppointments('missed')" class="tab-button">Missed</button>
+                <button onclick="showAppointments('upcoming')" class="tab-button active"><i class="fas fa-clock"></i> Upcoming</button>
+                <button onclick="showAppointments('past')" class="tab-button"><i class="fas fa-history"></i> Past</button> 
+                <button onclick="showAppointments('all')" class="tab-button"><i class="fas fa-list"></i> All</button>
+                <button onclick="showAppointments('missed')" class="tab-button"><i class="fas fa-times-circle"></i> Missed</button>
 
                   </div>
             <h2>My Appointments</h2>
@@ -441,29 +479,37 @@ ul li a:hover {
                     </tr>
                 </thead>
                 <tbody id="appointments-body">
-                   
+                
                 </tbody>
             </table>
+        <div id="pagination-controls">
+            <button onclick="prevPage()">Previous</button>
+            <span id="page-info">Page 1</span>
+            <button onclick="nextPage()">Next</button>
+        </div>
+
+
+
         </div>
             <div class="profile-container">
                 <h2>My Profile</h2>
                 <div class="profile-info">
-                    <label>Name:</label>
+<label><i class="fas fa-user"></i> Name:</label>
                     <p id="displayName"></p>
         
-                    <label>Email:</label>
+<label><i class="fas fa-envelope"></i> Email:</label>
                     <p id="displayEmail"></p>
         
-                    <label>Phone Number:</label>
+<label><i class="fas fa-phone"></i> Phone Number:</label>
                     <p id="displayPhone"></p>
         
-                    <label>Age:</label>
+<label><i class="fas fa-birthday-cake"></i> Age:</label>
                     <p id="displayAge"></p>
         
-                    <label>Date of Birth:</label>
+<label><i class="fas fa-calendar-alt"></i> Date of Birth:</label>
                     <p id="displayDob"></p>
         
-                    <label>Gender:</label>
+<label><i class="fas fa-venus-mars"></i> Gender:</label>
                     <p id="displayGender"></p>
                 </div>
         
@@ -571,6 +617,10 @@ ul li a:hover {
     <script>
                 let allAppointments = [];
 
+                let currentPage = 1; // Global variable to track current page
+                    let currentAppointments = []; // Global variable to hold filtered list for current type
+                    const pageSize = 6;
+
         // Fetch user profile data when the page loads
         window.onload = function () {
             showLoader();
@@ -654,6 +704,7 @@ ul li a:hover {
 
         }
     function renderAppointments(appointments, type = 'upcoming') {
+        
         const submittedFeedbacks = JSON.parse(localStorage.getItem('feedbackGiven') || '[]');
 
         const appointmentsBody = document.getElementById('appointments-body');
@@ -720,7 +771,12 @@ ul li a:hover {
             return aTime - bTime;
         });
 
-        filtered.forEach(appointment => {
+       currentAppointments = filtered; // Save filtered list
+        const startIndex = (currentPage - 1) * pageSize;
+        const paginatedAppointments = filtered.slice(startIndex, startIndex + pageSize);
+
+        paginatedAppointments.forEach(appointment => {
+
             const appointmentElement = document.createElement('tr');
                     const feedbackGiven = submittedFeedbacks.includes(appointment._id);
 
@@ -776,8 +832,42 @@ ul li a:hover {
         if (filtered.length === 0) {
             appointmentsBody.innerHTML = `<tr><td colspan="5">No ${type} appointments found.</td></tr>`;
         }
+        updatePageInfo();
+    }
+    function showAppointments(type) {
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.tab-button[onclick*="${type}"]`).classList.add('active');
+
+        currentPage = 1; // Reset to first page
+        activeTab = type; // Track the active tab (for pagination use)
+        renderAppointments(allAppointments, type);
     }
 
+    function updatePageInfo() {
+        const totalPages = Math.ceil(currentAppointments.length / pageSize);
+        document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages}`;
+    }
+
+    function nextPage() {
+        const totalPages = Math.ceil(currentAppointments.length / pageSize);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderAppointments(allAppointments, getCurrentTabType());
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderAppointments(allAppointments, getCurrentTabType());
+        }
+    }
+
+    // Helper to detect active tab
+    function getCurrentTabType() {
+        const activeTab = document.querySelector('.tab-button.active');
+        return activeTab ? activeTab.textContent.toLowerCase() : 'upcoming';
+    }
 
     function removeAppointmentFromUI(appointmentId) {
             if (!confirm("Are you sure you want to hide this appointment from the list?")) return;
