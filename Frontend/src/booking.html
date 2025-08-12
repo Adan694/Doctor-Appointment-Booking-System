@@ -12,6 +12,32 @@
                 background-color: #e6f2ff;
 
         }
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    color: #009999;
+    margin: 20px auto;
+    padding: 15px;
+    border: 3px solid #009999;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 700px;
+    background-color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+h1:hover {
+    color: #007d7d;
+    border-color: #007d7d;
+    background-color: #f0fefe;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
 
        .slot {
     margin-bottom: 15px;
@@ -151,11 +177,14 @@
 }
 .modal-content {
     background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
     animation: fadeInScale 0.3s ease-out;
+    width: 450px; /* Increased width */
+    max-width: 95%; /* Responsive */
 }
+
 
 @keyframes fadeInScale {
     from { opacity: 0; transform: scale(0.95); }
@@ -165,38 +194,45 @@ body {
     background: linear-gradient(to bottom, #f2fefe, #e6fafa);
 }
 
-
 .modal-content h2 {
     margin-top: 0;
-    font-size: 22px;
-    margin-bottom: 15px;
-    color: #333;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #009999;
+    text-align: center;
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
+
 
 .form-group label {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;
     color: #444;
+    
 }
 
 .form-group input {
     width: 100%;
-    padding: 8px 10px;
-    font-size: 14px;
+    padding: 12px 10px;
+    font-size: 15px;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 8px;
     outline: none;
-    transition: border 0.2s;
+    transition: all 0.3s ease;
+    background-color: #f9f9f9;
 }
 
 .form-group input:focus {
     border-color: #009999;
+    background-color: #ffffff;
+    box-shadow: 0 0 6px rgba(0, 153, 153, 0.2);
 }
+
 
 .modal-actions {
     display: flex;
@@ -236,11 +272,8 @@ body {
             <div class="loading-text">Booking appointment...</div>
         </div>
     </div>
-    
-    <!-- Toast Notification -->
-    <div id="toast">
+        <div id="toast">
         </div>
-        <!-- Booking Confirmation Modal -->
         <div id="bookingModal" class="modal-overlay">
             <div class="modal-content">
                 <h2>Confirm Appointment</h2>

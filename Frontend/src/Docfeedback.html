@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Doctor Feedback</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e6f2ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 20px;
+            position: fixed;
+            top: 0%;
+            width: 100%;
+            left: 0;
+            background-color: rgb(9, 102, 102);
+            color: white;
+            z-index: 1000;
+            padding: 10px 20px;
+        }
+
+        nav ul {
+            display: flex;
+        }
+
+        nav ul li {
+            list-style: none;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            margin-inline: 20px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: black;
+            border-bottom: 2px solid black;
+        }
+
+        #bar {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+       .logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin: 0;
+}
+
+.logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.logo h1 {
+    font-size: 30px;
+    margin: 0;
+}
+
+.logo img:hover {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.logo h1 {
+    font-size: 28px;
+    background: linear-gradient(45deg, #ffffff, #cceeff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+       /* Main container */
+main {
+    max-width: 1000px;
+    margin: 150px auto 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 14px;
+    padding: 2rem;
+    box-shadow: 0 6px 20px rgba(0, 128, 128, 0.12);
+    text-align: center;
+    animation: fadeInMain 0.7s ease;
+}
+
+@keyframes fadeInMain {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Heading Styling */
+h2.page-title {
+    text-align: center;
+    font-size: 2.4rem;
+    margin-bottom: 1.5rem;
+    color: rgb(9, 102, 102);
+    border-bottom: 3px solid rgb(9, 102, 102);
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 10px;
+    background: linear-gradient(to right, rgba(9, 102, 102, 0.1), rgba(9, 102, 102, 0.25));
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    margin-top: 10px;
+}
+
+h2.page-title::after {
+    content: '';
+    position: absolute;
+    left: -100%;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.5), transparent);
+    transition: all 0.4s ease;
+}
+
+h2.page-title:hover {
+    color: white;
+    background: linear-gradient(to right, rgb(9, 102, 102), rgb(5, 80, 80));
+    border-color: rgb(5, 80, 80);
+    transform: scale(1.06);
+    box-shadow: 0 8px 25px rgba(9, 102, 102, 0.25);
+}
+
+h2.page-title:hover::after {
+    left: 100%;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+    font-family: 'Segoe UI', sans-serif;
+    animation: fadeInTable 0.7s ease forwards;
+    border-spacing: 0 12px;
+}
+
+thead {
+    background: linear-gradient(135deg, #d1f0f0, #a8e0e0);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+th, td {
+    padding: 14px 18px;
+    transition: all 0.3s ease;
+}
+
+th {
+    font-weight: 700;
+    color: #044;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+
+tbody tr {
+    background: rgba(255, 255, 255, 0.85);
+    border: 2px solid #0a7d7d;   
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 10px rgba(0, 128, 128, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    opacity: 0; 
+    overflow: hidden;
+}
+
+@keyframes fadeInRow {
+    0% { opacity: 0; transform: translateY(15px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+tbody tr.appear {
+    animation: fadeInRow 0.5s ease forwards;
+}
+
+tbody tr:hover {
+    transform: translateY(-4px) scale(1.01);
+    border-color: #0a7d7d;
+    box-shadow: 0 8px 25px rgba(0, 128, 128, 0.18);
+    background: rgba(240, 255, 255, 0.96);
+}
+td {
+    border-left: 1px solid #0a7d7d ;
+}
+td:first-child {
+    border-left: none;
+}
+
+
+td:hover {
+    background: rgba(228, 247, 247, 0.7);
+    color: #055b5b;
+}
+
+@keyframes fadeInTable {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.rating {
+    color: #facc15;
+    font-size: 1.3rem;
+}
+
+/* Login warning */
+#loginWarning {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    padding: 20px;
+    background: rgba(255, 0, 0, 0.06);
+    border: 1px solid rgba(255, 0, 0, 0.15);
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 2px 6px rgba(255, 0, 0, 0.08);
+    animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    75% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+
+/* Mobile view */
+@media (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+
+    thead { display: none; }
+
+    tr {
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 2px 8px rgba(0, 128, 128, 0.08);
+        border: 1px solid rgba(0, 128, 128, 0.25);
+    }
+
+    td {
+        display: flex;
+        align-items: center; /* vertically align label + value */
+        padding: 6px 0;
+        border: none;
+    }
+
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        min-width: 110px; /* fixed label width so values align */
+        color: #055b5b;
+    }
+
+    td span {
+        flex: 1;
+        text-align: left;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    nav ul {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        background-color: rgb(9, 102, 102);
+        transition: max-height 0.3s ease;
+
+    }
+    nav ul li {
+        text-align: center;
+        width: 70%;
+        padding: 10px 0;
+    }
+    nav ul.active {
+        display: flex;
+    }
+    #bar {
+        z-index: 1001;
+        display: block;
+    }
+}
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">
+            <img src="images/Da.png" alt="DocAssist Logo">
+            <h1>DocAssist</h1>
+        </div>
+        <i id="bar" class="fa-solid fa-bars"></i>
+        <ul>
+            <li><a href="docpanel.html">Dashboard</a></li>
+            <li><a href="DocAppointment.html">Appointments</a></li>
+            <li><a href="docprofile.html">Profile</a></li>
+            <li><a href="Docfeedback.html">Feedback</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h2 class="page-title">Feedback</h2>
+
+        <div id="loginWarning" style="display:none;">
+            You must be logged in as a doctor to view this page.
+        </div>
+
+        <table id="feedbackTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Rating</th>
+                    <th>Feedback</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <p id="noFeedback" style="display: none; text-align:center; margin-top: 20px;">No feedback available.</p>
+    </main>
+
+    <script>
+
+       document.addEventListener('DOMContentLoaded', () => {
+            const doctorId = localStorage.getItem('doctorId');
+            const token = localStorage.getItem('authToken');
+
+            if (!doctorId || !token) {
+                window.location.href = 'login.html'; 
+                return;
+            }
+
+            loadDoctorFeedback(doctorId, token);
+        });
+
+         document.getElementById('bar').addEventListener('click', function () {
+                const menu = document.querySelector('nav ul');
+                menu.classList.toggle('active'); 
+            });
+
+        function loadDoctorFeedback(doctorId, token) {
+                fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error('Failed to fetch feedback');
+                        }
+                        return res.json();
+                    })
+                    .then(feedbacks => {
+                        const table = document.getElementById('feedbackTable');
+                        const tableBody = table.querySelector('tbody');
+                        const noFeedback = document.getElementById('noFeedback');
+
+                        tableBody.innerHTML = '';
+
+                        if (!feedbacks.length) {
+                            noFeedback.style.display = 'block';
+                            return;
+                        }
+
+                        table.style.display = 'table';
+                        noFeedback.style.display = 'none';
+
+                        feedbacks.forEach((feedback, index) => { // ✅ Added index here
+                            const row = document.createElement('tr');
+
+                            // Patient name
+                            const patientNameCell = document.createElement('td');
+                            patientNameCell.textContent = feedback.userName || 'Unknown';
+                            patientNameCell.setAttribute('data-label', 'Patient Name');
+
+                            // Rating
+                            const ratingCell = document.createElement('td');
+                            ratingCell.classList.add('rating');
+                            ratingCell.innerHTML = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+                            ratingCell.setAttribute('data-label', 'Rating');
+
+                            // Feedback text
+                            const feedbackCell = document.createElement('td');
+                            feedbackCell.textContent = feedback.comment || 'No comment';
+                            feedbackCell.setAttribute('data-label', 'Feedback');
+
+                            // Date
+                            const dateCell = document.createElement('td');
+                            dateCell.textContent = new Date(feedback.timestamp).toLocaleDateString();
+                            dateCell.setAttribute('data-label', 'Date');
+
+                            row.appendChild(patientNameCell);
+                            row.appendChild(ratingCell);
+                            row.appendChild(feedbackCell);
+                            row.appendChild(dateCell);
+
+                            // Start hidden
+                            row.style.opacity = "0";
+
+                            // Append first
+                            tableBody.appendChild(row);
+
+                            // Animate later
+                            setTimeout(() => {
+                                row.classList.add('appear');
+                            }, index * 150); // ✅ Stagger each row by 150ms
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Error loading feedback:', err);
+                        alert('Error loading feedback.');
+                    });
+            }
+
+    </script>
+
+</body>
+
+</html>

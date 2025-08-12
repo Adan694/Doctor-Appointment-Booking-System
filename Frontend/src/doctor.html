@@ -41,15 +41,35 @@
 }
 
 h2 {
-    margin: 0 0 10px;
     color: rgb(9, 102, 102);
-    font-size: 25px;
+    font-size: 30px;
+    margin: 8px 0; 
+    line-height: 1.6;
+    border-bottom: 1px solid #ddd; 
+    padding: 10px 0; 
 }
 
-p {
-    margin: 6px 0;
-    font-size: 15px;
-    line-height: 1.6;
+.profile-card p {
+     margin: 10px 0; 
+    line-height: 1.6; 
+    font-size: 16px;
+    color: #555; 
+    padding: 10px; 
+    background-color: #f9f9f9; 
+    border-left: 5px solid rgb(9, 102, 102); 
+    border-radius: 5px; 
+    transition: background-color 0.3s ease; 
+
+}
+.profile-card strong {
+    display: block; 
+    font-weight: bold; 
+    color: rgb(9, 102, 102); 
+    margin-bottom: 4px; 
+}
+
+.profile-card p:hover {
+    background-color: #e6f2f2; 
 }
 
 .book-button {
@@ -83,16 +103,34 @@ p {
 .unavailable {
     color: #dc3545;
 }
-
-/* Feedback Styles */
-h3 {
-    font-size: 26px;
-    color: rgb(9, 102, 102);
-    margin-top: 40px;
-    margin-bottom: 20px;
+.Heading {
+    font-size: 28px;
+    font-weight: 700;
     text-align: center;
-    font-weight: 600;
+    color: #009999;
+    margin: 20px auto;
+    padding: 15px;
+    border: 3px solid #009999;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 700px;
+    background-color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-top: 40px;
 }
+
+.Heading:hover {
+    color: #007d7d;
+    border-color: #007d7d;
+    background-color: #f0fefe;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+
 
 #feedback-list {
     margin: 30px auto;
@@ -101,10 +139,6 @@ h3 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 
 }
-
-
-
-
 .feedback-item {
     display: flex;
     gap: 15px;
@@ -115,7 +149,23 @@ h3 {
     border: 1px solid #e3e3e3;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     align-items: flex-start;
+
+    /* Smooth transition for hover changes */
+    transition: color 0.3s ease,
+                border-color 0.3s ease,
+                background-color 0.3s ease,
+                box-shadow 0.3s ease,
+                transform 0.3s ease;
 }
+
+.feedback-item:hover {
+    color: #007d7d;
+    border-color: #007d7d;
+    background-color: #f0fefe;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
 
 .feedback-avatar {
     width: 50px;
@@ -171,11 +221,6 @@ h3 {
 
 .feedback-actions button:hover {
     background-color: #0b7b7b;
-}
-.feedback-item:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-    transition: all 0.3s ease;
 }
 
 
@@ -297,78 +342,123 @@ nav ul li a:hover {
     font-size: 30px;
     margin: 0;
 }
-  .footer {
+
+.logo img:hover {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.logo h1 {
+    font-size: 28px;
+    background: linear-gradient(45deg, #ffffff, #cceeff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+   /* Footer */
+    .footer {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 50px 40px;
+    justify-content: space-around;
+    padding: 40px;
     color: white;
-    background-color: rgb(9, 102, 102);
-    margin-top: 80px;
-    gap: 20px;
-    font-family: 'Arial', sans-serif;
+    margin-top: 66px;
+    background: linear-gradient(135deg, #096666, #064949);
+    border-top: 4px solid #0f8080;
+    margin-bottom: 0px;
 }
 
-.footer > div {
-    flex: 1 1 200px;
-    min-width: 220px;
-    padding: 10px 20px;
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
+.footer>div {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0 20px;
 }
 
-.footer > div:last-child {
+.footer>div:last-child {
     border-right: none;
 }
 
 .footer h3 {
-    margin-bottom: 16px;
-    font-size: 20px;
-    font-weight: 600;
-    color: #ffffff;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .footer p {
-    margin: 10px 0;
+    margin: 15px 0;
     font-size: 15px;
-    color: #e0e0e0;
 }
 
-.text p {
-    margin-top: 12px;
-    line-height: 1.5;
+.contact-info,
+.text,
+.quick-links,
+.Legal {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+    flex-direction: column;
 }
 
 .quick-links ul,
 .Legal ul {
     list-style: none;
     padding: 0;
-    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+}
+
+.quick-links li,
+.Legal li {
+    margin: 6px 0;
+    font-size: 15px;
 }
 
 .quick-links a,
 .Legal a {
-    color: #dcdcdc;
+    color: #fff;
     text-decoration: none;
-    font-size: 15px;
+    position: relative;
+    font-weight: 600;
+    cursor: pointer;
+    padding-bottom: 3px;
     transition: color 0.3s ease;
+}
+
+.quick-links a::after,
+.Legal a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.quick-links a:hover::after,
+.Legal a:hover::after {
+    width: 100%;
+    left: 0;
 }
 
 .quick-links a:hover,
 .Legal a:hover {
-    color: #ffd700;
-    text-decoration: underline;
+    color: white;
+    text-shadow: 0 0 5px #ffd700aa;
 }
+
 
 .specialties-columns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 5px;
     margin-top: 10px;
 }
 
+.text p {
+    margin-top: 12px;
+}
 
 @media (max-width: 900px) {
     nav ul {
@@ -441,20 +531,20 @@ nav ul li a:hover {
         </div>
         <i id="bar" class="fa-solid fa-bars"></i>
         <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-            <li><a href="Contactus.html">Contact Us</a></li>
-            <li><a href="faqs.html">FAQs</a></li> 
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="Alldoctorsreal.html"><i class="fa-solid fa-user-doctor"></i> Find a Doctor</a></li>
+            <li><a href="Contactus.html"><i class="fa-solid fa-envelope"></i> Contact Us</a></li>
+            <li><a href="faqs.html"><i class="fa-solid fa-circle-question"></i> FAQs</a></li>
         </ul>
-    
     </nav>
-    <!-- <a class="back-link" href="Alldoctorsreal.html">← Back to Doctors Page</a> -->
-<h3>Profile:</h3>
-    <div class="profile-card" id="profile"></div>
-<div id="edit-form-container" style="display: none; max-width: 800px; margin: 40px auto;"></div>
 
-    <h3>Feedback:</h3>
+    <h3 class="Heading">Profile:</h3>
+    <div class="profile-card" id="profile"></div>
+    <div id="edit-form-container" style="display: none; max-width: 800px; margin: 40px auto;"></div>
+
+    <h3 class="Heading">Feedback:</h3>
     <div id="feedback-list"></div>
+
     <!-- Footer Section -->
     <div class="footer">
         <div class="contact-info">
@@ -464,6 +554,7 @@ nav ul li a:hover {
             <p>Phone: (123) 456-7890</p>
             <p>Email: support@hospital.com</p>
         </div>
+
         <div class="quick-links">
             <h3>Quick Links</h3>
             <ul>
@@ -474,6 +565,7 @@ nav ul li a:hover {
                 <li><a href="Faqs.html">FAQS</a></li>
             </ul>
         </div>
+
         <div class="text">
             <h3>Doctors' Specialties</h3>
             <div class="specialties-columns">
@@ -489,6 +581,7 @@ nav ul li a:hover {
                 <p>Psychiatry</p>
             </div>
         </div>
+
         <div class="Legal">
             <h3>Legal</h3>
             <ul>
@@ -497,6 +590,7 @@ nav ul li a:hover {
             </ul>
         </div>
     </div>
+
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
 
@@ -608,14 +702,16 @@ nav ul li a:hover {
 <p><small><strong>Submitted:</strong> ${dayjs(feedback.timestamp).fromNow()}</small></p>
     
 `;
-                        if (String(feedback.patientId) === String(loggedInPatientId)) {
+                       const userRole = localStorage.getItem("userRole");
+                        if (String(feedback.patientId) === String(loggedInPatientId) || userRole === "admin") {
                             feedbackHTML += `
         <div class="feedback-actions">
-            <button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${encodeURIComponent(feedback.comment)}')">Edit</button>
+            ${(String(feedback.patientId) === String(loggedInPatientId)) ? `<button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${encodeURIComponent(feedback.comment)}')">Edit</button>` : ''}
             <button class="delete" onclick="deleteFeedback('${feedback._id}')">Delete</button>
         </div>
     `;
                         }
+
 
                         feedbackHTML += `</div>`; // Close .feedback-content
 

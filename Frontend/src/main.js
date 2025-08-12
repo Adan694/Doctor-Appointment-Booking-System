@@ -7,9 +7,9 @@ document.addEventListener('DOMContentLoaded', function () {
     let slide = document.querySelectorAll(".patientCard");
     let card = document.querySelectorAll(".card");
     let count = 0;
-
     const doctorContainer = document.getElementById("doctorContainer");
 
+    // Load doctors from API
     if (doctorContainer) {
         const loadingMessage = document.createElement("p");
         loadingMessage.textContent = "Loading doctors...";
@@ -45,25 +45,51 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // Function to update the navbar based on user role
-    function updateNavbar() {
-        if (userRole === 'patient') {
-            myAppointmentsTab.style.display = 'block';
-            authButton.innerHTML = '<a href="#" class="logout-button" onclick="logout()">Logout</a>';
-        } else {
-            myAppointmentsTab.style.display = 'none';
-            authButton.innerHTML = '<a href="login.html" class="login-button">Login</a>';
+// Update navigation bar based on user role
+   function updateNavbar() {
+    const profileMenu = document.getElementById('profileMenu');
+    const authButton = document.getElementById('authButton');
+    const userRole = localStorage.getItem('userRole');
+
+    if (userRole === 'patient') {
+        if (profileMenu) profileMenu.style.display = 'block';
+        if (authButton) {
+            authButton.innerHTML = `
+                <a href="javascript:void(0);" onclick="logout()" class="logout-button">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            `;
+        }
+    } else {
+        if (profileMenu) profileMenu.style.display = 'none';
+        if (authButton) {
+            authButton.innerHTML = `
+                <a href="login.html" class="login-button">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </a>
+            `;
         }
     }
+    }
+    // Profile icon click event
+const profileIcon = profileMenu.querySelector('.profile-icon');
+profileIcon.addEventListener('click', function(e) {
+    e.stopPropagation();
+    profileMenu.classList.toggle('active');
+});
+    document.addEventListener('click', () => {
+        if (profileMenu) profileMenu.classList.remove('active');
+    });
     updateNavbar();
 
-    // Function to handle logout
+     // Logout function
     window.logout = function () {
         localStorage.removeItem('userRole');
+        updateNavbar();
         location.reload();
     };
 
-    // JavaScript to toggle the hamburger menu
+    // Mobile menu toggle
     const bar = document.getElementById('bar');
     if (bar) {
         bar.addEventListener('click', function () {
@@ -72,48 +98,50 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Initialize slides position
+    // Initialize slides for patient cards
     slide.forEach(function (slides, index) {
         slides.style.left = `${index * 100}%`;
     });
-
-    // Function to handle slide animation
     function myFun() {
         slide.forEach(function (curVal) {
             curVal.style.transform = `translateX(-${count * 99}%)`;
         });
     }
 
-    // Automatic slide change every 2 seconds
-    setInterval(function () {
-        count++;
-        if (count == slide.length) {
-            count = 0;
-        }
-        myFun();
-    }, 2000);
+const prevArrow = document.getElementById('prevArrow');
+const nextArrow = document.getElementById('nextArrow');
 
-    // Event listeners for doctor cards
-    card.forEach(function (cards) {
-        cards.addEventListener("click", function () {
-            console.log(cards.firstElementChild.src);
-            document.querySelector(".content").style.display = "block";
-            document.querySelector(".contentDetail").innerHTML = `
-                <img src=${cards.firstElementChild.src}>
-                <div>
-                    <h1>Dr Alexa Zoan</h1>
-                    <p>Experienced surgeon specializing in minimally invasive procedures.</p>
-                    <p>Experience: 10 Years</p>
-                </div>
-            `;
-            // Close button functionality
-            closeBtn.addEventListener("click", function () {
-                document.querySelector(".content").style.display = "none";
-            });
-        });
-    });
+prevArrow.addEventListener('click', () => {
+    count--;
+    if (count < 0) count = slide.length - 1;
+    myFun();
+});
 
-    // Event listener for the connect button (Login form)
+nextArrow.addEventListener('click', () => {
+    count++;
+    if (count >= slide.length) count = 0;
+    myFun();
+});
+
+    // card.forEach(function (cards) {
+    //     cards.addEventListener("click", function () {
+    //         console.log(cards.firstElementChild.src);
+    //         document.querySelector(".content").style.display = "block";
+    //         document.querySelector(".contentDetail").innerHTML = `
+    //             <img src=${cards.firstElementChild.src}>
+    //             <div>
+    //                 <h1>Dr Alexa Zoan</h1>
+    //                 <p>Experienced surgeon specializing in minimally invasive procedures.</p>
+    //                 <p>Experience: 10 Years</p>
+    //             </div>
+    //         `;
+    //         closeBtn.addEventListener("click", function () {
+    //             document.querySelector(".content").style.display = "none";
+    //         });
+    //     });
+    // });
+
+     // Connect button event for login validation
     if (connectBtn) {
         connectBtn.addEventListener("click", function () {
             let email = document.getElementById("email");
@@ -151,14 +179,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Contact Us form submission
+    // Contact form submission
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const email = document.getElementById('email').value;
-           const name = document.getElementById('name').value;
+            const name = document.getElementById('name').value;
             const phone = document.getElementById('phone').value;
             const message = document.getElementById('message').value;
 
@@ -181,67 +209,47 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-});
-// Word-by-word animation function
-function animateWords(selector, delay = 300) {
-    const el = document.querySelector(selector);
-    
-    // Replace <br> with a placeholder token
-    const rawHTML = el.innerHTML.replace(/<br\s*\/?>/gi, '[[BR]]');
-    const words = rawHTML.split(' ');
 
-    el.innerHTML = ''; // Clear existing content
+     // Animate words in specified selector
+    function animateWords(selector, delay = 300) {
+        const el = document.querySelector(selector);
+            const rawHTML = el.innerHTML.replace(/<br\s*\/?>/gi, '[[BR]]');
+        const words = rawHTML.split(' ');
 
-    let index = 0;
+        el.innerHTML = ''; 
 
-    words.forEach((word) => {
-        if (word.includes('[[BR]]')) {
-            // If word has [[BR]], split and handle both parts
-            const parts = word.split('[[BR]]');
-            if (parts[0]) {
+        let index = 0;
+
+        words.forEach((word) => {
+            if (word.includes('[[BR]]')) {
+                const parts = word.split('[[BR]]');
+                if (parts[0]) {
+                    const span = document.createElement('span');
+                    span.textContent = parts[0] + ' ';
+                    span.style.animationDelay = `${index * delay}ms`;
+                    el.appendChild(span);
+                    index++;
+                }
+                el.appendChild(document.createElement('br'));
+                if (parts[1]) {
+                    const span = document.createElement('span');
+                    span.textContent = parts[1] + ' ';
+                    span.style.animationDelay = `${index * delay}ms`;
+                    el.appendChild(span);
+                    index++;
+                }
+            } else {
                 const span = document.createElement('span');
-                span.textContent = parts[0] + ' ';
+                span.textContent = word + ' ';
                 span.style.animationDelay = `${index * delay}ms`;
                 el.appendChild(span);
                 index++;
             }
-            el.appendChild(document.createElement('br'));
-            if (parts[1]) {
-                const span = document.createElement('span');
-                span.textContent = parts[1] + ' ';
-                span.style.animationDelay = `${index * delay}ms`;
-                el.appendChild(span);
-                index++;
-            }
-        } else {
-            const span = document.createElement('span');
-            span.textContent = word + ' ';
-            span.style.animationDelay = `${index * delay}ms`;
-            el.appendChild(span);
-            index++;
-        }
-    });
-}
-
-// Apply to your headings
-animateWords('#heading1', 200);
-animateWords('#heading3', 300);
-
-// Logout functionality
-// document.getElementById('logoutBtn').addEventListener('click', logout);
-
-// function logout() {
-//     localStorage.removeItem('token');
-//     localStorage.removeItem('patientId');
-//     localStorage.removeItem('doctorId');
-//     localStorage.removeItem('role');
-//     showToast("Logged out successfully!");
-//     setTimeout(() => {
-//         window.location.href = 'login.html';
-//     }, 1500);
-// }
-
-// Dummy showToast function (you can replace it with your own)
-function showToast(msg) {
-    alert(msg); // Replace with a fancier toast if needed
-}
+        });
+    }
+    animateWords('#heading1', 200);
+    animateWords('#heading3', 300);
+    function showToast(msg) {
+        alert(msg); // Replace with a fancier toast if needed
+    }
+})

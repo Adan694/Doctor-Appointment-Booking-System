@@ -83,117 +83,206 @@
         }
 
         main {
-            margin-left: 250px;
-            width: calc(100% - 250px);
-            position: relative;
-            z-index: 1;
-            padding: 20px;
-            background-color: #e6f2ff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            min-height: 100vh;
-        }
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    background-color: #e6f2ff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: 100vh;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
 
-        header {
-            background-color: #166e6b;
-            color: white;
-            padding-bottom: 10px;
-            font-size: 28px;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-            border-bottom: 2px solid white;
-            padding: 20px 16px;
-        }
+header {
+    background-color: #166e6b;
+    color: white;
+    padding: 20px 16px 10px 16px; /* adjusted padding for clarity */
+    font-size: 28px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    border-bottom: 3px solid white;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
 
-        header button {
-            background-color: #28a745;
-            border: none;
-            color: white;
-            padding: 10px 22px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+header:hover {
+    background-color: #145956;
+    border-color: #ccc;
+}
 
-        header button:hover {
-            background-color: #1e7e34;
-        }
+header button {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    padding: 10px 22px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 3px 6px rgba(40, 167, 69, 0.4);
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-            background-color: #fff;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
-            table-layout: fixed;
-        }
+header button:hover {
+    background-color: #1e7e34;
+    box-shadow: 0 6px 12px rgba(30, 126, 52, 0.6);
+}
+h2 {
+    font-size: 24px;
+    color: #166e6b;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    font-weight: 700;
+    cursor: default;
+    transition: color 0.3s ease, transform 0.3s ease;
+    position: relative;
+    display: inline-block
+;}
 
-        th {
-            background-color: #166e6b;
-            color: white;
-            padding: 16px;
-            text-align: left;
-            font-weight: 700;
-        }
+h2::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 3px;
+    background-color: #166e6b;
+    box-shadow: 0 0 8px #166e6b;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+}
 
-        td {
-            padding: 16px;
-            border-bottom: 1px solid #eee;
-        }
+h2:hover {
+    color: #166e6b;
+    transform: scale(1.05);
+}
 
-        tr:hover {
-            background-color: #f9f9f9;
-        }
+h2:hover::after {
+    width: 100%;
+}
 
-        .action {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
 
-        .cancelled {
-            color: #dc3545;
-            font-weight: bold;
-        }
+table {
+    width: 100%;
+    border-collapse: separate; /* changed for border-radius to work */
+    border-spacing: 0;
+    margin-top: 30px;
+    background-color: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
+    table-layout: fixed;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    border: 1px solid #ccc;
+}
 
-        .completed {
-            color: #28a745;
-            font-weight: bold;
-        }
+table:hover {
+    box-shadow: 0 8px 20px rgba(22, 110, 107, 0.25);
+    transform: translateY(-3px);
+}
 
-        .delete-btn {
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            color: #166e6b;
-            font-size: 18px;
-            transition: color 0.3s ease;
-        }
+th {
+    background-color: #166e6b;
+    color: white;
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 2px solid #0f5957;
+    transition: background-color 0.3s ease;
+}
 
-        .delete-btn:hover {
-            color: #dc3545;
-        }
+th:hover {
+    background-color: #145956;
+}
 
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 900;
-            display: none;
-        }
+td {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s ease;
+}
 
-        #overlay.active {
-            display: block;
-        }
-        /* General Pagination Style */
+tr:hover td {
+    background-color: #f9f9f9;
+}
+/* Table row hover with smooth background, shadow and lift */
+tr {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    will-change: transform, box-shadow;
+}
+
+tr:hover {
+    background-color: #f0f8ff;  /* light blue-ish background on hover */
+    box-shadow: 0 4px 8px rgba(22, 110, 107, 0.15);
+    transform: translateY(-3px);
+}
+
+tr:hover td {
+    /* optional: keep cells clean with no border highlight */
+    border-bottom-color: transparent;
+}
+
+
+.action {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.cancelled {
+    color: #dc3545;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.cancelled:hover {
+    color: #a71d2a;
+}
+
+.completed {
+    color: #28a745;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.completed:hover {
+    color: #1e7e34;
+}
+
+.delete-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #166e6b;
+    font-size: 18px;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-btn:hover {
+    color: #dc3545;
+    transform: scale(1.1);
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 900;
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+#overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* General Pagination Style */
 .pagination-controls,
 #pagination-missed {
     display: flex;
@@ -204,22 +293,23 @@
     padding: 10px 0;
 }
 
-/* Pagination Buttons */
 .pagination-controls button,
 #pagination-missed button {
-    padding: 6px 16px;
+    padding: 8px 18px;
     border: none;
-    border-radius: 5px;
-    background-color: #007bff; /* Bootstrap blue */
+    border-radius: 6px;
+    background-color: #166e6b; 
     color: white;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 123, 255, 0.4);
 }
 
 .pagination-controls button:hover,
 #pagination-missed button:hover {
     background-color: #0056b3;
+    box-shadow: 0 6px 12px rgba(0, 86, 179, 0.6);
 }
 
 /* Page Info Styling */
@@ -230,7 +320,6 @@
     font-size: 16px;
 }
 
-        
 
         @media (max-width: 768px) {
             .main-content {
@@ -319,14 +408,14 @@
                     <th>Age</th>
                     <th>Date & Time</th>
                     <th>Doctor</th>
-                    <th>Action</th>
+                    <!-- <th>Action</th> -->
                 </tr>
             </thead>
             <tbody id="upcoming-appointments-table"></tbody>
         </table>
         <div class="pagination-controls" data-table="upcoming-appointments-table">
             <button onclick="prevPage('upcoming')">Previous</button>
-<span id="page-info-upcoming">Page 1</span>
+            <span id="page-info-upcoming">Page 1</span>
             <button onclick="nextPage('upcoming')">Next</button>
         </div>
 
@@ -339,14 +428,14 @@
                     <th>Age</th>
                     <th>Date & Time</th>
                     <th>Doctor</th>
-                    <th>Action</th>
+                    <!-- <th>Action</th> -->
                 </tr>
             </thead>
             <tbody id="completed-appointments-table"></tbody>
         </table>
         <div class="pagination-controls" data-table="completed-appointments-table">
             <button onclick="prevPage('completed')">Previous</button>
-<span id="page-info-completed">Page 1</span>
+             <span id="page-info-completed">Page 1</span>
             <button onclick="nextPage('completed')">Next</button>
         </div>
 
@@ -359,7 +448,7 @@
                     <th>Age</th>
                     <th>Date & Time</th>
                     <th>Doctor</th>
-                    <th>Action</th>
+                    <!-- <th>Action</th> -->
                 </tr>
             </thead>
             <tbody id="missed-cancelled-appointments-table"></tbody>
@@ -372,7 +461,6 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script>
         const bar = document.getElementById('bar');
         const sidebar = document.querySelector('.sidebar');
@@ -389,66 +477,72 @@
         });
 
         async function fetchAppointments() {
-            try {
-                const response = await fetch('http://localhost:3000/api/appointments/all');
-                if (!response.ok) throw new Error('Network response was not ok');
-                const appointments = await response.json();
+                try {
+                    const response = await fetch('http://localhost:3000/api/appointments/all');
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const appointments = await response.json();
 
-                const upcomingTableBody = document.getElementById('upcoming-appointments-table');
-                const completedTableBody = document.getElementById('completed-appointments-table');
-                const missedCancelledTableBody = document.getElementById('missed-cancelled-appointments-table');
+                    const upcomingTableBody = document.getElementById('upcoming-appointments-table');
+                    const completedTableBody = document.getElementById('completed-appointments-table');
+                    const missedCancelledTableBody = document.getElementById('missed-cancelled-appointments-table');
 
-                upcomingTableBody.innerHTML = '';
-                completedTableBody.innerHTML = '';
-                missedCancelledTableBody.innerHTML = '';
+                    upcomingTableBody.innerHTML = '';
+                    completedTableBody.innerHTML = '';
+                    missedCancelledTableBody.innerHTML = '';
 
-                let upcomingIndex = 1, completedIndex = 1, missedCancelledIndex = 1;
+                    let upcomingIndex = 1,
+                        completedIndex = 1,
+                        missedCancelledIndex = 1;
 
-               appointments.forEach((appointment) => {
-                    const row = document.createElement('tr');
-                    row.setAttribute('data-id', appointment._id);
+                    appointments.forEach((appointment) => {
+                        const row = document.createElement('tr');
+                        row.setAttribute('data-id', appointment._id);
 
-                    const status = appointment.status?.trim().toLowerCase(); // normalize
+                        const status = appointment.status?.trim().toLowerCase(); // normalize
 
-                    const statusClass = status === 'cancelled' ? 'cancelled'
-                        : (status === 'completed' ? 'completed' : '');
+                        const statusClass =
+                            status === 'cancelled'
+                                ? 'cancelled'
+                                : status === 'completed'
+                                    ? 'completed'
+                                    : '';
 
-                    let actionButtons = `<button class="delete-btn" onclick="deleteAppointment(this)">❌</button>`;
+                        // let actionButtons = `<button class="delete-btn" onclick="deleteAppointment(this)">❌</button>`;
 
-                    row.innerHTML = `
-        <td></td>
-        <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
-        <td>${appointment.patientId?.age || 'N/A'}</td>
-        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
-        <td>${appointment.doctorId?.name || 'N/A'}</td>
-        <td class="action ${statusClass}">${actionButtons}</td>
-    `;
+                        row.innerHTML = `
+                <td></td>
+                <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
+                <td>${appointment.patientId?.age || 'N/A'}</td>
+                <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
+                <td>${appointment.doctorId?.name || 'N/A'}</td>
+            `;
 
-                    if (status === 'completed') {
-                        row.querySelector('td').textContent = completedIndex++;
-                        completedTableBody.appendChild(row);
-                    } else if (status === 'cancelled' || status === 'missed') {
-                        row.querySelector('td').textContent = missedCancelledIndex++;
-                        missedCancelledTableBody.appendChild(row);
-                    } else {
-                        row.querySelector('td').textContent = upcomingIndex++;
-                        upcomingTableBody.appendChild(row);
-                    }
-                });
+                        if (status === 'completed') {
+                            row.querySelector('td').textContent = completedIndex++;
+                            completedTableBody.appendChild(row);
+                        } else if (status === 'cancelled' || status === 'missed') {
+                            row.querySelector('td').textContent = missedCancelledIndex++;
+                            missedCancelledTableBody.appendChild(row);
+                        } else {
+                            row.querySelector('td').textContent = upcomingIndex++;
+                            upcomingTableBody.appendChild(row);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Failed to fetch appointments:', error);
+                }
 
-            } catch (error) {
-                console.error('Failed to fetch appointments:', error);
+                paginateTable('upcoming');
+                paginateTable('completed');
+                paginateTable('missed');
             }
-            paginateTable('upcoming');
-            paginateTable('completed');
-            paginateTable('missed');
 
-        }
-    const paginationState = {
-        upcoming: { page: 1, perPage: 6 },
-        completed: { page: 1, perPage: 6 },
-        missed: { page: 1, perPage: 6 },
-    };
+            const paginationState = {
+                upcoming: { page: 1, perPage: 6 },
+                completed: { page: 1, perPage: 6 },
+                missed: { page: 1, perPage: 6 },
+            };
+
 
     function paginateTable(type) {
         const tableId = {
@@ -496,55 +590,6 @@
             paginateTable(type);
         }
     }
-
-        async function deleteAppointment(button) {
-            const row = button.closest('tr');
-            const appointmentId = row.getAttribute('data-id');
-            if (!appointmentId) return alert('Appointment ID not found');
-
-            const confirmed = confirm('Are you sure you want to permanently delete this appointment?');
-            if (!confirmed) return;
-
-            try {
-                const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-                    method: 'DELETE'
-                });
-                const result = await response.json();
-
-                if (response.ok) {
-                    alert('Appointment deleted successfully.');
-                    row.remove();
-                } else {
-                    alert('Failed to delete appointment: ' + result.message);
-                }
-            } catch (error) {
-                alert('Error deleting appointment: ' + error.message);
-            }
-        }
-
-        async function cancelAppointment(button) {
-            const row = button.closest('tr');
-            const appointmentId = row.getAttribute('data-id');
-            if (!appointmentId) return alert('Appointment ID not found');
-
-            if (!confirm('Are you sure you want to cancel this appointment?')) return;
-
-            try {
-                const response = await fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-                    method: 'DELETE'
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Appointment cancelled successfully');
-                    row.remove();
-                } else {
-                    alert('Failed to cancel appointment: ' + result.message);
-                }
-            } catch (error) {
-                alert('Error cancelling appointment: ' + error.message);
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             fetchAppointments();
         });

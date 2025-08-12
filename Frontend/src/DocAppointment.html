@@ -8,18 +8,19 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            box-sizing: border-box;
-        }
+       /* General Box Sizing & Body */
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #e6f2ff;
-            display: flex;
-        }
-
-          nav {
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #e6f2ff;
+    display: flex;
+    transition: background-color 0.3s ease;
+}
+ nav {
             display: flex;
             align-items: center;
             justify-content: space-around;
@@ -32,32 +33,45 @@
             z-index: 1000;
         }
 
-          .logo {
-            display: flex;
-            align-items: center;
-            font-size: 20px;
-            margin: 0;
-        }
+         .logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin: 0;
+}
 
-        .logo img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
+.logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
 
-        .logo h1 {
-            font-size: 30px;
-            margin: 0;
-        }
+.logo h1 {
+    font-size: 30px;
+    margin: 0;
+}
 
+.logo img:hover {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.logo h1 {
+    font-size: 28px;
+    background: linear-gradient(45deg, #ffffff, #cceeff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
         nav ul {
             display: flex;
         }
 
         nav ul li {
             list-style: none;
+            margin-top: 15px;
+
         }
 
         nav ul li a {
@@ -69,7 +83,7 @@
 
           nav ul li a:hover {
             color: black;
-            border-bottom: 2px solid black;
+            /* border-bottom: 2px solid black; */
         }
          #bar {
             display: none;
@@ -77,72 +91,274 @@
             cursor: pointer;
         }
 
-        .container {
-            padding: 20px;
-            max-width: 1200px;
-        }
+/* Container */
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    width: 100%;
+    margin-top: 80px;
+}
 
-        .section-block {
-            background-color: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
+/* Section Blocks - card-like with hover */
+.section-block {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    margin-bottom: 30px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    cursor: default;
+}
 
-        .section-block h2 {
-            color: rgb(9, 102, 102);
-            margin-bottom: 20px;
-        }
+.section-block:hover {
+    box-shadow: 0 10px 25px rgba(0, 128, 128, 0.2);
+    transform: translateY(-4px);
+}
 
-        .appointment-table thead th {
-            background-color: rgb(9, 102, 102);
-            color: white;
-        }
+/* Section Titles */
+.section-block h2 {
+    color: rgb(9, 102, 102);
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+    transition: color 0.3s ease;
+    
+}
 
-        .appointment-table tbody tr:hover {
-            background-color: #f1f8ff;
-        }
+.section-block:hover h2 {
+    color: #007777;
+}
 
-        h1.page-title {
-            color: rgb(9, 102, 102);
-            margin-bottom: 30px;
-        }
+/* Appointment Table */
+.appointment-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing:  2px 0;
+    font-family: 'Roboto', sans-serif;
+}
 
-         /* Shared pagination styling for all sections */
-  .pagination-controls {
+.appointment-table thead th {
+    background-color: rgb(9, 102, 102);
+    color: white;
+    padding: 18px 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 6px;
+    user-select: none;
+    text-align: center;
+    
+}
+
+.appointment-table tbody tr {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0, 128, 128, 0.07);
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.appointment-table tbody tr:hover {
+    box-shadow: 0 8px 25px rgba(0, 128, 128, 0.2);
+    transform: translateY(-3px);
+    border-color: #009999;
+    background: rgba(240, 255, 255, 0.95);
+}
+
+.appointment-table tbody tr:hover td {
+    color: #007777;
+}
+
+.appointment-table tbody td {
+    padding: 14px 18px;
+    border-left: 1px solid rgba(0, 128, 128, 0.15);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+}
+
+.appointment-table tbody td:first-child {
+    border-left: none;
+    border-radius: 12px 0 0 12px;
+}
+
+.appointment-table tbody td:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+.appointment-table tbody tr:hover td:hover {
+    background: rgba(228, 247, 247, 0.8);
+    color: #055b5b;
+}
+
+/* Page Title */
+h1.page-title {
+    color: rgb(9, 102, 102);
+    margin-bottom: 30px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-align: center;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+h1.page-title:hover {
+    color: #007777;
+}
+
+/* Pagination */
+.pagination-controls {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 12px;
     margin-top: 20px;
     font-family: Arial, sans-serif;
-  }
+}
 
-  .pagination-controls button {
-    padding: 6px 14px;
-    background-color: #007BFF;
+.pagination-controls button {
+    padding: 8px 18px;
+    background-color: #009999;
     color: white;
     border: none;
-    border-radius: 5px;
-    font-weight: bold;
+    border-radius: 8px;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 3px 8px rgba(0, 153, 153, 0.4);
+}
 
-  .pagination-controls button:hover {
-    background-color: #0056b3;
-  }
+.pagination-controls button:hover:not(:disabled) {
+    background-color: #007777;
+    box-shadow: 0 6px 15px rgba(0, 119, 119, 0.6);
+}
 
-  .pagination-controls button:disabled {
+.pagination-controls button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
-  }
+    box-shadow: none;
+}
 
-  .pagination-controls span {
+.pagination-controls span {
     font-size: 14px;
     font-weight: 500;
-  }
+    color: #333;
+}
+
+/* Modal Styling Enhancements */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 25px 35px;
+    border: 1px solid #009999;
+    width: 400px;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 10px 28px rgba(0, 153, 153, 0.3);
+    animation: fadeIn 0.35s ease-in-out;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.modal-content:hover {
+    box-shadow: 0 14px 40px rgba(0, 153, 153, 0.45);
+    border-color: #007777;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #006666;
+    user-select: none;
+}
+
+.modal-content button {
+    margin-top: 15px;
+    background-color: #009999;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    user-select: none;
+}
+
+.modal-content button:hover {
+    background-color: #007777;
+    box-shadow: 0 6px 16px rgba(0, 119, 119, 0.5);
+}
+
+#availableSlots {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 15px;
+    border: 1.8px solid #009999;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+}
+
+#availableSlots:focus {
+    border-color: #007777;
+    box-shadow: 0 0 8px #007777aa;
+}
+
+/* Close button */
+.close {
+    color: #aaa;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 26px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    user-select: none;
+}
+
+.close:hover {
+    color: #004d4d;
+}
+
+/* Responsive Design tweaks kept as-is from your code */
+
+/* Keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+.appointment-table td:last-child {
+    white-space: nowrap; /* keeps buttons on one line */
+}
+
+.appointment-table td:last-child button {
+    margin-right: 6px; /* small space between buttons */
+}
+
+
 
         @media screen and (max-width: 768px) {
    nav {
@@ -177,7 +393,7 @@
 
     nav ul li {
         padding: 10px 0;
-        text-align: left;   
+        text-align: center;   
     }
 
     nav ul li a {
@@ -203,10 +419,22 @@
         font-size: 24px;
         text-align: center;
     }
+    .section-block {
+  padding: 15px;     
+  overflow-x: auto;   
+  max-width: 100%;     
+  box-sizing: border-box;  
+}
 
     .section-block h2 {
         font-size: 20px;
     }
+    .appointment-table {
+  width: 100%;         
+  max-width: 100%;     
+  border-collapse: collapse;
+}
+
 
     .appointment-table thead {
         font-size: 14px;
@@ -216,16 +444,6 @@
     .appointment-table th {
         font-size: 14px;
         padding: 8px;
-    }
-     #bar {
-        display: block;
-        position: absolute;
-        right: 50px;
-        top: 20px;
-        font-size: 30px;
-        cursor: pointer;
-        z-index: 1001;
-        
     }
 }
 
@@ -269,103 +487,6 @@
     .section-block {
         padding: 15px;
     }
-}
-.modal {
-  display: none; 
-  position: fixed; 
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  justify-content: center;
-        align-items: center;
-        padding: 20px;
-
-}
-
-.modal-content {
-  background-color: #fff;
-  margin: 10% auto;
-  padding: 20px 30px;
-  border: 1px solid #888;
-  width: 400px;
-  border-radius: 8px;
-  position: relative;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-        animation: fadeIn 0.3s ease-in-out;
-}
-
-.modal-content h3 {
-  margin-top: 0;
-}
-
-.modal-content button {
-  margin-top: 15px;
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.modal-content button:hover {
-  background-color: #1565c0;
-}
-
-#availableSlots {
-        width: 100%;
-        padding: 10px 12px;
-        font-size: 14px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        margin-bottom: 20px;
-        outline: none;
-        transition: border 0.2s ease-in-out;
-    }
-
-    #availableSlots:focus {
-        border-color: #009999;
-    }
-    .modal-content button {
-        width: 100%;
-        background-color: #009999;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 6px;
-        font-size: 15px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .modal-content button:hover {
-        background-color: #007777;
-    }
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-
-.close {
-  color: #aaa;
-  position: absolute;
-  right: 15px;
-  top: 10px;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.close:hover {
-  color: #000;
 }
 /* Responsive Design */
     @media (max-width: 768px) {
@@ -421,6 +542,7 @@
             <li><a href="docpanel.html">Dashboard</a></li>
             <li><a href="DocAppointment.html">Appointments</a></li>
             <li><a href="docprofile.html">Profile</a></li>
+            <li><a href="Docfeedback.html">Feedback</a></li>
         </ul>
     </nav>
 
@@ -616,8 +738,6 @@
                                 );
                             });
 
-
-
                             console.log("Looking for feedback: userId", appointment.patientId?._id, "doctorId", doctorId);
 
 
@@ -692,7 +812,7 @@
             const cancelledAppointments = JSON.parse(localStorage.getItem('cancelledAppointments')) || [];
 
             cancelledAppointments
-                .filter(appointment => appointment.doctorId === doctorId)  // Only show relevant ones
+                .filter(appointment => appointment.doctorId === doctorId)  
                 .forEach(appointment => {
                     addCancelledAppointmentRow(appointment);
                 });
@@ -730,7 +850,6 @@
         <td>${appointment.phone || 'N/A'}</td>
         <td>
             <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
-            <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
             <button class="btn btn-danger" onclick="deleteAppointment(this)">❌</button>
         </td>
     </tr>`;
@@ -766,6 +885,10 @@
             const appointmentTime = row.cells[1].innerText;
             const appointmentId = row.getAttribute('data-appointment-id');;
             const token = localStorage.getItem('authToken'); 
+             const confirmed = confirm("Are you sure you want to mark this appointment as Completed?");
+            if (!confirmed) {
+                return; 
+            }
             console.log('Updating appointment ID:', appointmentId); 
             fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
                 method: 'PUT',
@@ -884,12 +1007,12 @@
                     body: JSON.stringify({
                         newDate,
                         newTime,
-                        rescheduledBy: 'doctor'  // or 'admin' if admin is rescheduling
+                        rescheduledBy: 'doctor'  
                     })
                 })
                     .then(res => res.json())
                     .then(data => {
-                            console.log("Reschedule response:", data); // 🔍 Log whole response
+                            console.log("Reschedule response:", data); 
 
                         if (data.success) {
                             alert("Appointment successfully rescheduled!");
@@ -993,7 +1116,7 @@
                 return; // Exit if user cancels
             }
 
-                fetch(`http://localhost:3000/api/appointments/${appointmentId}/cancel`, {
+                fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

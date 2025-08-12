@@ -27,19 +27,19 @@ nav {
     z-index: 1000;
     left: 0%;
 }
-ul {
+nav ul {
     display: flex;
 }
-ul li {
+nav ul li {
     list-style: none;
 }
-ul li a {
+nav ul li a {
     text-decoration: none;
     color: white;
     font-size: 20px;
     margin-inline: 20px;
 }
-ul li a:hover {
+nav ul li a:hover {
     color: black;
     border-bottom: 2px solid black;
 }
@@ -49,6 +49,7 @@ ul li a:hover {
     font-size: 20px;
     margin: 0;
 }
+
 .logo img {
     width: 60px;
     height: 60px;
@@ -56,15 +57,55 @@ ul li a:hover {
     margin-right: 10px;
     object-fit: cover;
 }
+
 .logo h1 {
     font-size: 30px;
     margin: 0;
 }
-h1 {
-    text-align: center;
-    color: rgb(9, 102, 102);
-    margin-top: 100px;
+
+.logo img:hover {
+    transform: scale(1.1) rotate(-5deg);
 }
+
+.logo h1 {
+    font-size: 28px;
+    background: linear-gradient(45deg, #ffffff, #cceeff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h1.FAQ {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    color: #009999;
+    margin-bottom: 0px;
+    margin: 100px auto 20px auto; 
+    padding: 15px;
+    border: 3px solid #009999;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 700px;
+    background-color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+h1.FAQ:hover {
+     color: #007d7d;
+    border-color: #007d7d;
+    background-color: #f0fefe;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
 .faq-container {
     max-width: 800px;
     margin: 20px auto;
@@ -83,7 +124,23 @@ h1 {
     background: #0f8888;
     color: white;
     border-radius: 5px;
+    border: 2px solid #0f8888;
+
+    /* Smooth transition for hover changes */
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
 }
+
+.faq h2:hover {
+    background-color: #0db1b1;
+    border-color: #0db1b1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .faq p {
     display: none;
     padding: 10px;
@@ -96,8 +153,111 @@ h1 {
     font-size: 30px;
     cursor: pointer;
 }
+.footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 40px;
+    color: white;
+    margin-top: 66px;
+    background: linear-gradient(135deg, #096666, #064949);
+    border-top: 4px solid #0f8080;
+}
+
+.footer>div {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0 20px;
+}
+
+.footer>div:last-child {
+    border-right: none;
+}
+
+.footer h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.footer p {
+    margin: 15px 0;
+    font-size: 15px;
+}
+
+.contact-info,
+.text,
+.quick-links,
+.Legal {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+    flex-direction: column;
+}
+
+.quick-links ul,
+.Legal ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-links li,
+.Legal li {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.quick-links a,
+.Legal a {
+    color: #fff;
+    text-decoration: none;
+    position: relative;
+    font-weight: 600;
+    cursor: pointer;
+    padding-bottom: 3px;
+    transition: color 0.3s ease;
+}
+
+.quick-links a::after,
+.Legal a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.quick-links a:hover::after,
+.Legal a:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+.quick-links a:hover,
+.Legal a:hover {
+    color: white;
+    text-shadow: 0 0 5px #ffd700aa;
+}
+
+
+.specialties-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.text p {
+    margin-top: 12px;
+}
+
 @media screen and (max-width: 900px) {
-    ul {
+    nav ul {
         display: none;
         flex-direction: column;
         width: 100%;
@@ -105,85 +265,43 @@ h1 {
         top: 60px;
         left: 0;
         background-color: rgb(9, 102, 102);
+        transition: max-height 0.3s ease;
+
     }
-    ul.active {
+    nav ul li {
+        text-align: center;
+        width: 70%;
+        padding: 10px 0;
+    }
+    nav ul.active {
         display: flex;
     }
     #bar {
         z-index: 1001;
         display: block;
     }
-}
- /* Footer */
     .footer {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        padding: 40px 20px;
-        color: white;
-        background-color: rgb(9, 102, 102);
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
 
-    .footer h3 {
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
-
-    .footer p {
-        margin: 8px 0;
-        font-size: 20px;
-    }
-
-    .quick-links,
-    .Legal,
-    .contact-info,
-    .text {
-        flex: 1;
-        min-width: 200px;
-        margin: 10px;
+    .footer>div {
+        width: 100%;
+        border-right: none;
+        margin-bottom: 20px;
     }
 
     .quick-links ul,
     .Legal ul {
-        list-style: none;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
+        align-items: center;
     }
 
-    .quick-links a,
-    .Legal a {
-        color: white;
-        text-decoration: none;
-        font-size: 15px;
-        transition: all 0.2s ease;
+    .quick-links li,
+    .Legal li {
+        margin: 5px 0;
     }
-
-    .quick-links a:hover,
-    .Legal a:hover {
-        text-decoration: underline;
-        color: #ffd700;
-    }
-
-    .specialties-columns {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 4px;
-        font-size: 14px;
-    }
-
-    .footer>div {
-        border-right: 1px solid rgba(255, 255, 255, 0.2);
-        padding-right: 10px;
-    }
-
-    .footer>div:last-child {
-        border-right: none;
-    }
-
-
-
-
+}
     </style>
 </head>
 
@@ -205,7 +323,7 @@ h1 {
             </ul>
         </nav>
 
-        <h1>Frequently Asked Questions</h1>
+        <h1 class="FAQ">Frequently Asked Questions</h1>
         <div class="faq-container">
 
             <div class="faq">

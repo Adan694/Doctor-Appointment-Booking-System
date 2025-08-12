@@ -243,7 +243,6 @@
         .footer>div:last-child {
             border-right: none;
         }
-        /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
     nav {
         flex-direction: column; 
@@ -359,7 +358,6 @@
                     well-being.</p>
                 <div class="doctor-list">
                     <div class="card-container" id="doctorContainer">
-                        <!-- Dynamic doctor cards will be injected here -->
                     </div>
                     <a href="alldoctorsreal.html" class="see-more">SEE MORE</a>
                 </div>
@@ -411,9 +409,8 @@
     </div>
 
     <script>
-        // Function to update the navbar based on user role
         function updateNavbar() {
-            const userRole = localStorage.getItem('userRole'); // Get user role from localStorage
+            const userRole = localStorage.getItem('userRole'); 
             const myProfileTab = document.getElementById('myProfileTab');
             const authButton = document.getElementById('authButton');
 
@@ -426,10 +423,9 @@
             }
         }
 
-        // Function to handle logout
         window.logout = function () {
-            localStorage.removeItem('userRole'); // Remove user role from localStorage
-            location.reload(); // Refresh the page
+            localStorage.removeItem('userRole');
+            location.reload(); 
         };
 
         document.addEventListener('DOMContentLoaded', () => {

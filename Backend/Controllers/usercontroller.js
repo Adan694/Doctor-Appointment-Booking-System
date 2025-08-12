@@ -40,6 +40,7 @@ const submitFeedback = async (req, res) => {
         res.status(500).json({ message: 'Error submitting feedback' });
     }
 };
+
 module.exports = {
     getUserProfile,
     updateUserProfile,

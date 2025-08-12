@@ -43,11 +43,16 @@
                         <i class="fa-solid fa-circle-question"></i> FAQs
                     </a>
                 </li>
-                <li id="myprofile" style="display: none;">
-                    <a href="myprofile.html">
-                        <i class="fa-solid fa-user"></i> My Profile
-                    </a>
-                </li>
+            <li id="profileMenu" class="dropdown">
+                <a href="javascript:void(0);" class="profile-icon">
+                    <i class="fa-solid fa-user"></i>  Account
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="myprofile.html">My Profile</a></li>
+                    <li><a href="myappointments.html">My Appointments</a></li>
+                </ul>
+            </li>
+
                 <li id="authButton">
                     <a href="login.html" class="login-button">
                         <i class="fa-solid fa-right-to-bracket"></i> Login
@@ -60,8 +65,8 @@
         <!-- Main Section -->
         <div class="main">
             <div class="mainText">
-                <h1 id="heading1">Find The Best Doctors<br> Who Care for You</h1>
-                <h3 id="heading3">Best Teams</h3>
+                <h1 id="heading1">Find Caring Professionals<br> Guided by Experience</h1>
+                <h3 id="heading3">Trusted Care Teams</h3>
             </div>
             <img src="images/mains.png" alt="Main Image">
         </div>
@@ -71,10 +76,6 @@
         <div id="doctors">
             <div class="head">
                 <h1>Our Great Doctors</h1>
-            </div>
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search doctor by name or speciality">
-                <button id="search-btn">Search</button>
             </div>
 
             <div class="doctor-list">
@@ -112,27 +113,47 @@
             </div>
         </div>
 
-        <!-- Patient Reviews Section -->
-        <div id="patient">
-            <div class="head">
-                <h1>What Our Patients Say</h1>
-            </div>
-            <div class="patients">
-                <div class="patientCard">
-                    <img src="images/p1.png" alt="">
-                    <img src="images/p2.png" alt="">
-                </div>
-                <div class="patientCard">
-                    <img src="images/p3.jpg" alt="">
-                    <img src="images/p4.jpg" alt="">
-                </div>
-                <div class="patientCard">
-                    <img src="images/p5.jpg" alt="">
-                    <img src="images/p6.jpg" alt="">
+    <!-- Patient Reviews Section -->
+<div id="patient">
+    <div class="head">
+        <h1>What Our Patients Say</h1>
+    </div>
+
+    <div class="patients">
+    <button id="prevArrow" class="arrowBtn">&#171;</button> 
+        <div class="patientCard">
+            <img src="images/p2.png" alt="Patient 2">
+            <div class="reviewsUnderCard">
+                <div class="review">
+                    <p class="testimonial"><blockquote>"Excellent service! Booking was quick and easy."</blockquote></p>
+                    <p class="patientName"><cite>- John Doe<cite></p>
                 </div>
             </div>
         </div>
 
+        <div class="patientCard">
+            <img src="images/p4.jpg" alt="Patient 4">
+            <div class="reviewsUnderCard">
+                <div class="review">
+                    <p class="testimonial"><blockquote>"Booking online saved me so much time!"</blockquote></p>
+                    <p class="patientName"><cite>- Emily Clark</cite></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="patientCard">
+            <img src="images/p6.jpg" alt="Patient 6">
+            <div class="reviewsUnderCard">
+                <div class="review">
+                    <p class="testimonial"><blockquote>"The appointment system is very user-friendly."</blockquote></p>
+                    <p class="patientName"><cite>- David Kim</cite></p>
+                </div>
+            </div>
+        </div>
+    <button id="nextArrow" class="arrowBtn">&#187;</button> 
+
+    </div>
+</div>
         <!-- Conditions Section -->
         <div class="section">
             <h1>Search by Condition</h1>
@@ -292,8 +313,6 @@
             </div>
         </div>
 
-
-
     <!-- Contact Section -->
     <div id="contact">
         <div class="head">
@@ -377,12 +396,7 @@
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 1500);
-            }
-            
-
+            }    
     </script>
-  
-
 </body>
-
 </html>

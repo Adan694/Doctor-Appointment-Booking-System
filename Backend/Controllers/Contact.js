@@ -13,7 +13,7 @@ const handleContactForm = async (req, res) => {
     try {
         // 1. Save to database
         const newContact = new Contact({ email, name, phone, message });
-        console.log('Saving to DB:', newContact);
+        // console.log('Saving to DB:', newContact);
 
         await newContact.save();
 
@@ -28,7 +28,8 @@ const handleContactForm = async (req, res) => {
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: 'admin@gmail.com', 
+            // to: 'ashehzad0100@gmail.com', 
+            to: 'kartizafar76@gmail.com', 
             subject: 'New Contact Form Submission',
             html: `
                 <h2>New Contact Submission</h2>
@@ -43,6 +44,20 @@ const handleContactForm = async (req, res) => {
 
 
         await transporter.sendMail(mailOptions);
+
+        // 4. Confirmation email to user
+        const userMailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Query Recieved',
+            html: `
+                <p>Hi ${name},</p>
+                <p>We have received your query. Our admin will contact you shortly.</p>
+                <p>Thank you for reaching out to us!</p>
+            `
+        };
+
+        await transporter.sendMail(userMailOptions);
 
         res.status(200).json({ message: "Your query has been submitted and admin has been notified." });
     } catch (error) {

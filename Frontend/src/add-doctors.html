@@ -70,153 +70,203 @@
       font-weight: bold;
     }
 
-    /* Main layout */
-    .main-content {
-      flex: 1;
-      padding: 20px;
-      background-color: #e6f2ff;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      overflow-y: auto;
-    }
+   /* Main layout */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #e6f2ff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  border-radius: 12px; /* subtle rounding */
+  transition: background-color 0.3s ease;
+}
 
-    /* Header */
-    .header {
-      background-color: rgb(9, 102, 102);
-      color: white;
-      padding: 15px 25px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
+/* Header */
+.header {
+  background-color: rgb(9, 102, 102);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease;
+}
 
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+.header:hover {
+  background-color: #075b5b;
+}
 
-    .logout-btn {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 10px 22px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+}
 
-    .logout-btn:hover {
-      background-color: #c82333;
-    }
+/* Logout button */
+.logout-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 22px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.4);
+}
 
-    #bar {
-      display: none;
-      font-size: 30px;
-      cursor: pointer;
-    }
+.logout-btn:hover {
+  background-color: #c82333;
+  box-shadow: 0 4px 12px rgba(200, 35, 51, 0.6);
+}
 
-    /* Form container */
-    .form-container {
-      background-color: white;
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(9, 102, 102, 0.1);
-    }
+/* Menu bar icon */
+#bar {
+  display: none;
+  font-size: 30px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
 
-    .form-group {
-      margin-bottom: 20px;
-    }
+#bar:hover {
+  color: #28a745;
+}
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 700;
-      color: #333;
-    }
+/* Form container */
+.form-container {
+  background-color: white;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(9, 102, 102, 0.1);
+  transition: box-shadow 0.3s ease;
+}
 
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background-color: #fdfdfd;
-      transition: border-color 0.3s;
-    }
+.form-container:hover {
+  box-shadow: 0 8px 24px rgba(9, 102, 102, 0.25);
+}
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: rgb(9, 102, 102);
-      outline: none;
-    }
+/* Form groups */
+.form-group {
+  margin-bottom: 20px;
+}
 
-    /* Upload button style */
-    .upload-button {
-      padding: 20px;
-      text-align: center;
-      background-color: #eaf6f6;
-      border: 2px dashed rgb(9, 102, 102);
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+/* Labels */
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #333;
+}
 
-    .upload-button:hover {
-      background-color: #d3eeee;
-    }
+/* Inputs, selects, textarea */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  background-color: #fdfdfd;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  box-sizing: border-box;
+}
 
-    .upload-button label {
-      color: rgb(9, 102, 102);
-      font-weight: bold;
-      cursor: pointer;
-    }
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: rgb(9, 102, 102);
+  box-shadow: 0 0 6px rgba(9, 102, 102, 0.4);
+  background-color: #f0fafb;
+}
 
-    /* Submit button */
-    .btn {
-      background-color: rgb(9, 102, 102);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgb(9, 102, 102);
+  outline: none;
+  box-shadow: 0 0 8px rgba(9, 102, 102, 0.6);
+  background-color: #f7fcfc;
+}
 
-    .btn:hover {
-      background-color: #075b5b;
-    }
+/* Upload button style */
+.upload-button {
+  padding: 20px;
+  text-align: center;
+  background-color: #eaf6f6;
+  border: 2px dashed rgb(9, 102, 102);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
 
-    .success-message {
-      margin-top: 15px;
-      color: #28a745;
-      font-weight: bold;
-      text-align: center;
-    }
+.upload-button:hover {
+  background-color: #d3eeee;
+  border-color: #0b7878;
+}
 
-    #overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      z-index: 900;
-      display: none;
-    }
+.upload-button label {
+  color: rgb(9, 102, 102);
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
 
-    #overlay.active {
-      display: block;
-    }
+.upload-button label:hover {
+  color: #075b5b;
+}
+
+/* Submit button */
+.btn {
+  background-color: rgb(9, 102, 102);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(9, 102, 102, 0.3);
+}
+
+.btn:hover {
+  background-color: #075b5b;
+  box-shadow: 0 6px 16px rgba(7, 91, 91, 0.6);
+  transform: scale(1.05);
+}
+
+/* Success message */
+.success-message {
+  margin-top: 15px;
+  color: #28a745;
+  font-weight: bold;
+  text-align: center;
+  transition: opacity 0.3s ease;
+}
+
+/* Overlay */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 900;
+  display: none;
+  transition: opacity 0.3s ease;
+}
+
+#overlay.active {
+  display: block;
+  opacity: 1;
+}
 
     /* Responsive styles */
     @media (max-width: 1024px) {
@@ -357,12 +407,65 @@
         <div class="form-group">
           <label for="speciality">Speciality</label>
           <select id="speciality" name="speciality" required>
+          <optgroup label="Primary Care">
+            <option value="family-medicine">Family Medicine</option>
             <option value="general">General Physician</option>
+            <option value="geriatrics">Geriatric Medicine</option>
+            <option value="pediatrician">Pediatrician</option>
+          </optgroup>
+          
+          <optgroup label="Internal Medicine Subspecialties">
             <option value="cardiologist">Cardiologist</option>
-            <option value="dermatologist">Dermatologist</option>
+            <option value="endocrinologist">Endocrinologist</option>
+            <option value="gastroenterologist">Gastroenterologist</option>
+            <option value="hematologist">Hematologist</option>
+            <option value="infectious-disease">Infectious Disease Specialist</option>
+            <option value="nephrologist">Nephrologist</option>
+            <option value="oncologist">Oncologist</option>
+            <option value="pulmonologist">Pulmonologist</option>
+            <option value="rheumatologist">Rheumatologist</option>
+          </optgroup>
+          
+          <optgroup label="Surgical Specialties">
+            <option value="maxillofacial-surgeon">Oral & Maxillofacial Surgeon</option>
             <option value="orthopedist">Orthopedist</option>
-            <option value="Surgeon">Surgeon</option>
-            <option value="Opthamologist">Opthamologist</option>
+            <option value="plastic-surgeon">Plastic Surgeon</option>
+            <option value="surgeon">General Surgeon</option>
+            <option value="thoracic-surgeon">Thoracic Surgeon</option>
+            <option value="transplant-surgeon">Transplant Surgeon</option>
+            <option value="vascular-surgeon">Vascular Surgeon</option>
+          </optgroup>
+          
+          <optgroup label="Specialty Care">
+            <option value="allergist">Allergist / Immunologist</option>
+            <option value="dermatologist">Dermatologist</option>
+            <option value="neurologist">Neurologist</option>
+            <option value="ophthalmologist">Ophthalmologist</option>
+            <option value="otolaryngologist">Otolaryngologist (ENT)</option>
+            <option value="psychiatrist">Psychiatrist</option>
+            <option value="urologist">Urologist</option>
+          </optgroup>
+          
+          <optgroup label="Diagnostic & Technical">
+            <option value="anesthesiologist">Anesthesiologist</option>
+            <option value="critical-care">Critical Care Specialist</option>
+            <option value="emergency-medicine">Emergency Medicine</option>
+            <option value="pathologist">Pathologist</option>
+            <option value="radiologist">Radiologist</option>
+            <option value="sleep-medicine">Sleep Medicine Specialist</option>
+            <option value="sports-medicine">Sports Medicine Specialist</option>
+          </optgroup>
+          
+          <optgroup label="Women’s Health">
+            <option value="gynecologist">Gynecologist</option>
+            <option value="obstetrician">Obstetrician</option>
+          </optgroup>
+          
+          <optgroup label="Other Specialties">
+            <option value="occupational-medicine">Occupational Medicine</option>
+            <option value="palliative-care">Palliative Care Specialist</option>
+          </optgroup>
+
           </select>
         </div>
 
@@ -432,12 +535,6 @@
       const formData = new FormData(form);
       const submitBtn = form.querySelector('button[type="submit"]');
 
-      // Validate required fields
-      // const photoInput = document.getElementById('photo');
-      // if (!photoInput.files.length) {
-      //   showError(photoInput.parentElement, 'Please upload a doctor picture');
-      //   return;
-      // }
       // Append the role to the formData
       formData.append('role', document.getElementById('doctor-role').value);
 
@@ -497,5 +594,4 @@
   
   </script>
 </body>
-
 </html>

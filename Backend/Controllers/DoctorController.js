@@ -10,8 +10,6 @@ const addDoctor = async (req, res) => {
     console.log('Uploaded file:', req.file);
 
     const { name, email, password, speciality, degree, address1, address2, experience, fees, about } = req.body;
-
-    // Validate required fields
     if (!name || !email || !password || !speciality || !degree || !address1 || !experience || !fees || !about) {
       return res.status(400).json({ success: false, message: 'All required fields must be filled.' });
     }
@@ -58,6 +56,7 @@ const getDoctors = async (req, res) => {
       res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
 const getDoctorById = async (req, res) => {
   try {
     const doctor = await Doctor.findById(req.params.id);
@@ -66,15 +65,12 @@ const getDoctorById = async (req, res) => {
     }
 
     const today = new Date().toISOString().split('T')[0];
-
     // Filter only future availability slots
     doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => {
       return new Date(slot.date).toISOString().split('T')[0] >= today;
     });
 
-    
-// FIXED: include all bookings
-const bookings = await Booking.find({ doctorId: doctor._id });
+    const bookings = await Booking.find({ doctorId: doctor._id });
 
     // Normalize date format for comparison
     const formatDate = (d) => new Date(d).toISOString().split('T')[0];
@@ -139,7 +135,6 @@ if (req.file) {
   }
 };
 
-
 // Delete a doctor by ID
 const deleteDoctor = async (req, res) => {
   try {
@@ -153,6 +148,7 @@ const deleteDoctor = async (req, res) => {
       res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
 const updateDoctorAvailability = async (req, res) => {
   try {
     const doctorId = req.params.id;
@@ -245,10 +241,11 @@ const deleteDoctorAvailabilitySlot = async (req, res) => {
     res.status(500).json({ message: "Failed to delete availability slot" });
   }
 };
+
 const updateAvailabilityOrder = async (req, res) => {
   try {
     const doctorId = req.params.id;
-    const newOrder = req.body.order; // Array of dates in new order
+    const newOrder = req.body.order; 
 
     if (!Array.isArray(newOrder)) {
       return res.status(400).json({ message: "Invalid order format" });

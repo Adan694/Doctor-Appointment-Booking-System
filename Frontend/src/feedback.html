@@ -147,7 +147,7 @@
             if (!token) return alert("You must be logged in.");
             console.log("Stored Patient ID:", localStorage.getItem('patientId')); 
 
-
+            const appointmentId = document.getElementById("appointmentId").value;
             const payload = {
                     appointmentId: document.getElementById("appointmentId").value,
                 doctorId: document.getElementById("doctorId").value,
@@ -170,7 +170,12 @@
                 if (!res.ok) {
                     throw new Error(data.message || "Error submitting feedback");
                 }
-
+                // ✅ Mark as feedback given in localStorage after success
+                let submitted = JSON.parse(localStorage.getItem('feedbackGiven') || '[]');
+                if (!submitted.includes(payload.appointmentId)) {
+                    submitted.push(payload.appointmentId);
+                    localStorage.setItem('feedbackGiven', JSON.stringify(submitted));
+                }
                 alert("Thank you for your feedback!");
                 window.location.href = "index.html";
             } catch (error) {

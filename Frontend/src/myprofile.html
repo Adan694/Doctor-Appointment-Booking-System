@@ -89,6 +89,18 @@ nav ul li a:hover {
     margin: 0;
 }
 
+.logo img:hover {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.logo h1 {
+    font-size: 28px;
+    background: linear-gradient(45deg, #ffffff, #cceeff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
     .main-container {
         flex: 1;
         display: flex;
@@ -97,46 +109,48 @@ nav ul li a:hover {
         gap: 20px;
     }
     
-
-
-    .appointments,
     .profile-container {
-        background-color: white;
-        padding: 25px;
-        border: 1px solid #ddd;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
-        flex: 1 1 300px;
-    }
+    background-color: white;
+    padding: 25px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    flex: 1 1 300px;
+    max-width: 900px;      
+    margin: 0 auto;        
+    margin-top: 40px;
+}
 
-    .appointments h2,
-    .profile-container h2 {
-        font-size: 18px;
-        margin-bottom: 15px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 5px;
-    }
+.profile-container h2 {
+   font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    color: #009999;
+    margin: 20px auto 20px auto; /* top, right, bottom, left */
+    padding: 15px;
+    border: 3px solid #009999;
+    border-radius: 50px;
+    width: 100%;
+    max-width: 800px;
+    background-color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+}
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
+.profile-container h2:hover {
+    color: #007d7d;
+    border-color: #007d7d;
+    background-color: #f0fefe;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
 
-    th,
-    td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    th {
-        background-color: #e8f5f5;
-        color: #333;
-    }
-
-    tr:hover {
-        background-color: #f0f8f8;
-    }
 
     .btn-view {
         color: var(--primary-color);
@@ -154,15 +168,9 @@ nav ul li a:hover {
         color: var(--primary-color);
     }
 
-    .profile-info p {
-        margin: 4px 0 12px;
-        color: #555;
-    }
-
     .edit-button,
     button[type="submit"],
-    .btn-cancel,
-    .btn-feedback {
+    .btn-cancel {
         background-color: var(--primary-color);
         color: white;
         border: none;
@@ -175,8 +183,7 @@ nav ul li a:hover {
     }
 
     .edit-button:hover,
-    button[type="submit"]:hover,
-    .btn-feedback:hover {
+    button[type="submit"]:hover {
         background-color: #004c4c;
         transform: translateY(-2px);
     }
@@ -191,17 +198,30 @@ nav ul li a:hover {
         margin-bottom: 10px;
     }
 
-    input,
-    select {
-        width: 100%;
-        padding: 8px;
-        margin-top: 6px;
-        margin-bottom: 12px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
+   .profile-info p,
+.profile-info input,
+.profile-info select {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #006d6d;
+    border-radius: 25px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 6px rgba(0, 109, 109, 0.15);
+    color: #004c4c;
+    background-color: #f0f8f8;
+}
 
-     .footer {
+.profile-info input:focus,
+.profile-info select:focus {
+    border-color: #004c4c;
+    box-shadow: 0 0 8px rgba(0, 76, 76, 0.5);
+    background-color: white;
+    color: #333;
+}
+
+.footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
@@ -258,16 +278,40 @@ nav ul li a:hover {
 
 .quick-links a,
 .Legal a {
-    color: white;
+    color: #fff;
     text-decoration: none;
+    position: relative;
+    font-weight: 600;
+    cursor: pointer;
+    padding-bottom: 3px;
     transition: color 0.3s ease;
+}
+
+.quick-links a::after,
+.Legal a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.quick-links a:hover::after,
+.Legal a:hover::after {
+    width: 100%;
+    left: 0;
 }
 
 .quick-links a:hover,
 .Legal a:hover {
-    color: #ffd700;
-    text-decoration: underline;
+    color: white;
+    text-shadow: 0 0 5px #ffd700aa;
 }
+
 
 .specialties-columns {
     display: grid;
@@ -279,8 +323,6 @@ nav ul li a:hover {
 .text p {
     margin-top: 12px;
 }
-
-
     .btn-cancel {
         background: #d9534f;
         color: white;
@@ -387,56 +429,87 @@ nav ul li a:hover {
             transform: translate(-50%, -50%);
         }
     }
-
-#pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-    margin-top: 24px;
-    font-family: Arial, sans-serif;
-}
-
-#pagination-controls button {
-    background-color: #004c4c;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-#pagination-controls button:hover {
-    background-color: #0056b3;
-}
-
-#pagination-controls button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
 #page-info {
     font-weight: bold;
     font-size: 15px;
 }
+#bar {
+    align-items: center;
+    display: none;
+    font-size: 30px;
+    color: #0f8080;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
 
-    @media (max-width: 768px) {
-        .main-container {
-            flex-direction: column;
-            padding: 80px 15px 20px;
-        }
 
-        nav ul {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        nav ul li {
-            margin: 8px 0;
-        }
+#bar:hover {
+    transform: scale(1.1);
+}
+   
+@media screen and (max-width: 900px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 20px;
     }
+
+   nav ul {
+       position: absolute;
+       top: 60px;
+       left: 0;
+       width: 100%;
+       background-color: rgb(9, 102, 102);
+       flex-direction: column;
+       overflow: hidden;
+       max-height: 0;
+       transition: max-height 0.3s ease;
+       z-index: 999;
+   }
+
+   nav ul.active {
+       max-height: 300px;
+   }
+
+    nav ul li {
+        text-align: center;
+        width: 70%;
+        padding: 10px 0;
+    }
+
+    #bar {
+        display: block;
+        position: absolute;
+        right: 100px;
+        top: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+}
+@media screen and (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer>div {
+        width: 100%;
+        border-right: none;
+        margin-bottom: 20px;
+    }
+
+    .quick-links ul,
+    .Legal ul {
+        align-items: center;
+    }
+
+    .quick-links li,
+    .Legal li {
+        margin: 5px 0;
+    }
+}
 </style>
 
 </head>
@@ -448,6 +521,7 @@ nav ul li a:hover {
             <img src="images/Da.png" alt="DocAssist Logo">
             <h1>DocAssist</h1>
         </div>
+                    <i id="bar" class="fa-solid fa-bars"></i>
     <ul>
         <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
         <li><a href="Alldoctorsreal.html"><i class="fas fa-user-md"></i> Find a Doctor</a></li>
@@ -458,89 +532,29 @@ nav ul li a:hover {
     </nav>
 
     <div class="main-container">
-        
-        <div class="appointments">
-            <div id="appointment-tabs" style="margin-bottom: 1em;">
-                <button onclick="showAppointments('upcoming')" class="tab-button active"><i class="fas fa-clock"></i> Upcoming</button>
-                <button onclick="showAppointments('past')" class="tab-button"><i class="fas fa-history"></i> Past</button> 
-                <button onclick="showAppointments('all')" class="tab-button"><i class="fas fa-list"></i> All</button>
-                <button onclick="showAppointments('missed')" class="tab-button"><i class="fas fa-times-circle"></i> Missed</button>
-
-                  </div>
-            <h2>My Appointments</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Doctor Name</th>
-                        <th>Apt. Date</th>
-                        <th>Apt. Time</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="appointments-body">
-                
-                </tbody>
-            </table>
-        <div id="pagination-controls">
-            <button onclick="prevPage()">Previous</button>
-            <span id="page-info">Page 1</span>
-            <button onclick="nextPage()">Next</button>
-        </div>
-
-
-
-        </div>
             <div class="profile-container">
                 <h2>My Profile</h2>
                 <div class="profile-info">
-<label><i class="fas fa-user"></i> Name:</label>
-                    <p id="displayName"></p>
-        
-<label><i class="fas fa-envelope"></i> Email:</label>
-                    <p id="displayEmail"></p>
-        
-<label><i class="fas fa-phone"></i> Phone Number:</label>
-                    <p id="displayPhone"></p>
-        
-<label><i class="fas fa-birthday-cake"></i> Age:</label>
-                    <p id="displayAge"></p>
-        
-<label><i class="fas fa-calendar-alt"></i> Date of Birth:</label>
-                    <p id="displayDob"></p>
-        
-<label><i class="fas fa-venus-mars"></i> Gender:</label>
-                    <p id="displayGender"></p>
+<label for="edit-name"><i class="fas fa-user"></i> Name:</label>
+<p id="displayName"></p>
+
+<label for="edit-email"><i class="fas fa-envelope"></i> Email:</label>
+<p id="displayEmail"></p>
+
+<label for="edit-phone"><i class="fas fa-phone"></i> Phone Number:</label>
+<p id="displayPhone"></p>
+
+<label for="edit-age"><i class="fas fa-birthday-cake"></i> Age:</label>
+<p id="displayAge"></p>
+
+<label for="edit-dob"><i class="fas fa-calendar-alt"></i> Date of Birth:</label>
+<p id="displayDob"></p>
+
+<label for="edit-gender"><i class="fas fa-venus-mars"></i> Gender:</label>
+<p id="displayGender"></p>
                 </div>
         
                 <button class="edit-button" onclick="toggleEditForm()">Edit Profile</button>
-        
-                <form id="profile-form" class="update-form" onsubmit="event.preventDefault();">
-                     <h3>Update Profile</h3>
-                    <label for="name">Name</label>
-                    <input type="text" id="name" name="name" required>
-        
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-        
-                    <label for="phone">Phone Number</label>
-                    <input type="text" id="phone" name="phone" required>
-        
-                    <label for="age">Age</label>
-                    <input type="number" id="age" name="age" required>
-        
-                    <label for="dob">Date of Birth</label>
-                    <input type="date" id="dob" name="dob" required>
-        
-                    <label for="gender">Gender</label>
-                    <select id="gender" name="gender" required>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-        
-                    <button type="submit">Update</button>
-                </form>
             </div>
             </div>
     </div>
@@ -560,7 +574,6 @@ nav ul li a:hover {
         z-index: 3000;">
         Loading...
     </div>
-<!--Footer-->
 <!-- Footer Section -->
 <div class="footer">
     <div class="contact-info">
@@ -607,21 +620,16 @@ nav ul li a:hover {
 
 </div>
 
-    <!-- Pop-up Content Area -->
-    <div class="content" id="popupContent">
-        <button id="close" onclick="document.getElementById('popupContent').style.display='none'">Close</button>
-        <div class="contentDetail">
-        </div>
-    </div>
-
     <script>
-                let allAppointments = [];
+        document.addEventListener('DOMContentLoaded', () => {
+                const bar = document.getElementById('bar');
+                const menu = document.querySelector('nav ul');
 
-                let currentPage = 1; // Global variable to track current page
-                    let currentAppointments = []; // Global variable to hold filtered list for current type
-                    const pageSize = 6;
+                bar.addEventListener('click', function () {
+                    menu.classList.toggle('active');
+                });
+            });
 
-        // Fetch user profile data when the page loads
         window.onload = function () {
             showLoader();
 
@@ -653,380 +661,184 @@ nav ul li a:hover {
                     document.getElementById('displayGender').innerText = data.gender || 'male';
 
                     // Populate form fields with user data
-                    document.getElementById('name').value = data.name || '';
-                    document.getElementById('email').value = data.email || '';
-                    document.getElementById('phone').value = data.phone || '';
-                    document.getElementById('age').value = data.age || '';
-                    document.getElementById('dob').value = data.dob || '';
-                    document.getElementById('gender').value = data.gender || 'male';
+                    // document.getElementById('name').value = data.name || '';
+                    // document.getElementById('email').value = data.email || '';
+                    // document.getElementById('phone').value = data.phone || '';
+                    // document.getElementById('age').value = data.age || '';
+                    // document.getElementById('dob').value = data.dob || '';
+                    // document.getElementById('gender').value = data.gender || 'male';
+
+                                        hideLoader();
+
                 })
                 .catch(error => {
                     console.error('Error fetching user profile:', error);
                     alert('Could not load profile data. Please try again.');
-                    hideLoader();
 
                 });
 
-            // Fetch patient appointments after loading the profile
-            fetchPatientAppointments(token);
+           
         };
 
-        // Fetch patient appointments
-        function fetchPatientAppointments(token) {
-            const patientId = localStorage.getItem('patientId');
-            console.log("Retrieved patientId from localStorage:", patientId); 
-            showLoader();
-
-
-            fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}` 
-                }
-            })
-                .then(response => {
-                    console.log("Raw response:", response); 
-
-                    if (!response.ok) throw new Error('Failed to fetch appointments');
-                    return response.json();
-                })
-                // .then(data => renderAppointments(data))
-                .then(data => {
-                    allAppointments = data; 
-                    renderAppointments(allAppointments, 'upcoming');
-                    hideLoader();
-
-                })
-                .catch(err => {
-    console.error("Error fetching patient appointments:", err);
-    hideLoader();
-});
-
-        }
-    function renderAppointments(appointments, type = 'upcoming') {
-        
-        const submittedFeedbacks = JSON.parse(localStorage.getItem('feedbackGiven') || '[]');
-
-        const appointmentsBody = document.getElementById('appointments-body');
-        appointmentsBody.innerHTML = '';
-
-        const now = new Date();
-        const removedIds = JSON.parse(localStorage.getItem('removedAppointments') || '[]');
-        const filtered = appointments.filter(appointment => {
-            if (removedIds.includes(appointment._id)) return false;
-
-            const datePart = appointment.date;
-            let timeStr = appointment.time?.toString().trim().toLowerCase() || '';
-            let formattedTime = '00:00:00';
-
-            if (/am|pm/i.test(timeStr)) {
-                const match = timeStr.match(/^(\d{1,2})(?::(\d{2}))?\s?(am|pm)$/i);
-                if (!match) {
-                    console.warn('Invalid AM/PM time:', timeStr);
-                    return false;
-                }
-
-                let [, hour, minute, period] = match;
-                hour = parseInt(hour, 10);
-                minute = parseInt(minute || '0', 10);
-
-                if (period.toLowerCase() === 'pm' && hour < 12) hour += 12;
-                if (period.toLowerCase() === 'am' && hour === 12) hour = 0;
-
-                formattedTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
-            } else if (/^\d{1,2}:\d{2}$/.test(timeStr)) {
-                formattedTime = `${timeStr}:00`;
-            } else if (/^\d{1,2}$/.test(timeStr)) {
-                formattedTime = `${timeStr.padStart(2, '0')}:00:00`;
-            } else {
-                console.warn('Unrecognized time format:', timeStr);
-                return false;
-            }
-
-            const plainDate = new Date(datePart).toISOString().split('T')[0]; 
-            const appointmentDateTime = new Date(`${plainDate}T${formattedTime}`);
-            if (isNaN(appointmentDateTime)) {
-                console.warn('Invalid appointment datetime:', `${plainDate}T${formattedTime}`);
-                return false;
-            }
-
-            const status = (appointment.status || '').toLowerCase();
-
-            if (type === 'upcoming') {
-                return appointmentDateTime >= now && status !== 'cancelled' && status !== 'completed';
-            }
-            if (type === 'past') {
-                return appointmentDateTime < now && (status === 'completed' || status === 'cancelled');
-            }
-            if (type === 'missed') {
-                return appointmentDateTime < now && status !== 'completed' && status !== 'cancelled';
-            }
-
-            return true; 
-        });
-
-        filtered.sort((a, b) => {
-            const aTime = new Date(`${a.date}T${a.time}`);
-            const bTime = new Date(`${b.date}T${b.time}`);
-            return aTime - bTime;
-        });
-
-       currentAppointments = filtered; // Save filtered list
-        const startIndex = (currentPage - 1) * pageSize;
-        const paginatedAppointments = filtered.slice(startIndex, startIndex + pageSize);
-
-        paginatedAppointments.forEach(appointment => {
-
-            const appointmentElement = document.createElement('tr');
-                    const feedbackGiven = submittedFeedbacks.includes(appointment._id);
-
-
-            let appointmentDate = new Date(appointment.date);
-            let timeStr = appointment.time?.toString().trim().toLowerCase() || '';
-            let hours = 0, minutes = 0;
-
-            if (/^\d{1,2}$/.test(timeStr)) {
-                hours = parseInt(timeStr);
-            } else if (/^\d{1,2}\s?(am|pm)$/.test(timeStr)) {
-                let [, h, period] = timeStr.match(/(\d{1,2})\s?(am|pm)/i) || [];
-                hours = parseInt(h);
-                if (period === 'pm' && hours < 12) hours += 12;
-                if (period === 'am' && hours === 12) hours = 0;
-            } else if (/^\d{1,2}:\d{2}/.test(timeStr)) {
-                [hours, minutes] = timeStr.split(':').map(Number);
-            }
-
-            appointmentDate.setHours(hours, minutes, 0, 0);
-
-            // Determine effective status
-            let effectiveStatus = appointment.status?.toLowerCase() || '';
-            if (appointmentDate < now && effectiveStatus !== 'completed' && effectiveStatus !== 'cancelled') {
-                effectiveStatus = 'missed';
-            }
-
-            appointmentElement.innerHTML = `
-        <td>
-            <span style="cursor:pointer; color:red; font-weight:bold;" onclick="removeAppointmentFromUI('${appointment._id}')">❌</span>
-            ${appointment.doctorId?.name || 'Unknown Doctor'}
-        </td>
-        <td>${new Date(appointment.date).toLocaleDateString()}</td>
-        <td>${appointment.time || 'N/A'}</td>
-        <td>${effectiveStatus}</td>
-        <td>
-            <span class="btn-view" onclick="viewAppointment('${appointment._id}')">View</span>
-            ${type === 'upcoming'
-                    ? `<span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>`
-                    : (effectiveStatus === 'completed' && !submittedFeedbacks.includes(appointment._id))
-                    ? `<button class="btn-feedback" onclick="giveFeedback('${appointment._id}', '${appointment.doctorId?._id}', '${appointment.doctorId?.name}')">Give Feedback</button>`
-                    : (effectiveStatus === 'completed' && submittedFeedbacks.includes(appointment._id))
-                        ? `<div style="margin-top: 4px; color: green; font-size: 0.9em;">Feedback Submitted</div>`
-                        : ''
-                }
-        </td>
-    `;
-
-            appointmentsBody.appendChild(appointmentElement);
-        });
-
-
-        if (filtered.length === 0) {
-            appointmentsBody.innerHTML = `<tr><td colspan="5">No ${type} appointments found.</td></tr>`;
-        }
-        updatePageInfo();
-    }
-    function showAppointments(type) {
-        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`.tab-button[onclick*="${type}"]`).classList.add('active');
-
-        currentPage = 1; // Reset to first page
-        activeTab = type; // Track the active tab (for pagination use)
-        renderAppointments(allAppointments, type);
-    }
-
-    function updatePageInfo() {
-        const totalPages = Math.ceil(currentAppointments.length / pageSize);
-        document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages}`;
-    }
-
-    function nextPage() {
-        const totalPages = Math.ceil(currentAppointments.length / pageSize);
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderAppointments(allAppointments, getCurrentTabType());
-        }
-    }
-
-    function prevPage() {
-        if (currentPage > 1) {
-            currentPage--;
-            renderAppointments(allAppointments, getCurrentTabType());
-        }
-    }
-
-    // Helper to detect active tab
-    function getCurrentTabType() {
-        const activeTab = document.querySelector('.tab-button.active');
-        return activeTab ? activeTab.textContent.toLowerCase() : 'upcoming';
-    }
-
-    function removeAppointmentFromUI(appointmentId) {
-            if (!confirm("Are you sure you want to hide this appointment from the list?")) return;
-
-            let removed = JSON.parse(localStorage.getItem('removedAppointments') || '[]');
-            if (!removed.includes(appointmentId)) {
-                removed.push(appointmentId);
-                localStorage.setItem('removedAppointments', JSON.stringify(removed));
-            }
-
-            // Rerender the current tab
-            const activeTab = document.querySelector('.tab-button.active');
-            const tabType = activeTab ? activeTab.textContent.toLowerCase() : 'upcoming';
-            renderAppointments(allAppointments, tabType);
-        }
-
-
-
-            function giveFeedback(appointmentId, doctorId, doctorName) {
-                    // Save this appointment as feedback submitted
-                    let submitted = JSON.parse(localStorage.getItem('feedbackGiven') || '[]');
-                    if (!submitted.includes(appointmentId)) {
-                        submitted.push(appointmentId);
-                        localStorage.setItem('feedbackGiven', JSON.stringify(submitted));
-                    }
-
-                    // Pass doctor info via sessionStorage
-                    sessionStorage.setItem('feedbackDoctorId', doctorId);
-                    sessionStorage.setItem('feedbackDoctorName', doctorName);
-                    sessionStorage.setItem('feedbackAppointmentId', appointmentId);
-                    window.location.href = 'feedback.html';
-                }
-
-
-                function showAppointments(type) {
-                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                    document.querySelector(`.tab-button[onclick*="${type}"]`).classList.add('active');
-
-                    renderAppointments(allAppointments, type);
-                }
-
-                   
-
-            function formatTime(timeString) {
-                if (!timeString) return 'N/A';
-                const [hours, minutes] = timeString.split(':');
-                const hour = parseInt(hours);
-                return `${hour > 12 ? hour - 12 : hour}:${minutes || '00'} ${hour >= 12 ? 'PM' : 'AM'}`;
-            }
-
         // Handle profile form submission
-        document.getElementById('profile-form').addEventListener('submit', function (event) {
-            event.preventDefault();
+        // document.getElementById('profile-form').addEventListener('submit', function (event) {
+        //     event.preventDefault();
 
-            const token = localStorage.getItem('authToken'); 
+        //     const token = localStorage.getItem('authToken'); 
 
-            const updatedData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                age: document.getElementById('age').value,
-                dob: document.getElementById('dob').value,
-                gender: document.getElementById('gender').value,
-            };
+        //     const updatedData = {
+        //         name: document.getElementById('name').value,
+        //         email: document.getElementById('email').value,
+        //         phone: document.getElementById('phone').value,
+        //         age: document.getElementById('age').value,
+        //         dob: document.getElementById('dob').value,
+        //         gender: document.getElementById('gender').value,
+        //     };
 
-            // Send updated data to the server
-            fetch('http://localhost:3000/user/update', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, 
-                },
-                body: JSON.stringify(updatedData),
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to update profile');
-                    return response.json();
-                })
-                .then(data => {
-                    alert(data.message); 
-                    document.getElementById('displayName').innerText = updatedData.name;
-                    document.getElementById('displayEmail').innerText = updatedData.email;
-                    document.getElementById('displayPhone').innerText = updatedData.phone;
-                    document.getElementById('displayAge').innerText = updatedData.age;
-                    document.getElementById('displayDob').innerText = updatedData.dob;
-                    document.getElementById('displayGender').innerText = updatedData.gender;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while updating your profile. Please try again.');
-                });
-        });
+        //     // Send updated data to the server
+        //     fetch('http://localhost:3000/user/update', {
+        //         method: 'PUT',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'Authorization': `Bearer ${token}`, 
+        //         },
+        //         body: JSON.stringify(updatedData),
+        //     })
+        //         .then(response => {
+        //             if (!response.ok) throw new Error('Failed to update profile');
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             alert(data.message); 
+        //             document.getElementById('displayName').innerText = updatedData.name;
+        //             document.getElementById('displayEmail').innerText = updatedData.email;
+        //             document.getElementById('displayPhone').innerText = updatedData.phone;
+        //             document.getElementById('displayAge').innerText = updatedData.age;
+        //             document.getElementById('displayDob').innerText = updatedData.dob;
+        //             document.getElementById('displayGender').innerText = updatedData.gender;
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //             alert('An error occurred while updating your profile. Please try again.');
+        //         });
+        // });
 
         // Function to toggle the edit form visibility
         function toggleEditForm() {
-            const form = document.getElementById('profile-form');
-            form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
-        }
+                const btn = document.querySelector('.edit-button');
+                const profileInfo = document.querySelector('.profile-info');
 
-        function viewAppointment(appointmentId) {
-                fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                    }
-                })
-                    .then(res => {
-                        if (!res.ok) {
-                            return res.text().then(text => {
-                                console.error("Non-JSON error response:", text);
-                                throw new Error(`Failed to fetch appointment details (status: ${res.status})`);
-                            });
+                // Mapping from label text to keys used in inputs and updatedData
+                const labelToKey = {
+                    'name': 'name',
+                    'email': 'email',
+                    'phonenumber': 'phone',
+                    'phone': 'phone',
+                    'age': 'age',
+                    'dateofbirth': 'dob',
+                    'dob': 'dob',
+                    'gender': 'gender'
+                };
+
+                if (btn.innerText === 'Edit Profile') {
+                    // Change to editable inputs with current values
+                    btn.innerText = 'Update';
+
+                    profileInfo.querySelectorAll('p').forEach(p => {
+                        const text = p.innerText;
+                        // Clean label text to lowercase with no spaces or special chars
+                        const rawLabel = p.previousElementSibling.innerText.toLowerCase().replace(/[^a-z]/g, '');
+                        const key = labelToKey[rawLabel] || rawLabel;
+
+                        const input = document.createElement(key === 'gender' ? 'select' : 'input');
+
+                        if (key === 'gender') {
+                            input.innerHTML = `
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                `;
+                            input.value = text.toLowerCase();
+                        } else {
+                            input.type = key === 'age' ? 'number' : (key === 'dob' ? 'date' : 'text');
+                            input.value = text;
                         }
-                        return res.json(); 
-                    })
-                    .then(data => {
-                        const contentDetail = document.querySelector('.contentDetail');
-                        contentDetail.innerHTML = `
-            <h3>Appointment Details</h3>
-            <p><strong>Doctor:</strong> ${data.doctorName || 'N/A'}</p>
-            <p><strong>Date:</strong> ${new Date(data.date).toLocaleDateString()}</p>
-            <p><strong>Time:</strong> ${data.time}</p>
-            <p><strong>Status:</strong> ${data.status}</p>
-            <p><strong>Reason:</strong> ${data.reason || 'Not Provided'}</p>
-        `;
-                        document.getElementById('popupContent').style.display = 'block';
-                    })
-                    .catch(err => {
-                        console.error("Error fetching appointment details:", err);
-                        alert("Unable to load appointment details.");
+
+                        input.id = 'edit-' + key;
+                        input.name = key;
+                        input.required = true;
+                        input.style.marginBottom = '10px';
+                        input.style.width = '100%';
+                        input.style.padding = '5px';
+                        input.style.borderRadius = '5px';
+                        input.style.border = '1px solid #ccc';
+
+                        p.replaceWith(input);
                     });
+
+                } else {
+                    // Update action
+                    updateProfile();
+                }
             }
 
+            function updateProfile() {
+                const btn = document.querySelector('.edit-button');
+                const profileInfo = document.querySelector('.profile-info');
 
+                // Safely get inputs, provide fallback or empty string if missing
+                const getInputValue = id => {
+                    const el = document.getElementById(id);
+                    return el ? el.value : '';
+                };
 
+                const updatedData = {
+                    name: getInputValue('edit-name'),
+                    email: getInputValue('edit-email'),
+                    phone: getInputValue('edit-phone'),
+                    age: getInputValue('edit-age'),
+                    dob: getInputValue('edit-dob'),
+                    gender: getInputValue('edit-gender'),
+                };
 
-        function openFeedbackForm() {
-            alert("Feedback form would open here.");
-        }
+                // Show loader
+                showLoader();
 
-            function cancelAppointment(appointmentId) {
-                if (!confirm("Are you sure you want to cancel this appointment?")) return;
+                const token = localStorage.getItem('authToken');
 
-                fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+                fetch('http://localhost:3000/user/update', {
                     method: 'PUT',
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                    }
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(updatedData),
                 })
                     .then(response => {
-                        if (!response.ok) throw new Error('Failed to cancel');
+                        if (!response.ok) throw new Error('Failed to update profile');
                         return response.json();
                     })
                     .then(data => {
                         alert(data.message);
-                        fetchPatientAppointments(localStorage.getItem('authToken'));
+
+                        // Replace inputs back to <p> with updated text
+                        for (const key in updatedData) {
+                            const input = document.getElementById('edit-' + key);
+                            if (!input) continue; // skip if input not found (safety)
+
+                            const p = document.createElement('p');
+                            p.id = 'display' + key.charAt(0).toUpperCase() + key.slice(1);
+                            p.innerText = updatedData[key];
+                            input.replaceWith(p);
+                        }
+
+                        btn.innerText = 'Edit Profile';
+                        hideLoader();
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Failed to cancel appointment: ' + error.message);
+                        alert('An error occurred while updating your profile. Please try again.');
+                        hideLoader();
                     });
             }
             function showLoader() {
