@@ -15,7 +15,6 @@ const addDoctor = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newDoctor = new Doctor({
       name,
       email,
@@ -46,7 +45,6 @@ const addDoctor = async (req, res) => {
   }
 };
 
-// Get all doctors
 const getDoctors = async (req, res) => {
   try {
       const doctors = await Doctor.find();
@@ -65,17 +63,12 @@ const getDoctorById = async (req, res) => {
     }
 
     const today = new Date().toISOString().split('T')[0];
-    // Filter only future availability slots
     doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => {
       return new Date(slot.date).toISOString().split('T')[0] >= today;
     });
 
     const bookings = await Booking.find({ doctorId: doctor._id });
-
-    // Normalize date format for comparison
     const formatDate = (d) => new Date(d).toISOString().split('T')[0];
-
-    // Filter available slots based on existing (non-cancelled) bookings
     const filteredAvailability = doctor.availabilitySlots
       .map(slot => {
         const availableTimes = slot.slots.filter(time => {
@@ -93,10 +86,7 @@ const getDoctorById = async (req, res) => {
       })
       .filter(slot => slot.slots.length > 0);
 
-    // Fetch feedback for this doctor
     const feedback = await Feedback.find({ doctorId: doctor._id });
-
-    // Respond with updated doctor object
     res.status(200).json({
       ...doctor.toObject(),
       availabilitySlots: filteredAvailability,
@@ -109,7 +99,6 @@ const getDoctorById = async (req, res) => {
   }
 };
 
-// Update a doctor by ID
 const updateDoctor = async (req, res) => {
   try {
     const updateFields = req.body;
@@ -135,7 +124,6 @@ if (req.file) {
   }
 };
 
-// Delete a doctor by ID
 const deleteDoctor = async (req, res) => {
   try {
       const doctor = await Doctor.findByIdAndDelete(req.params.id);
@@ -170,13 +158,11 @@ const updateDoctorAvailability = async (req, res) => {
       });
 
       if (existingIndex >= 0) {
-        // Merge and remove duplicates
         existingSlots[existingIndex].slots = Array.from(new Set([
           ...existingSlots[existingIndex].slots,
           ...newSlot.slots.map(s => s.trim())
         ]));
       } else {
-        // Normalize new slot date
         existingSlots.push({
           date: newSlotDate,
           slots: newSlot.slots.map(s => s.trim())
@@ -185,15 +171,15 @@ const updateDoctorAvailability = async (req, res) => {
     });
 
     doctor.availabilitySlots = existingSlots;
-    doctor.markModified('availabilitySlots'); // Ensure Mongoose detects change
+    doctor.markModified('availabilitySlots'); 
 
-    console.log("✅ Saving availabilitySlots:", doctor.availabilitySlots);
+    console.log("Saving availabilitySlots:", doctor.availabilitySlots);
 
     await doctor.save();
 
     res.status(200).json({ availabilitySlots: doctor.availabilitySlots });
   } catch (error) {
-    console.error("❌ Error updating availability:", error);
+    console.error(" Error updating availability:", error);
     res.status(500).json({ message: "Failed to update availability" });
   }
 };
@@ -204,7 +190,6 @@ const getDoctorAvailability = async (req, res) => {
     if (!doctor) {
       return res.status(404).json({ error: 'Doctor not found' }); 
     }
-    
     const today = new Date().toISOString().split('T')[0]; 
     const futureSlots = doctor.availabilitySlots.filter(slot => slot.date >= today);
     
@@ -219,12 +204,11 @@ const getDoctorAvailability = async (req, res) => {
 const deleteDoctorAvailabilitySlot = async (req, res) => {
   try {
     const doctorId = req.params.id;
-    const slotDate = req.params.date; // e.g., "2025-08-07"
+    const slotDate = req.params.date; 
 
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-    // Normalize dates to ensure proper comparison
     doctor.availabilitySlots = doctor.availabilitySlots.filter(slot => {
       const slotDateOnly = new Date(slot.date).toISOString().split('T')[0];
       return slotDateOnly !== slotDate;
@@ -254,13 +238,10 @@ const updateAvailabilityOrder = async (req, res) => {
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-    // Create a map from date to slot object for quick lookup
     const slotsMap = {};
     doctor.availabilitySlots.forEach(slot => {
       slotsMap[slot.date] = slot;
     });
-
-    // Reorder availabilitySlots according to newOrder array
     const reorderedSlots = [];
     newOrder.forEach(date => {
       if (slotsMap[date]) {
@@ -268,7 +249,6 @@ const updateAvailabilityOrder = async (req, res) => {
       }
     });
 
-    // Optional: If there are any slots not included in newOrder, append them at the end
     doctor.availabilitySlots.forEach(slot => {
       if (!newOrder.includes(slot.date)) {
         reorderedSlots.push(slot);
@@ -284,7 +264,7 @@ const updateAvailabilityOrder = async (req, res) => {
     res.status(500).json({ message: "Failed to update availability order" });
   }
 };
-// Update doctor availability
+
 const updateDoctorAvailable = async (req, res) => {
     try {
         const { available } = req.body;
