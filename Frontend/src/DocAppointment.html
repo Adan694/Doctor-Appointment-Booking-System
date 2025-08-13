@@ -528,6 +528,50 @@ h1.page-title:hover {
         }
     }
 
+   .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 25px 35px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  border: 2px solid #4a90e2; /* soft blue border */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
+}
+
+.modal-content button {
+  margin: 12px 15px 0 15px;
+  padding: 10px 22px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.modal-content button:hover {
+  border-color: #4a90e2;
+  box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
+}
+
+
     </style>
 </head>
 
@@ -656,7 +700,55 @@ h1.page-title:hover {
     </div>
 </div>
 
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <p>Are you sure you want to mark this appointment as Completed?</p>
+        <button id="confirmYes">Yes</button>
+        <button id="confirmNo">No</button>
+    </div>
+</div>
 
+<!-- Success Modal -->
+<div id="successModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <p>Appointment moved to completed successfully.</p>
+        <button id="successOk">OK</button>
+    </div>
+</div>
+<!-- Adeed -->
+<!-- Missed Confirmation Modal -->
+<div id="missedConfirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <p>Are you sure you want to mark this appointment as Missed?</p>
+        <button id="missedConfirmYes">Yes</button>
+        <button id="missedConfirmNo">No</button>
+    </div>
+</div>
+
+<!-- Missed Success Modal -->
+<div id="missedSuccessModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <p>Appointment marked as Missed successfully.</p>
+        <button id="missedSuccessOk">OK</button>
+    </div>
+</div>
+
+<!-- Cancelled Confirmation Modal -->
+<div id="cancelConfirmModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <p>Are you sure you want to mark this appointment as Cancelled?</p>
+        <button id="cancelConfirmYes">Yes</button>
+        <button id="cancelConfirmNo">No</button>
+    </div>
+</div>
+
+<div id="cancelSuccessModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <p>Appointment cancelled successfully.</p>
+        <button id="cancelSuccessOk">OK</button>
+    </div>
+</div>
 
 <script>
         console.log("Script loaded"); 
@@ -879,45 +971,68 @@ h1.page-title:hover {
 
 
 
-        function completeAppointment(button) {
+       function completeAppointment(button) {
             const row = button.parentElement.parentElement;
             const patientName = row.cells[0].innerText;
             const appointmentTime = row.cells[1].innerText;
-            const appointmentId = row.getAttribute('data-appointment-id');;
-            const token = localStorage.getItem('authToken'); 
-             const confirmed = confirm("Are you sure you want to mark this appointment as Completed?");
-            if (!confirmed) {
-                return; 
-            }
-            console.log('Updating appointment ID:', appointmentId); 
-            fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ status: 'Completed' }) 
-            })
-                .then(response => {
-                    console.error('Error response:', response); 
+            const appointmentId = row.getAttribute('data-appointment-id');
+            const token = localStorage.getItem('authToken');
 
-                    if (!response.ok) throw new Error('Failed to update appointment');
-                    return response.json();
+            // Show confirmation modal
+            const confirmModal = document.getElementById('confirmModal');
+            const successModal = document.getElementById('successModal');
+            const confirmYesBtn = document.getElementById('confirmYes');
+            const confirmNoBtn = document.getElementById('confirmNo');
+            const successOkBtn = document.getElementById('successOk');
+
+            confirmModal.style.display = 'flex';
+
+            // Remove any old listeners first (important to avoid duplicates)
+            confirmYesBtn.onclick = null;
+            confirmNoBtn.onclick = null;
+            successOkBtn.onclick = null;
+
+            confirmYesBtn.onclick = () => {
+                confirmModal.style.display = 'none';
+
+                fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: 'Completed' })
                 })
-                .then(data => {
-                    addCompletedAppointmentRow({
-                        patientName,
-                        appointmentTime
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to update appointment');
+                        return response.json();
+                    })
+                    .then(data => {
+                        addCompletedAppointmentRow({
+                            patientName,
+                            appointmentTime
+                        });
+                        row.remove();
+                        updateLocalStorage();
+
+                        // Show success modal
+                        successModal.style.display = 'flex';
+                    })
+                    .catch(err => {
+                        console.error('Error updating appointment:', err);
+                        alert('Failed to update appointment. Please try again.');
                     });
+            };
 
-                    row.remove();
-                    updateLocalStorage();
-                })
-                .catch(err => {
-                    console.error('Error updating appointment:', err);
-                });
+            confirmNoBtn.onclick = () => {
+                confirmModal.style.display = 'none';
+            };
+
+            successOkBtn.onclick = () => {
+                successModal.style.display = 'none';
+            };
         }
-        
+
        async function rescheduleAppointment(buttonElement) {
             const token = localStorage.getItem("token");
             const row = buttonElement.closest('tr');
@@ -1039,106 +1154,137 @@ h1.page-title:hover {
 
 
       function cancelAppointment(button) {
-            // Show confirmation dialog
-            const confirmed = confirm("Are you sure you want to cancel this appointment?");
-            if (!confirmed) {
-                return; // Exit if user cancels
-            }
-
-            const row = button.parentElement.parentElement;
+            const row = button.closest('tr');
             const appointmentId = row.getAttribute('data-appointment-id');
+            const patientName = row.cells[0].innerText;
+            const appointmentTime = row.cells[1].innerText;
+            const phone = row.cells[2].innerText;
             const token = localStorage.getItem('authToken');
 
-            // Show loading state
-            button.disabled = true;
-            const originalText = button.textContent;
-            button.textContent = 'Cancelling...';
+            // Get modal elements
+            const confirmModal = document.getElementById('cancelConfirmModal');
+            const successModal = document.getElementById('cancelSuccessModal');
+            const yesBtn = document.getElementById('cancelConfirmYes');
+            const noBtn = document.getElementById('cancelConfirmNo');
+            const okBtn = document.getElementById('cancelSuccessOk');
 
-            fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    status: 'Cancelled',
-                    cancelledBy: 'doctor'
-                })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(err.message || 'Failed to cancel appointment');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Success handling
-                    const patientName = row.cells[0].innerText;
-                    const appointmentTime = row.cells[1].innerText;
-                    const phone = row.cells[2].innerText;
-                    const id = row.getAttribute('data-appointment-id');
+            // Show confirmation modal
+            confirmModal.style.display = 'flex';
 
-                    addCancelledAppointmentRow({
-                        id,
-                        patientName,
-                        appointmentTime,
-                        phone
+            // Clear previous listeners
+            yesBtn.onclick = null;
+            noBtn.onclick = null;
+            okBtn.onclick = null;
+
+            yesBtn.onclick = () => {
+                confirmModal.style.display = 'none';
+
+                button.disabled = true;
+                const originalText = button.textContent;
+                button.textContent = 'Cancelling...';
+
+                fetch(`http://localhost:3000/api/appointments/${appointmentId}/cancel`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'Cancelled',
+                        canceledBy: 'doctor'
+                    })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.message || 'Failed to cancel appointment');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        addCancelledAppointmentRow({ id: appointmentId, patientName, appointmentTime, phone });
+                        row.remove();
+                        updateLocalStorage();
+
+                        successModal.style.display = 'flex';
+                    })
+                    .catch(err => {
+                        console.error('Error cancelling appointment:', err);
+                        alert(`Error: ${err.message}`);
+                    })
+                    .finally(() => {
+                        button.disabled = false;
+                        button.textContent = originalText;
                     });
+            };
 
-                    row.remove();
-                    updateLocalStorage();
+            noBtn.onclick = () => {
+                confirmModal.style.display = 'none';
+            };
 
-                    // Show success notification
-                    alert('Appointment cancelled successfully');
-                })
-                .catch(err => {
-                    console.error('Error cancelling appointment:', err);
-                    alert(`Error: ${err.message}`);
-                })
-                .finally(() => {
-                    // Restore button state
-                    button.disabled = false;
-                    button.textContent = originalText;
-                });
+            okBtn.onclick = () => {
+                successModal.style.display = 'none';
+            };
         }
 
         function markAsMissed(button) {
-                const row = button.closest('tr');
-                const appointmentId = row.getAttribute('data-appointment-id');
-                const patientName = row.cells[0].innerText;
-                const appointmentTime = row.cells[1].innerText;
-                const phone = row.cells[2].innerText;
-                const token = localStorage.getItem('authToken');
-                const confirmed = confirm("Are you sure you want to mark this appointment as Missed?");
-            if (!confirmed) {
-                return; // Exit if user cancels
-            }
+            const row = button.closest('tr');
+            const appointmentId = row.getAttribute('data-appointment-id');
+            const patientName = row.cells[0].innerText;
+            const appointmentTime = row.cells[1].innerText;
+            const phone = row.cells[2].innerText;
+            const token = localStorage.getItem('authToken');
+
+            // Get modal elements
+            const confirmModal = document.getElementById('missedConfirmModal');
+            const successModal = document.getElementById('missedSuccessModal');
+            const yesBtn = document.getElementById('missedConfirmYes');
+            const noBtn = document.getElementById('missedConfirmNo');
+            const okBtn = document.getElementById('missedSuccessOk');
+
+            confirmModal.style.display = 'flex';
+
+            yesBtn.onclick = null;
+            noBtn.onclick = null;
+            okBtn.onclick = null;
+
+            yesBtn.onclick = () => {
+                confirmModal.style.display = 'none';
 
                 fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ status: 'Missed' })
-            })
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: 'Missed' })
+                })
                     .then(response => {
                         if (!response.ok) throw new Error('Failed to mark as missed');
                         return response.json();
                     })
                     .then(() => {
-                        row.remove(); 
+                        row.remove();
                         addMissedAppointmentRow({ patientName, appointmentTime, phone });
                         updateLocalStorage();
-                        console.log(`✅ Marked appointment ${appointmentId} as missed`);
+
+                        successModal.style.display = 'flex';
                     })
                     .catch(err => {
-                        console.error('❌ Error marking as missed:', err);
+                        console.error('Error marking as missed:', err);
                         alert("Failed to mark appointment as missed.");
                     });
-            }
+            };
+
+            noBtn.onclick = () => {
+                confirmModal.style.display = 'none';
+            };
+
+            okBtn.onclick = () => {
+                successModal.style.display = 'none';
+            };
+        }
 
         function addMissedAppointmentRow(appointment) {
                 const rowHTML = `<tr data-appointment-id="${appointment.id || ''}">

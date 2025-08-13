@@ -1,11 +1,12 @@
-const formatMessage = ({ action, appointment, doctor, patient }) => {
+const formatMessage = ({ action, appointment, doctor, patient, recipient }) => {
   let message = '';
   const appointmentDate = new Date(appointment.date).toLocaleDateString();
   const appointmentTime = appointment.time;
 
   switch (action) {
     case 'book':
-      message = `📅 Appointment Confirmation
+      if (recipient === 'patient') {
+        message = `📅 Appointment Confirmation
 
 Dear ${patient.name},
 
@@ -19,42 +20,91 @@ Please arrive at least 10 minutes before your scheduled time and bring any neces
 
 Thank you,  
 DocAssist`;
-      break;
+      } else if (recipient === 'doctor') {
+        message = `📅 New Appointment Booked
 
-    case 'cancel-patient':
-      message = `❌ Appointment Cancellation Notice
+Dear Dr. ${doctor.name},
 
-Dear ${doctor.name},
-
-Please be informed that the following appointment has been cancelled by the patient:
+A new appointment has been booked with:
 
 Patient: ${patient.name}  
 Date: ${appointmentDate}  
 Time: ${appointmentTime}
 
-Kind regards,  
+Please prepare accordingly.
+
+Thank you,  
 DocAssist`;
+      }
       break;
 
-    case 'cancel-doctor':
-      message = `❌ Appointment Cancellation Notice
+    case 'cancel-patient':
+  if (recipient === 'doctor') {
+    message = `❌ Patient-Initiated Cancellation
 
-Dear ${patient.name},
+Dr. ${doctor.name},
 
-We regret to inform you that your upcoming appointment has been cancelled by Dr. ${doctor.name}.
+${patient.name} has cancelled their appointment:
 
-Details of the cancelled appointment:  
-Date: ${appointmentDate}  
-Time: ${appointmentTime}  
+Original Schedule:
+Date: ${appointmentDate}
+Time: ${appointmentTime}
 
-Please contact our office to reschedule at your earliest convenience.
+This slot is now available for other bookings.
 
-Kind regards,  
-DocAssist`;
-      break;
+DocAssist Team`;
+  } else if (recipient === 'patient') {
+    message = `🗓️ Appointment Cancellation Confirmed
+
+${patient.name},
+
+You've successfully cancelled your appointment with Dr. ${doctor.name}.
+
+Cancelled Appointment Details:
+Date: ${appointmentDate}
+Time: ${appointmentTime}
+
+To book a new appointment, please visit our portal.
+
+DocAssist Support`;
+  }
+  break;
+
+case 'cancel-doctor':
+  if (recipient === 'patient') {
+    message = `⚠️ Doctor-Initiated Cancellation
+
+${patient.name},
+
+We regret to inform you that Dr. ${doctor.name} has cancelled your scheduled appointment.
+
+Affected Appointment:
+Date: ${appointmentDate}
+Time: ${appointmentTime}
+
+Please contact our support team to reschedule. We apologize for any inconvenience.
+
+DocAssist Support`;
+  } else if (recipient === 'doctor') {
+    message = `⚕️ Cancellation Record
+
+Dr. ${doctor.name},
+
+You've cancelled the appointment with ${patient.name}.
+
+Appointment Details:
+Date: ${appointmentDate}
+Time: ${appointmentTime}
+
+The patient has been automatically notified.
+
+DocAssist System`;
+  }
+  break;
 
     case 'reschedule-doctor':
-      message = `🔄 Appointment Rescheduling Notice
+      if (recipient === 'patient') {
+        message = `🔄 Appointment Rescheduling Notice
 
 Dear ${patient.name},
 
@@ -68,6 +118,51 @@ If the new time is inconvenient, please contact our office to arrange an alterna
 
 Kind regards,  
 DocAssist`;
+      } else if (recipient === 'doctor') {
+        message = `ℹ Appointment Rescheduled
+
+Dear Dr. ${doctor.name},
+
+The appointment with:
+
+Patient: ${patient.name}  
+
+has been rescheduled to:
+
+Date: ${appointmentDate}  
+Time: ${appointmentTime}
+
+Kind regards,  
+DocAssist`;
+      }
+      break;
+
+    case 'complete':
+      if (recipient === 'patient') {
+        message = `✅ Appointment Completed
+
+Dear ${patient.name},
+
+Your appointment with Dr. ${doctor.name} on ${appointmentDate} at ${appointmentTime} has been marked as completed.
+
+Thank you for choosing our service.
+
+Kind regards,  
+DocAssist`;
+      } else if (recipient === 'doctor') {
+        message = `✅ Appointment Completed
+
+Dear Dr. ${doctor.name},
+
+The appointment with:
+
+Patient: ${patient.name}  
+
+on ${appointmentDate} at ${appointmentTime} has been marked as completed.
+
+Kind regards,  
+DocAssist`;
+      }
       break;
 
     default:

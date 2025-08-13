@@ -334,7 +334,6 @@ nav ul li a:hover {
     background: linear-gradient(90deg, #fff, #b2f7ef, #ffffff);
     background-size: 200% 200%;
     background-clip: text;
-    /* ✅ Standard property */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shineText 5s ease infinite;
@@ -365,59 +364,25 @@ nav ul li a:hover {
     opacity: 0;
     animation: fadeIn 0.5s ease forwards;
     background: inherit;
-    /* get the gradient from parent */
     background-clip: inherit;
-    /* keep clipping mode */
     -webkit-background-clip: inherit;
-    /* keep webkit clipping */
     -webkit-text-fill-color: inherit;
-    /* keep transparent fill */
+}
+.main img {
+    width: 550px;
+    height: auto;
+    opacity: 0;
+    transform: translateY(20px) scale(1);
+    animation: fadeIn 0.8s ease forwards;
+    animation-delay: 0.3s;
+    transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease, box-shadow 0.5s ease;
+    z-index: 1;
 }
 
-/* Button */
-.mainText button {
-    background: linear-gradient(135deg, #ffffff, #e6f7f7);
-    color: #006d77;
-    border: none;
-    padding: 12px 28px;
-    font-size: 18px;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    animation: fadeUp 1s ease forwards;
-}
-
-@keyframes fadeUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.mainText button:hover {
-    transform: scale(1.1);
-    background: linear-gradient(135deg, #e6f7f7, #ffffff);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        transform: scale(1.1);
-    }
-
-    50% {
-        transform: scale(1.15);
-    }
+.main img:hover {
+    transform: scale(1.15) rotate(5deg);
+    opacity: 1;
+    filter: brightness(1.2) contrast(1.05);
 }
 
 /* Dropdown */
@@ -532,6 +497,10 @@ nav ul li a:hover {
 #doctors .head h1:hover::after {
     width: 100px;
     opacity: 1;
+}
+
+.speciality {
+    text-transform: capitalize;
 }
 
 /* Doctor Cards Container */

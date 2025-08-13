@@ -2,8 +2,7 @@ const Feedback = require('../models/feedback');
 const { User } = require('../models/users'); 
 const notifyAll = require('../Utils/notifyAll');
 const Doctor = require('../models/doctors'); 
-
-
+const Notification = require('../models/Notification');
 
 const submitFeedback = async (req, res) => {
     console.log('Decoded JWT user:', req.user); 
@@ -29,17 +28,14 @@ const submitFeedback = async (req, res) => {
         const doctor = await Doctor.findById(doctorId);
         const admin = await User.findOne({ role: 'admin' });
 
-        const message = `📝 New Feedback Received
+        const message = `📝 New feedback from ${user.name} for Dr. ${doctor.name}`;
 
-Patient: ${user.name}
-Doctor: Dr. ${doctor.name}
-Rating: ${rating}/5
-Comment: ${comment}
-Date: ${new Date().toLocaleString()}
-
-Regards,
-DocAssist`;
         if (admin) {
+            await Notification.create({
+                userId: admin._id, 
+                message: message
+            });
+
             await notifyAll({
                 patient: null,
                 doctor,
@@ -47,7 +43,6 @@ DocAssist`;
                 message
             });
         }
-
         res.status(201).json({ message: 'Feedback submitted successfully' });
     } catch (error) {
         console.error('Error submitting feedback:', error);
@@ -55,8 +50,6 @@ DocAssist`;
     }
 };
 
-
-// Get feedback by doctor ID
 const getFeedbackByDoctor = async (req, res) => {
     const { doctorId } = req.params;
 
@@ -69,7 +62,6 @@ const getFeedbackByDoctor = async (req, res) => {
     }
 };
 
-// Update feedback by ID
 const updateFeedback = async (req, res) => {
     const { id } = req.params;
     const { rating, comment } = req.body;
@@ -88,8 +80,8 @@ const updateFeedback = async (req, res) => {
         const feedback = await Feedback.findById(id);
         if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
 
-if (feedback.patientId.toString() !== user._id.toString()){
-    return res.status(403).json({ message: 'Not authorized to edit this feedback' });
+        if (feedback.patientId.toString() !== user._id.toString()){
+        return res.status(403).json({ message: 'Not authorized to edit this feedback' });
         }
 
         feedback.rating = rating;
@@ -103,7 +95,6 @@ if (feedback.patientId.toString() !== user._id.toString()){
     }
 };
 
-// Delete feedback by ID
 const deleteFeedback = async (req, res) => {
     const { id } = req.params;
 
@@ -127,7 +118,6 @@ const deleteFeedback = async (req, res) => {
                 return res.status(403).json({ message: 'Not authorized' });
             }
         } else {
-            // for admin you can log safely without checking patientId existence if you want
             console.log('Admin deleting feedback:', feedback._id);
         }
 
@@ -139,10 +129,68 @@ const deleteFeedback = async (req, res) => {
     }
 };
 
+const getAllFeedback = async (req, res) => {
+    try {
+        const feedbacks = await Feedback.find()
+            .populate('doctorId', 'name')
+            .populate('patientId', 'name')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(feedbacks);
+    } catch (error) {
+        console.error('Error getting feedback:', error);
+        res.status(500).json({ message: 'Error retrieving feedback' });
+    }
+};
+
+const getFeedbackNotificationCount = async (req, res) => {
+    try {
+        const admin = await User.findOne({ role: 'admin' });
+        if (!admin) return res.status(404).json({ message: 'Admin not found' });
+
+        const count = await Notification.countDocuments({
+            userId: admin._id,
+            isRead: false
+        });
+
+        res.status(200).json({ count });
+    } catch (error) {
+        console.error('Error getting feedback notification count:', error);
+        res.status(500).json({ message: 'Error retrieving notification count' });
+    }
+};
+
+const markFeedbackNotificationAsRead = async (req, res) => {
+    try {
+        await Notification.findByIdAndUpdate(req.params.id, { isRead: true });
+        res.status(200).json({ message: 'Notification marked as read' });
+    } catch (error) {
+        console.error('Error marking notification as read:', error);
+        res.status(500).json({ message: 'Error updating notification' });
+    }
+};
+
+const markAllFeedbackNotificationsAsRead = async (req, res) => {
+  try {
+    const admin = await User.findOne({ role: 'admin' });
+    if (!admin) return res.status(404).json({ message: 'Admin not found' });
+
+    await Notification.updateMany({ userId: admin._id, isRead: false }, { isRead: true });
+
+    res.status(200).json({ message: 'All notifications marked as read' });
+  } catch (error) {
+    console.error('Error marking all notifications as read:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 module.exports = {
     submitFeedback,
     getFeedbackByDoctor,
     updateFeedback,
     deleteFeedback,
+    getAllFeedback,
+    getFeedbackNotificationCount,
+    markFeedbackNotificationAsRead,
+    markAllFeedbackNotificationsAsRead,
 };

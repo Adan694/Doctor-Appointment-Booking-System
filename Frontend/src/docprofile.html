@@ -351,6 +351,64 @@ textarea:focus {
     transform: scale(1.2);
 }
 
+/* Switch container */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+/* Hide default checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Slider track */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: red;
+    transition: .4s;
+    border-radius: 28px;
+}
+
+/* Slider circle */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* Checked state */
+input:checked + .slider {
+    background-color: green;
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+/* Rounded style */
+.slider.round {
+    border-radius: 28px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
 
     #loadingOverlay {
         display: none;
@@ -469,6 +527,7 @@ textarea:focus {
             /* allow wrapping */
         }
     }
+ 
 </style>
 
 </head>
@@ -525,8 +584,16 @@ textarea:focus {
         
             <label>Practice Locations:</label>
             <textarea id="locations"></textarea>
-        
+    <div class="status-section">
+        <label class="switch">
+            <input type="checkbox" id="availabilitySwitch" disabled>
+            <span class="slider round"></span>
+        </label>
+        <span id="availabilityLabel"></span>
+    </div>
+
         </div>
+
 
         <div class="availability-section">
 <h2 class="section-title">Availability</h2>
@@ -623,12 +690,47 @@ textarea:focus {
                     document.getElementById("fees").value = data.fees || '';
                     document.getElementById("locations").value = data.locations || '';
                     document.getElementById("profilePic").src = data.image || "https://via.placeholder.com/100";
+
+                    // Inside .then(data => { ... }) in loadDoctorProfile:
+                    const switchInput = document.getElementById("availabilitySwitch");
+                    const label = document.getElementById("availabilityLabel");
+
+                    switchInput.checked = data.available;
+                    label.textContent = data.available ? "Available" : "Unavailable";
+
+                    // When switch changes
+                    // switchInput.onchange = () => {
+                    //     toggleAvailability(switchInput.checked);
+                    //     label.textContent = switchInput.checked ? "Available" : "Unavailable";
+                    // };
+
                 })
                 .catch(err => {
                     console.error("Error loading doctor profile:", err);
                     alert("Failed to load doctor profile.");
                 });
         }
+        function toggleAvailability(newStatus) {
+                const token = localStorage.getItem('authToken');
+                fetch(`http://localhost:3000/api/doctors/${doctorId}/status`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ available: newStatus })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        showToast(`Status updated to ${data.available ? 'Available' : 'Unavailable'}`);
+                        loadDoctorProfile();
+                    })
+                    .catch(err => {
+                        console.error("Error updating availability:", err);
+                        alert("Failed to update status");
+                    });
+            }
+
 
         function loadAvailability() {
             const token = localStorage.getItem('authToken');
@@ -753,6 +855,9 @@ textarea:focus {
                 profile.append("fees", document.getElementById("fees").value);
                 profile.append("locations", document.getElementById("locations").value);
 
+                const availableState = document.getElementById("availabilitySwitch").checked;
+                profile.append("available", availableState);
+
                 if (file) {
                     profile.append("photo", file);  
                 }
@@ -812,8 +917,9 @@ textarea:focus {
                         showToast("Profile updated successfully!");
                         isEditing = false;
                         toggleEditFields(false);
+                        document.getElementById("availabilitySwitch").disabled = true;
                         document.getElementById("buttonGroup").innerHTML = `
-                <button class="btn" onclick="enableEditing()">Edit Profile</button>
+                        <button class="btn" onclick="enableEditing()">Edit Profile</button>
             `;
                         loadAvailability();
                     })
@@ -850,6 +956,7 @@ textarea:focus {
     function enableEditing() {
         isEditing = true;
         toggleEditFields(true);
+        document.getElementById("availabilitySwitch").disabled = false;
         const buttonGroup = document.getElementById("buttonGroup");
         buttonGroup.innerHTML = `
         <button class="btn" onclick="saveProfile()">Save Profile</button>

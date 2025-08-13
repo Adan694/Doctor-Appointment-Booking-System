@@ -22,7 +22,7 @@ const getAdminProfile = async (req, res) => {
 // Get current admin profile from token
 const getCurrentAdminProfile = async (req, res) => {
   try {
-    const adminId = req.user.id; // Assuming req.user is set by auth middleware
+    const adminId = req.user.id; 
     const admin = await User.findOne({ _id: adminId, role: 'admin' }).select('-password');
     if (!admin) {
       return res.status(404).json({ message: 'Admin not found' });
@@ -142,16 +142,15 @@ const getTodaysAppointments = async (req, res) => {
 
     const appointments = await Booking.find({
   date: { $gte: startOfDay, $lte: endOfDay },
-  status: { $in: ['pending', 'confirmed'] }
 })
-.populate('patientId doctorId', 'name photo') // populate names/photos
+.populate('patientId doctorId', 'name photo') 
 .lean();
 
 const formattedAppointments = appointments.map(app => ({
-  patientName: app.patientId?.name || 'Unknown',
-  patientPhoto: app.patientId?.photo || 'images/default.jpg',
+  patientName: app.name || app.patientId?.name || 'Unknown',
   doctorName: app.doctorId?.name || 'Unknown',
-  time: app.time || 'N/A'
+  time: app.time || 'N/A',
+  status: app.status || 'Unknown'
 }));
 
 res.json({ todaysAppointments: formattedAppointments });
@@ -164,7 +163,6 @@ res.json({ todaysAppointments: formattedAppointments });
 // Get feedback alerts count
 const getFeedbackAlerts = async (req, res) => {
   try {
-    // For simplicity, count all feedbacks as alerts
     const count = await Feedback.countDocuments();
     res.json({ feedbackAlerts: count });
   } catch (error) {
@@ -210,7 +208,6 @@ const getPatientsTimeSeries = async (req, res) => {
     const today = new Date();
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(today.getDate() - 6);
-    // Aggregate patients created in last 7 days grouped by date
     const data = await User.aggregate([
       {
         $match: {
@@ -233,35 +230,6 @@ const getPatientsTimeSeries = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
-
-
-const getTodaysAppointmentsList = async (req, res) => {
-  try {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
-
-    const appointments = await Booking.find({
-      date: { $gte: startOfDay, $lte: endOfDay },
-      status: { $in: ['pending', 'confirmed'] }
-    })
-      .populate('patientId', 'name photo')
-      .populate('doctorId', 'name');
-
-    const formattedAppointments = appointments.map(app => ({
-      patientName: app.patientId ? app.patientId.name : 'Unknown Patient',
-      patientPhoto: app.patientId && app.patientId.photo ? app.patientId.photo : 'images/default.jpg',
-      doctorName: app.doctorId ? app.doctorId.name : 'Unknown Doctor',
-      time: app.time
-    }));
-
-    res.json(formattedAppointments);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
-  }
-};
-
 
 const getDoctorsTimeSeries = async (req, res) => {
   try {
@@ -334,7 +302,6 @@ module.exports = {
   getLatestBookings,
   getUserCounts,
   getTotalAppointmentsCount,
-  getTodaysAppointmentsList,
   getPatientsTimeSeries,
   getDoctorsTimeSeries,
   getAppointmentsTimeSeries

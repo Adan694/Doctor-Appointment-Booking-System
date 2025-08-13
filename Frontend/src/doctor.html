@@ -95,14 +95,14 @@ h2 {
     font-weight: bold;
     margin-top: 10px;
 }
-
-.available {
-    color: #28a745;
+p.availability.available {
+    color: #28a745 !important;
 }
 
-.unavailable {
-    color: #dc3545;
+p.availability.unavailable {
+    color: #dc3545 !important;
 }
+
 .Heading {
     font-size: 28px;
     font-weight: 700;
@@ -621,7 +621,7 @@ nav ul li a:hover {
                 })
                 .then(doctor => {
                     profileDiv.innerHTML = `
-<img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}">
+                            <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}">
                             <h2>${doctor.name}</h2>
                             <p class="availability ${doctor.available ? "available" : "unavailable"}">
                                 ${doctor.available ? "Available" : "Not Available"}

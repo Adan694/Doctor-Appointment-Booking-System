@@ -238,23 +238,6 @@
         .appointment-item:last-child {
             border-bottom: none;
         }
-    
-        .appointment-photo {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin-right: 18px;
-            flex-shrink: 0;
-            border: 2px solid #166e6b;
-        }
-    
-        .appointment-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    
         .appointment-info {
             flex-grow: 1;
         }
@@ -263,22 +246,58 @@
             font-weight: 700;
             font-size: 18px;
             color: #222;
+            margin-left: 20px;
         }
     
         .appointment-info .details {
             font-size: 14px;
             color: #666;
             margin-top: 4px;
+            margin-left: 20px;
         }
-    
-        .appointment-time {
-            font-weight: 700;
-            color: #166e6b;
-            font-size: 16px;
-            min-width: 80px;
-            text-align: right;
-        }
-    #overlay {
+.appointment-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.appointment-time,
+.appointment-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;          
+    height: 32px;            
+    padding: 0 12px;
+    border-radius: 20px;     
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.appointment-status {
+    text-transform: capitalize;
+}
+
+.appointment-time {
+    background-color: #e0f7f6;
+    color: #166e6b;
+}
+
+.status-pending   { background-color: orange;  color: white; }
+.status-confirmed { background-color: royalblue; color: white; }
+.status-completed { background-color: mediumseagreen; color: white; }
+.status-cancelled { background-color: crimson; color: white; }
+.status-missed    { background-color: darkgray; color: white; }
+.status-unknown   { background-color: #999;    color: white; }
+
+.appointment-time,
+.appointment-status {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+        #overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -292,6 +311,30 @@
 #overlay.active {
     display: block;
 }
+ #notificationBell {
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* Bell icon style */
+  #notificationBell i {
+    font-size: 24px;
+    color: white;
+    margin-left: -250px;
+  }
+
+  /* Notification count badge */
+  #notificationCount {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    display: none; /* Hide by default */
+  }
 
         @media (max-width: 768px) {
             .dashboard-cards {
@@ -394,6 +437,13 @@
         <header>
         <i id="bar" class="fa-solid fa-bars"></i>
             <div>Admin Dashboard</div>
+<div id="notificationBell" style="position: relative; cursor: pointer; margin-right: 20px;">
+    <i class="fa-solid fa-bell"></i>
+    <span id="notificationCount">
+    </span>
+</div>
+           
+
             <button id="logoutBtn">Logout</button>
         </header>
 
@@ -468,7 +518,57 @@
             fetchDashboardStats();
             fetchTodaysAppointments();
             renderCharts();
+            fetchUnreadNotificationCount(); 
         });
+
+    async function markAllNotificationsAsRead() {
+        const token = localStorage.getItem('authToken');
+        try {
+            const res = await fetch('http://localhost:3000/api/notifications/mark-all-read', {
+                method: 'PATCH',
+                headers: { Authorization: 'Bearer ' + token }
+            });
+            if (!res.ok) throw new Error('Failed to mark notifications as read');
+            console.log('Notifications marked as read');
+            // After marking read, update UI immediately
+            document.getElementById('notificationCount').style.display = 'none';
+            document.getElementById('notificationCount').textContent = '';
+        } catch (error) {
+            console.error('Error marking notifications as read:', error);
+        }
+    }
+
+    document.getElementById('notificationBell').addEventListener('click', async () => {
+            await markAllNotificationsAsRead();
+            window.location.href = 'AdminFeedback.html';
+        });
+        async function fetchUnreadNotificationCount() {
+                console.log('GET /admin/notifications/count called');
+
+                const token = localStorage.getItem('authToken');
+                try {
+                    const res = await fetch('http://localhost:3000/api/admin/notifications/count', {
+                        headers: { Authorization: 'Bearer ' + token }
+                    });
+
+                    if (!res.ok) throw new Error('Failed to fetch notification count');
+                    const data = await res.json();
+                    const countSpan = document.getElementById('notificationCount');
+                    if (data.count && data.count > 0) {
+                        countSpan.textContent = data.count;
+                        countSpan.style.display = 'inline-block';
+                    } else {
+                        countSpan.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error fetching unread notifications count:', error);
+                }
+            }
+
+            document.getElementById('notificationBell').addEventListener('click', () => {
+                window.location.href = 'AdminFeedback.html';
+            });
+
 
         async function fetchDashboardStats() {
             const token = localStorage.getItem('authToken');
@@ -514,13 +614,6 @@
                     const div = document.createElement('div');
                     div.className = 'appointment-item';
 
-                    const photoDiv = document.createElement('div');
-                    photoDiv.className = 'appointment-photo';
-                    const img = document.createElement('img');
-                    img.src = app.patientPhoto || 'images/default.jpg';
-                    img.alt = app.patientName;
-                    photoDiv.appendChild(img);
-
                     const infoDiv = document.createElement('div');
                     infoDiv.className = 'appointment-info';
                     const nameDiv = document.createElement('div');
@@ -536,9 +629,14 @@
                     timeDiv.className = 'appointment-time';
                     timeDiv.textContent = app.time;
 
-                    div.appendChild(photoDiv);
+                     const statusDiv = document.createElement('div');
+                    statusDiv.className = `appointment-status status-${(app.status || 'unknown').toLowerCase()}`;
+                    statusDiv.textContent = app.status || 'Unknown';
+
+                    // div.appendChild(photoDiv);
                     div.appendChild(infoDiv);
                     div.appendChild(timeDiv);
+                    div.appendChild(statusDiv);
 
                     container.appendChild(div);
                 });

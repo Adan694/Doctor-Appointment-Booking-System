@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     card.innerHTML = `
                         <img src="${doctor.image}" alt="${doctor.name}" />
                         <p><strong>${doctor.name}</strong></p>
-                        <p>${doctor.speciality}</p>
+                        <p class="speciality">${doctor.speciality}</p>
                     `;
                     card.addEventListener("click", () => {
                         window.location.href = `doctor.html?id=${encodeURIComponent(doctor._id)}`;

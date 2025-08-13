@@ -26,7 +26,7 @@ require('dotenv').config();  // Load environment variables
 
 app.use(cors({
   origin: ['http://localhost:5501', 'http://127.0.0.1:5501'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE' , 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());

@@ -498,7 +498,7 @@ tr:hover td {
                         const row = document.createElement('tr');
                         row.setAttribute('data-id', appointment._id);
 
-                        const status = appointment.status?.trim().toLowerCase(); // normalize
+                        const status = appointment.status?.trim().toLowerCase(); 
 
                         const statusClass =
                             status === 'cancelled'
@@ -507,15 +507,14 @@ tr:hover td {
                                     ? 'completed'
                                     : '';
 
-                        // let actionButtons = `<button class="delete-btn" onclick="deleteAppointment(this)">❌</button>`;
 
                         row.innerHTML = `
-                <td></td>
-                <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
-                <td>${appointment.patientId?.age || 'N/A'}</td>
-                <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
-                <td>${appointment.doctorId?.name || 'N/A'}</td>
-            `;
+                        <td></td>
+                        <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
+                        <td>${appointment.patientId?.age || 'N/A'}</td>
+                        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
+                        <td>${appointment.doctorId?.name || 'N/A'}</td>
+                            `;
 
                         if (status === 'completed') {
                             row.querySelector('td').textContent = completedIndex++;

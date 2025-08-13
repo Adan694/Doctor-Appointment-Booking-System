@@ -284,6 +284,29 @@ const updateAvailabilityOrder = async (req, res) => {
     res.status(500).json({ message: "Failed to update availability order" });
   }
 };
+// Update doctor availability
+const updateDoctorAvailable = async (req, res) => {
+    try {
+        const { available } = req.body;
+        const doctor = await Doctor.findByIdAndUpdate(
+            req.params.id,
+            { available },
+            { new: true }
+        );
+
+        if (!doctor) {
+            return res.status(404).json({ message: "Doctor not found" });
+        }
+
+        res.json({
+            message: `Availability updated to ${available ? 'Available' : 'Unavailable'}`,
+            doctor
+        });
+    } catch (error) {
+        console.error("Error updating availability:", error);
+        res.status(500).json({ error: "Server error updating availability" });
+    }
+};
 
 
-module.exports = { addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, updateDoctorAvailability, getDoctorAvailability, deleteDoctorAvailabilitySlot,updateAvailabilityOrder,};
+module.exports = { updateDoctorAvailable, addDoctor, getDoctors, updateDoctor, deleteDoctor, getDoctorById, updateDoctorAvailability, getDoctorAvailability, deleteDoctorAvailabilitySlot,updateAvailabilityOrder,};
