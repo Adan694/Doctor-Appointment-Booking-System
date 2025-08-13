@@ -38,7 +38,7 @@ const submitFeedback = async (req, res) => {
 
             await notifyAll({
                 patient: null,
-                doctor,
+                doctor: null,
                 admin,
                 message
             });
