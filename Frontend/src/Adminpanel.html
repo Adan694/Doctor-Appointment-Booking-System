@@ -315,12 +315,17 @@
     position: relative;
     cursor: pointer;
   }
+#notificationBell {
+    position: relative;
+    cursor: pointer;
+    margin-left: auto; /* push it to the right */
+}
 
   /* Bell icon style */
   #notificationBell i {
     font-size: 24px;
     color: white;
-    margin-left: -250px;
+    margin-left: 0px;
   }
 
   /* Notification count badge */
@@ -538,21 +543,23 @@
         }
     }
 
-    document.getElementById('notificationBell').addEventListener('click', async () => {
-            await markAllNotificationsAsRead();
-            window.location.href = 'AdminFeedback.html';
-        });
+    // document.getElementById('notificationBell').addEventListener('click', async () => {
+    //         await markAllNotificationsAsRead();
+    //         window.location.href = 'AdminFeedback.html';
+    //     });
         async function fetchUnreadNotificationCount() {
                 console.log('GET /admin/notifications/count called');
 
                 const token = localStorage.getItem('authToken');
                 try {
                     const res = await fetch('http://localhost:3000/api/admin/notifications/count', {
+                        
                         headers: { Authorization: 'Bearer ' + token }
                     });
 
                     if (!res.ok) throw new Error('Failed to fetch notification count');
                     const data = await res.json();
+                            console.log('Server returned notification count:', data.count);
                     const countSpan = document.getElementById('notificationCount');
                     if (data.count && data.count > 0) {
                         countSpan.textContent = data.count;
@@ -565,9 +572,11 @@
                 }
             }
 
-            document.getElementById('notificationBell').addEventListener('click', () => {
+          document.getElementById('notificationBell').addEventListener('click', async () => {
+                await markAllNotificationsAsRead();
                 window.location.href = 'AdminFeedback.html';
             });
+
 
 
         async function fetchDashboardStats() {

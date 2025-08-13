@@ -93,13 +93,18 @@ console.log(doctorConsoleMsg);
       }
 
       // ✅ 24-hour Reminder
-      else if (timeDiff <= 24 * 60 * 60 * 1000 && !appt.reminderSent24hr) {
-        const patientMsg = `⏰ 24-Hour Reminder: You have an appointment with Dr. ${doctor.name} on ${time}`;
-        const doctorMsg = `⏰ 24-Hour Reminder: You have an appointment with ${patient.name} on ${time}`;
+      // ✅ 24-hour Reminder
+else if (
+  timeDiff > 23 * 60 * 60 * 1000 &&  // more than 23 hours away
+  timeDiff <= 24 * 60 * 60 * 1000 && // less than or equal to 24 hours away
+  !appt.reminderSent24hr
+) {
+  const patientMsg = `⏰ 24-Hour Reminder: You have an appointment with Dr. ${doctor.name} on ${time}`;
+  const doctorMsg = `⏰ 24-Hour Reminder: You have an appointment with ${patient.name} on ${time}`;
 
-        await sendEmail(patient.email, 'Appointment Reminder - 24 Hours', patientMsg);
-        await sendEmail(doctor.email, 'Appointment Reminder - 24 Hours', doctorMsg);
-        
+  await sendEmail(patient.email, 'Appointment Reminder - 24 Hours', patientMsg);
+  await sendEmail(doctor.email, 'Appointment Reminder - 24 Hours', doctorMsg);
+  
   const formattedDate = new Date(appt.date).toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
