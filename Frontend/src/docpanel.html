@@ -415,13 +415,17 @@ nav ul li a:hover {
         try {
             const response = await fetch('http://localhost:3000/api/appointments/all');
             const data = await response.json();
-            const bookings = Array.isArray(data) ? data : [];
 
-            // Save to localStorage
+            const doctorId = localStorage.getItem('doctorId');
+
+            // Keep only appointments belonging to the logged-in doctor
+            const bookings = (Array.isArray(data) ? data : []).filter(
+                b => b.doctorId?._id === doctorId
+            );
+
             localStorage.setItem('bookings', JSON.stringify(bookings));
-
-            // Render only non-removed pending bookings
             renderBookings();
+
 
         } catch (error) {
             console.error("Failed to load bookings:", error);
