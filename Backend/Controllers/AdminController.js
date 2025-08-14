@@ -288,6 +288,34 @@ const getAppointmentsTimeSeries = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+// Get a single patient's details by ID
+const getPatientById = async (req, res) => {
+  try {
+    const patientId = req.params.id;
+    const patient = await User.findOne({ _id: patientId, role: 'patient' }).select('-password');
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+    res.json(patient);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+// Get all appointments for a specific patient
+const getAppointmentsByPatientId = async (req, res) => {
+  try {
+    const patientId = req.params.id;
+    const appointments = await Booking.find({ patientId })
+      .populate('doctorId', 'name')
+      .lean();
+
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
 
 module.exports = {
   getAdminProfile,
@@ -295,6 +323,8 @@ module.exports = {
   updateAdminProfile,
   changeAdminPassword,
   getAllPatients,
+  getPatientById,
+  getAppointmentsByPatientId,
   deletePatient,
   getTotalUsers,
   getTodaysAppointments,
@@ -306,4 +336,5 @@ module.exports = {
   getDoctorsTimeSeries,
   getAppointmentsTimeSeries
 };
+
 

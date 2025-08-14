@@ -346,14 +346,28 @@
                     console.error('Unexpected response:', patients);
                     return;
                 }
-                patients.forEach(patient => {
+               patients.forEach(patient => {
                     const tr = document.createElement('tr');
+
                     tr.innerHTML = `
-                        <td>${patient.email || ''}</td>
-                        <td><button class="delete-btn" data-id="${patient._id}"><i class="fas fa-trash-alt"></i></button></td>
-                    `;
+        <td class="patient-email" data-id="${patient._id}" style="cursor:pointer; color:#007bff; text-decoration:underline;">
+            ${patient.email || ''}
+        </td>
+        <td>
+            <button class="delete-btn" data-id="${patient._id}">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </td>
+    `;
+
+                    // Click event to go to patient details page
+                    tr.querySelector('.patient-email').addEventListener('click', () => {
+                        window.location.href = `patient-details.html?id=${patient._id}`;
+                    });
+
                     tbody.appendChild(tr);
                 });
+
 
                 // Add event listeners for delete buttons
                 document.querySelectorAll('.delete-btn').forEach(button => {

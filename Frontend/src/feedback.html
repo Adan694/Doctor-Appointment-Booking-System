@@ -6,76 +6,257 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Feedback - DocAssist</title>
     <style>
+        /* GENERAL STYLING */
         body {
             font-family: 'Segoe UI', sans-serif;
-    background-color: #e6f2ff;
+            background: linear-gradient(135deg, #e6f2ff, #ffffff);
             margin: 0;
+            color: #333;
         }
 
         header {
-            background-color: #006d6d;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
+    background: linear-gradient(135deg, #006d6d, #009688);
+    color: white;
+    padding: 20px 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.header-title {
+    text-align: center;
+}
+
+.header-title h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.header-title p {
+    margin: 4px 0 0 0;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.back-profile-btn {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.back-profile-btn:hover {
+    background-color: rgba(255,255,255,0.4);
+    transform: translateY(-50%) scale(1.05);
+}
+
 
         .container {
             max-width: 700px;
-            margin: 40px auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        label,
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            color: #006d6d;
+            margin-bottom: 10px;
+        }
+
+        p#doctorName {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            color: #004d4d;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
         input,
         textarea,
-        select,
-        button {
-            display: block;
+        select {
             width: 100%;
-            margin-bottom: 15px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-size: 16px;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #006d6d;
+            box-shadow: 0 0 5px rgba(0, 109, 109, 0.3);
         }
 
         button {
             background-color: #006d6d;
             color: white;
-            padding: 12px;
+            padding: 14px;
             border: none;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #004d4d;
+            transform: scale(1.05);
         }
 
         .back-link {
             text-align: center;
             display: block;
-            margin-top: 20px;
+            margin-top: 25px;
             color: #006d6d;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s, transform 0.2s;
         }
 
         .back-link:hover {
-            text-decoration: underline;
+            color: #004d4d;
+            transform: scale(1.05);
         }
 
-        .hidden {
-            display: none;
+        .feedback-list {
+            margin-top: 30px;
+        }
+
+        .feedback-item {
+            background: #f0f8ff;
+            border-left: 5px solid #006d6d;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feedback-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+            transition: transform 0.4s ease;
+        }
+
+        .popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .popup h3 {
+            margin-bottom: 15px;
+            color: #006d6d;
+        }
+
+        .popup button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #006d6d;
+            color: white;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .popup button:hover {
+            background-color: #004d4d;
+        }
+
+        /* Button Loading State */
+        .loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 3px solid white;
+            border-top: 3px solid #004d4d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <h1>Feedback</h1>
-        <p>We'd love to hear from you!</p>
-    </header>
+<header>
+    <div class="header-container">
+        <a href="profile.html" class="back-profile-btn">← Profile</a>
+        <div class="header-title">
+            <h1>Feedback</h1>
+            <p>We'd love to hear from you!</p>
+        </div>
+    </div>
+</header>
+
+
 
     <div class="container">
         <h2 id="formTitle">Share your Experience</h2>
         <p id="doctorName"></p>
         <form id="feedbackForm" class="hidden">
             <input type="hidden" id="doctorId" />
-<input type="hidden" id="appointmentId" />
+            <input type="hidden" id="appointmentId" />
 
             <label for="rating">Rate Your Experience</label>
             <select id="rating" required>
@@ -90,70 +271,81 @@
             <label for="comments">Your Comments</label>
             <textarea id="comments" placeholder="Write your feedback here..." required></textarea>
 
-            <button type="submit">Submit Feedback</button>
+            <button type="submit" id="submitBtn">Submit Feedback</button>
         </form>
+
         <div id="feedbackContainer" class="feedback-list"></div>
-
-
         <a href="index.html" class="back-link">← Back to Home</a>
     </div>
 
+    <div id="popup" class="popup">
+        <h3>Thank you for your feedback!</h3>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
     <script>
+        const popup = document.getElementById("popup");
+        const submitBtn = document.getElementById("submitBtn");
+
+        function showPopup() {
+            popup.classList.add("show");
+        }
+
+        function closePopup() {
+            popup.classList.remove("show");
+            window.location.href = "index.html";
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
-                const doctorId = sessionStorage.getItem('feedbackDoctorId');
-                const doctorNameEl = document.getElementById("doctorName");
-                const doctorIdInput = document.getElementById("doctorId");
+            const doctorId = sessionStorage.getItem('feedbackDoctorId');
+            const doctorNameEl = document.getElementById("doctorName");
+            const doctorIdInput = document.getElementById("doctorId");
             const appointmentId = sessionStorage.getItem("feedbackAppointmentId");
             document.getElementById("appointmentId").value = appointmentId;
 
-                if (!doctorId) {
-                    doctorNameEl.innerText = "Invalid or missing doctor ID.";
+            if (!doctorId) {
+                doctorNameEl.innerText = "Invalid or missing doctor ID.";
+                return;
+            }
+
+            const token = localStorage.getItem("authToken");
+
+            try {
+                const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                    headers: token ? { "Authorization": `Bearer ${token}` } : {}
+                });
+
+                const doctor = await res.json();
+                if (!res.ok || !doctor.name) {
+                    doctorNameEl.innerText = "Doctor not found.";
                     return;
                 }
 
-                const token = localStorage.getItem("authToken"); 
+                doctorNameEl.innerText = `Doctor: ${doctor.name}`;
+                doctorIdInput.value = doctorId;
+                document.getElementById("feedbackForm").classList.remove("hidden");
+                loadFeedback(doctorId);
 
-                try {
-                    console.log("Fetching doctor with ID:", doctorId);
-                    console.log("Retrieved token:", token);
-
-                    const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                        headers: token ? { "Authorization": `Bearer ${token}` } : {}
-                    });
-
-                    const doctor = await res.json();
-
-                    if (!res.ok || !doctor.name) {
-                        doctorNameEl.innerText = "Doctor not found.";
-                        return;
-                    }
-
-                    doctorNameEl.innerText = `Doctor: ${doctor.name}`;
-                    doctorIdInput.value = doctorId;
-                    document.getElementById("feedbackForm").classList.remove("hidden");
-                    loadFeedback(doctorId); 
-
-                } catch (error) {
-                    console.error("Doctor fetch failed:", error);
-                    doctorNameEl.innerText = "Error fetching doctor details.";
-                }
-            });
-
+            } catch (error) {
+                console.error("Doctor fetch failed:", error);
+                doctorNameEl.innerText = "Error fetching doctor details.";
+            }
+        });
 
         document.getElementById("feedbackForm").addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const token = localStorage.getItem("authToken"); 
+            const token = localStorage.getItem("authToken");
             if (!token) return alert("You must be logged in.");
-            console.log("Stored Patient ID:", localStorage.getItem('patientId')); 
 
-            const appointmentId = document.getElementById("appointmentId").value;
             const payload = {
-                    appointmentId: document.getElementById("appointmentId").value,
+                appointmentId: document.getElementById("appointmentId").value,
                 doctorId: document.getElementById("doctorId").value,
                 rating: document.getElementById("rating").value,
                 comment: document.getElementById("comments").value
             };
+
+            submitBtn.classList.add("loading");
 
             try {
                 const res = await fetch("http://localhost:3000/api/feedback", {
@@ -166,50 +358,51 @@
                 });
 
                 const data = await res.json();
+                if (!res.ok) throw new Error(data.message || "Error submitting feedback");
 
-                if (!res.ok) {
-                    throw new Error(data.message || "Error submitting feedback");
-                }
-                // ✅ Mark as feedback given in localStorage after success
                 let submitted = JSON.parse(localStorage.getItem('feedbackGiven') || '[]');
                 if (!submitted.includes(payload.appointmentId)) {
                     submitted.push(payload.appointmentId);
                     localStorage.setItem('feedbackGiven', JSON.stringify(submitted));
                 }
-                alert("Thank you for your feedback!");
-                window.location.href = "index.html";
+
+                submitBtn.classList.remove("loading");
+                showPopup();
+
             } catch (error) {
+                submitBtn.classList.remove("loading");
                 alert(error.message);
                 console.error("Feedback submit error:", error);
             }
         });
+
         async function loadFeedback(doctorId) {
-                const feedbackContainer = document.getElementById("feedbackContainer");
+            const feedbackContainer = document.getElementById("feedbackContainer");
 
-                try {
-                    const res = await fetch(`http://localhost:3000/api/feedback/doctor/${doctorId}`);
-                    const feedbacks = await res.json();
+            try {
+                const res = await fetch(`http://localhost:3000/api/feedback/doctor/${doctorId}`);
+                const feedbacks = await res.json();
 
-                    if (!res.ok) throw new Error("Failed to load feedback");
+                if (!res.ok) throw new Error("Failed to load feedback");
 
-                    if (feedbacks.length === 0) {
-                        feedbackContainer.innerHTML = "<p>No feedback yet.</p>";
-                        return;
-                    }
-
-                    feedbackContainer.innerHTML = feedbacks.map(fb => `
-            <div class="feedback-item">
-                <strong>${fb.userName || "Anonymous"}</strong> rated <strong>${fb.rating}/5</strong>
-                <p>${fb.comment}</p>
-                <small>${new Date(fb.timestamp).toLocaleString()}</small>
-            </div>
-        `).join("");
-                } catch (err) {
-                    console.error("Error loading feedback:", err);
-                    feedbackContainer.innerHTML = "<p>Error loading feedback.</p>";
+                if (feedbacks.length === 0) {
+                    feedbackContainer.innerHTML = "<p>No feedback yet.</p>";
+                    return;
                 }
-            }
 
+                feedbackContainer.innerHTML = feedbacks.map(fb => `
+                    <div class="feedback-item">
+                        <strong>${fb.userName || "Anonymous"}</strong> rated <strong>${fb.rating}/5</strong>
+                        <p>${fb.comment}</p>
+                        <small>${new Date(fb.timestamp).toLocaleString()}</small>
+                    </div>
+                `).join("");
+
+            } catch (err) {
+                console.error("Error loading feedback:", err);
+                feedbackContainer.innerHTML = "<p></p>";
+            }
+        }
     </script>
 </body>
 

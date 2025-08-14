@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAdminProfile, updateAdminProfile, changeAdminPassword, getAllPatients, deletePatient, getTotalUsers, getTodaysAppointments, getFeedbackAlerts, getLatestBookings, getCurrentAdminProfile, getUserCounts,getTotalAppointmentsCount, getPatientsTimeSeries, getDoctorsTimeSeries, getAppointmentsTimeSeries  } = require('../Controllers/AdminController');
+const { getAdminProfile,getPatientById,getAppointmentsByPatientId, updateAdminProfile, changeAdminPassword, getAllPatients, deletePatient, getTotalUsers, getTodaysAppointments, getFeedbackAlerts, getLatestBookings, getCurrentAdminProfile, getUserCounts,getTotalAppointmentsCount, getPatientsTimeSeries, getDoctorsTimeSeries, getAppointmentsTimeSeries  } = require('../Controllers/AdminController');
 const { authenticateToken, authorizeAdmin } = require('../middlewares/auth');
 const router = express.Router();
 
@@ -31,5 +31,7 @@ router.get('/dashboard/total-appointments', authenticateToken, authorizeAdmin, g
 router.get('/dashboard/patients-time-series', authenticateToken, authorizeAdmin, getPatientsTimeSeries);
 router.get('/dashboard/doctors-time-series', authenticateToken, authorizeAdmin, getDoctorsTimeSeries);
 router.get('/dashboard/appointments-time-series', authenticateToken, authorizeAdmin, getAppointmentsTimeSeries);
+router.get('/patients/:id', getPatientById);
+router.get('/patients/:id/appointments', getAppointmentsByPatientId);
 
 module.exports = router;
