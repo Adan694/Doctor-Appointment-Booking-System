@@ -8,254 +8,284 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Roboto', Arial, sans-serif;
-            display: flex;
-            min-height: 100vh;
-            background-color: #e6f2ff;
-            color: #333;
-            overflow-x: hidden;
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            width: 250px;
-            min-width: 250px;
-            background-color: rgb(9, 102, 102);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            position: fixed;
-            height: 100vh;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar h2 {
-            font-size: 30px;
-            color: white;
-            margin: 0 0 40px 20px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-        }
-
-        .sidebar ul li {
-            padding: 12px 20px;
-            margin: 10px 0;
-        }
-
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 16px;
-            display: block;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            border-radius: 6px;
-            padding: 10px 15px;
-        }
-
-        .sidebar ul li a:hover,
-        .sidebar ul li a.active {
-            background-color: #e8f0fe;
-            color: #007bff;
-            font-weight: bold;
-        }
-
-        /* Header Styles */
-        header {
-            background-color: #166e6b;
-            color: white;
-            padding: 20px 16px;
-            font-size: 28px;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-            border-bottom: 2px solid white;
-        }
-
-        header button {
-            background-color: #28a745;
-            border: none;
-            color: white;
-            padding: 10px 22px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        header button:hover {
-            background-color: #1e7e34;
-        }
-
-        #bar {
-            display: none;
-            font-size: 30px;
-            cursor: pointer;
-        }
-
-        /* Main Content Styles */
-        .main-content {
-            flex: 1;
-            padding: 20px;
+    * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    }
+    
+    body {
+    font-family: 'Roboto', Arial, sans-serif;
+    display: flex;
+    min-height: 100vh;
     background-color: #e6f2ff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            margin-left: 250px;
-            width: calc(100% - 250px);
-        }
-
-        h1 {
-            color: #166e6b;
-            margin-bottom: 20px;
-        }
-
-        /* Table Styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-            background-color: #fff;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
-        }
-
-        th {
-            background-color: #166e6b;
-            color: white;
-            padding: 16px;
-            text-align: left;
-            font-weight: 700;
-        }
-
-        td {
-            padding: 16px;
-            border-bottom: 1px solid #eee;
-        }
-
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .delete-btn {
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            color: #166e6b;
-            font-size: 18px;
-            transition: color 0.3s ease;
-        }
-
-        .delete-btn:hover {
-            color: #dc3545;
-        }
-
-        /* Overlay for mobile */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 250px;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 900;
-            display: none;
-             
-        }
-        .sidebar.active + #overlay {
+    color: #333;
+    overflow-x: hidden;
+    }
+    
+    .sidebar {
+    width: 250px;
+    min-width: 250px;
+    background-color: rgb(9, 102, 102);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    }
+    
+    .sidebar h2 {
+    font-size: 30px;
+    color: white;
+    margin: 0 0 40px 20px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    }
+    
+    .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    }
+    
+    .sidebar ul li {
+    padding: 12px 20px;
+    margin: 10px 0;
+    }
+    
+    .sidebar ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    display: block;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 6px;
+    padding: 10px 15px;
+    }
+    
+    .sidebar ul li a:hover,
+    .sidebar ul li a.active {
+    background-color: #e8f0fe;
+    color: #007bff;
+    font-weight: bold;
+    }
+    
+    header {
+    background-color: #166e6b;
+    color: white;
+    padding: 20px 16px;
+    font-size: 28px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    border-bottom: 2px solid white;
+    }
+    
+    header button {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    padding: 10px 22px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    }
+    
+    header button:hover {
+    background-color: #1e7e34;
+    }
+    
+    #bar {
+    display: none;
+    font-size: 30px;
+    cursor: pointer;
+    }
+    
+    .main-content {
+    flex: 1;
+    padding: 20px;
+    background-color: #e6f2ff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    }
+    
+    h1 {
+    color: #166e6b;
+    margin-bottom: 20px;
+    }
+    
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    background-color: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
+    }
+    
+    th {
+    background-color: #166e6b;
+    color: white;
+    padding: 16px;
+    text-align: left;
+    font-weight: 700;
+    }
+    
+    td {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+    }
+    
+    tr:hover {
+    background-color: #f9f9f9;
+    }
+    
+    .delete-btn,
+    .details-btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-left: 10px;
+    }
+    
+    .delete-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #166e6b;
+    font-size: 18px;
+    transition: color 0.3s ease;
+    }
+    
+    .delete-btn:hover {
+    color: #dc3545;
+    }
+    
+    .details-btn {
+    background-color: #009688;
+    color: #fff;
+    }
+    
+    .details-btn:hover {
+    background-color: #00796b;
+    transform: translateY(-2px);
+    }
+    
+    .details-btn i,
+    .delete-btn i {
+    font-size: 16px;
+    }
+    
+    .table-buttons {
+    display: flex;
+    gap: 10px;
+    }
+    
+    #overlay {
+    position: fixed;
+    top: 0;
+    left: 250px;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 900;
+    display: none;
+    }
+    
+    .sidebar.active + #overlay {
     left: 0;
     width: 100%;
-}
+    }
+    
+    #overlay.active {
+    display: block;
+    }
+    
+    @media (max-width: 992px) {
+    table {
+    font-size: 14px;
+    }
+    
+    th,
+    td {
+    padding: 12px;
+    width: 100%;
+    }
+    }
+    
+    @media (max-width: 768px) {
+    .sidebar {
+    transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+    transform: translateX(0);
+    }
+    
+    .main-content {
+    margin-left: 0;
+    width: 100%;
+    }
+    
+    #bar {
+    display: block;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 26px;
+    cursor: pointer;
+    }
+    
+    header {
+    flex-direction: row;
+    gap: 20px;
+    font-size: 22px;
+    align-items: center;
+    }
+    
+    table {
+    display: block;
+    overflow-x: auto;
+    }
+    }
+    
+    @media (max-width: 480px) {
+    header {
+    padding: 15px;
+    font-size: 20px;
+    }
+    
+    header button {
+    padding: 8px 16px;
+    font-size: 14px;
+    }
+    
+    th,
+    td {
+    padding: 12px 8px;
+    font-size: 13px;
+    }
+    }
 
-        #overlay.active {
-            display: block;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 992px) {
-            table {
-                font-size: 14px;
-                
-            }
-
-            th,
-            td {
-                padding: 12px;
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            #bar {
-                display: block;
-                background: none;
-                border: none;
-                color: white;
-                font-size: 26px;
-                cursor: pointer;
-            }
-
-            header {
-                flex-direction: row;
-                gap: 20px;
-                font-size: 22px;
-                align-items: center;
-            }
-
-            table {
-                display: block;
-                overflow-x: auto;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header {
-                padding: 15px;
-                font-size: 20px;
-            }
-
-            header button {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
-
-            th,
-            td {
-                padding: 12px 8px;
-                font-size: 13px;
-            }
-        }
     </style>
 </head>
 
@@ -349,25 +379,28 @@
                patients.forEach(patient => {
                     const tr = document.createElement('tr');
 
-                    tr.innerHTML = `
-        <td class="patient-email" data-id="${patient._id}" style="cursor:pointer; color:#007bff; text-decoration:underline;">
-            ${patient.email || ''}
-        </td>
-        <td>
-            <button class="delete-btn" data-id="${patient._id}">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-        </td>
-    `;
+                     tr.innerHTML = `
+                    <td>${patient.email || ''}</td>
+                    <td>
+                        <button class="details-btn" data-id="${patient._id}" style="margin-right:10px;">
+                            <i class="fas fa-info-circle"></i> Show Details
+                        </button>
+                        <button class="delete-btn" data-id="${patient._id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
 
-                    // Click event to go to patient details page
-                    tr.querySelector('.patient-email').addEventListener('click', () => {
-                        window.location.href = `patient-details.html?id=${patient._id}`;
+                   tbody.appendChild(tr);
+               });
+               
+                // Add event listeners for dynamic buttons
+                tbody.querySelectorAll('.details-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const patientId = e.currentTarget.dataset.id;
+                        window.location.href = `patient-details.html?id=${patientId}`;
                     });
-
-                    tbody.appendChild(tr);
                 });
-
 
                 // Add event listeners for delete buttons
                 document.querySelectorAll('.delete-btn').forEach(button => {

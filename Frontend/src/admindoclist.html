@@ -183,21 +183,17 @@
 }
 
 /* Doctor Info */
-.doctor-info {
-    flex-grow: 1;
-}
-
 .doctor-name {
     font-size: 20px;
     font-weight: 700;
-    color: #333;
+    color: #1a1a1a;
     margin-bottom: 5px;
 }
 
 .specialty {
     font-size: 16px;
-    color: #555;
     font-weight: 600;
+    color: #00796b;
     margin-bottom: 5px;
 }
 
@@ -205,7 +201,7 @@
 .rating,
 .about {
     font-size: 14px;
-    color: #777;
+    color: #555555;
     margin-bottom: 5px;
 }
 
@@ -216,29 +212,21 @@
 }
 
 /* Button Group */
-.btn-group {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-}
-
-/* Buttons */
-.btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
+button {
+    margin: 8px 10px ;
+    padding: 10px 15px;
+    background-color: #006d6d;
     color: #fff;
-    font-weight: bold;
+    border: none;
+    border-radius: 25px;
     cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
-.btn:hover {
+button:hover {
+    background-color: #009688;
     transform: scale(1.05);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
 }
-
 .btn-edit {
     background-color: #007bff;
 }
@@ -482,8 +470,7 @@ nav::-webkit-scrollbar-thumb {
         <div class="doctor-info">
             <p class="doctor-name">${doctor.name}</p>
             <p class="specialty">${doctor.speciality}</p>
-            <p class="experience">Experience: ${doctor.experience}</p>
-            <p class="rating">Rating: ${doctor.rating || 'N/A'}</p>
+            <p class="experience">Experience: ${doctor.experience} Years</p>
             <p class="about">${doctor.about || ''}</p>
         </div>
     </a>
