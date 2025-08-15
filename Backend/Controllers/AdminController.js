@@ -225,6 +225,8 @@ const getPatientsTimeSeries = async (req, res) => {
       },
       { $sort: { _id: 1 } }
     ]);
+    console.log('Patients Data:', data);
+
     res.json(data);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
@@ -253,6 +255,7 @@ const getDoctorsTimeSeries = async (req, res) => {
       },
       { $sort: { _id: 1 } }
     ]);
+console.log('Doctors Data:', doctorsData);
 
     res.json(doctorsData);
   } catch (error) {

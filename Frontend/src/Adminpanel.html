@@ -676,8 +676,12 @@
                 ]);
 
                 const patientsData = await patientsRes.json();
+                console.log('Patients Data:', patientsData);
+
                 const appointmentsData = await appointmentsRes.json();
                 const doctorsData = await doctorsRes.json();
+                console.log('Doctors Data:', doctorsData);
+
 
                 // Helper function to process data into labels and counts for last 7 days
                 function processTimeSeriesData(data) {

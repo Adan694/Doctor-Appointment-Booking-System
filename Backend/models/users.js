@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     age: Number,
     dob: String,
     gender: { type: String, enum: ['male', 'female', 'other'] },
-});
+}, { timestamps: true });
 const User = mongoose.model('User', userSchema);
 
 module.exports = { User };

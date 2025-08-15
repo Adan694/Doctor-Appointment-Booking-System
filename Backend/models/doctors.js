@@ -28,7 +28,7 @@ user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
       slots: [String]
     }
   ]
-});
+}, { timestamps: true }); 
 
 module.exports = mongoose.model('Doctor', doctorSchema);
 
