@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const doctorSchema = new mongoose.Schema({
   //Added
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
+user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
 //Added
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },

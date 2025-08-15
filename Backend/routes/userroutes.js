@@ -5,10 +5,14 @@ const { authenticateToken } = require('../middlewares/auth');
 const {
     getUserProfile,
     updateUserProfile,
-    submitFeedback
+    submitFeedback,
+    insertUser,
+    getUsers
 } = require('../Controllers/usercontroller');
 
 router.get('/profile', authenticateToken, getUserProfile);
 router.put('/update', authenticateToken, updateUserProfile);
 router.post('/feedback', authenticateToken, submitFeedback);
+router.post('/users', authenticateToken, insertUser);
+router.get('/users', authenticateToken, getUsers);
 module.exports = router;

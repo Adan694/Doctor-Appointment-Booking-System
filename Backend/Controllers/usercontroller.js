@@ -1,5 +1,16 @@
 const { User } = require('../models/users');
 
+async function insertUser(userData) {
+  const user = new User(userData); 
+  const savedUser = await user.save(); 
+  return savedUser; 
+}
+
+async function getUsers() {
+  const users = await User.find({}); 
+  return users;
+}
+
 const getUserProfile = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.user.email }).select('-password');
@@ -44,5 +55,7 @@ const submitFeedback = async (req, res) => {
 module.exports = {
     getUserProfile,
     updateUserProfile,
-  submitFeedback
+  submitFeedback,
+  insertUser,
+  getUsers
 };
