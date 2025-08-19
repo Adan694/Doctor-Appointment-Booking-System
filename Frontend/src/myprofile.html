@@ -486,6 +486,9 @@ nav ul li a:hover {
         cursor: pointer;
         z-index: 1001;
     }
+    .profile-container h2{
+        width: auto;
+    }
 }
 @media screen and (max-width: 768px) {
     .footer {
@@ -526,6 +529,7 @@ nav ul li a:hover {
         <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
         <li><a href="Alldoctorsreal.html"><i class="fas fa-user-md"></i> Find a Doctor</a></li>
         <li><a href="Contactus.html"><i class="fas fa-envelope"></i> Contact Us</a></li>
+        <li><a href="myappointments.html"><i class="fas fa-calendar-check"></i> My Appointments</a></li>
         <li><a href="faqs.html"><i class="fas fa-question-circle"></i> FAQs</a></li>
     </ul>
 
@@ -533,7 +537,7 @@ nav ul li a:hover {
 
     <div class="main-container">
             <div class="profile-container">
-                <h2>My Profile</h2>
+                <h2>Profile</h2>
                 <div class="profile-info">
 <label for="edit-name"><i class="fas fa-user"></i> Name:</label>
 <p id="displayName"></p>
@@ -746,35 +750,74 @@ nav ul li a:hover {
 
                     profileInfo.querySelectorAll('p').forEach(p => {
                         const text = p.innerText;
-                        // Clean label text to lowercase with no spaces or special chars
                         const rawLabel = p.previousElementSibling.innerText.toLowerCase().replace(/[^a-z]/g, '');
                         const key = labelToKey[rawLabel] || rawLabel;
 
-                        const input = document.createElement(key === 'gender' ? 'select' : 'input');
-
                         if (key === 'gender') {
+                            const input = document.createElement('select');
                             input.innerHTML = `
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                `;
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        `;
                             input.value = text.toLowerCase();
-                        } else {
-                            input.type = key === 'age' ? 'number' : (key === 'dob' ? 'date' : 'text');
+                            input.id = 'edit-' + key;
+                            input.name = key;
+                            p.replaceWith(input);
+                        }
+                        else if (key === 'dob') {
+                            const input = document.createElement('input');
+                            input.type = 'date';
                             input.value = text;
+                            input.id = 'edit-' + key;
+                            input.name = key;
+
+                            // Auto calculate age + validate DOB
+                            input.addEventListener('change', function () {
+                                const dob = new Date(this.value);
+                                const today = new Date();
+
+                                if (dob > today) {
+                                    alert("Date of Birth cannot be in the future.");
+                                    this.value = ""; // clear the invalid date
+                                    document.getElementById('displayAge').innerText = "";
+                                    return;
+                                }
+
+                                const maxAge = 120; // optional cap
+                                let age = today.getFullYear() - dob.getFullYear();
+                                const monthDiff = today.getMonth() - dob.getMonth();
+                                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                                    age--;
+                                }
+
+                                if (age < 0 || age > maxAge) {
+                                    alert("Please enter a valid Date of Birth.");
+                                    this.value = "";
+                                    document.getElementById('displayAge').innerText = "";
+                                    return;
+                                }
+
+                                document.getElementById('displayAge').innerText = age;
+                            });
+
+                            p.replaceWith(input);
                         }
 
-                        input.id = 'edit-' + key;
-                        input.name = key;
-                        input.required = true;
-                        input.style.marginBottom = '10px';
-                        input.style.width = '100%';
-                        input.style.padding = '5px';
-                        input.style.borderRadius = '5px';
-                        input.style.border = '1px solid #ccc';
-
-                        p.replaceWith(input);
+                        else if (key === 'age') {
+                            // 🚫 Skip replacing Age with an input
+                            return;
+                        }
+                        else {
+                            const input = document.createElement('input');
+                            input.type = 'text';
+                            input.value = text;
+                            input.id = 'edit-' + key;
+                            input.name = key;
+                            p.replaceWith(input);
+                        }
                     });
+
 
                 } else {
                     // Update action
@@ -792,14 +835,27 @@ nav ul li a:hover {
                     return el ? el.value : '';
                 };
 
+                const dobValue = getInputValue('edit-dob');
+                let calculatedAge = '';
+                if (dobValue) {
+                    const dob = new Date(dobValue);
+                    const today = new Date();
+                    calculatedAge = today.getFullYear() - dob.getFullYear();
+                    const monthDiff = today.getMonth() - dob.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                        calculatedAge--;
+                    }
+                }
+
                 const updatedData = {
                     name: getInputValue('edit-name'),
                     email: getInputValue('edit-email'),
                     phone: getInputValue('edit-phone'),
-                    age: getInputValue('edit-age'),
-                    dob: getInputValue('edit-dob'),
+                    dob: dobValue,
                     gender: getInputValue('edit-gender'),
+                    age: calculatedAge, // always auto from dob
                 };
+
 
                 // Show loader
                 showLoader();
@@ -820,6 +876,10 @@ nav ul li a:hover {
                     })
                     .then(data => {
                         alert(data.message);
+                        localStorage.setItem('patientName', updatedData.name);
+                        localStorage.setItem('patientEmail', updatedData.email);
+                        localStorage.setItem('patientPhone', updatedData.phone);
+                        localStorage.setItem('patientDOB', updatedData.dob);
 
                         // Replace inputs back to <p> with updated text
                         for (const key in updatedData) {

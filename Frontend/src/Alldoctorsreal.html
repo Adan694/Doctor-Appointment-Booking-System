@@ -311,7 +311,7 @@
 nav ul {
     display: flex;
     transition: max-height 0.3s ease; 
-    overflow: hidden; 
+    overflow: visible; 
     max-height: 0;
 }
 nav ul.active {
@@ -370,6 +370,73 @@ nav ul li a:hover {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.profile-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 10px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    gap: 6px;
+    border-bottom: none;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    top: calc(100% + 8px);
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    list-style: none;
+    padding: 8px 0;
+    margin: 10px;
+    min-width: 180px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    flex-direction: column;
+    overflow: visible;
+
+}
+
+.dropdown-menu li {
+    padding: 0;
+}
+
+.dropdown-menu li a {
+    display: inline-flex;
+    padding: 10px 16px;
+    color: #333;
+    font-size: 14px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.dropdown-menu li a:hover {
+    background: #f0f0f0;
+    color: #0f8080;
+}
+
+.dropdown.active .dropdown-menu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
 
 /* Media Queries for Responsiveness */
 @media (min-width: 901px) {
@@ -451,6 +518,57 @@ nav ul li a:hover {
         margin: 5px 0;
     }
 }
+@media (max-width: 900px) {
+
+    .dropdown {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .profile-icon {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0px;
+        gap: 2px;
+        width: 30%;
+        box-sizing: border-box;
+        font-size: 20px;
+        margin-left: 210px;
+    }
+
+    .profile-icon:hover {
+        border-bottom: none;
+    }
+
+    .dropdown-menu {
+        position: static;
+        width: 80%;
+        margin: 0;
+        margin-left: 25px;
+        box-shadow: none;
+        border: 1px solid #f0f0f0;
+        border-top: none;
+        transform: none !important;
+        transition: opacity 0.3s ease, max-height 0.3s ease;
+        max-height: 0;
+        overflow: hidden;
+        flex-direction: row;
+    }
+
+    .dropdown.active .dropdown-menu {
+        max-height: 500px;
+        opacity: 1;
+        margin-top: 0;
+    }
+
+    .dropdown-menu li a {
+        display: block;
+        padding: 2px 4px;
+    }
+}
+
     </style>
 </head>
 
@@ -482,6 +600,21 @@ nav ul li a:hover {
         <li>
             <a href="faqs.html">
                 <i class="fa-solid fa-circle-question"></i> FAQs
+            </a>
+        </li>
+        <li id="profileMenu" class="dropdown">
+            <a href="javascript:void(0);" class="profile-icon">
+                <i class="fa-solid fa-user"></i> Account
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="myprofile.html">My Profile</a></li>
+                <li><a href="myappointments.html">My Appointments</a></li>
+            </ul>
+        </li>
+        
+        <li id="authButton">
+            <a href="login.html" class="login-button">
+                <i class="fa-solid fa-right-to-bracket"></i> Login
             </a>
         </li>
     </ul>
@@ -550,20 +683,78 @@ nav ul li a:hover {
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const profileMenu = document.getElementById("profileMenu");
+            const profileIcon = profileMenu.querySelector(".profile-icon");
+            const authButton = document.getElementById("authButton");
             const doctorList = document.querySelector(".doctor-list");
             const noDoctorsMessage = document.querySelector(".no-doctors-message");
             const searchInput = document.getElementById("search-input");
             const searchBtn = document.getElementById("search-btn");
-            const nav = document.querySelector("nav");
             const bar = document.getElementById("bar");
-            const menu = document.querySelector("ul");
+            const menu = document.querySelector("nav ul");
 
-            const loadingMessage = document.createElement("p");
-            loadingMessage.textContent = "Loading doctors...";
-            doctorList.appendChild(loadingMessage);
+            /* ------------------ Navbar Logic ------------------ */
+         function updateNavbar() {
+                const profileMenu = document.getElementById("profileMenu");  // <-- re-select here
+                const dropdown = profileMenu ? profileMenu.querySelector(".dropdown-menu") : null;
+                const authButton = document.getElementById("authButton");
+                const userRole = localStorage.getItem("userRole");
 
+                if (userRole === "patient") {
+                    if (profileMenu) profileMenu.style.display = "inline-block";
+                    if (authButton) authButton.style.display = "none"; // hide standalone login/logout button
+
+                    // ✅ Add Logout inside dropdown if not already present
+                    if (dropdown && !document.getElementById("logoutLink")) {
+                        const logoutLi = document.createElement("li");
+                        logoutLi.innerHTML = `
+                <a href="javascript:void(0);" id="logoutLink" class="logout-button">
+                    Logout
+                </a>
+            `;
+                        dropdown.appendChild(logoutLi);
+
+                        // Attach event
+                        document.getElementById("logoutLink").addEventListener("click", logout);
+                    }
+                } else {
+                    if (profileMenu) profileMenu.style.display = "none";
+                    if (authButton) {
+                        authButton.style.display = "block";
+                        authButton.innerHTML = `
+                <a href="login.html" class="login-button">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </a>
+            `;
+                    }
+                }
+            }
+
+            window.logout = function () {
+                localStorage.removeItem("userRole");
+                updateNavbar();
+                location.reload();
+            };
+
+            updateNavbar();
+
+            /* ------------------ Profile Dropdown ------------------ */
+            profileIcon.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                profileMenu.classList.toggle("active");
+            });
+
+            // close dropdown when clicking outside
+            document.addEventListener("click", (e) => {
+                if (!profileMenu.contains(e.target)) {
+                    profileMenu.classList.remove("active");
+                }
+            });
+
+            /* ------------------ Fetch & Display Doctors ------------------ */
             const params = new URLSearchParams(window.location.search);
-            const specialityParam = params.get("speciality")?.toLowerCase();  // 'dermatologist' etc.
+            const specialityParam = params.get("speciality")?.toLowerCase();
 
             fetch("http://localhost:3000/api/doctors/alldoctors")
                 .then((response) => {
@@ -586,17 +777,17 @@ nav ul li a:hover {
                         const card = document.createElement("div");
                         card.className = "card";
                         card.innerHTML = `
-                                <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" class="doctor-img" />
-
-                                <div class="card-content">
-                                    <h3 class="doctor-name">${doctor.name}</h3>
-                                    <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>
-                                    <p><strong>Experience:</strong> ${doctor.experience} years</p>
-                                    <p class="availability ${doctor.available ? "available" : "unavailable"}">
-                                    ${doctor.available ? "Available" : "Not Available"}</p>
-                                    <a href="doctor.html?id=${encodeURIComponent(doctor._id)}" class="book-btn">View Profile</a>
-                                </div>
-                            `;
+                        <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" class="doctor-img" />
+                        <div class="card-content">
+                            <h3 class="doctor-name">${doctor.name}</h3>
+                            <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>
+                            <p><strong>Experience:</strong> ${doctor.experience} years</p>
+                            <p class="availability ${doctor.available ? "available" : "unavailable"}">
+                                ${doctor.available ? "Available" : "Not Available"}
+                            </p>
+                            <a href="doctor.html?id=${encodeURIComponent(doctor._id)}" class="book-btn">View Profile</a>
+                        </div>
+                    `;
 
                         card.addEventListener("click", () => {
                             window.location.href = `doctor.html?id=${doctor._id}`;
@@ -608,11 +799,10 @@ nav ul li a:hover {
                                 foundSpecialityMatch = true;
                             }
                         } else {
-                            doctorList.appendChild(card); // No filter — show all
+                            doctorList.appendChild(card);
                         }
                     });
 
-                    // 🔸 If no match found, show message
                     if (specialityParam && !foundSpecialityMatch) {
                         doctorList.innerHTML = `<p>No doctors found for ${specialityParam}.</p>`;
                     }
@@ -622,32 +812,36 @@ nav ul li a:hover {
                     console.error("Error fetching doctors:", error);
                 });
 
-            // 🔸 Manual Search
-            searchBtn.addEventListener("click", () => {
+            /* ------------------ Search Functionality ------------------ */
+            function filterDoctors() {
                 const query = searchInput.value.toLowerCase();
                 const cards = document.querySelectorAll(".card");
 
-                cards.forEach(card => {
+                let anyVisible = false;
+                cards.forEach((card) => {
                     const name = card.querySelector(".doctor-name").textContent.toLowerCase();
                     const speciality = card.querySelector(".specialty").textContent.toLowerCase();
 
                     if (name.includes(query) || speciality.includes(query)) {
                         card.style.display = "";
+                        anyVisible = true;
                     } else {
                         card.style.display = "none";
                     }
                 });
-            });
 
-            searchInput.addEventListener("input", () => {
-                searchBtn.click();
-            });
-             // Toggle navigation menu
+                noDoctorsMessage.style.display = anyVisible ? "none" : "block";
+            }
+
+            searchBtn.addEventListener("click", filterDoctors);
+            searchInput.addEventListener("input", filterDoctors);
+
             bar.addEventListener("click", () => {
                 menu.classList.toggle("active");
             });
         });
     </script>
+
         
 
 </body>

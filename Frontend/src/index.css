@@ -1383,7 +1383,7 @@ transition: all 0.3s ease;
     .dropdown-menu {
 
         position: static;
-        width: 40%;
+        width: 100%;
         margin: 0;
         box-shadow: none;
         border: 1px solid #f0f0f0;
@@ -1392,7 +1392,8 @@ transition: all 0.3s ease;
         transition: opacity 0.3s ease, max-height 0.3s ease;
         max-height: 0;
         overflow: hidden;
-        display: inline-flex;
+        display: flex;
+        flex-direction: row;
     }
 
     .dropdown.active .dropdown-menu {
@@ -1421,7 +1422,7 @@ transition: all 0.3s ease;
     }
 }
 
-@media (min-width: 601px) and (max-width: 900px) {
+/* @media (min-width: 601px) and (max-width: 900px) {
 
     .profile-icon {
         display: flex;
@@ -1451,7 +1452,7 @@ transition: all 0.3s ease;
         padding: 10px 16px;
         font-size: 15px;
     }
-}
+} */
 
 @media (min-width: 801px) and (max-width: 900px) {
     .profile-icon {

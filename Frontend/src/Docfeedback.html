@@ -89,7 +89,7 @@
 }
        /* Main container */
 main {
-    max-width: 1000px;
+    max-width: 900px;
     margin: 150px auto 2rem;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 14px;
@@ -284,29 +284,46 @@ td:hover {
 }
 
 @media screen and (max-width: 900px) {
-    nav ul {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        background-color: rgb(9, 102, 102);
-        transition: max-height 0.3s ease;
+    
+   nav ul {
+  flex-direction: column;
+  width: 100%;
+  position: absolute;
+  top: 60px;
+  left: 0; 
+  background-color: rgb(9, 102, 102);
+  max-height: 0;     
+  overflow: hidden;    
+  opacity: 0;         
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+}
 
-    }
-    nav ul li {
-        text-align: center;
-        width: 70%;
-        padding: 10px 0;
-    }
-    nav ul.active {
-        display: flex;
-    }
-    #bar {
-        z-index: 1001;
-        display: block;
-    }
+nav ul li {
+  text-align: center;
+  width: 80%;
+  padding: 15px 0;
+  font-size: 10px;
+}
+
+nav ul.active {
+  max-height: 300px;   
+  opacity: 1;         
+}
+
+nav ul li a {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+#bar {
+  z-index: 1001;
+  display: block;
+  margin-right: 20px;
+}
+
+.logo {
+  margin-right: 200px;
+}
 }
     </style>
 </head>

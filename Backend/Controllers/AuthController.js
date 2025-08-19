@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/users'); 
-const Otp = require('../models/otp'); 
+// const Otp = require('../models/otp'); 
 const nodemailer = require('nodemailer');
 const Doctor  = require('../models/doctors'); 
 
@@ -54,15 +54,15 @@ async function sendOtpToEmail(email) {
     const otp = Math.floor(100000 + Math.random() * 900000);
     const expiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    await Otp.deleteMany({ email }); // Remove old OTPs
-    const otpEntry = new Otp({ email, otp: Number(otp), expiration });
+    // Save OTP and expiration in user document
+    const user = await User.findOneAndUpdate(
+        { email },
+        { otp: otp, otpExpiration: expiration },
+        { new: true }
+    );
 
-    try {
-        await otpEntry.save();
-        console.log('OTP Entry Saved:', otpEntry);
-    } catch (error) {
-        console.error('Error saving OTP to database:', error);
-        throw new Error('Failed to save OTP');
+    if (!user) {
+        throw new Error('User not found');
     }
 
     const transporter = nodemailer.createTransport({
@@ -81,6 +81,7 @@ async function sendOtpToEmail(email) {
     };
 
     await transporter.sendMail(mailOptions);
+    console.log('OTP sent and saved to user:', otp);
 }
 
 async function verifyOtp(email, otp) {
@@ -90,25 +91,27 @@ async function verifyOtp(email, otp) {
         throw new Error('Email and OTP are required.');
     }
 
-    const otpEntry = await Otp.findOne({ email });
-    console.log('Database OTP Entry:', otpEntry);
-
-    if (!otpEntry || otpEntry.expiration < new Date()) {
-        throw new Error('OTP not found or expired');
+    const user = await User.findOne({ email });
+    if (!user || !user.otp || !user.otpExpiration) {
+        throw new Error('OTP not found. Request a new one.');
     }
-    
-    // Convert both to numbers for comparison
-    const inputOtp = Number(otp);
-    const storedOtp = Number(otpEntry.otp);
-    
-    console.log('Comparing OTP:', { input: inputOtp, stored: storedOtp });
-    if (inputOtp !== storedOtp) {
+
+    if (user.otpExpiration < new Date()) {
+        throw new Error('OTP has expired');
+    }
+
+    if (Number(user.otp) !== Number(otp)) {
         throw new Error('Invalid OTP');
     }
 
-    await Otp.deleteOne({ email });
+    // Clear OTP after successful verification
+    user.otp = null;
+    user.otpExpiration = null;
+    await user.save();
+
     return { success: true, message: 'OTP verified successfully' };
 }
+
 // Controller function for signup
 async function signup(req, res) {
     const { email, password, role } = req.body;

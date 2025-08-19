@@ -7,7 +7,10 @@ const bookingSchema = new mongoose.Schema({
     time: { type: String, required: true },
     feedback: { type: String, default: "" },
     name: { type: String },
-phone: { type: String },
+    phone: { type: String },
+email: { type: String },
+age: { type: Number },
+
 
     status: { 
         type: String, 

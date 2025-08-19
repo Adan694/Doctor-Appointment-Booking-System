@@ -252,11 +252,53 @@ nav ul li a:hover {
 .text p {
     margin-top: 12px;
 }
+.profile-menu {
+  position: relative;
+  display: inline-block;
+}
 
+.dropdown-menu {
+  position: absolute;
+  top: calc(70% + 6px);
+  right: 10;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  list-style: none;
+  padding: 2px 0;
+  margin: 0;
+  min-width: 60px;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-10px);
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
 
+.dropdown-menu li {
+  padding: 6px 10px;
+}
 
-    /* Responsive Nav & Footer */
-    @media screen and (max-width: 900px) {
+.dropdown-menu li a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+  font-size: 15px;
+}
+
+.dropdown-menu li a:hover {
+  background: #f5f5f5;
+}
+
+.dropdown-menu.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media screen and (max-width: 900px) {
         nav {
             flex-direction: column;
             align-items: flex-start;
@@ -269,13 +311,15 @@ nav ul li a:hover {
             width: 100%;
             flex-direction: column;
             background-color: rgb(9, 102, 102);
-            overflow: hidden;
+            overflow: hiddens;
             max-height: 0;
             transition: max-height 0.3s ease;
+            display: none;
         }
 
         nav ul.active {
             max-height: 300px;
+            display: flex;
         }
 
         nav ul li {
@@ -300,6 +344,31 @@ nav ul li a:hover {
             border-right: none;
             margin-bottom: 20px;
         }
+         .dropdown-menu {
+        position: static;
+        width: 80%;
+        margin: 0;
+        margin-left: 25px;
+        box-shadow: none;
+        border: 1px solid #f0f0f0;
+        border-top: none;
+        transform: none !important;
+        transition: opacity 0.3s ease, max-height 0.3s ease;
+        max-height: 0;
+        overflow: hidden;
+        flex-direction: row;
+    }
+
+    .dropdown.active .dropdown-menu {
+        max-height: 500px;
+        opacity: 1;
+        margin-top: 0;
+    }
+
+    .dropdown-menu li a {
+        display: block;
+        padding: 2px 4px;
+    }
     }
 
     @media screen and (max-width: 600px) {
@@ -334,8 +403,20 @@ nav ul li a:hover {
                 <li><a href="Alldoctorsreal.html"><i class="fas fa-user-md"></i> Find a Doctor</a></li>
                 <li><a href="Contactus.html"><i class="fas fa-envelope"></i> Contact Us</a></li>
                 <li><a href="faqs.html"><i class="fas fa-question-circle"></i> FAQs</a></li> 
-        
-<li><a href="login.html" class="login-button" id="authButton">Login</a></li>
+                <li id="profileMenu" class="dropdown">
+                    <a href="javascript:void(0);" class="profile-icon">
+                        <i class="fa-solid fa-user"></i> Account
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="myprofile.html">My Profile</a></li>
+                        <li><a href="myappointments.html">My Appointments</a></li>
+                    </ul>
+                </li>
+                <li id="authButton">
+                    <a href="login.html" class="login-button">
+                        <i class="fa-solid fa-right-to-bracket"></i> Login
+                    </a>
+                </li>
             </ul>
         
         </nav>
@@ -402,14 +483,20 @@ nav ul li a:hover {
 
     </div>
 
-   <script>
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         const nav = document.querySelector('nav');
         const bar = document.getElementById('bar');
+        const profileMenu = document.querySelector('#profileMenu .dropdown-menu');
+        const profileIcon = document.querySelector('#profileMenu .profile-icon');
+        const authButton = document.getElementById('authButton');
 
+        // ✅ Toggle mobile nav
         bar.addEventListener('click', () => {
             document.querySelector('nav ul').classList.toggle('active');
         });
+
+        // ✅ Contact form validation & submit
         document.getElementById('contactForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -418,28 +505,20 @@ nav ul li a:hover {
             const phone = document.getElementById('phone').value.trim();
             const message = document.getElementById('message').value.trim();
 
-            // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 alert("Please enter a valid email address.");
                 return;
             }
-
-            
-            // Name validation
             if (name.length < 2) {
                 alert("Please enter your full name.");
                 return;
             }
-
-            // Phone number validation (exactly 11 digits)
             const phoneRegex = /^[0-9]{11}$/;
             if (!phoneRegex.test(phone)) {
                 alert("Phone number must be exactly 11 digits.");
                 return;
             }
-
-            // Message validation
             if (message.length === 0) {
                 alert("Please enter a message.");
                 return;
@@ -450,9 +529,7 @@ nav ul li a:hover {
             try {
                 const response = await fetch('http://localhost:3000/contact', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
 
@@ -463,40 +540,54 @@ nav ul li a:hover {
                 alert('Failed to submit. Try again.');
             }
         });
-            updateNavbar();
 
-    });
-     function updateNavbar() {
-            const authButton = document.getElementById('authButton');
+        // ✅ Dropdown toggle
+        if (profileIcon) {
+            profileIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                profileMenu.classList.toggle('active');
+            });
 
+            document.addEventListener('click', (e) => {
+                if (!profileMenu.contains(e.target) && !profileIcon.contains(e.target)) {
+                    profileMenu.classList.remove('active');
+                }
+            });
+        }
+
+        // ✅ Update navbar (show/hide login & account menu)
+        function updateNavbar() {
             const userRole = localStorage.getItem('userRole');
 
-            if (!authButton) {
-                console.warn("⚠️ authButton not found in DOM.");
-                return;
-            }
+            if (userRole === 'patient') {
+                authButton.style.display = "none";
+                document.getElementById('profileMenu').style.display = "inline-block";
 
-            if ( userRole === 'patient') {
-                authButton.innerHTML = 'Logout';
-                authButton.href = '#';
-                authButton.onclick = logout;
+                // Add logout button if missing
+                if (!document.getElementById('logoutLink')) {
+                    const logoutLi = document.createElement('li');
+                    logoutLi.innerHTML = `<a href="#" id="logoutLink">Logout</a>`;
+                    profileMenu.appendChild(logoutLi);
+
+                    logoutLi.addEventListener('click', logout);
+                }
             } else {
-                authButton.innerHTML = 'Login';
-                authButton.href = 'login.html';
-                authButton.onclick = null;
+                authButton.style.display = "inline-block";
+                document.getElementById('profileMenu').style.display = "none";
             }
         }
 
+        updateNavbar();
+    });
 
-
-        function logout() {
-                console.log("🚪 Logging out...");
-                localStorage.removeItem('userRole');
-                alert('Logged out successfully.');
-                location.reload(); // refresh page to update UI
-            }
-
-
+    // ✅ Logout function
+    function logout() {
+        console.log("🚪 Logging out...");
+        localStorage.removeItem('userRole');
+        alert('Logged out successfully.');
+        location.reload();
+    }
 </script>
 
 </body>

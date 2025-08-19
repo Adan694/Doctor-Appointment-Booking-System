@@ -10,7 +10,7 @@
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 30px;
-    background-color: #e6f2ff;
+        background-color: #e6f2ff;
         display: flex;
         flex-direction: column;
     }
@@ -469,31 +469,35 @@ input:checked + .slider:before {
         }
 
         nav ul {
-            display: none;
+            /* display: none; */
             flex-direction: column;
             width: 100%;
             position: absolute;
             top: 60px;
             left: 0;
             background-color: rgb(9, 102, 102);
-            transition: max-height 0.3s ease;
+            /* transition: max-height 0.3s ease, opacity 0.4s ease; */
             overflow: hidden;
             max-height: 0;
+            opacity: 0;         
+            transition: max-height 0.4s ease, opacity 0.4s ease;
         }
 
         nav ul.active {
-            display: flex;
+            /* display: flex; */
             max-height: 300px;
+            opacity: 1;
         }
 
         nav ul li {
-            padding: 10px 0;
-            text-align: left;
+            padding: 15px 0;
+            text-align: center;
         }
 
         nav ul li a {
             font-size: 16px;
             margin: 5px 0;
+            margin-right: 10px;
         }
 
         #bar {
@@ -527,7 +531,79 @@ input:checked + .slider:before {
             /* allow wrapping */
         }
     }
- 
+
+/* ==== Fullscreen Modal Styling ==== */
+.modal {
+  display: none; /* hidden by default */
+  position: fixed;
+  inset: 0; /* shorthand for top:0; right:0; bottom:0; left:0 */
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 10000; /* make sure it's above everything */
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 14px;
+  width: 440px;
+  max-width: 95%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: relative;
+  animation: slideDown 0.3s ease;
+}
+
+.modal-header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgb(9, 102, 102);
+  margin-bottom: 15px;
+}
+
+/* Close icon */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.modal-close:hover {
+  color: #000;
+}
+
+.modal-footer {
+  margin-top: 18px;
+  text-align: right;
+}
+
+.modal-footer .btn {
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideDown {
+  from { transform: translateY(-25px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.availability-buttons {
+    display: flex;
+    gap: 1px; /* space between the buttons */
+    margin-top: 12px; /* optional spacing from table */
+}
+
 </style>
 
 </head>
@@ -595,9 +671,12 @@ input:checked + .slider:before {
         </div>
 
 
-        <div class="availability-section">
-<h2 class="section-title">Availability</h2>
-            <table class="availability-table" id="availabilityTable">
+    <div class="availability-section">
+<h2 class="section-title">
+    Availability
+</h2>
+        <table class="availability-table" id="availabilityTable">
+
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -609,6 +688,8 @@ input:checked + .slider:before {
                 <tbody></tbody>
             </table>
             <button class="btn add-slot-btn" onclick="addSlot()">+ Add Slot</button>
+                <button onclick="openQuickAddPopup()" class="btn add-slot-btn">Quick Add</button>
+
         </div>
     </div>
     <div id="loadingOverlay">
@@ -625,6 +706,40 @@ input:checked + .slider:before {
 <div id="buttonGroup">
     <button class="btn" onclick="enableEditing()">Edit Profile</button>
 </div>
+<!-- ✅ Quick Add Availability Popup -->
+<div id="quickAddModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeQuickAddPopup()">&times;</span>
+        <div class="modal-header">Quick Add Availability</div>
+
+        <!-- Days of week -->
+        <div style="margin-bottom:14px;">
+            <label><input type="checkbox" class="dayCheckbox" value="Mon"> Mon</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Tue"> Tue</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Wed"> Wed</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Thu"> Thu</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Fri"> Fri</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Sat"> Sat</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Sun"> Sun</label>
+        </div>
+
+        <!-- Time range -->
+        <div style="margin-bottom:14px;">
+            <label>From: <input type="time" id="quickStart" value="09:00"></label>
+            <label style="margin-left:12px;">To: <input type="time" id="quickEnd" value="17:00"></label>
+        </div>
+
+        <!-- Buttons -->
+        <div class="modal-footer">
+        <div class="availability-buttons">
+            <button class="btn add-slot-btn" onclick="addSlot()">+ Add Slot</button>
+            <button onclick="openQuickAddPopup()" class="btn add-slot-btn">Quick Add</button>
+        </div>
+
+        </div>
+    </div>
+</div>
+
     <script>
         const standardSlots = [
                 "12:00 AM", "12:30 AM",
@@ -1076,6 +1191,77 @@ input:checked + .slider:before {
                     <button class="btn" onclick="enableEditing()">Edit Profile</button>
                 `;
         };
+       function openQuickAddPopup() {
+            document.getElementById("quickAddModal").style.display = "flex";
+        }
+
+        function closeQuickAddPopup() {
+            document.getElementById("quickAddModal").style.display = "none";
+        }
+
+        function applyQuickAvailability() {
+            const days = Array.from(document.querySelectorAll('.dayCheckbox:checked')).map(cb => cb.value);
+            const start = document.getElementById('quickStart').value;
+            const end = document.getElementById('quickEnd').value;
+
+            if (!days.length || !start || !end) {
+                alert("Please select days and time range.");
+                return;
+            }
+
+            // Generate 30-min slots
+            function generateSlots(start, end) {
+                const slots = [];
+                let [sh, sm] = start.split(':').map(Number);
+                let [eh, em] = end.split(':').map(Number);
+                let startTime = new Date(2000, 0, 1, sh, sm);
+                let endTime = new Date(2000, 0, 1, eh, em);
+
+                while (startTime < endTime) {
+                    let h = startTime.getHours();
+                    let m = startTime.getMinutes();
+                    let ampm = h >= 12 ? "PM" : "AM";
+                    let displayH = h % 12 || 12;
+                    let displayM = m.toString().padStart(2, '0');
+                    slots.push(`${displayH}:${displayM} ${ampm}`);
+                    startTime.setMinutes(startTime.getMinutes() + 30);
+                }
+                return slots;
+            }
+
+            const slotList = generateSlots(start, end);
+            const tbody = document.querySelector("#availabilityTable tbody");
+
+            days.forEach(day => {
+                const today = new Date();
+                const dayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(day);
+
+                const diff = (dayIndex - today.getDay() + 7) % 7;
+                const targetDate = new Date(today);
+                targetDate.setDate(today.getDate() + diff);
+
+                const formattedDate = targetDate.toISOString().split("T")[0];
+
+                const tr = document.createElement("tr");
+
+                // ✅ create checkboxes for each slot (so saveProfile works)
+                let slotCheckboxes = slotList.map(s =>
+                    `<label><input type="checkbox" checked value="${s}"> ${s}</label>`
+                ).join(" ");
+
+                tr.innerHTML = `
+            <td><input type="date" value="${formattedDate}"></td>
+            <td>${slotCheckboxes}</td>
+            <td><button onclick="removeRow(this)">❌</button></td>
+        `;
+
+                tbody.appendChild(tr);
+            });
+
+            closeQuickAddPopup();
+            showToast("Availability added!");
+        }
+
     </script>
 
     

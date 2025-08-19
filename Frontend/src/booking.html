@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Book Appointment</title>
     <style>
         body {
@@ -12,12 +13,13 @@
                 background-color: #e6f2ff;
 
         }
-h1 {
+.heading {
+    margin-top: 100px;
+    margin-left: 300px;
     font-size: 28px;
     font-weight: 700;
     text-align: center;
     color: #009999;
-    margin: 20px auto;
     padding: 15px;
     border: 3px solid #009999;
     border-radius: 8px;
@@ -30,14 +32,257 @@ h1 {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-h1:hover {
+.heading:hover {
     color: #007d7d;
     border-color: #007d7d;
     background-color: #f0fefe;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
+      nav {
+         display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    top: 0%;
+    width: 100%;
+    background-color: rgb(9, 102, 102);
+    color: white;
+    z-index: 1000;
+    padding: 10px 20px;
+    left: 0%;
+}
 
+nav ul {
+    display: flex;
+    transition: max-height 0.3s ease; 
+    overflow: visible; 
+    max-height: 0;
+}
+nav ul.active {
+    max-height: 300px; 
+}
+
+nav ul li {
+    list-style: none;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    margin-inline: 20px;
+}
+
+nav ul li a:hover {
+    color: black;
+    border-bottom: 2px solid black;
+}
+#bar {
+    display: block; 
+    font-size: 30px; 
+    cursor: pointer; 
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin: 0;
+}
+
+.logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.logo h1 {
+    font-size: 30px;
+    margin: 0;
+}
+
+.logo img:hover {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.logo h1 {
+    font-size: 28px;
+    background: linear-gradient(45deg, #ffffff, #cceeff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.profile-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 10px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    gap: 6px;
+    border-bottom: none;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    top: calc(100% + 8px);
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    list-style: none;
+    padding: 8px 0;
+    margin: 10px;
+    min-width: 180px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    flex-direction: column;
+    overflow: visible;
+
+}
+
+.dropdown-menu li {
+    padding: 0;
+}
+
+.dropdown-menu li a {
+    display: inline-flex;
+    padding: 10px 16px;
+    color: #333;
+    font-size: 14px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.dropdown-menu li a:hover {
+    background: #f0f0f0;
+    color: #0f8080;
+}
+
+.dropdown.active .dropdown-menu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+   .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 40px;
+    color: white;
+    margin-top: 66px;
+    background: linear-gradient(135deg, #096666, #064949);
+    border-top: 4px solid #0f8080;
+}
+
+.footer>div {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0 20px;
+}
+
+.footer>div:last-child {
+    border-right: none;
+}
+
+.footer h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.footer p {
+    margin: 15px 0;
+    font-size: 15px;
+}
+
+.contact-info,
+.text,
+.quick-links,
+.Legal {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+    flex-direction: column;
+}
+
+.quick-links ul,
+.Legal ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-links li,
+.Legal li {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.quick-links a,
+.Legal a {
+    color: #fff;
+    text-decoration: none;
+    position: relative;
+    font-weight: 600;
+    cursor: pointer;
+    padding-bottom: 3px;
+    transition: color 0.3s ease;
+}
+
+.quick-links a::after,
+.Legal a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.quick-links a:hover::after,
+.Legal a:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+.quick-links a:hover,
+.Legal a:hover {
+    color: white;
+    text-shadow: 0 0 5px #ffd700aa;
+}
+
+
+.specialties-columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.text p {
+    margin-top: 12px;
+}
 
        .slot {
     margin-bottom: 15px;
@@ -160,8 +405,134 @@ h1:hover {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
 /* Modal Styling */
+/* Overlay */
 .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 3000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+/* Show overlay */
+.modal-overlay.show {
+    display: flex;
+}
+
+/* Modal content */
+.modal-content {
+    background: #ffffff;
+    padding: 30px 30px;
+    border-radius: 12px;
+    border: 2px solid rgba(0, 179, 179, 0.3); /* outer border */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 450px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin: auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Hover effect */
+.modal-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    border-color: rgba(0, 179, 179, 0.6); /* slightly stronger on hover */
+}
+
+
+/* Form styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus, 
+.form-group select:focus, 
+.form-group textarea:focus {
+    border-color: #00b3b3;
+    box-shadow: 0 0 5px rgba(0, 179, 179, 0.4);
+    outline: none;
+}
+
+/* Actions (buttons) */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-btn, .book-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Cancel button */
+.cancel-btn {
+    background-color: #eee;
+    color: #555;
+}
+
+.cancel-btn:hover {
+    background-color: #ddd;
+}
+
+/* Book button */
+.book-btn {
+    background-color: #00b3b3;
+    color: #fff;
+}
+
+.book-btn:hover {
+    background-color: #009999;
+}
+
+/* Scrollbar */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 153, 153, 0.4);
+    border-radius: 3px;
+}
+
+/* Responsive */
+@media screen and (max-width: 500px) {
+    .modal-content {
+        padding: 20px;
+        width: 100%;
+    }
+}
+
+
+/* Modal Styling */
+/* .modal-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -181,27 +552,27 @@ h1:hover {
     border-radius: 16px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
     animation: fadeInScale 0.3s ease-out;
-    width: 450px; /* Increased width */
-    max-width: 95%; /* Responsive */
+    width: 450px;
+    max-width: 95%; 
 }
 
 
 @keyframes fadeInScale {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
-}
+} */
 body {
     background: linear-gradient(to bottom, #f2fefe, #e6fafa);
 }
 
-.modal-content h2 {
+/* .modal-content h2 {
     margin-top: 0;
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 20px;
     color: #009999;
     text-align: center;
-}
+} */
 
 .form-group {
     margin-bottom: 18px;
@@ -233,7 +604,7 @@ body {
     box-shadow: 0 0 6px rgba(0, 153, 153, 0.2);
 }
 
-
+/* 
 .modal-actions {
     display: flex;
     justify-content: space-between;
@@ -256,14 +627,181 @@ body {
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
+} */
+
+
+/* Media Queries for Responsiveness */
+@media (min-width: 901px) {
+    #bar {
+        display: none; 
+    }
+
+    nav ul {
+        display: flex; 
+        max-height: none; 
+    }
 }
+@media (max-width: 900px) {
+   nav ul {
+    flex-direction: column;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    width: 100%;
+    background-color: rgb(9, 102, 102);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0;
+    margin: 0;
+    z-index: 999; 
+  }
+ nav ul.active {
+        max-height: 300px; 
+    }
+    nav ul li {
+        text-align: center; 
+        margin: 10px 0; 
+    }
+    .heading{
+        margin-left: -20px;
+    }
+    .modal-overlay{
+        padding: 20px;
+        width: 450px;
+        margin-right: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .footer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer>div {
+        width: 100%;
+        border-right: none;
+        margin-bottom: 20px;
+    }
+
+     .quick-links ul,
+    .Legal ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center; 
+    }
+
+    .quick-links li,
+    .Legal li {
+        margin: 5px 0;
+    }
+}
+@media (max-width: 900px) {
+
+    .dropdown {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .profile-icon {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0px;
+        gap: 2px;
+        width: 30%;
+        box-sizing: border-box;
+        font-size: 20px;
+        margin-left: 210px;
+    }
+
+    .profile-icon:hover {
+        border-bottom: none;
+    }
+
+    .dropdown-menu {
+        position: static;
+        width: 80%;
+        margin: 0;
+        margin-left: 25px;
+        box-shadow: none;
+        border: 1px solid #f0f0f0;
+        border-top: none;
+        transform: none !important;
+        transition: opacity 0.3s ease, max-height 0.3s ease;
+        max-height: 0;
+        overflow: hidden;
+        flex-direction: row;
+    }
+
+    .dropdown.active .dropdown-menu {
+        max-height: 500px;
+        opacity: 1;
+        margin-top: 0;
+    }
+
+    .dropdown-menu li a {
+        display: block;
+        padding: 2px 4px;
+    }
+}
+
 
 
     </style>
 </head>
 
 <body>
-    <h1>Book an Appointment</h1>
+    <nav>
+        <div class="logo">
+            <img src="images/Da.png" alt="DocAssist Logo">
+            <h1>DocAssist</h1>
+        </div>
+        <i id="bar" class="fa-solid fa-bars"></i>
+    
+        <ul>
+            <li>
+                <a href="index.html">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+            </li>
+            <li>
+                <a href="Alldoctorsreal.html">
+                    <i class="fa-solid fa-user-doctor"></i> Find a Doctor
+                </a>
+            </li>
+            <li>
+                <a href="Contactus.html">
+                    <i class="fa-solid fa-envelope"></i> Contact Us
+                </a>
+            </li>
+            <li>
+                <a href="faqs.html">
+                    <i class="fa-solid fa-circle-question"></i> FAQs
+                </a>
+            </li>
+            <li id="profileMenu" class="dropdown">
+                <a href="javascript:void(0);" class="profile-icon">
+                    <i class="fa-solid fa-user"></i> Account
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="myprofile.html">My Profile</a></li>
+                    <li><a href="myappointments.html">My Appointments</a></li>
+                </ul>
+            </li>
+    
+            <li id="authButton">
+                <a href="login.html" class="login-button">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </a>
+            </li>
+        </ul>
+    
+    </nav>
+    <h1 class="heading">Book an Appointment</h1>
     <div id="booking-info"></div>
     <button onclick="loadAvailability()" class="book-btn">🔁 Refresh Slots</button>
     <div id="loadingOverlay">
@@ -282,9 +820,19 @@ body {
                     <input type="text" id="modalName" />
                 </div>
                 <div class="form-group">
-                    <label for="modalPhone">Phone</label>
-                    <input type="text" id="modalPhone" />
-                </div>
+    <label for="modalPhone">Phone</label>
+    <input type="text" id="modalPhone" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+    <small id="phoneError" style="color: red; display: none;"></small>
+</div>
+<div class="form-group">
+    <label for="modalEmail">Email</label>
+    <input type="email" id="modalEmail" />
+</div>
+<div class="form-group">
+    <label for="modalAge">Age</label>
+    <input type="number" id="modalAge" min="0" max="120" />
+</div>
+
                 <div class="form-group">
                     <label for="modalDate">Date</label>
                     <input type="text" id="modalDate" readonly />
@@ -299,14 +847,126 @@ body {
                 </div>
             </div>
         </div>
+<!-- Footer Section -->
+<div class="footer">
+    <div class="contact-info">
+        <h3>Contact Us</h3>
+        <p>Hospital Name</p>
+        <p>123 Main St, City, State, Zip</p>
+        <p>Phone: (123) 456-7890</p>
+        <p>Email: support@hospital.com</p>
+    </div>
+    <div class="quick-links">
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="">Home</a></li>
+            <li><a href="Aboutus.html">About Us</a></li>
+            <li><a href="">Services</a></li>
+            <li><a href="Alldoctorsreal.html">Doctors</a></li>
+            <li><a href="Faqs.html">FAQS</a></li>
+        </ul>
+    </div>
+    <div class="text">
+        <h3>Doctors' Specialties</h3>
+        <div class="specialties-columns">
+            <p>Cardiology</p>
+            <p>Dermatology</p>
+            <p>Pediatrics</p>
+            <p>Orthopedics</p>
+            <p>Gynecology</p>
+            <p>Neurology</p>
+            <p>Gastroenterology</p>
+            <p>Oncology</p>
+            <p>Radiology</p>
+            <p>Psychiatry</p>
+        </div>
+    </div>
+    <div class="Legal">
+        <h3>Legal</h3>
+        <ul>
+            <li><a href="Privacy.html">Privacy Policy</a></li>
+            <li><a href="TOS.html">Terms of Services</a></li>
+        </ul>
+    </div>
+</div>
+</div>
 
+</div>
 
 
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
+                const profileMenu = document.getElementById("profileMenu");
+                const profileIcon = profileMenu.querySelector(".profile-icon");
+                const authButton = document.getElementById("authButton");
+                const bar = document.getElementById("bar");
+                const menu = document.querySelector("nav ul");
+
+                /* ------------------ Navbar Logic ------------------ */
+                function updateNavbar() {
+                    const profileMenu = document.getElementById("profileMenu");  // <-- re-select here
+                    const dropdown = profileMenu ? profileMenu.querySelector(".dropdown-menu") : null;
+                    const authButton = document.getElementById("authButton");
+                    const userRole = localStorage.getItem("userRole");
+
+                    if (userRole === "patient") {
+                        if (profileMenu) profileMenu.style.display = "inline-block";
+                        if (authButton) authButton.style.display = "none"; // hide standalone login/logout button
+
+                        // ✅ Add Logout inside dropdown if not already present
+                        if (dropdown && !document.getElementById("logoutLink")) {
+                            const logoutLi = document.createElement("li");
+                            logoutLi.innerHTML = `
+                <a href="javascript:void(0);" id="logoutLink" class="logout-button">
+                    Logout
+                </a>
+            `;
+                            dropdown.appendChild(logoutLi);
+
+                            // Attach event
+                            document.getElementById("logoutLink").addEventListener("click", logout);
+                        }
+                    } else {
+                        if (profileMenu) profileMenu.style.display = "none";
+                        if (authButton) {
+                            authButton.style.display = "block";
+                            authButton.innerHTML = `
+                <a href="login.html" class="login-button">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </a>
+            `;
+                        }
+                    }
+                }
+
+                window.logout = function () {
+                    localStorage.removeItem("userRole");
+                    updateNavbar();
+                    location.reload();
+                };
+
+                updateNavbar();
+
+                /* ------------------ Profile Dropdown ------------------ */
+                profileIcon.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    profileMenu.classList.toggle("active");
+                });
+
+                // close dropdown when clicking outside
+                document.addEventListener("click", (e) => {
+                    if (!profileMenu.contains(e.target)) {
+                        profileMenu.classList.remove("active");
+                    }
+                });
+            bar.addEventListener("click", () => {
+                menu.classList.toggle("active");
+            });
+        });
+
         const params = new URLSearchParams(window.location.search);
         const doctorId = params.get("doctorId"); 
-
-       
        function loadAvailability() {
             fetch(`http://localhost:3000/api/doctors/${doctorId}`)
                 .then(res => res.json())
@@ -433,7 +1093,7 @@ body {
                         let selectedDate = '';
                         let selectedTime = '';
 
-                        function showBookingModal(date, time) {
+                      function showBookingModal(date, time) {
                             selectedDate = date;
                             selectedTime = time;
 
@@ -441,20 +1101,73 @@ body {
                             const phoneField = document.getElementById('modalPhone');
                             const dateField = document.getElementById('modalDate');
                             const timeField = document.getElementById('modalTime');
+                            const emailField = document.getElementById('modalEmail');
+                            const ageField = document.getElementById('modalAge');
 
-                            // Fetch user info from localStorage or API if available
-                            // const patientName = localStorage.getItem('patientName') || '';
-                            // const patientPhone = localStorage.getItem('patientPhone') || '';
+                            // Prefill from localStorage first
+                            let patientName = localStorage.getItem('patientName') || '';
+                            let patientPhone = localStorage.getItem('patientPhone') || '';
+                            let patientEmail = localStorage.getItem('patientEmail') || '';
+                            let patientDOB = localStorage.getItem('patientDOB'); // format: YYYY-MM-DD
 
-                            // nameField.value = patientName;
-                            // phoneField.value = patientPhone;
-                            nameField.value = '';
-                            phoneField.value = '';
+                            // If any key data missing, fetch from backend
+                            const token = localStorage.getItem('authToken');
+                            if (token && (!patientName || !patientPhone || !patientEmail || !patientDOB)) {
+                                fetch('http://localhost:3000/user/profile', {
+                                    method: 'GET',
+                                    headers: { 'Authorization': `Bearer ${token}` }
+                                })
+                                    .then(res => {
+                                        if (!res.ok) throw new Error('Failed to fetch profile');
+                                        return res.json();
+                                    })
+                                    .then(data => {
+                                        patientName = data.name || patientName;
+                                        patientPhone = data.phone || patientPhone;
+                                        patientEmail = data.email || patientEmail;
+                                        patientDOB = data.dob || patientDOB;
 
-                            dateField.value = date;
-                            timeField.value = time;
+                                        // Update localStorage for next time
+                                        localStorage.setItem('patientName', patientName);
+                                        localStorage.setItem('patientPhone', patientPhone);
+                                        localStorage.setItem('patientEmail', patientEmail);
+                                        localStorage.setItem('patientDOB', patientDOB);
 
-                            document.getElementById('bookingModal').style.display = 'flex';
+                                        // Fill modal fields
+                                        fillBookingModal();
+                                    })
+                                    .catch(err => {
+                                        console.error('Could not fetch profile:', err);
+                                        fillBookingModal(); // fallback to whatever localStorage has
+                                    });
+                            } else {
+                                fillBookingModal();
+                            }
+
+                            function fillBookingModal() {
+                                nameField.value = patientName;
+                                phoneField.value = patientPhone;
+                                emailField.value = patientEmail;
+
+                                // Calculate age from DOB if available
+                                if (patientDOB) {
+                                    const dob = new Date(patientDOB);
+                                    const today = new Date();
+                                    let age = today.getFullYear() - dob.getFullYear();
+                                    const monthDiff = today.getMonth() - dob.getMonth();
+                                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+                                        age--;
+                                    }
+                                    ageField.value = age;
+                                } else {
+                                    ageField.value = '';
+                                }
+
+                                dateField.value = date;
+                                timeField.value = time;
+
+                                document.getElementById('bookingModal').style.display = 'flex';
+                            }
                         }
 
                         function closeModal() {
@@ -464,14 +1177,30 @@ body {
 
                         }
 
-                        function confirmAppointment() {
+                       function confirmAppointment() {
                             const patientId = localStorage.getItem('patientId');
                             const doctorId = new URLSearchParams(window.location.search).get('doctorId');
                             const name = document.getElementById('modalName').value.trim();
                             const phone = document.getElementById('modalPhone').value.trim();
+                            const phoneError = document.getElementById('phoneError');
+                            const email = document.getElementById('modalEmail').value.trim();
+                           const age = document.getElementById('modalAge').value.trim();
 
-                            if (!name || !phone) {
-                                showToast("Please enter all details.");
+                            // Regex for Pakistani mobile (03XXXXXXXXX) or landline (0XXXXXXXXX)
+                            const pkPhoneRegex = /^(03[0-9]{9}|0[0-9]{9,10})$/;
+
+                            // Reset error
+                            phoneError.style.display = "none";
+                            phoneError.textContent = "";
+
+                            if (!name || !phone || !email || !age) {
+                               showToast("Please enter all details.");
+                               return;
+                            }
+
+                            if (!pkPhoneRegex.test(phone)) {
+                                phoneError.textContent = "❌ Please enter a valid Pakistani phone number.";
+                                phoneError.style.display = "block";
                                 return;
                             }
 
@@ -480,17 +1209,26 @@ body {
                             fetch(`http://localhost:3000/api/appointments`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ patientId, doctorId, date: selectedDate, time: selectedTime, name, phone })
+                                body: JSON.stringify({ patientId, doctorId, date: selectedDate, time: selectedTime, name, phone, email, age })
                             })
                                 .then(res => res.json())
                                 .then(data => {
                                     hideLoadingOverlay();
                                     closeModal();
-
                                     if (data.success) {
+                                        // Update localStorage with the latest booking info
+                                        localStorage.setItem('patientName', name);
+                                        localStorage.setItem('patientPhone', phone);
+                                        localStorage.setItem('patientEmail', email);
+                                        // localStorage.setItem('patientDOB', age); // if you have DOB
                                         showToast(`✅ Appointment booked for ${selectedDate} at ${selectedTime}`);
-                                    } else {
-                                        showToast(`❌ Error: ${data.message || "Booking failed"}`);
+                                    }
+ else {
+                                        if (data.message && data.message.includes("blocked")) {
+                                            showToast(`🚫 ${data.message}`, 5000);
+                                        } else {
+                                            showToast(`❌ Error: ${data.message || "Booking failed"}`);
+                                        }
                                     }
                                 })
                                 .catch(err => {
@@ -499,6 +1237,36 @@ body {
                                     showToast('❌ Network error: ' + err.message);
                                 });
                         }
+
+                        document.addEventListener("DOMContentLoaded", () => {
+                                const phoneInput = document.getElementById("modalPhone");
+                                const phoneError = document.createElement("div");
+                                phoneError.id = "phoneError";
+                                phoneError.style.color = "red";
+                                phoneError.style.fontSize = "0.9em";
+                                phoneError.style.marginTop = "4px";
+                                phoneError.style.display = "none";
+
+                                // Insert error div just below the phone input
+                                phoneInput.parentNode.appendChild(phoneError);
+
+                                // Regex for Pakistani mobile or landline
+                                const pkPhoneRegex = /^(03[0-9]{9}|0[1-9][0-9]{8,9})$/;
+
+                                // Live validation while typing
+                                phoneInput.addEventListener("input", () => {
+                                    const phone = phoneInput.value.trim();
+                                    if (phone === "") {
+                                        phoneError.style.display = "none"; // hide if empty
+                                    } else if (!pkPhoneRegex.test(phone)) {
+                                        phoneError.textContent = "❌ Invalid Pakistani phone number (e.g., 03001234567 or 0421234567)";
+                                        phoneError.style.display = "block";
+                                    } else {
+                                        phoneError.style.display = "none"; // hide if valid
+                                    }
+                                });
+                            });
+
 
     </script>
 </body>

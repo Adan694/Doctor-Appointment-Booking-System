@@ -7,13 +7,38 @@ const formatMessage = require('../Utils/formatAppointmentMessage');
 
 // Book Appointment
 const bookAppointment = async (req, res) => {
-  const { patientId, doctorId, date, time } = req.body;
+const { patientId, doctorId, date, time, name, phone, age } = req.body;
 
   if (!patientId || !doctorId || !date || !time) {
     return res.status(400).json({ success: false, message: "All fields are required." });
   }
 
+  if (isNaN(new Date(date).getTime())) {
+    return res.status(400).json({ success: false, message: "Invalid date format." });
+  }
+
   try {
+    const patient = await User.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({ success: false, message: "Patient not found" });
+    }
+
+    if (patient.isBlocked && patient.unblockDate && patient.unblockDate <= new Date()) {
+      patient.isBlocked = false;
+      patient.missedAppointments = 0;
+      patient.unblockDate = null;
+      await patient.save();
+    }
+
+    if (patient.isBlocked) {
+      return res.status(403).json({
+        success: false,
+        message: `Your account is blocked due to missed appointments. Please wait until ${patient.unblockDate ? patient.unblockDate.toDateString() : 'a future date'
+          } to book again.`
+      });
+    }
+
     const formattedDate = new Date(date).toISOString().split('T')[0];
 
     const existingBooking = await Booking.findOne({ doctorId, date: new Date(formattedDate), time });
@@ -25,6 +50,21 @@ const bookAppointment = async (req, res) => {
     if (patientConflict) {
       return res.status(409).json({ success: false, message: "You already have an appointment at this time with another doctor." });
     }
+    //daily limit code
+const maxDailyAppointments = 5; 
+const patientAppointmentsToday = await Booking.countDocuments({
+  patientId,
+  date: new Date(formattedDate),
+  status: { $ne: 'cancelled' } 
+});
+
+if (patientAppointmentsToday >= maxDailyAppointments) {
+  return res.status(403).json({
+    success: false,
+    message: `You cannot book more than ${maxDailyAppointments} appointments in a single day.`
+  });
+}
+//daily limit code
 
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) return res.status(404).json({ success: false, message: "Doctor not found" });
@@ -34,15 +74,21 @@ const bookAppointment = async (req, res) => {
       return res.status(400).json({ success: false, message: "Slot not available" });
     }
 
-    const newBooking = new Booking({ patientId, doctorId, date: new Date(formattedDate), time, name: req.body.name, 
-  phone: req.body.phone  });
+    const newBooking = new Booking({
+      patientId,
+      doctorId,
+      date: new Date(formattedDate),
+      time,
+      name: req.body.name,
+      phone: req.body.phone,
+      email: patient.email,          // use patient email
+  age 
+    });
     await newBooking.save();
 
     slotDay.slots = slotDay.slots.filter(t => t !== time);
     doctor.availabilitySlots = doctor.availabilitySlots.filter(s => s.slots.length > 0);
     await doctor.save();
-
-    const patient = await User.findById(patientId);
 
     const formattedDoctor = {
       _id: doctor._id,
@@ -52,23 +98,47 @@ const bookAppointment = async (req, res) => {
     };
 
     const patientMessage = formatMessage({
-  action: 'book',
-  appointment: newBooking,
-  doctor: formattedDoctor,
-  patient,
-  recipient: 'patient'  
-});
+      action: 'book',
+      appointment: newBooking.toObject(),
+      doctor: formattedDoctor,
+      patient: { 
+    name: newBooking.name, 
+    phone: newBooking.phone,
+    age: newBooking.age 
+  },
+      recipient: 'patient'
+    });
 
-const doctorMessage = formatMessage({
-  action: 'book',
-  appointment: newBooking,
-  doctor: formattedDoctor,
-  patient,
-  recipient: 'doctor'  
-});
+    const doctorMessage = formatMessage({
+      action: 'book',
+      appointment: newBooking.toObject(),
+      doctor: formattedDoctor,
+patient: { 
+    name: newBooking.name, 
+    phone: newBooking.phone,
+    age: newBooking.age 
+  },
+      recipient: 'doctor'
+    });
 
-await notifyAll({ patient, message: patientMessage });
-await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
+    await notifyAll({ patient, message: patientMessage });
+    await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
+    // Fetch the admin (assuming role field exists in User model)
+const admin = await User.findOne({ role: 'admin' });
+
+if (admin) {
+  const adminMessage = formatMessage({
+    action: 'book',
+    appointment: newBooking.toObject(),
+    doctor: formattedDoctor,
+    patient,
+     age: newBooking.age,
+    recipient: 'admin'
+  });
+
+  await notifyAll({ admin, message: adminMessage });
+}
+
 
     const patientName = patient ? patient.name : 'Unknown';
     res.status(201).json({
@@ -88,6 +158,8 @@ await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
     res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
+
+
 
 const cancelAppointment = async (req, res) => {
   try {
@@ -143,46 +215,58 @@ const cancelAppointment = async (req, res) => {
 
     await doctor.save();
     console.log("💾 Doctor saved with updated availability:", doctor.availabilitySlots);
-    
-   console.log("📍 Cancel flow reached");
-console.log("Booking data:", booking);
 
-const patient = await User.findById(booking.patientId);
-console.log("Fetched patient:", patient);
+    console.log("📍 Cancel flow reached");
+    console.log("Booking data:", booking);
 
-const doctorData = await Doctor.findById(booking.doctorId);
-console.log("Fetched doctorData:", doctorData);
+    const patient = await User.findById(booking.patientId);
+    console.log("Fetched patient:", patient);
 
-const formattedDoctor = {
-  _id: doctorData?._id,
-  email: doctorData?.email,
-  name: doctorData?.name,
-  role: doctorData?.role || 'doctor'
+    const doctorData = await Doctor.findById(booking.doctorId);
+    console.log("Fetched doctorData:", doctorData);
+
+    const formattedDoctor = {
+      _id: doctorData?._id,
+      email: doctorData?.email,
+      name: doctorData?.name,
+      role: doctorData?.role || 'doctor'
     };
     console.log("🔍 formattedDoctor debug:", formattedDoctor);
 
 
-const action = canceledBy === 'doctor' ? 'cancel-doctor' : 'cancel-patient';
+    const action = canceledBy === 'doctor' ? 'cancel-doctor' : 'cancel-patient';
 
-const patientMessage = formatMessage({
-  action,
-  appointment: booking,
-  doctor: formattedDoctor,
-  patient,
-  recipient: 'patient'
-});
+    const patientMessage = formatMessage({
+      action,
+      appointment: booking,
+      doctor: formattedDoctor,
+      patient,
+      recipient: 'patient'
+    });
 
-const doctorMessage = formatMessage({
-  action,
-  appointment: booking,
-  doctor: formattedDoctor,
-  patient,
-  recipient: 'doctor'
-});
+    const doctorMessage = formatMessage({
+      action,
+      appointment: booking,
+      doctor: formattedDoctor,
+      patient,
+      recipient: 'doctor'
+    });
 
-await notifyAll({ patient, message: patientMessage });
-await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
-return res.status(200).json({ message: 'Booking cancelled and slot restored' });
+    await notifyAll({ patient, message: patientMessage });
+    await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
+    const admin = await User.findOne({ role: 'admin' });
+    if (admin) {
+      const adminMessage = formatMessage({
+        action,
+        appointment: booking,
+        doctor: formattedDoctor,
+        patient,
+        recipient: 'admin'
+      });
+      await notifyAll({ admin, message: adminMessage });
+    }
+    
+    return res.status(200).json({ message: 'Booking cancelled and slot restored' });
 
   } catch (err) {
     console.error('❌ Cancel booking error:', err);
@@ -192,19 +276,22 @@ return res.status(200).json({ message: 'Booking cancelled and slot restored' });
 // Reschedule Appointment
 const rescheduleAppointment = async (req, res) => {
   const { id } = req.params;
-  const { newDate, newTime, rescheduledBy } = req.body;
+  const { newDate, newTime, rescheduledBy } = req.body; // 'doctor' or 'admin'
 
-  if (rescheduledBy === 'admin') {
-    return res.status(403).json({ success: false, message: "Only doctors can reschedule appointments." });
+  // Optional: validate rescheduledBy
+  if (!['doctor', 'admin'].includes(rescheduledBy)) {
+    return res.status(400).json({ success: false, message: "Invalid rescheduler role." });
   }
 
   try {
     const formattedDate = new Date(newDate).toISOString().split('T')[0];
+
     const currentAppointment = await Booking.findById(id);
     if (!currentAppointment) {
       return res.status(404).json({ success: false, message: "Appointment not found" });
     }
 
+    // Check for conflicts
     const conflict = await Booking.findOne({
       doctorId: currentAppointment.doctorId,
       date: new Date(formattedDate),
@@ -216,12 +303,23 @@ const rescheduleAppointment = async (req, res) => {
       return res.status(409).json({ success: false, message: "Doctor already has an appointment at this time." });
     }
 
-    const updatedAppointment = await Booking.findByIdAndUpdate(
-      id,
-      { date: newDate, time: newTime, status: 'pending' },
-      { new: true }
-    );
+    // Update appointment
+    // Fetch and update manually
+const appointment = await Booking.findById(id);
+if (!appointment) {
+  return res.status(404).json({ success: false, message: "Appointment not found" });
+}
 
+appointment.date = newDate;
+appointment.time = newTime;
+appointment.status = 'pending';
+appointment.rescheduledBy = rescheduledBy;
+
+// Save the updated appointment
+const updatedAppointment = await appointment.save();
+
+
+    // Remove the slot from doctor's availability
     await Doctor.updateOne(
       { _id: currentAppointment.doctorId, "availabilitySlots.date": newDate },
       { $pull: { "availabilitySlots.$.slots": newTime } }
@@ -241,31 +339,42 @@ const rescheduleAppointment = async (req, res) => {
       role: doctorData.role || 'doctor'
     };
 
-    const action = 'reschedule-doctor'; 
+    // Adjust action message based on who rescheduled
+    const action = rescheduledBy === 'admin' ? 'reschedule-admin' : 'reschedule-doctor';
 
-   const patientMessage = formatMessage({
-  action,
-  appointment: updatedAppointment,
-  doctor: formattedDoctor,
-  patient,
-  recipient: 'patient'
-});
+    const patientMessage = formatMessage({
+      action,
+      appointment: updatedAppointment,
+      doctor: formattedDoctor,
+      patient,
+      recipient: 'patient'
+    });
 
-const doctorMessage = formatMessage({
-  action,
-  appointment: updatedAppointment,
-  doctor: formattedDoctor,
-  patient,
-  recipient: 'doctor'
-});
+    const doctorMessage = formatMessage({
+      action,
+      appointment: updatedAppointment,
+      doctor: formattedDoctor,
+      patient,
+      recipient: 'doctor'
+    });
 
-await notifyAll({ patient, message: patientMessage });
-await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
-
+    await notifyAll({ patient, message: patientMessage });
+    await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
+    const admin = await User.findOne({ role: 'admin' });
+    if (admin) {
+      const adminMessage = formatMessage({
+        action,
+        appointment: updatedAppointment,
+        doctor: formattedDoctor,
+        patient,
+        recipient: 'admin'
+      });
+      await notifyAll({ admin, message: adminMessage });
+    }
 
     res.status(200).json({
       success: true,
-      message: "Appointment rescheduled successfully",
+      message: `Appointment rescheduled successfully by ${rescheduledBy}`,
       appointment: updatedAppointment
     });
 
@@ -274,6 +383,7 @@ await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
     res.status(500).json({ success: false, message: "Failed to reschedule appointment" });
   }
 };
+
 
 const getPatientBookings = async (req, res) => {
   const { patientId } = req.params;
@@ -363,6 +473,75 @@ const updateAppointmentStatus = async (req, res) => {
       console.log("✅ Cancellation notifications sent successfully");
     }
 
+    // ✅ If status is "Completed", send notifications
+if (status === 'completed' || status === 'Completed') {
+  const patient = await User.findById(updatedAppointment.patientId);
+  const doctorData = await Doctor.findById(updatedAppointment.doctorId);
+
+  if (patient && doctorData) {
+    const formattedDoctor = {
+      _id: doctorData._id,
+      email: doctorData.email,
+      name: doctorData.name,
+      role: doctorData.role || 'doctor'
+    };
+
+    const action = 'complete';
+
+    const patientMessage = formatMessage({
+      action,
+      appointment: updatedAppointment,
+      doctor: formattedDoctor,
+      patient,
+      recipient: 'patient'
+    });
+
+    const doctorMessage = formatMessage({
+      action,
+      appointment: updatedAppointment,
+      doctor: formattedDoctor,
+      patient,
+      recipient: 'doctor'
+    });
+
+    // Send notifications
+    await notifyAll({ patient, message: patientMessage });
+    await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
+  }
+}
+
+
+    // ✅ New logic: Handle missed appointment & block at 4th miss
+    if (status === 'Missed') {
+      const patient = await User.findById(updatedAppointment.patientId);
+
+      if (patient) {
+        // Increase missed count
+        patient.missedAppointments = (patient.missedAppointments || 0) + 1;
+
+        // If 4th missed appointment, block for 7 days and notify
+        if (patient.missedAppointments >= 4 && !patient.isBlocked) {
+          patient.isBlocked = true;
+          patient.blockedUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days block
+
+          await patient.save();
+
+          const blockMessage = formatMessage({
+            action: 'block',
+            appointment: updatedAppointment,
+            doctor: null,
+            patient,
+            recipient: 'patient'
+          });
+
+          console.log("🚫 Sending block notification to patient...");
+          await notifyAll({ patient, message: blockMessage });
+        } else {
+          await patient.save();
+        }
+      }
+    }
+
     res.status(200).json({ success: true, appointment: updatedAppointment });
 
   } catch (err) {
@@ -370,6 +549,7 @@ const updateAppointmentStatus = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
 
 const getAllAppointmentsForDoctor = async (req, res) => {
   const { doctorId } = req.params;

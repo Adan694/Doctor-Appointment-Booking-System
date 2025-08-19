@@ -10,7 +10,6 @@ const {insertUser,
     login,
     signup,
     requestOtp, forgotPassword, resetPassword} = require('../Controllers/AuthController'); 
-const Otp = require('../models/otp');
 const nodemailer = require('nodemailer');
 const user = require('../models/users'); 
 const Doctor = require('../models/doctors'); 

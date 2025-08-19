@@ -374,6 +374,226 @@ tr:hover td {
                 width: 100%;
             }
         }
+/* === Modal Overlay === */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0; /* shorthand for top/left/right/bottom: 0 */
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal.active {
+  display: flex;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* === Modal Box === */
+.modal-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  max-width: 480px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+  border: 1px solid #e0e0e0; /* subtle border */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-content:hover {
+  transform: translateY(-3px); /* floating hover effect */
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* === Close Button === */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 26px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.close-btn:hover {
+  color: #e74c3c;
+  transform: rotate(90deg); /* fun hover animation */
+}
+
+/* === Title === */
+.modal-content h2 {
+  margin-bottom: 18px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+/* === Labels & Inputs === */
+.modal-content label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+}
+
+.modal-content select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  font-size: 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-content select:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.4);
+  outline: none;
+}
+
+/* === Buttons === */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.modal-actions button {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+/* Primary button */
+.modal-actions button:first-child {
+  background: #4CAF50;
+  color: white;
+}
+.modal-actions button:first-child:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+/* Secondary (Cancel) */
+.modal-actions button:last-child {
+  background: #ccc;
+  color: #333;
+}
+.modal-actions button:last-child:hover {
+  background: #b3b3b3;
+  transform: translateY(-2px);
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
+/* Target only buttons inside Action column */
+td.action-cell button {
+  background-color: #166e6b;   /* green */
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+td.action-cell button:hover {
+  background-color: #45a049;  /* darker green on hover */
+}
+/* Loader text */
+.loader-text {
+  font-size: 14px;
+  color: #555;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Disabled button style */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+/* Popup overlay */
+#successPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+/* Popup box */
+#successPopup .popup-content {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 14px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  animation: popupScale 0.3s ease;
+  position: relative;
+}
+
+/* Success icon */
+#successPopup .popup-icon {
+  font-size: 50px;
+  color: #4CAF50;
+  margin-bottom: 15px;
+  animation: bounce 0.6s ease;
+}
+
+/* Close button */
+#successPopup .close-popup {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  margin-top: 15px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s;
+}
+#successPopup .close-popup:hover {
+  background: #43a047;
+}
+
+/* Animations */
+@keyframes popupScale {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes bounce {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
     </style>
 </head>
 
@@ -448,7 +668,7 @@ tr:hover td {
                     <th>Age</th>
                     <th>Date & Time</th>
                     <th>Doctor</th>
-                    <!-- <th>Action</th> -->
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="missed-cancelled-appointments-table"></tbody>
@@ -458,6 +678,30 @@ tr:hover td {
         <span id="page-info-missed">Page 1</span>
         <button onclick="nextPage('missed')">Next</button>
     </div>
+    <!-- Reschedule Modal -->
+<div id="rescheduleModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Reschedule Appointment</h2>
+        <input type="hidden" id="appointmentId" />
+        <label for="availableSlots">Select a slot:</label>
+        <select id="availableSlots">
+            <option value="">Select a slot</option>
+        </select>
+        <div class="modal-actions">
+            <button id="confirmRescheduleBtn">Confirm Reschedule</button>
+            <button id="cancelModalBtn">Cancel</button>
+        </div>
+    </div>
+</div>
+<div id="successPopup">
+    <div class="popup-content">
+        <div class="popup-icon">✅</div>
+        <h2>Appointment Rescheduled!</h2>
+        <p>Your appointment has been updated successfully.</p>
+        <button class="close-popup">OK</button>
+    </div>
+</div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -475,66 +719,6 @@ tr:hover td {
             sidebar.classList.remove('active');
             overlay.classList.remove('active');
         });
-
-        async function fetchAppointments() {
-                try {
-                    const response = await fetch('http://localhost:3000/api/appointments/all');
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    const appointments = await response.json();
-
-                    const upcomingTableBody = document.getElementById('upcoming-appointments-table');
-                    const completedTableBody = document.getElementById('completed-appointments-table');
-                    const missedCancelledTableBody = document.getElementById('missed-cancelled-appointments-table');
-
-                    upcomingTableBody.innerHTML = '';
-                    completedTableBody.innerHTML = '';
-                    missedCancelledTableBody.innerHTML = '';
-
-                    let upcomingIndex = 1,
-                        completedIndex = 1,
-                        missedCancelledIndex = 1;
-
-                    appointments.forEach((appointment) => {
-                        const row = document.createElement('tr');
-                        row.setAttribute('data-id', appointment._id);
-
-                        const status = appointment.status?.trim().toLowerCase(); 
-
-                        const statusClass =
-                            status === 'cancelled'
-                                ? 'cancelled'
-                                : status === 'completed'
-                                    ? 'completed'
-                                    : '';
-
-
-                        row.innerHTML = `
-                        <td></td>
-                        <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
-                        <td>${appointment.patientId?.age || 'N/A'}</td>
-                        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
-                        <td>${appointment.doctorId?.name || 'N/A'}</td>
-                            `;
-
-                        if (status === 'completed') {
-                            row.querySelector('td').textContent = completedIndex++;
-                            completedTableBody.appendChild(row);
-                        } else if (status === 'cancelled' || status === 'missed') {
-                            row.querySelector('td').textContent = missedCancelledIndex++;
-                            missedCancelledTableBody.appendChild(row);
-                        } else {
-                            row.querySelector('td').textContent = upcomingIndex++;
-                            upcomingTableBody.appendChild(row);
-                        }
-                    });
-                } catch (error) {
-                    console.error('Failed to fetch appointments:', error);
-                }
-
-                paginateTable('upcoming');
-                paginateTable('completed');
-                paginateTable('missed');
-            }
 
             const paginationState = {
                 upcoming: { page: 1, perPage: 6 },
@@ -592,6 +776,254 @@ tr:hover td {
         document.addEventListener('DOMContentLoaded', () => {
             fetchAppointments();
         });
+
+        async function fetchAppointments() {
+                try {
+                    const response = await fetch('http://localhost:3000/api/appointments/all');
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const appointments = await response.json();
+
+                    const upcomingTableBody = document.getElementById('upcoming-appointments-table');
+                    const completedTableBody = document.getElementById('completed-appointments-table');
+                    const missedCancelledTableBody = document.getElementById('missed-cancelled-appointments-table');
+
+                    upcomingTableBody.innerHTML = '';
+                    completedTableBody.innerHTML = '';
+                    missedCancelledTableBody.innerHTML = '';
+
+                    let upcomingIndex = 1,
+                        completedIndex = 1,
+                        missedCancelledIndex = 1;
+
+                   appointments.forEach((appointment) => {
+                        const row = document.createElement('tr');
+                        row.setAttribute('data-id', appointment._id);
+                        row.setAttribute('data-doctor-id', appointment.doctorId?._id || '');
+
+                        const status = appointment.status?.trim().toLowerCase();
+
+                        // Only cancelled or missed get action cell
+                        if (status === 'cancelled' || status === 'missed') {
+                            row.innerHTML = `
+            <td></td>
+            <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
+            <td>${appointment.patientId?.age || 'N/A'}</td>
+            <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
+            <td>${appointment.doctorId?.name || 'N/A'}</td>
+            <td class="action-cell"></td>
+        `;
+                            const actionCell = row.querySelector('.action-cell');
+
+                            if (status === 'cancelled') {
+                                const rescheduleBtn = document.createElement('button');
+                                rescheduleBtn.textContent = 'Reschedule';
+                                rescheduleBtn.addEventListener('click', () => {
+                                    window.rescheduleAppointment(row);
+                                });
+                                actionCell.appendChild(rescheduleBtn);
+                            } else if (status === 'missed') {
+                                // Simply show "Missed" text
+                                actionCell.textContent = 'Missed';
+                            }
+                        } else {
+                            // For completed & upcoming appointments
+                            row.innerHTML = `
+            <td></td>
+            <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
+            <td>${appointment.patientId?.age || 'N/A'}</td>
+            <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
+            <td>${appointment.doctorId?.name || 'N/A'}</td>
+        `;
+                        }
+
+                        // Append row to correct table
+                        if (status === 'completed') {
+                            row.querySelector('td').textContent = completedIndex++;
+                            completedTableBody.appendChild(row);
+                        } else if (status === 'cancelled' || status === 'missed') {
+                            row.querySelector('td').textContent = missedCancelledIndex++;
+                            missedCancelledTableBody.appendChild(row);
+                        } else {
+                            row.querySelector('td').textContent = upcomingIndex++;
+                            upcomingTableBody.appendChild(row);
+                        }
+                    });
+
+
+                } catch (error) {
+                    console.error('Failed to fetch appointments:', error);
+                }
+
+                paginateTable('upcoming');
+                paginateTable('completed');
+                paginateTable('missed');
+            }
+
+           window.rescheduleAppointment = async function (row) {
+                const token = localStorage.getItem("token");
+                const appointmentId = row.dataset.id;
+                const doctorId = row.dataset.doctorId;
+
+                document.getElementById('appointmentId').value = appointmentId;
+                const select = document.getElementById("availableSlots");
+
+                // show loader immediately
+                select.innerHTML = "<option>Loading available slots...</option>";
+                openModal(); // ✅ open modal right away, then update later
+
+                try {
+                    const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await res.json();
+                    const slotsData = data.availabilitySlots || [];
+
+                    const appointmentsRes = await fetch(`http://localhost:3000/api/appointments/all`);
+                    const allAppointments = await appointmentsRes.json();
+                    const bookedSlots = allAppointments
+                        .filter(app => app.doctorId?._id === doctorId && app.status !== 'cancelled')
+                        .map(app => `${app.date}|${app.time}`);
+
+                    select.innerHTML = "<option value=''>Select a slot</option>";
+                    let slotCount = 0;
+
+                    slotsData.forEach(day => {
+                        const dateStr = day.date.trim();
+                        day.slots.forEach(timeStr => {
+                            const timeTrimmed = timeStr.trim();
+                            if (bookedSlots.includes(`${dateStr}|${timeTrimmed}`)) return;
+
+                            const [hour, minute] = timeTrimmed.split(':').map(Number);
+                            const [year, month, dayNum] = dateStr.split('-').map(Number);
+                            const slotDateTime = new Date(year, month - 1, dayNum, hour, minute);
+                            if (slotDateTime <= new Date()) return;
+
+                            const option = document.createElement("option");
+                            option.value = `${dateStr}|${timeTrimmed}`;
+                            option.textContent = `${dateStr} at ${timeTrimmed}`;
+                            select.appendChild(option);
+                            slotCount++;
+                        });
+                    });
+
+                    if (slotCount === 0) {
+                        select.innerHTML = "<option>No available slots</option>";
+                    }
+
+                } catch (error) {
+                    console.error("Reschedule error:", error);
+                    select.innerHTML = "<option>Error loading slots</option>";
+                }
+            };
+
+
+           async function confirmReschedule() {
+                const confirmBtn = document.getElementById("confirmRescheduleBtn");
+                const cancelBtn = document.getElementById("cancelModalBtn");
+
+                const selectedSlot = document.getElementById('availableSlots').value;
+                const appointmentId = document.getElementById('appointmentId').value;
+
+                if (!selectedSlot) {
+                    alert("Please select a time slot.");
+                    return;
+                }
+
+                const [newDate, newTime] = selectedSlot.split('|');
+
+                // show processing state
+                confirmBtn.disabled = true;
+                cancelBtn.disabled = true;
+                confirmBtn.textContent = "Processing...";
+
+                try {
+                    const res = await fetch(`http://localhost:3000/api/appointments/${appointmentId}/reschedule`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ newDate, newTime, rescheduledBy: 'admin' })
+                    });
+                    const data = await res.json();
+
+                   if (data.success) {
+                        closeModal();
+                        showSuccessPopup("Appointment successfully rescheduled!");
+                        setTimeout(() => location.reload(), 2000); // reload after 2s
+                    } else {
+                        showSuccessPopup(" Failed to reschedule, try again.");
+                    }
+
+
+                } catch (err) {
+                    console.error(err);
+                    alert("Error occurred. Try again.");
+                } finally {
+                    // restore button
+                    confirmBtn.disabled = false;
+                    cancelBtn.disabled = false;
+                    confirmBtn.textContent = "Confirm Reschedule";
+                }
+            }
+  function showSuccessPopup(message = "Appointment Rescheduled Successfully!") {
+        const popup = document.getElementById("successPopup");
+        popup.style.display = "flex";
+        popup.querySelector("h2").textContent = message;
+
+        // disable background scroll
+        document.body.style.overflow = "hidden";
+
+        // close button event
+        popup.querySelector(".close-popup").onclick = () => {
+            closeSuccessPopup();
+        };
+    }
+
+    function closeSuccessPopup() {
+        const popup = document.getElementById("successPopup");
+        popup.style.display = "none";
+        document.body.style.overflow = "";
+    }
+
+        document.addEventListener("DOMContentLoaded", () => {
+                const modal = document.getElementById("rescheduleModal");
+                const closeBtn = modal.querySelector(".close-btn");
+                const cancelBtn = document.getElementById("cancelModalBtn");
+                const confirmBtn = document.getElementById("confirmRescheduleBtn");
+
+                // Open modal
+                window.openModal = function () {
+                    modal.classList.add("active");
+                    document.body.style.overflow = "hidden"; // disable scroll
+                };
+
+                // Close modal
+                window.closeModal = function () {
+                    modal.classList.remove("active");
+                    document.body.style.overflow = ""; // restore scroll
+                };
+
+                // Events
+                closeBtn.addEventListener("click", closeModal);
+                cancelBtn.addEventListener("click", closeModal);
+
+                // Close on backdrop click
+                modal.addEventListener("click", (event) => {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
+                });
+
+                // Close on ESC key
+                document.addEventListener("keydown", (event) => {
+                    if (event.key === "Escape" && modal.classList.contains("active")) {
+                        closeModal();
+                    }
+                });
+
+                // Confirm button action
+                confirmBtn.addEventListener("click", confirmReschedule);
+            });
+
+
     </script>
 </body>
 

@@ -31,10 +31,6 @@ const submitFeedback = async (req, res) => {
         const message = `📝 New feedback from ${user.name} for Dr. ${doctor.name}`;
 
         if (admin) {
-            await Notification.create({
-                userId: admin._id,
-                message: message
-            });
 
             await notifyAll({
                 patient: null,

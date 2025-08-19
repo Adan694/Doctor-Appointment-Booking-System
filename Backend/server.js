@@ -8,7 +8,6 @@ const mongoose = require('mongoose');
 const path = require('path'); 
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer'); 
-const Otp = require('./models/otp'); 
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userroutes');
 const doctorroutes = require('./routes/doctorroutes');
@@ -82,39 +81,39 @@ app.post('/contact', async (req, res) => {
   }
 });
 // Create initial admin user if not exists
-async function createInitialAdmin() {
-  try {
-    const adminEmail = 'admin@example.com';
-    const existingAdmin = await User.findOne({ email: adminEmail });
+// async function createInitialAdmin() {
+//   try {
+//     const adminEmail = 'admin@example.com';
+//     const existingAdmin = await User.findOne({ email: adminEmail });
 
-    if (existingAdmin) {
-      console.log('Initial admin user already exists.');
-      return;
-    }
+//     if (existingAdmin) {
+//       console.log('Initial admin user already exists.');
+//       return;
+//     }
 
-    const password = 'Admin@123';
-    const hashedPassword = await bcrypt.hash(password, 10);
+//     const password = 'Admin@123';
+//     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const adminUser = new User({
-      email: adminEmail,
-      password: hashedPassword,
-      role: 'admin',
-      name: 'Super Admin',
-      phone: '',
-      age: null,
-      dob: '',
-      gender: 'other',
-    });
+//     const adminUser = new User({
+//       email: adminEmail,
+//       password: hashedPassword,
+//       role: 'admin',
+//       name: 'Super Admin',
+//       phone: '',
+//       age: null,
+//       dob: '',
+//       gender: 'other',
+//     });
 
-    await adminUser.save();
-    console.log('Initial admin user created successfully.');
-  } catch (error) {
-    console.error('Error creating initial admin user:', error);
-  }
-}
-(async () => {
-  await createInitialAdmin();
-})();
+//     await adminUser.save();
+//     console.log('Initial admin user created successfully.');
+//   } catch (error) {
+//     console.error('Error creating initial admin user:', error);
+//   }
+// }
+// (async () => {
+//   await createInitialAdmin();
+// })();
 
 
 // Start the server

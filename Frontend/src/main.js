@@ -44,25 +44,34 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error("Error:", err);
             });
     }
-
 // Update navigation bar based on user role
-   function updateNavbar() {
+function updateNavbar() {
     const profileMenu = document.getElementById('profileMenu');
     const authButton = document.getElementById('authButton');
     const userRole = localStorage.getItem('userRole');
 
+    // ✅ define dropdown UL inside profileMenu
+    const dropdown = profileMenu ? profileMenu.querySelector('.dropdown-menu') : null;
+
     if (userRole === 'patient') {
         if (profileMenu) profileMenu.style.display = 'block';
-        if (authButton) {
-            authButton.innerHTML = `
-                <a href="javascript:void(0);" onclick="logout()" class="logout-button">
-                    <i class="fa-solid fa-right-from-bracket"></i> Logout
-                </a>
-            `;
-        }
+        if (authButton) authButton.style.display = 'none'; // hide login/logout button area
+
+        // ✅ Add Logout inside dropdown if not already added
+       if (dropdown && !document.getElementById('logoutLink')) {
+    const logoutLi = document.createElement('li');
+    logoutLi.innerHTML = `
+        <a href="javascript:void(0);" id="logoutLink" class="logout-button" onclick="logout()">
+             Logout
+        </a>
+    `;
+    dropdown.appendChild(logoutLi);
+}
+
     } else {
         if (profileMenu) profileMenu.style.display = 'none';
         if (authButton) {
+            authButton.style.display = 'block';
             authButton.innerHTML = `
                 <a href="login.html" class="login-button">
                     <i class="fa-solid fa-right-to-bracket"></i> Login
@@ -70,33 +79,43 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
         }
     }
-    }
-    // Profile icon click event
-const profileIcon = profileMenu.querySelector('.profile-icon');
-profileIcon.addEventListener('click', function(e) {
-    e.stopPropagation();
-    profileMenu.classList.toggle('active');
-});
-    document.addEventListener('click', () => {
-        if (profileMenu) profileMenu.classList.remove('active');
+}
+
+// Profile icon click event
+const profileMenu = document.getElementById('profileMenu');
+if (profileMenu) {
+    const profileIcon = profileMenu.querySelector('.profile-icon');
+    profileIcon.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileMenu.classList.toggle('active');
     });
+
+    document.addEventListener('click', (e) => {
+        if (!profileMenu.contains(e.target)) {
+            profileMenu.classList.remove('active');
+        }
+    });
+}
+
+updateNavbar();
+
+// Logout function
+window.logout = function () {
+    console.log("🚪 Logging out...");
+    localStorage.removeItem('userRole');
     updateNavbar();
+    location.reload();
+};
 
-     // Logout function
-    window.logout = function () {
-        localStorage.removeItem('userRole');
-        updateNavbar();
-        location.reload();
-    };
 
-    // Mobile menu toggle
-    const bar = document.getElementById('bar');
-    if (bar) {
-        bar.addEventListener('click', function () {
-            const menu = document.querySelector('nav ul');
-            menu.classList.toggle('active');
-        });
-    }
+// Mobile menu toggle
+const bar = document.getElementById('bar');
+if (bar) {
+    bar.addEventListener('click', function () {
+        const menu = document.querySelector('nav ul');
+        menu.classList.toggle('active');
+    });
+}
 
     // Initialize slides for patient cards
     slide.forEach(function (slides, index) {

@@ -380,25 +380,27 @@ h1.page-title:hover {
      
 
      nav ul {
-        display: none; 
+        /* display: none;  */
         flex-direction: column; 
         width: 100%; 
         position: absolute; 
-        top: 60px;
+        top: 70px;
         left: 0;
         background-color: rgb(9, 102, 102);
-        transition: max-height 0.3s ease;
+        opacity: 0;         
+        transition: max-height 0.4s ease, opacity 0.4s ease;      
         overflow: hidden;
         max-height: 0;
     }
 
     nav ul.active {
-        display: flex; 
+        /* display: flex;  */
         max-height: 300px; 
+        opacity: 1;
     }
 
     nav ul li {
-        padding: 10px 0;
+        padding: 5px 0;
         text-align: center;   
     }
 
@@ -418,7 +420,7 @@ h1.page-title:hover {
 
 
     .container {
-        padding-top: 100px; 
+        padding-top: 50px; 
         }
 
     .page-title {
