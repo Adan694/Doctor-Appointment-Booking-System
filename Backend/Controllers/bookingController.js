@@ -73,6 +73,20 @@ if (patientAppointmentsToday >= maxDailyAppointments) {
     if (!slotDay || !slotDay.slots.includes(time)) {
       return res.status(400).json({ success: false, message: "Slot not available" });
     }
+    // Generate unique 3-digit token for doctor+date
+const generateToken = async (doctorId, date) => {
+  let token;
+  let exists = true;
+
+  while (exists) {
+    token = Math.floor(100 + Math.random() * 900); // 100–999
+    exists = await Booking.findOne({ doctorId, date: new Date(date), token });
+  }
+  return token;
+};
+
+const token = await generateToken(doctorId, formattedDate);
+
 
     const newBooking = new Booking({
       patientId,
@@ -82,7 +96,8 @@ if (patientAppointmentsToday >= maxDailyAppointments) {
       name: req.body.name,
       phone: req.body.phone,
       email: patient.email,          // use patient email
-  age 
+      age,
+      token 
     });
     await newBooking.save();
 
@@ -102,9 +117,10 @@ if (patientAppointmentsToday >= maxDailyAppointments) {
       appointment: newBooking.toObject(),
       doctor: formattedDoctor,
       patient: { 
-    name: newBooking.name, 
-    phone: newBooking.phone,
-    age: newBooking.age 
+      name: newBooking.name, 
+      phone: newBooking.phone,
+      age: newBooking.age,
+      token: newBooking.token 
   },
       recipient: 'patient'
     });
@@ -113,11 +129,12 @@ if (patientAppointmentsToday >= maxDailyAppointments) {
       action: 'book',
       appointment: newBooking.toObject(),
       doctor: formattedDoctor,
-patient: { 
-    name: newBooking.name, 
-    phone: newBooking.phone,
-    age: newBooking.age 
-  },
+      patient: { 
+      name: newBooking.name, 
+      phone: newBooking.phone,
+      age: newBooking.age,
+      token: newBooking.token 
+      },
       recipient: 'doctor'
     });
 
@@ -150,6 +167,7 @@ if (admin) {
         doctorId,
         date,
         time,
+        token: newBooking.token ,
         patientName
       }
     });
@@ -273,6 +291,17 @@ const cancelAppointment = async (req, res) => {
     return res.status(500).json({ message: 'Server error' });
   }
 };
+const generateToken = async (doctorId, date) => {
+  let token;
+  let exists = true;
+
+  while (exists) {
+    token = Math.floor(100 + Math.random() * 900); // 100–999
+    exists = await Booking.findOne({ doctorId, date: new Date(date), token });
+  }
+  return token;
+};
+
 // Reschedule Appointment
 const rescheduleAppointment = async (req, res) => {
   const { id } = req.params;
@@ -309,12 +338,15 @@ const appointment = await Booking.findById(id);
 if (!appointment) {
   return res.status(404).json({ success: false, message: "Appointment not found" });
 }
-
+const oldDate = appointment.date.toISOString().split('T')[0];
+const newDateFormatted = new Date(newDate).toISOString().split('T')[0];
 appointment.date = newDate;
 appointment.time = newTime;
 appointment.status = 'pending';
 appointment.rescheduledBy = rescheduledBy;
-
+if (oldDate !== newDateFormatted) {
+  appointment.token = await generateToken(appointment.doctorId, newDateFormatted);
+}
 // Save the updated appointment
 const updatedAppointment = await appointment.save();
 

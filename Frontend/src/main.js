@@ -269,6 +269,22 @@ nextArrow.addEventListener('click', () => {
     animateWords('#heading1', 200);
     animateWords('#heading3', 300);
     function showToast(msg) {
-        alert(msg); // Replace with a fancier toast if needed
+        alert(msg); 
     }
 })
+// Open Popup
+function openSpecialityPopup() {
+    document.getElementById("specialityPopup").style.display = "flex";
+    document.body.style.overflow = "hidden";  
+}
+
+// Close Popup
+function closeSpecialityPopup() {
+    document.getElementById("specialityPopup").style.display = "none";
+    document.body.style.overflow = "auto";   
+}
+
+
+function goToSpeciality(speciality) {
+  window.location.href = "Alldoctorsreal.html?speciality=" + encodeURIComponent(speciality);
+}

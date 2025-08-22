@@ -8,17 +8,16 @@ const bookingSchema = new mongoose.Schema({
     feedback: { type: String, default: "" },
     name: { type: String },
     phone: { type: String },
-email: { type: String },
-age: { type: Number },
-
-
+    email: { type: String },
+    age: { type: Number },
+    token: { type: Number, required: true }, 
     status: { 
         type: String, 
         enum: ['pending', 'confirmed', 'completed', 'cancelled', 'missed'],
         default: 'pending'
     },
     reminderSent24hr: { type: Boolean, default: false },
-reminderSent30min: { type: Boolean, default: false },
-}, { timestamps: true });
+    reminderSent30min: { type: Boolean, default: false },
+    }, { timestamps: true });
 
 module.exports = mongoose.model('Booking', bookingSchema);

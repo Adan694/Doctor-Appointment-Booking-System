@@ -704,28 +704,27 @@ button:disabled {
 </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const bar = document.getElementById('bar');
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('overlay');
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const bar = document.getElementById('bar');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('overlay');
 
-        bar.addEventListener('click', function () {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        });
+    bar.addEventListener('click', function () {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    });
 
-        overlay.addEventListener('click', function () {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-        });
+    overlay.addEventListener('click', function () {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    });
 
-            const paginationState = {
-                upcoming: { page: 1, perPage: 6 },
-                completed: { page: 1, perPage: 6 },
-                missed: { page: 1, perPage: 6 },
-            };
-
+    const paginationState = {
+        upcoming: { page: 1, perPage: 6 },
+        completed: { page: 1, perPage: 6 },
+        missed: { page: 1, perPage: 6 },
+    };
 
     function paginateTable(type) {
         const tableId = {
@@ -745,8 +744,16 @@ button:disabled {
             row.style.display = (i >= start && i < end) ? '' : 'none';
         });
 
+        const totalPages = Math.ceil(rows.length / state.perPage);
         const pageInfo = document.getElementById(`page-info-${type}`);
-        pageInfo.textContent = `Page ${state.page} of ${Math.ceil(rows.length / state.perPage)}`;
+        pageInfo.textContent = `Page ${state.page} of ${totalPages}`;
+
+        // Disable/enable buttons
+        const prevBtn = document.querySelector(`.pagination-controls[data-table="${tableId}"] button:first-child`);
+        const nextBtn = document.querySelector(`.pagination-controls[data-table="${tableId}"] button:last-child`);
+
+        if (prevBtn) prevBtn.disabled = state.page === 1;
+        if (nextBtn) nextBtn.disabled = state.page === totalPages || totalPages === 0;
     }
 
     function nextPage(type) {
@@ -773,205 +780,193 @@ button:disabled {
             paginateTable(type);
         }
     }
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchAppointments();
-        });
 
-        async function fetchAppointments() {
-                try {
-                    const response = await fetch('http://localhost:3000/api/appointments/all');
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    const appointments = await response.json();
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchAppointments();
+    });
 
-                    const upcomingTableBody = document.getElementById('upcoming-appointments-table');
-                    const completedTableBody = document.getElementById('completed-appointments-table');
-                    const missedCancelledTableBody = document.getElementById('missed-cancelled-appointments-table');
+    async function fetchAppointments() {
+        try {
+            const response = await fetch('http://localhost:3000/api/appointments/all');
+            if (!response.ok) throw new Error('Network response was not ok');
+            const appointments = await response.json();
 
-                    upcomingTableBody.innerHTML = '';
-                    completedTableBody.innerHTML = '';
-                    missedCancelledTableBody.innerHTML = '';
+            const upcomingTableBody = document.getElementById('upcoming-appointments-table');
+            const completedTableBody = document.getElementById('completed-appointments-table');
+            const missedCancelledTableBody = document.getElementById('missed-cancelled-appointments-table');
 
-                    let upcomingIndex = 1,
-                        completedIndex = 1,
-                        missedCancelledIndex = 1;
+            upcomingTableBody.innerHTML = '';
+            completedTableBody.innerHTML = '';
+            missedCancelledTableBody.innerHTML = '';
 
-                   appointments.forEach((appointment) => {
-                        const row = document.createElement('tr');
-                        row.setAttribute('data-id', appointment._id);
-                        row.setAttribute('data-doctor-id', appointment.doctorId?._id || '');
+            let upcomingIndex = 1, completedIndex = 1, missedCancelledIndex = 1;
 
-                        const status = appointment.status?.trim().toLowerCase();
+            appointments.forEach((appointment) => {
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', appointment._id);
+                row.setAttribute('data-doctor-id', appointment.doctorId?._id || '');
 
-                        // Only cancelled or missed get action cell
-                        if (status === 'cancelled' || status === 'missed') {
-                            row.innerHTML = `
-            <td></td>
-            <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
-            <td>${appointment.patientId?.age || 'N/A'}</td>
-            <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
-            <td>${appointment.doctorId?.name || 'N/A'}</td>
-            <td class="action-cell"></td>
-        `;
-                            const actionCell = row.querySelector('.action-cell');
+                const status = appointment.status?.trim().toLowerCase();
 
-                            if (status === 'cancelled') {
-                                const rescheduleBtn = document.createElement('button');
-                                rescheduleBtn.textContent = 'Reschedule';
-                                rescheduleBtn.addEventListener('click', () => {
-                                    window.rescheduleAppointment(row);
-                                });
-                                actionCell.appendChild(rescheduleBtn);
-                            } else if (status === 'missed') {
-                                // Simply show "Missed" text
-                                actionCell.textContent = 'Missed';
-                            }
-                        } else {
-                            // For completed & upcoming appointments
-                            row.innerHTML = `
-            <td></td>
-            <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
-            <td>${appointment.patientId?.age || 'N/A'}</td>
-            <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
-            <td>${appointment.doctorId?.name || 'N/A'}</td>
-        `;
-                        }
+                // Only cancelled or missed get action cell
+                if (status === 'cancelled' || status === 'missed') {
+                    row.innerHTML = `
+                        <td></td>
+                        <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
+                        <td>${appointment.patientId?.age || 'N/A'}</td>
+                        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
+                        <td>${appointment.doctorId?.name || 'N/A'}</td>
+                        <td class="action-cell"></td>
+                    `;
+                    const actionCell = row.querySelector('.action-cell');
 
-                        // Append row to correct table
-                        if (status === 'completed') {
-                            row.querySelector('td').textContent = completedIndex++;
-                            completedTableBody.appendChild(row);
-                        } else if (status === 'cancelled' || status === 'missed') {
-                            row.querySelector('td').textContent = missedCancelledIndex++;
-                            missedCancelledTableBody.appendChild(row);
-                        } else {
-                            row.querySelector('td').textContent = upcomingIndex++;
-                            upcomingTableBody.appendChild(row);
-                        }
-                    });
-
-
-                } catch (error) {
-                    console.error('Failed to fetch appointments:', error);
-                }
-
-                paginateTable('upcoming');
-                paginateTable('completed');
-                paginateTable('missed');
-            }
-
-           window.rescheduleAppointment = async function (row) {
-                const token = localStorage.getItem("token");
-                const appointmentId = row.dataset.id;
-                const doctorId = row.dataset.doctorId;
-
-                document.getElementById('appointmentId').value = appointmentId;
-                const select = document.getElementById("availableSlots");
-
-                // show loader immediately
-                select.innerHTML = "<option>Loading available slots...</option>";
-                openModal(); // ✅ open modal right away, then update later
-
-                try {
-                    const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const data = await res.json();
-                    const slotsData = data.availabilitySlots || [];
-
-                    const appointmentsRes = await fetch(`http://localhost:3000/api/appointments/all`);
-                    const allAppointments = await appointmentsRes.json();
-                    const bookedSlots = allAppointments
-                        .filter(app => app.doctorId?._id === doctorId && app.status !== 'cancelled')
-                        .map(app => `${app.date}|${app.time}`);
-
-                    select.innerHTML = "<option value=''>Select a slot</option>";
-                    let slotCount = 0;
-
-                    slotsData.forEach(day => {
-                        const dateStr = day.date.trim();
-                        day.slots.forEach(timeStr => {
-                            const timeTrimmed = timeStr.trim();
-                            if (bookedSlots.includes(`${dateStr}|${timeTrimmed}`)) return;
-
-                            const [hour, minute] = timeTrimmed.split(':').map(Number);
-                            const [year, month, dayNum] = dateStr.split('-').map(Number);
-                            const slotDateTime = new Date(year, month - 1, dayNum, hour, minute);
-                            if (slotDateTime <= new Date()) return;
-
-                            const option = document.createElement("option");
-                            option.value = `${dateStr}|${timeTrimmed}`;
-                            option.textContent = `${dateStr} at ${timeTrimmed}`;
-                            select.appendChild(option);
-                            slotCount++;
+                    if (status === 'cancelled') {
+                        const rescheduleBtn = document.createElement('button');
+                        rescheduleBtn.textContent = 'Reschedule';
+                        rescheduleBtn.addEventListener('click', () => {
+                            window.rescheduleAppointment(row);
                         });
-                    });
-
-                    if (slotCount === 0) {
-                        select.innerHTML = "<option>No available slots</option>";
+                        actionCell.appendChild(rescheduleBtn);
+                    } else if (status === 'missed') {
+                        actionCell.textContent = 'Missed';
                     }
-
-                } catch (error) {
-                    console.error("Reschedule error:", error);
-                    select.innerHTML = "<option>Error loading slots</option>";
-                }
-            };
-
-
-           async function confirmReschedule() {
-                const confirmBtn = document.getElementById("confirmRescheduleBtn");
-                const cancelBtn = document.getElementById("cancelModalBtn");
-
-                const selectedSlot = document.getElementById('availableSlots').value;
-                const appointmentId = document.getElementById('appointmentId').value;
-
-                if (!selectedSlot) {
-                    alert("Please select a time slot.");
-                    return;
+                } else {
+                    row.innerHTML = `
+                        <td></td>
+                        <td>${appointment.name || appointment.patientId?.name || 'N/A'}</td>
+                        <td>${appointment.patientId?.age || 'N/A'}</td>
+                        <td>${new Date(appointment.date).toLocaleDateString()} ${appointment.time}</td>
+                        <td>${appointment.doctorId?.name || 'N/A'}</td>
+                    `;
                 }
 
-                const [newDate, newTime] = selectedSlot.split('|');
-
-                // show processing state
-                confirmBtn.disabled = true;
-                cancelBtn.disabled = true;
-                confirmBtn.textContent = "Processing...";
-
-                try {
-                    const res = await fetch(`http://localhost:3000/api/appointments/${appointmentId}/reschedule`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ newDate, newTime, rescheduledBy: 'admin' })
-                    });
-                    const data = await res.json();
-
-                   if (data.success) {
-                        closeModal();
-                        showSuccessPopup("Appointment successfully rescheduled!");
-                        setTimeout(() => location.reload(), 2000); // reload after 2s
-                    } else {
-                        showSuccessPopup(" Failed to reschedule, try again.");
-                    }
-
-
-                } catch (err) {
-                    console.error(err);
-                    alert("Error occurred. Try again.");
-                } finally {
-                    // restore button
-                    confirmBtn.disabled = false;
-                    cancelBtn.disabled = false;
-                    confirmBtn.textContent = "Confirm Reschedule";
+                if (status === 'completed') {
+                    row.querySelector('td').textContent = completedIndex++;
+                    completedTableBody.appendChild(row);
+                } else if (status === 'cancelled' || status === 'missed') {
+                    row.querySelector('td').textContent = missedCancelledIndex++;
+                    missedCancelledTableBody.appendChild(row);
+                } else {
+                    row.querySelector('td').textContent = upcomingIndex++;
+                    upcomingTableBody.appendChild(row);
                 }
+            });
+
+        } catch (error) {
+            console.error('Failed to fetch appointments:', error);
+        }
+
+        paginateTable('upcoming');
+        paginateTable('completed');
+        paginateTable('missed');
+    }
+
+    window.rescheduleAppointment = async function (row) {
+        const token = localStorage.getItem("token");
+        const appointmentId = row.dataset.id;
+        const doctorId = row.dataset.doctorId;
+
+        document.getElementById('appointmentId').value = appointmentId;
+        const select = document.getElementById("availableSlots");
+
+        select.innerHTML = "<option>Loading available slots...</option>";
+        openModal();
+
+        try {
+            const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            const slotsData = data.availabilitySlots || [];
+
+            const appointmentsRes = await fetch(`http://localhost:3000/api/appointments/all`);
+            const allAppointments = await appointmentsRes.json();
+            const bookedSlots = allAppointments
+                .filter(app => app.doctorId?._id === doctorId && app.status !== 'cancelled')
+                .map(app => `${app.date}|${app.time}`);
+
+            select.innerHTML = "<option value=''>Select a slot</option>";
+            let slotCount = 0;
+
+            slotsData.forEach(day => {
+                const dateStr = day.date.trim();
+                day.slots.forEach(timeStr => {
+                    const timeTrimmed = timeStr.trim();
+                    if (bookedSlots.includes(`${dateStr}|${timeTrimmed}`)) return;
+
+                    const [hour, minute] = timeTrimmed.split(':').map(Number);
+                    const [year, month, dayNum] = dateStr.split('-').map(Number);
+                    const slotDateTime = new Date(year, month - 1, dayNum, hour, minute);
+                    if (slotDateTime <= new Date()) return;
+
+                    const option = document.createElement("option");
+                    option.value = `${dateStr}|${timeTrimmed}`;
+                    option.textContent = `${dateStr} at ${timeTrimmed}`;
+                    select.appendChild(option);
+                    slotCount++;
+                });
+            });
+
+            if (slotCount === 0) {
+                select.innerHTML = "<option>No available slots</option>";
             }
-  function showSuccessPopup(message = "Appointment Rescheduled Successfully!") {
+
+        } catch (error) {
+            console.error("Reschedule error:", error);
+            select.innerHTML = "<option>Error loading slots</option>";
+        }
+    };
+
+    async function confirmReschedule() {
+        const confirmBtn = document.getElementById("confirmRescheduleBtn");
+        const cancelBtn = document.getElementById("cancelModalBtn");
+
+        const selectedSlot = document.getElementById('availableSlots').value;
+        const appointmentId = document.getElementById('appointmentId').value;
+
+        if (!selectedSlot) {
+            alert("Please select a time slot.");
+            return;
+        }
+
+        const [newDate, newTime] = selectedSlot.split('|');
+
+        confirmBtn.disabled = true;
+        cancelBtn.disabled = true;
+        confirmBtn.textContent = "Processing...";
+
+        try {
+            const res = await fetch(`http://localhost:3000/api/appointments/${appointmentId}/reschedule`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ newDate, newTime, rescheduledBy: 'admin' })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                closeModal();
+                showSuccessPopup("Appointment successfully rescheduled!");
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showSuccessPopup("Failed to reschedule, try again.");
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Error occurred. Try again.");
+        } finally {
+            confirmBtn.disabled = false;
+            cancelBtn.disabled = false;
+            confirmBtn.textContent = "Confirm Reschedule";
+        }
+    }
+
+    function showSuccessPopup(message = "Appointment Rescheduled Successfully!") {
         const popup = document.getElementById("successPopup");
         popup.style.display = "flex";
         popup.querySelector("h2").textContent = message;
-
-        // disable background scroll
         document.body.style.overflow = "hidden";
 
-        // close button event
         popup.querySelector(".close-popup").onclick = () => {
             closeSuccessPopup();
         };
@@ -992,13 +987,13 @@ button:disabled {
                 // Open modal
                 window.openModal = function () {
                     modal.classList.add("active");
-                    document.body.style.overflow = "hidden"; // disable scroll
+                    document.body.style.overflow = "hidden"; 
                 };
 
                 // Close modal
                 window.closeModal = function () {
                     modal.classList.remove("active");
-                    document.body.style.overflow = ""; // restore scroll
+                    document.body.style.overflow = ""; 
                 };
 
                 // Events

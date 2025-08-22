@@ -20,7 +20,11 @@ user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
   conditions: String,
   memberships: String,
   locations: String,
-  available: { type: Boolean, default: true },
+  // available: { type: Boolean, default: true },
+available: { type: Boolean, default: false }, // start as false
+
+  averageRating: { type: Number, default: 0 },  
+  feedbackCount: { type: Number, default: 0 },
   role: { type: String, default: 'doctor' },
   availabilitySlots: [
     {
@@ -29,6 +33,20 @@ user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
     }
   ]
 }, { timestamps: true }); 
+
+doctorSchema.pre('save', function (next) {
+  if (this.availabilitySlots && this.availabilitySlots.length > 0) {
+    const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+
+    // check only today's slots
+    const todaySlot = this.availabilitySlots.find(s => s.date === today);
+    this.available = todaySlot && todaySlot.slots.length > 0;
+  } else {
+    this.available = false;
+  }
+  next();
+});
+
 
 module.exports = mongoose.model('Doctor', doctorSchema);
 

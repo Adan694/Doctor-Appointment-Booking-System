@@ -994,7 +994,7 @@
                 appointmentElement.innerHTML = `
                     <td>
                         <span style="cursor:pointer; color:red; font-weight:bold;" onclick="removeAppointmentFromUI('${appointment._id}')">❌</span>
-                        ${appointment.doctorId?.name || 'Unknown Doctor'}
+                       Dr. ${appointment.doctorId?.name || 'Unknown Doctor'}
                     </td>
                     <td>${new Date(appointment.date).toLocaleDateString()}</td>
                     <td>${appointment.time || 'N/A'}</td>

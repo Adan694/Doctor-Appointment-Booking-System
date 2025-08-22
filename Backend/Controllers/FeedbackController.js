@@ -25,6 +25,16 @@ const submitFeedback = async (req, res) => {
         });
 
         await feedback.save();
+        const feedbacks = await Feedback.find({ doctorId });
+const avg =
+  feedbacks.length > 0
+    ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length
+    : 0;
+
+await Doctor.findByIdAndUpdate(doctorId, {
+  averageRating: avg.toFixed(1),
+  feedbackCount: feedbacks.length,
+});
         const doctor = await Doctor.findById(doctorId);
         const admin = await User.findOne({ role: 'admin' });
 
@@ -83,6 +93,16 @@ const updateFeedback = async (req, res) => {
         feedback.rating = rating;
         feedback.comment = comment;
         await feedback.save();
+        const feedbacks = await Feedback.find({ doctorId: feedback.doctorId });
+const avg =
+  feedbacks.length > 0
+    ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length
+    : 0;
+
+await Doctor.findByIdAndUpdate(feedback.doctorId, {
+  averageRating: avg.toFixed(1),
+  feedbackCount: feedbacks.length,
+});
 
         res.status(200).json(feedback);
     } catch (error) {
@@ -119,6 +139,16 @@ const deleteFeedback = async (req, res) => {
         }
 
         await Feedback.findByIdAndDelete(id);
+        const feedbacks = await Feedback.find({ doctorId: feedback.doctorId });
+const avg =
+  feedbacks.length > 0
+    ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length
+    : 0;
+
+await Doctor.findByIdAndUpdate(feedback.doctorId, {
+  averageRating: avg.toFixed(1),
+  feedbackCount: feedbacks.length,
+});
         res.status(200).json({ message: 'Feedback deleted successfully' });
     } catch (error) {
         console.error('Delete feedback error:', error);

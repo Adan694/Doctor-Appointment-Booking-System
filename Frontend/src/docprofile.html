@@ -350,7 +350,6 @@ textarea:focus {
 .slots-container > label input[type="checkbox"]:hover {
     transform: scale(1.2);
 }
-
 /* Switch container */
 .switch {
     position: relative;
@@ -408,6 +407,20 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+.switch input:disabled + .slider {
+    pointer-events: none;
+}
+.switch input:disabled {
+    pointer-events: none;
+}
+
+
+/* Disabled state */
+.switch input:disabled + .slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
     #loadingOverlay {
@@ -604,6 +617,8 @@ input:checked + .slider:before {
     margin-top: 12px; /* optional spacing from table */
 }
 
+
+
 </style>
 
 </head>
@@ -667,7 +682,6 @@ input:checked + .slider:before {
         </label>
         <span id="availabilityLabel"></span>
     </div>
-
         </div>
 
 
@@ -812,6 +826,7 @@ input:checked + .slider:before {
 
                     switchInput.checked = data.available;
                     label.textContent = data.available ? "Available" : "Unavailable";
+
 
                     // When switch changes
                     // switchInput.onchange = () => {
@@ -970,8 +985,8 @@ input:checked + .slider:before {
                 profile.append("fees", document.getElementById("fees").value);
                 profile.append("locations", document.getElementById("locations").value);
 
-                const availableState = document.getElementById("availabilitySwitch").checked;
-                profile.append("available", availableState);
+                // const availableState = document.getElementById("availabilitySwitch").checked;
+                // profile.append("available", availableState);
 
                 if (file) {
                     profile.append("photo", file);  
@@ -981,6 +996,8 @@ input:checked + .slider:before {
 
                 // Get and merge availability slots
                 const newSlots = getCurrentAvailabilitySlots();
+            // const isAvailable = newSlots.length > 0;
+            // profile.append("available", isAvailable);
 
                 fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
                     headers: { "Authorization": `Bearer ${token}` }
@@ -1005,6 +1022,14 @@ input:checked + .slider:before {
                             date,
                             slots: Array.from(slotsSet)
                         }));
+                        // Determine availability for today using merged slots
+                        const today = new Date().toISOString().split("T")[0];
+                        const todaySlotObj = mergedSlots.find(slot => slot.date === today);
+                        const isAvailableToday = todaySlotObj && todaySlotObj.slots.length > 0;
+
+                        // Update FormData for the profile PUT request
+                        // profile.set("available", isAvailableToday);
+
 
                         return Promise.all([
                             fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
@@ -1032,12 +1057,32 @@ input:checked + .slider:before {
                         showToast("Profile updated successfully!");
                         isEditing = false;
                         toggleEditFields(false);
+
+                        // ✅ reload actual slots from DB
+                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                            headers: { "Authorization": `Bearer ${token}` }
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                               const today = new Date().toISOString().split("T")[0];
+                                const slots = doctorData.availabilitySlots || [];
+                                const todaySlot = slots.find(slot => slot.date === today);
+                                const isAvailableToday = todaySlot && todaySlot.slots.length > 0;
+
+                                document.getElementById("availabilityLabel").textContent = isAvailableToday ? "Available" : "Unavailable";
+                                document.getElementById("availabilitySwitch").checked = isAvailableToday;
+
+                            });
+
+
+
                         document.getElementById("availabilitySwitch").disabled = true;
                         document.getElementById("buttonGroup").innerHTML = `
-                        <button class="btn" onclick="enableEditing()">Edit Profile</button>
-            `;
+        <button class="btn" onclick="enableEditing()">Edit Profile</button>
+    `;
                         loadAvailability();
                     })
+
                     .catch(err => {
                         hideLoadingOverlay();
                         showToast("An error occurred while saving.");
@@ -1071,7 +1116,7 @@ input:checked + .slider:before {
     function enableEditing() {
         isEditing = true;
         toggleEditFields(true);
-        document.getElementById("availabilitySwitch").disabled = false;
+        // document.getElementById("availabilitySwitch").disabled = false;
         const buttonGroup = document.getElementById("buttonGroup");
         buttonGroup.innerHTML = `
         <button class="btn" onclick="saveProfile()">Save Profile</button>

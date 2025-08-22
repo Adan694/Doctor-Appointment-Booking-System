@@ -73,7 +73,7 @@
 
 
         <!-- Doctors Section -->
-        <div id="doctors">
+        <!-- <div id="doctors">
             <div class="head">
                 <h1>Our Great Doctors</h1>
             </div>
@@ -81,13 +81,204 @@
             <div class="doctor-list">
                         <div class="doctor-card-wrapper">
                     <div class="card-container" id="doctorContainer">
-                        <!-- Dynamic doctor cards will be injected here -->
                     </div>
                       
                 </div>
                 <a href="alldoctorsreal.html" class="see-more">SEE MORE</a>
             </div>
+        </div> -->
+        <!-- Doctors Section -->
+    <!-- Doctors Section -->
+    <div id="doctors">
+        <div class="head">
+            <h1>Consult Best Doctors </h1>
         </div>
+    
+        <div class="speciality-list">
+            <!-- Row 1 -->
+            <div class="speciality-card" onclick="goToSpeciality('Dermatologist')">
+                <i class="fa-solid fa-user-md fa-2x"></i>
+                <p>Dermatologist</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('Urologist')">
+                <i class="fa-solid fa-restroom fa-2x"></i>
+                <p>Urologist</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('Dentist')">
+                <i class="fa-solid fa-tooth fa-2x"></i>
+                <p>Dentist</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('Obesity Specialist')">
+                <i class="fa-solid fa-weight-scale fa-2x"></i>
+                <p>Obesity Specialist</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('ENT Specialist')">
+                <i class="fa-solid fa-ear-listen fa-2x"></i>
+                <p>ENT Specialist</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('Orthopedic Surgeon')">
+                <i class="fa-solid fa-bone fa-2x"></i>
+                <p>Orthopedic Surgeon</p>
+            </div>
+    
+            <!-- Row 2 -->
+            <div class="speciality-card" onclick="goToSpeciality('Neurologist')">
+                <i class="fa-solid fa-brain fa-2x"></i>
+                <p>Neurologist</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('Child Specialist')">
+                <i class="fa-solid fa-baby fa-2x"></i>
+                <p>Child Specialist</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('Pulmonologist')">
+                <i class="fa-solid fa-lungs fa-2x"></i>
+                <p>Pulmonologist</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('Eye Specialist')">
+                <i class="fa-solid fa-eye fa-2x"></i>
+                <p>Eye Specialist</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('General Physician')">
+                <i class="fa-solid fa-stethoscope fa-2x"></i>
+                <p>General Physician</p>
+            </div>
+            <div class="speciality-card" onclick="goToSpeciality('Cardiologist')">
+                <i class="fa-solid fa-heart-pulse fa-2x"></i>
+                <p>Cardiologist</p>
+            </div>
+        </div>
+    
+        <a href="javascript:void(0)" class="see-more" onclick="openSpecialityPopup()">SEE MORE</a>
+    </div>
+
+        <!-- Popup Modal -->
+        <!-- Popup Modal -->
+        <div id="specialityPopup" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closeSpecialityPopup()">&times;</span>
+                <h2>Select a Speciality</h2>
+                <div class="all-specialities">
+        
+                    <!-- First 16 (already on homepage too) -->
+                    <div class="speciality-card" onclick="goToSpeciality('Dermatologist')">
+                        <i class="fa-solid fa-user-md fa-2x"></i>
+                        <p>Dermatologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Gynecologist')">
+                        <i class="fa-solid fa-person-pregnant fa-2x"></i>
+                        <p>Gynecologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Urologist')">
+                        <i class="fa-solid fa-restroom fa-2x"></i>
+                        <p>Urologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Gastroenterologist')">
+                        <i class="fa-solid fa-bowl-food fa-2x"></i>
+                        <p>Gastroenterologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Dentist')">
+                        <i class="fa-solid fa-tooth fa-2x"></i>
+                        <p>Dentist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Obesity Specialist')">
+                        <i class="fa-solid fa-weight-scale fa-2x"></i>
+                        <p>Obesity Specialist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('ENT Specialist')">
+                        <i class="fa-solid fa-ear-listen fa-2x"></i>
+                        <p>ENT Specialist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Orthopedic Surgeon')">
+                        <i class="fa-solid fa-bone fa-2x"></i>
+                        <p>Orthopedic Surgeon</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Sexologist')">
+                        <i class="fa-solid fa-heart fa-2x"></i>
+                        <p>Sexologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Neurologist')">
+                        <i class="fa-solid fa-brain fa-2x"></i>
+                        <p>Neurologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Child Specialist')">
+                        <i class="fa-solid fa-baby fa-2x"></i>
+                        <p>Child Specialist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Pulmonologist')">
+                        <i class="fa-solid fa-lungs fa-2x"></i>
+                        <p>Pulmonologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Eye Specialist')">
+                        <i class="fa-solid fa-eye fa-2x"></i>
+                        <p>Eye Specialist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('General Physician')">
+                        <i class="fa-solid fa-stethoscope fa-2x"></i>
+                        <p>General Physician</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Cardiologist')">
+                        <i class="fa-solid fa-heart-pulse fa-2x"></i>
+                        <p>Cardiologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Psychiatrist')">
+                        <i class="fa-solid fa-user fa-2x"></i>
+                        <p>Psychiatrist</p>
+                    </div>
+        
+                    <!-- Extra Specialties -->
+                    <div class="speciality-card" onclick="goToSpeciality('Oncologist')">
+                        <i class="fa-solid fa-ribbon fa-2x"></i>
+                        <p>Oncologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Nephrologist')">
+                        <i class="fa-solid fa-kidneys fa-2x"></i>
+                        <p>Nephrologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Endocrinologist')">
+                        <i class="fa-solid fa-syringe fa-2x"></i>
+                        <p>Endocrinologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Allergist')">
+                        <i class="fa-solid fa-spray-can-sparkles fa-2x"></i>
+                        <p>Allergist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Radiologist')">
+                        <i class="fa-solid fa-x-ray fa-2x"></i>
+                        <p>Radiologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Surgeon')">
+                        <i class="fa-solid fa-scissors fa-2x"></i>
+                        <p>Surgeon</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Rheumatologist')">
+                        <i class="fa-solid fa-hand-holding-medical fa-2x"></i>
+                        <p>Rheumatologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Infectious Disease Specialist')">
+                        <i class="fa-solid fa-virus fa-2x"></i>
+                        <p>Infectious Disease</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Plastic Surgeon')">
+                        <i class="fa-solid fa-face-smile fa-2x"></i>
+                        <p>Plastic Surgeon</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Hematologist')">
+                        <i class="fa-solid fa-droplet fa-2x"></i>
+                        <p>Hematologist</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Geriatrician')">
+                        <i class="fa-solid fa-person-cane fa-2x"></i>
+                        <p>Geriatrician</p>
+                    </div>
+                    <div class="speciality-card" onclick="goToSpeciality('Immunologist')">
+                        <i class="fa-solid fa-shield-virus fa-2x"></i>
+                        <p>Immunologist</p>
+                    </div>
+        
+                </div>
+            </div>
+        </div>
+
 
         <!-- Speciality Section -->
         <div id="speciality">
