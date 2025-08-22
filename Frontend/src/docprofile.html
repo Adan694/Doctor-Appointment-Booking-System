@@ -616,6 +616,56 @@ input:checked + .slider:before {
     gap: 1px; /* space between the buttons */
     margin-top: 12px; /* optional spacing from table */
 }
+#password-change-container {
+    margin-top: 20px;
+}
+
+/* Change Password Button Styling */
+#change-password-btn {
+    background: linear-gradient(90deg, #4CAF50, #45A049); /* nice green gradient */
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+#change-password-btn:hover {
+    background: linear-gradient(90deg, #45A049, #3e8e41);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+#change-password-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+#change-password-btn:disabled {
+    background: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+#password-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#password-fields input {
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
 
 
 
@@ -675,6 +725,30 @@ input:checked + .slider:before {
         
             <label>Practice Locations:</label>
             <textarea id="locations"></textarea>
+            <label>Degree:</label>
+            <input type="text" id="degree" placeholder="Enter your degree">
+            
+            <label>Address:</label>
+            <textarea id="address" placeholder="Enter your clinic or practice address"></textarea>
+            
+            <label>About:</label>
+            <textarea id="about" placeholder="Write a short description about yourself"></textarea>
+            <div id="password-change-container" style="margin-top:15px;">
+                <button type="button" id="change-password-btn" onclick="togglePasswordFields()" disabled>Change Password</button>
+                <div id="password-fields" style="display:none; margin-top:10px;">
+                    <label for="current-password">Current Password:</label>
+                    <input type="password" id="current-password" placeholder="Enter current password">
+            
+                    <label for="new-password">New Password:</label>
+                    <input type="password" id="new-password" placeholder="Enter new password">
+            
+                    <label for="confirm-password">Confirm Password:</label>
+                    <input type="password" id="confirm-password" placeholder="Confirm new password">
+                </div>
+            </div>
+
+
+
     <div class="status-section">
         <label class="switch">
             <input type="checkbox" id="availabilitySwitch" disabled>
@@ -795,6 +869,10 @@ input:checked + .slider:before {
         let saveTimeout = null;
         let isEditing = false;
         let draggedRow = null;
+   function togglePasswordFields() {
+        const fields = document.getElementById("password-fields");
+        fields.style.display = fields.style.display === "none" ? "block" : "none";
+    }
 
         function loadDoctorProfile() {
             const token = localStorage.getItem('authToken');
@@ -819,6 +897,10 @@ input:checked + .slider:before {
                     document.getElementById("fees").value = data.fees || '';
                     document.getElementById("locations").value = data.locations || '';
                     document.getElementById("profilePic").src = data.image || "https://via.placeholder.com/100";
+                    document.getElementById("degree").value = data.degree || '';
+                    document.getElementById("address").value = data.address || '';
+                    document.getElementById("about").value = data.about || '';
+
 
                     // Inside .then(data => { ... }) in loadDoctorProfile:
                     const switchInput = document.getElementById("availabilitySwitch");
@@ -963,133 +1045,128 @@ input:checked + .slider:before {
                 });
         }
 
-        function saveProfile() {
-                const token = localStorage.getItem('authToken');
-                if (!token) {
-                    alert("You are not logged in. Redirecting to login page.");
-                    window.location.href = 'login.html';
-                    return;
-                }
-
-                const fileInput = document.getElementById("fileUpload");
-                const file = fileInput.files[0];
-
-                const profile = new FormData();
-                profile.append("name", document.getElementById("doctorName").value);
-                profile.append("speciality", document.getElementById("specialization").value);
-                profile.append("qualifications", document.getElementById("qualifications").value);
-                profile.append("services", document.getElementById("services").value);
-                profile.append("conditions", document.getElementById("conditions").value);
-                profile.append("experience", document.getElementById("experience").value);
-                profile.append("memberships", document.getElementById("memberships").value);
-                profile.append("fees", document.getElementById("fees").value);
-                profile.append("locations", document.getElementById("locations").value);
-
-                // const availableState = document.getElementById("availabilitySwitch").checked;
-                // profile.append("available", availableState);
-
-                if (file) {
-                    profile.append("photo", file);  
-                }
-
-                showLoadingOverlay();
-
-                // Get and merge availability slots
-                const newSlots = getCurrentAvailabilitySlots();
-            // const isAvailable = newSlots.length > 0;
-            // profile.append("available", isAvailable);
-
-                fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                    headers: { "Authorization": `Bearer ${token}` }
-                })
-                    .then(res => res.json())
-                    .then(existingData => {
-                        const existingSlots = existingData.availabilitySlots || [];
-                        const mergedSlotsMap = {};
-
-                        existingSlots.forEach(slot => {
-                            mergedSlotsMap[slot.date] = new Set(slot.slots);
-                        });
-
-                        newSlots.forEach(slot => {
-                            if (!mergedSlotsMap[slot.date]) {
-                                mergedSlotsMap[slot.date] = new Set();
-                            }
-                            slot.slots.forEach(s => mergedSlotsMap[slot.date].add(s));
-                        });
-
-                        const mergedSlots = Object.entries(mergedSlotsMap).map(([date, slotsSet]) => ({
-                            date,
-                            slots: Array.from(slotsSet)
-                        }));
-                        // Determine availability for today using merged slots
-                        const today = new Date().toISOString().split("T")[0];
-                        const todaySlotObj = mergedSlots.find(slot => slot.date === today);
-                        const isAvailableToday = todaySlotObj && todaySlotObj.slots.length > 0;
-
-                        // Update FormData for the profile PUT request
-                        // profile.set("available", isAvailableToday);
-
-
-                        return Promise.all([
-                            fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                                method: "PUT",
-                                headers: {
-                                    "Authorization": `Bearer ${token}`
-                                },
-                                body: profile
-                            }),
-                            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Authorization": `Bearer ${token}`
-                                },
-                                body: JSON.stringify({ availabilitySlots: mergedSlots })
-                            })
-                        ]);
-                    })
-                    .then(responses => {
-                        responses.forEach(res => {
-                            if (!res.ok) throw new Error("Update failed");
-                        });
-                        hideLoadingOverlay();
-                        showToast("Profile updated successfully!");
-                        isEditing = false;
-                        toggleEditFields(false);
-
-                        // ✅ reload actual slots from DB
-                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                            headers: { "Authorization": `Bearer ${token}` }
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                               const today = new Date().toISOString().split("T")[0];
-                                const slots = doctorData.availabilitySlots || [];
-                                const todaySlot = slots.find(slot => slot.date === today);
-                                const isAvailableToday = todaySlot && todaySlot.slots.length > 0;
-
-                                document.getElementById("availabilityLabel").textContent = isAvailableToday ? "Available" : "Unavailable";
-                                document.getElementById("availabilitySwitch").checked = isAvailableToday;
-
-                            });
-
-
-
-                        document.getElementById("availabilitySwitch").disabled = true;
-                        document.getElementById("buttonGroup").innerHTML = `
-        <button class="btn" onclick="enableEditing()">Edit Profile</button>
-    `;
-                        loadAvailability();
-                    })
-
-                    .catch(err => {
-                        hideLoadingOverlay();
-                        showToast("An error occurred while saving.");
-                        console.error("Update error:", err);
-                    });
-                    saveAvailabilityOrder();
+       function saveProfile() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert("You are not logged in. Redirecting to login page.");
+                window.location.href = 'login.html';
+                return;
             }
+
+            const fileInput = document.getElementById("fileUpload");
+            const file = fileInput.files[0];
+
+            const profile = new FormData();
+            profile.append("name", document.getElementById("doctorName").value);
+            profile.append("speciality", document.getElementById("specialization").value);
+            profile.append("qualifications", document.getElementById("qualifications").value);
+            profile.append("services", document.getElementById("services").value);
+            profile.append("conditions", document.getElementById("conditions").value);
+            profile.append("experience", document.getElementById("experience").value);
+            profile.append("memberships", document.getElementById("memberships").value);
+            profile.append("fees", document.getElementById("fees").value);
+            profile.append("locations", document.getElementById("locations").value);
+            profile.append("degree", document.getElementById("degree").value);
+            profile.append("address", document.getElementById("address").value);
+            profile.append("about", document.getElementById("about").value);
+
+            if (file) profile.append("photo", file);
+
+            // Optional password change
+            // Inside saveProfile(), after collecting FormData
+           const passwordFields = document.getElementById("password-fields");
+           if (passwordFields.style.display === "block") {
+               const currentPassword = document.getElementById("current-password").value.trim();
+               const newPassword = document.getElementById("new-password").value.trim();
+               const confirmPassword = document.getElementById("confirm-password").value.trim();
+
+               // Only proceed if user wants to change password
+               if (currentPassword || newPassword || confirmPassword) {
+                   // Check all fields are filled
+                   if (!currentPassword || !newPassword || !confirmPassword) {
+                       return alert("Please fill all password fields to change password.");
+                   }
+
+                   // Check new password matches confirmation
+                   if (newPassword !== confirmPassword) {
+                       return alert("New password and confirmation do not match.");
+                   }
+
+                   // Password strength check
+                   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+                   if (!passwordRegex.test(newPassword)) {
+                       return alert("Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.");
+                   }
+
+                   // Append to FormData to send to server
+                   profile.append("currentPassword", currentPassword);
+                   profile.append("newPassword", newPassword);
+               }
+           }
+
+
+            showLoadingOverlay();
+
+            // Merge availability slots
+            const newSlots = getCurrentAvailabilitySlots();
+            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+                .then(res => res.json())
+                .then(existingData => {
+                    const existingSlots = existingData.availabilitySlots || [];
+                    const mergedSlotsMap = {};
+
+                    existingSlots.forEach(slot => mergedSlotsMap[slot.date] = new Set(slot.slots));
+                    newSlots.forEach(slot => {
+                        if (!mergedSlotsMap[slot.date]) mergedSlotsMap[slot.date] = new Set();
+                        slot.slots.forEach(s => mergedSlotsMap[slot.date].add(s));
+                    });
+
+                    const mergedSlots = Object.entries(mergedSlotsMap).map(([date, slotsSet]) => ({
+                        date,
+                        slots: Array.from(slotsSet)
+                    }));
+
+                    return Promise.all([
+                        fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                            method: "PUT",
+                            headers: { "Authorization": `Bearer ${token}` },
+                            body: profile
+                        }),
+                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ availabilitySlots: mergedSlots })
+                        })
+                    ]);
+                })
+                .then(responses => {
+                    responses.forEach(res => {
+                        if (!res.ok) throw new Error("Update failed");
+                    });
+                    hideLoadingOverlay();
+                    showToast("Profile updated successfully!");
+
+                    isEditing = false;
+                    toggleEditFields(false);
+                    loadAvailability();
+                    loadDoctorProfile();
+
+                    document.getElementById("availabilitySwitch").disabled = true;
+                    document.getElementById("buttonGroup").innerHTML = `<button class="btn" onclick="enableEditing()">Edit Profile</button>`;
+                })
+                .catch(err => {
+                    hideLoadingOverlay();
+                    showToast("An error occurred while saving.");
+                    console.error("Update error:", err);
+                });
+
+            saveAvailabilityOrder();
+        }
 
         function getCurrentAvailabilitySlots() {
                 const availabilitySlots = [];
@@ -1117,6 +1194,8 @@ input:checked + .slider:before {
         isEditing = true;
         toggleEditFields(true);
         // document.getElementById("availabilitySwitch").disabled = false;
+            document.getElementById("change-password-btn").disabled = false;
+
         const buttonGroup = document.getElementById("buttonGroup");
         buttonGroup.innerHTML = `
         <button class="btn" onclick="saveProfile()">Save Profile</button>

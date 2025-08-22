@@ -107,20 +107,29 @@ const getDoctorById = async (req, res) => {
 const updateDoctor = async (req, res) => {
   try {
     const updateFields = req.body;
-    delete updateFields.password;
-    delete updateFields.email;
-if (req.file) {
-  updateFields.photo = req.file.filename;  
-}
+    const { currentPassword, newPassword } = req.body;
+
+    const doctor = await Doctor.findById(req.params.id);
+    if (!doctor) return res.status(404).json({ message: 'Doctor not found.' });
+
+    // Optional password change
+    if (currentPassword && newPassword) {
+        const isMatch = await bcrypt.compare(currentPassword, doctor.password);
+        if (!isMatch) return res.status(400).json({ message: 'Current password is incorrect.' });
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        updateFields.password = hashedPassword;
+    }
+
+    delete updateFields.email; // keep email immutable if desired
+
+    if (req.file) updateFields.photo = req.file.filename;
+
     const updatedDoctor = await Doctor.findByIdAndUpdate(
       req.params.id,
       { $set: updateFields },
       { new: true, runValidators: true }
     );
-
-    if (!updatedDoctor) {
-      return res.status(404).json({ message: 'Doctor not found.' });
-    }
 
     res.status(200).json({ message: 'Profile updated successfully.', doctor: updatedDoctor });
   } catch (error) {
@@ -128,6 +137,7 @@ if (req.file) {
     res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
 
 // const deleteDoctor = async (req, res) => {
 //   try {

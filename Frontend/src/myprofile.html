@@ -513,6 +513,55 @@ nav ul li a:hover {
         margin: 5px 0;
     }
 }
+/* Password fields styling matches profile fields */
+#password-fields input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #006d6d;
+    border-radius: 25px;
+    font-size: 16px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 6px rgba(0, 109, 109, 0.15);
+    color: #004c4c;
+    background-color: #f0f8f8;
+}
+
+#password-fields input:focus {
+    border-color: #004c4c;
+    box-shadow: 0 0 8px rgba(0, 76, 76, 0.5);
+    background-color: white;
+    color: #333;
+}
+
+/* Password field labels styling matches profile labels */
+#password-fields label {
+    display: block;
+    margin-top: 10px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* Change Password button styling matches Edit Profile button */
+#change-password-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#change-password-btn:hover {
+    background-color: #004c4c;
+    transform: translateY(-2px);
+}
+
+
 </style>
 
 </head>
@@ -557,8 +606,24 @@ nav ul li a:hover {
 <label for="edit-gender"><i class="fas fa-venus-mars"></i> Gender:</label>
 <p id="displayGender"></p>
                 </div>
-        
+                <div id="password-change-container" style="display:none; margin-top:15px;">
+                    <button type="button" id="change-password-btn" class="btn-feedback">Change Password</button>
+                    <div id="password-fields" style="display:none; margin-top:10px;">
+                        <label for="edit-current-password">Current Password:</label>
+                        <input type="password" id="edit-current-password" placeholder="Enter current password">
+                
+                        <label for="edit-new-password">New Password:</label>
+                        <input type="password" id="edit-new-password" placeholder="Enter new password">
+                
+                        <label for="edit-password-confirm">Confirm Password:</label>
+                        <input type="password" id="edit-password-confirm" placeholder="Confirm new password">
+                    </div>
+                </div>
+
                 <button class="edit-button" onclick="toggleEditForm()">Edit Profile</button>
+                
+            
+
             </div>
             </div>
     </div>
@@ -624,292 +689,220 @@ nav ul li a:hover {
 
 </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-                const bar = document.getElementById('bar');
-                const menu = document.querySelector('nav ul');
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const changePasswordBtn = document.getElementById('change-password-btn');
+        const passwordFields = document.getElementById('password-fields');
+        const bar = document.getElementById('bar');
+        const menu = document.querySelector('nav ul');
 
-                bar.addEventListener('click', function () {
-                    menu.classList.toggle('active');
-                });
-            });
-
-        window.onload = function () {
-            showLoader();
-
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                alert("You are not logged in. Redirecting to login page.");
-                window.location.href = 'login.html';
-                return;
+        // Toggle password fields only if Edit Profile is active
+        changePasswordBtn.addEventListener('click', () => {
+            const btn = document.querySelector('.edit-button');
+            if (btn.innerText === 'Update') {
+                passwordFields.style.display = passwordFields.style.display === 'none' ? 'block' : 'none';
+            } else {
+                alert('Click "Edit Profile" first to change password.');
             }
+        });
 
-            // Fetch user profile data
-            fetch('http://localhost:3000/user/profile', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}` 
-                }
+        // Mobile menu toggle
+        bar.addEventListener('click', function () {
+            menu.classList.toggle('active');
+        });
+    });
+
+    window.onload = function () {
+        showLoader();
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            alert("You are not logged in. Redirecting to login page.");
+            window.location.href = 'login.html';
+            return;
+        }
+
+        fetch('http://localhost:3000/user/profile', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(response => { if (!response.ok) throw new Error('Unauthorized or bad token'); return response.json(); })
+            .then(data => {
+                document.getElementById('displayName').innerText = data.name || '';
+                document.getElementById('displayEmail').innerText = data.email || '';
+                document.getElementById('displayPhone').innerText = data.phone || '';
+                document.getElementById('displayAge').innerText = data.age || '';
+                document.getElementById('displayDob').innerText = data.dob || '';
+                document.getElementById('displayGender').innerText = data.gender || 'male';
+                hideLoader();
             })
-                .then(response => {
-                    if (!response.ok) throw new Error('Unauthorized or bad token');
-                    return response.json();
-                })
-                .then(data => {
-                    // Populate display fields with user data
-                    document.getElementById('displayName').innerText = data.name || '';
-                    document.getElementById('displayEmail').innerText = data.email || '';
-                    document.getElementById('displayPhone').innerText = data.phone || '';
-                    document.getElementById('displayAge').innerText = data.age || '';
-                    document.getElementById('displayDob').innerText = data.dob || '';
-                    document.getElementById('displayGender').innerText = data.gender || 'male';
+            .catch(error => {
+                console.error('Error fetching user profile:', error);
+                alert('Could not load profile data. Please try again.');
+            });
+    };
 
-                    // Populate form fields with user data
-                    // document.getElementById('name').value = data.name || '';
-                    // document.getElementById('email').value = data.email || '';
-                    // document.getElementById('phone').value = data.phone || '';
-                    // document.getElementById('age').value = data.age || '';
-                    // document.getElementById('dob').value = data.dob || '';
-                    // document.getElementById('gender').value = data.gender || 'male';
+    function toggleEditForm() {
+        const btn = document.querySelector('.edit-button');
+        const profileInfo = document.querySelector('.profile-info');
+        const passwordContainer = document.getElementById('password-change-container');
+        const passwordFields = document.getElementById('password-fields');
 
-                                        hideLoader();
+        if (btn.innerText === 'Edit Profile') {
+            btn.innerText = 'Update';
+            passwordContainer.style.display = 'block';
+            passwordFields.style.display = 'none';
 
-                })
-                .catch(error => {
-                    console.error('Error fetching user profile:', error);
-                    alert('Could not load profile data. Please try again.');
+            profileInfo.querySelectorAll('p').forEach(p => {
+                const label = p.previousElementSibling.innerText.toLowerCase().replace(/[^a-z]/g, '');
+                const key = { name: 'name', email: 'email', phone: 'phone', phonenumber: 'phone', age: 'age', dob: 'dob', dateofbirth: 'dob', gender: 'gender' }[label] || label;
 
+                if (key === 'gender') {
+                    const select = document.createElement('select');
+                    select.id = 'edit-' + key;
+                    select.value = p.innerText.toLowerCase();
+                    select.innerHTML = `<option value="male">Male</option><option value="female">Female</option><option value="other">Other</option>`;
+                    p.replaceWith(select);
+                } else if (key === 'dob') {
+                    const input = document.createElement('input');
+                    input.type = 'date';
+                    input.id = 'edit-dob';
+                    input.value = p.innerText;
+                    input.addEventListener('change', () => {
+                        const dob = new Date(input.value);
+                        const today = new Date();
+                        if (dob > today) return alert("Date of Birth cannot be in the future.");
+                        let age = today.getFullYear() - dob.getFullYear();
+                        const monthDiff = today.getMonth() - dob.getMonth();
+                        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
+                        document.getElementById('displayAge').innerText = age;
+                    });
+                    p.replaceWith(input);
+                } else if (key === 'age') return;
+                else {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = 'edit-' + key;
+                    input.value = p.innerText;
+                    p.replaceWith(input);
+                }
+            });
+        } else {
+            updateProfile();
+        }
+    }
+
+    function updateProfile() {
+        const btn = document.querySelector('.edit-button');
+        const getInput = id => document.getElementById(id) ? document.getElementById(id).value : '';
+
+        const dobValue = getInput('edit-dob');
+        const calculatedAge = dobValue ? (() => {
+            const dob = new Date(dobValue);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDiff = today.getMonth() - dob.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
+            return age;
+        })() : '';
+
+        const updatedData = {
+            name: getInput('edit-name'),
+            email: getInput('edit-email'),
+            phone: getInput('edit-phone'),
+            dob: dobValue,
+            gender: getInput('edit-gender'),
+            age: calculatedAge
+        };
+        // Validate DOB
+        if (dobValue) {
+            const dob = new Date(dobValue);
+            const today = new Date();
+            if (dob > today) {
+                return alert("Date of Birth cannot be in the future.");
+            }
+        }
+
+        // Inside updateProfile(), before sending fetch request
+        const phoneNumber = getInput('edit-phone');
+
+        // Pakistani mobile or PTCL validation
+        const phoneRegex = /^(03\d{9}|0\d{2,3}\d{7})$/;
+        if (!phoneRegex.test(phoneNumber)) {
+            return alert("Please enter a valid Pakistani mobile (03XXXXXXXXX) or PTCL number.");
+        }
+
+
+        // Include password only if visible and filled
+        const passwordFields = document.getElementById('password-fields');
+        if (passwordFields.style.display === 'block') {
+            const currentPassword = getInput('edit-current-password');
+            const newPassword = getInput('edit-new-password');
+            const confirmPassword = getInput('edit-password-confirm');
+
+            if (currentPassword || newPassword || confirmPassword) {
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    return alert("Please fill all password fields to change password.");
+                }
+                if (newPassword !== confirmPassword) return alert("New password and confirmation do not match.");
+                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+                if (!passwordRegex.test(newPassword)) return alert("Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.");
+                updatedData.password = newPassword;
+                updatedData.currentPassword = currentPassword;
+            }
+        }
+
+        showLoader();
+        const token = localStorage.getItem('authToken');
+
+        fetch('http://localhost:3000/user/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(updatedData),
+        })
+            .then(response => { if (!response.ok) throw new Error('Failed to update profile'); return response.json(); })
+            .then(data => {
+                alert(data.message);
+
+                // Remove password fields
+                ['edit-current-password', 'edit-new-password', 'edit-password-confirm'].forEach(id => {
+                    const input = document.getElementById(id);
+                    const label = input ? input.previousElementSibling : null;
+                    if (input) input.remove();
+                    if (label) label.remove();
                 });
 
-           
-        };
-
-        // Handle profile form submission
-        // document.getElementById('profile-form').addEventListener('submit', function (event) {
-        //     event.preventDefault();
-
-        //     const token = localStorage.getItem('authToken'); 
-
-        //     const updatedData = {
-        //         name: document.getElementById('name').value,
-        //         email: document.getElementById('email').value,
-        //         phone: document.getElementById('phone').value,
-        //         age: document.getElementById('age').value,
-        //         dob: document.getElementById('dob').value,
-        //         gender: document.getElementById('gender').value,
-        //     };
-
-        //     // Send updated data to the server
-        //     fetch('http://localhost:3000/user/update', {
-        //         method: 'PUT',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'Authorization': `Bearer ${token}`, 
-        //         },
-        //         body: JSON.stringify(updatedData),
-        //     })
-        //         .then(response => {
-        //             if (!response.ok) throw new Error('Failed to update profile');
-        //             return response.json();
-        //         })
-        //         .then(data => {
-        //             alert(data.message); 
-        //             document.getElementById('displayName').innerText = updatedData.name;
-        //             document.getElementById('displayEmail').innerText = updatedData.email;
-        //             document.getElementById('displayPhone').innerText = updatedData.phone;
-        //             document.getElementById('displayAge').innerText = updatedData.age;
-        //             document.getElementById('displayDob').innerText = updatedData.dob;
-        //             document.getElementById('displayGender').innerText = updatedData.gender;
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //             alert('An error occurred while updating your profile. Please try again.');
-        //         });
-        // });
-
-        // Function to toggle the edit form visibility
-        function toggleEditForm() {
-                const btn = document.querySelector('.edit-button');
-                const profileInfo = document.querySelector('.profile-info');
-
-                // Mapping from label text to keys used in inputs and updatedData
-                const labelToKey = {
-                    'name': 'name',
-                    'email': 'email',
-                    'phonenumber': 'phone',
-                    'phone': 'phone',
-                    'age': 'age',
-                    'dateofbirth': 'dob',
-                    'dob': 'dob',
-                    'gender': 'gender'
-                };
-
-                if (btn.innerText === 'Edit Profile') {
-                    // Change to editable inputs with current values
-                    btn.innerText = 'Update';
-
-                    profileInfo.querySelectorAll('p').forEach(p => {
-                        const text = p.innerText;
-                        const rawLabel = p.previousElementSibling.innerText.toLowerCase().replace(/[^a-z]/g, '');
-                        const key = labelToKey[rawLabel] || rawLabel;
-
-                        if (key === 'gender') {
-                            const input = document.createElement('select');
-                            input.innerHTML = `
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-        `;
-                            input.value = text.toLowerCase();
-                            input.id = 'edit-' + key;
-                            input.name = key;
-                            p.replaceWith(input);
-                        }
-                        else if (key === 'dob') {
-                            const input = document.createElement('input');
-                            input.type = 'date';
-                            input.value = text;
-                            input.id = 'edit-' + key;
-                            input.name = key;
-
-                            // Auto calculate age + validate DOB
-                            input.addEventListener('change', function () {
-                                const dob = new Date(this.value);
-                                const today = new Date();
-
-                                if (dob > today) {
-                                    alert("Date of Birth cannot be in the future.");
-                                    this.value = ""; // clear the invalid date
-                                    document.getElementById('displayAge').innerText = "";
-                                    return;
-                                }
-
-                                const maxAge = 120; // optional cap
-                                let age = today.getFullYear() - dob.getFullYear();
-                                const monthDiff = today.getMonth() - dob.getMonth();
-                                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-                                    age--;
-                                }
-
-                                if (age < 0 || age > maxAge) {
-                                    alert("Please enter a valid Date of Birth.");
-                                    this.value = "";
-                                    document.getElementById('displayAge').innerText = "";
-                                    return;
-                                }
-
-                                document.getElementById('displayAge').innerText = age;
-                            });
-
-                            p.replaceWith(input);
-                        }
-
-                        else if (key === 'age') {
-                            // 🚫 Skip replacing Age with an input
-                            return;
-                        }
-                        else {
-                            const input = document.createElement('input');
-                            input.type = 'text';
-                            input.value = text;
-                            input.id = 'edit-' + key;
-                            input.name = key;
-                            p.replaceWith(input);
-                        }
-                    });
-
-
-                } else {
-                    // Update action
-                    updateProfile();
-                }
-            }
-
-            function updateProfile() {
-                const btn = document.querySelector('.edit-button');
-                const profileInfo = document.querySelector('.profile-info');
-
-                // Safely get inputs, provide fallback or empty string if missing
-                const getInputValue = id => {
-                    const el = document.getElementById(id);
-                    return el ? el.value : '';
-                };
-
-                const dobValue = getInputValue('edit-dob');
-                let calculatedAge = '';
-                if (dobValue) {
-                    const dob = new Date(dobValue);
-                    const today = new Date();
-                    calculatedAge = today.getFullYear() - dob.getFullYear();
-                    const monthDiff = today.getMonth() - dob.getMonth();
-                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-                        calculatedAge--;
-                    }
+                // Replace other inputs back to <p>
+                for (const key of ['name', 'email', 'phone', 'dob', 'gender', 'age']) {
+                    const input = document.getElementById('edit-' + key);
+                    if (!input) continue;
+                    const p = document.createElement('p');
+                    p.id = 'display' + key.charAt(0).toUpperCase() + key.slice(1);
+                    p.innerText = updatedData[key];
+                    input.replaceWith(p);
                 }
 
-                const updatedData = {
-                    name: getInputValue('edit-name'),
-                    email: getInputValue('edit-email'),
-                    phone: getInputValue('edit-phone'),
-                    dob: dobValue,
-                    gender: getInputValue('edit-gender'),
-                    age: calculatedAge, // always auto from dob
-                };
+                btn.innerText = 'Edit Profile';
+                hideLoader();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating your profile. Please try again.');
+                hideLoader();
+            });
+    }
 
+    function showLoader() {
+        document.getElementById('loader').style.display = 'block';
+    }
 
-                // Show loader
-                showLoader();
+    function hideLoader() {
+        document.getElementById('loader').style.display = 'none';
+    }
+</script>
 
-                const token = localStorage.getItem('authToken');
-
-                fetch('http://localhost:3000/user/update', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(updatedData),
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Failed to update profile');
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert(data.message);
-                        localStorage.setItem('patientName', updatedData.name);
-                        localStorage.setItem('patientEmail', updatedData.email);
-                        localStorage.setItem('patientPhone', updatedData.phone);
-                        localStorage.setItem('patientDOB', updatedData.dob);
-
-                        // Replace inputs back to <p> with updated text
-                        for (const key in updatedData) {
-                            const input = document.getElementById('edit-' + key);
-                            if (!input) continue; // skip if input not found (safety)
-
-                            const p = document.createElement('p');
-                            p.id = 'display' + key.charAt(0).toUpperCase() + key.slice(1);
-                            p.innerText = updatedData[key];
-                            input.replaceWith(p);
-                        }
-
-                        btn.innerText = 'Edit Profile';
-                        hideLoader();
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while updating your profile. Please try again.');
-                        hideLoader();
-                    });
-            }
-            function showLoader() {
-                    document.getElementById('loader').style.display = 'block';
-                }
-
-                function hideLoader() {
-                    document.getElementById('loader').style.display = 'none';
-                }
-
-    </script>
 </body>
 
 </html>
