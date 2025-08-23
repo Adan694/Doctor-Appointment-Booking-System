@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- ✅ Added Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
     <title>Doctor Dashboard</title>
 <style>
     * {
@@ -19,7 +19,6 @@
         background-color: #e6f2ff;
     }
 
-    /* --- Navbar --- */
     nav {
         display: flex;
         align-items: center;
@@ -89,7 +88,6 @@
         cursor: pointer;
     }
 
-    /* --- Main Content --- */
     .main-content {
         flex: 1;
         padding: 30px;
@@ -131,7 +129,6 @@
         letter-spacing: 0.05em;
     }
 
-    /* --- Section Titles --- */
     .main-content h2 {
         margin-top: 24px;
         font-size: 22px;
@@ -141,61 +138,55 @@
         font-weight: 600;
     }
 
-   /* --- Stats Section --- */
-.stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin: 20px 0;
-}
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
 
-.stat-card {
-    background: #fff;
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    border: 1px solid #e0e0e0;
-    cursor: pointer;
-}
+    .stat-card {
+        background: #fff;
+        padding: 25px;
+        border-radius: 14px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        border: 1px solid #e0e0e0;
+        cursor: pointer;
+    }
 
-.stat-card:hover {
-    transform: translateY(-6px) scale(1.03);
-    box-shadow: 0 8px 25px rgba(0,123,255,0.25);
-    background: #f0faff;   /* light blue glow */
-    border-color: #007b7b;
-}
+    .stat-card:hover {
+        transform: translateY(-6px) scale(1.03);
+        box-shadow: 0 8px 25px rgba(0,123,255,0.25);
+        background: #f0faff;   
+        border-color: #007b7b;
+    }
 
-/* Icon styling */
-.stat-card i {
-    font-size: 40px;
-    margin-bottom: 12px;
-    color: #007b7b;
-    transition: color 0.3s ease, transform 0.3s ease;
-}
+    .stat-card i {
+        font-size: 40px;
+        margin-bottom: 12px;
+        color: #007b7b;
+        transition: color 0.3s ease, transform 0.3s ease;
+    }
 
-/* Icon hover effect */
-.stat-card:hover i {
-    color: #005f5f;
-    transform: scale(1.2);
-}
+    .stat-card:hover i {
+        color: #005f5f;
+        transform: scale(1.2);
+    }
 
-/* Number */
-.stat-card h3 {
-    font-size: 2rem;
-    color: #2c3e50;
-    margin: 5px 0;
-}
+    .stat-card h3 {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin: 5px 0;
+    }
 
-/* Label */
-.stat-card p {
-    font-size: 1rem;
-    color: #555;
-    margin: 0;
-}
+    .stat-card p {
+        font-size: 1rem;
+        color: #555;
+        margin: 0;
+    }
 
-    /* --- Chart Section --- */
     .chart-section {
         background: #fff;
         padding: 20px;
@@ -227,7 +218,6 @@
         text-align: left;
     }
 
-    /* --- Latest Bookings --- */
     .latest-bookings {
         background: #fff;
         padding: 20px;
@@ -336,7 +326,6 @@
         filter: brightness(0.9);
     }
 
-    /* --- Responsive --- */
     @media (max-width: 576px) {
         nav ul li a {
             font-size: 16px;
@@ -464,22 +453,22 @@
         
     <section class="stats">
         <div class="stat-card" id="appointments-card">
-            <i class="fas fa-clock"></i> <!-- Pending icon -->
+            <i class="fas fa-clock"></i> 
             <h3>0</h3>
             <p>Pending Appointments</p>
         </div>
         <div class="stat-card" id="patients-card">
-            <i class="fas fa-users"></i> <!-- Patients icon -->
+            <i class="fas fa-users"></i> 
             <h3>0</h3>
             <p>Total Patients</p>
         </div>
         <div class="stat-card" id="today-card">
-            <i class="fas fa-calendar-day"></i> <!-- Today’s appointments -->
+            <i class="fas fa-calendar-day"></i> 
             <h3>0</h3>
             <p>Today’s Appointments</p>
         </div>
         <div class="stat-card" id="completed-card">
-            <i class="fas fa-check-circle"></i> <!-- Completed -->
+            <i class="fas fa-check-circle"></i> 
             <h3>0</h3>
             <p>Completed This Month</p>
         </div>
@@ -516,7 +505,6 @@
 
             const doctorId = localStorage.getItem('doctorId');
 
-            // Keep only appointments belonging to the logged-in doctor
             const bookings = (Array.isArray(data) ? data : []).filter(
                 b => b.doctorId?._id === doctorId
             );
@@ -563,49 +551,14 @@
 
             if (!removed) return;
 
-            // Store removed appointment ID in localStorage
             let removedIds = JSON.parse(localStorage.getItem('removedBookingIds')) || [];
             if (removed._id && !removedIds.includes(removed._id)) {
                 removedIds.push(removed._id);
                 localStorage.setItem('removedBookingIds', JSON.stringify(removedIds));
             }
-
-            // Re-render the list after filtering again
             renderBookings();
         }
-    // function renderBookings() {
-    //         let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-    //         let removedIds = JSON.parse(localStorage.getItem('removedBookingIds')) || [];
-
-    //         // Filter only pending appointments, excluding removed ones
-    //         const pendingAppointments = bookings.filter(
-    //             b => b.status?.toLowerCase() === 'pending' && !removedIds.includes(b._id)
-    //         );
-
-    //         // Sort and take the latest 5
-    //         const latestPending = pendingAppointments
-    //             .sort((a, b) => new Date(b.date) - new Date(a.date))
-    //             .slice(0, 5);
-
-    //         // Count unique patients from non-removed bookings
-    //         const uniquePatients = new Set(bookings.map(b => b.patientId?._id).filter(Boolean));
-
-    //         // Update stats
-    //         appointmentsCount = pendingAppointments.length;
-    //         patientsCount = uniquePatients.size;
-    //         updateCounts();
-
-    //         // Re-render list
-    //         const bookingList = document.getElementById('booking-list');
-    //         bookingList.innerHTML = '';
-
-    //         latestPending.forEach(booking => {
-    //             // Use booking.name first (from form submission), fallback to patientId.name
-    //             const name = booking.name || booking.patientId?.name || 'Unknown';
-    //             const readableDate = new Date(booking.date).toLocaleDateString();
-    //             addBookingToList(name, readableDate, booking.status);
-    //         });
-    //     }
+    
     function renderBookings() {
         let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         let removedIds = JSON.parse(localStorage.getItem('removedBookingIds')) || [];
@@ -628,18 +581,14 @@
                 d.getFullYear() === now.getFullYear();
         });
 
-
-        // Unique patients count
         const uniquePatients = new Set(bookings.map(b => b.patientId?._id).filter(Boolean));
 
-        // Update counts
         appointmentsCount = pendingAppointments.length;
         patientsCount = uniquePatients.size;
         document.getElementById('today-card').querySelector('h3').innerText = todayAppointments.length;
         document.getElementById('completed-card').querySelector('h3').innerText = completedThisMonth.length;
         updateCounts();
 
-        // Latest 5 pending
         const latestPending = pendingAppointments
             .sort((a, b) => new Date(b.date) - new Date(a.date))
             .slice(0, 5);
@@ -652,29 +601,21 @@
             addBookingToList(name, readableDate, booking.status);
         });
 
-        // ✅ Chart Data
         updateChart(bookings);
     }
 
-    // ✅ Chart.js setup
     let chart;
     function updateChart(bookings) {
-            // Get today
             const now = new Date();
-
-            // Decide whether you want weekly or monthly
-            const daysBack = 7; // ✅ for last 7 days (weekly). Change to 30 for monthly.
-
-            // Build date keys
+            const daysBack = 7; 
             const counts = {};
             for (let i = daysBack - 1; i >= 0; i--) {
                 const d = new Date();
                 d.setDate(now.getDate() - i);
                 const dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-                counts[dateStr] = 0; // initialize with 0
+                counts[dateStr] = 0; 
             }
 
-            // Count appointments by date
             bookings.forEach(b => {
                 const d = new Date(b.date);
                 const dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
@@ -688,7 +629,7 @@
             chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(counts), // ✅ will be dates like "Aug 15"
+                    labels: Object.keys(counts), 
                     datasets: [{
                         label: 'Appointments',
                         data: Object.values(counts),
@@ -704,8 +645,6 @@
                 }
             });
         }
-
-
 
     function updateCounts() {
         document.getElementById('appointments-card').querySelector('h3').innerText = appointmentsCount;
@@ -724,8 +663,5 @@
         location.reload();
     }
 </script>
-
-
-    </body>
-    
-    </html>
+</body>
+</html>

@@ -341,7 +341,7 @@
                 display: block;
             }
         }
-        /* Doctor Name */
+       
 #doctorName {
     font-size: 28px;
     font-weight: 700;
@@ -359,7 +359,6 @@
     border-bottom: 2px solid #096666;
 }
 
-/* Specialization */
 #specialization {
     font-size: 18px;
     font-weight: 500;
@@ -378,7 +377,6 @@
     border-bottom: 1.5px solid #096666;
 }
 
-/* Optional: smooth hover effect */
 #doctorName:hover, #specialization:hover {
     border-bottom-color: #009999;
 }
@@ -578,9 +576,10 @@
                     document.getElementById("fees").value = data.fees || '';
                     document.getElementById("locations").value = data.locations || '';
                     document.getElementById("degree").value = data.degree || '';
-                    document.getElementById("profilePic").src = data.image
-                        ? `http://localhost:3000/${data.image}`
-                        : "https://via.placeholder.com/100";
+                    document.getElementById("profilePic").src = data.photo
+                        ? `http://localhost:3000/uploads/${data.photo}`
+                        : 'images/placeholder.png';
+
                     document.getElementById("address").value = data.address || '';
                     document.getElementById("about").value = data.about || '';
                     document.getElementById("change-password-btn").disabled = false;
