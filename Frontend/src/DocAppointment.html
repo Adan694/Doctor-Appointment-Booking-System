@@ -644,7 +644,9 @@ h1.page-title:hover {
             <li><a href="docpanel.html">Dashboard</a></li>
             <li><a href="DocAppointment.html">Appointments</a></li>
             <li><a href="docprofile.html">Profile</a></li>
+            <li><a href="docavailability.html">Manage Availability</a></li>
             <li><a href="Docfeedback.html">Feedback</a></li>
+            <li><a href="login.html">Logout</a></li>
         </ul>
     </nav>
 
@@ -825,6 +827,11 @@ h1.page-title:hover {
          document.addEventListener('DOMContentLoaded', () => {
                 const bar = document.getElementById('bar');
                 const menu = document.querySelector('nav ul');
+                const logoutButton = document.getElementById('logoutBtn');
+             if (logoutButton) {
+                 logoutButton.addEventListener('click', logout);
+             }
+
 
                 bar.addEventListener('click', function () {
                     menu.classList.toggle('active');

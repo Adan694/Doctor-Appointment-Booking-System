@@ -5,672 +5,385 @@
     <meta charset="UTF-8">
     <title>Doctor Profile Editor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 30px;
-        background-color: #e6f2ff;
-        display: flex;
-        flex-direction: column;
-    }
-
-    nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background-color: rgb(9, 102, 102);
-        color: white;
-        z-index: 1000;
-        padding: 10px 20px;
-    }
-
-    ul {
-        display: flex;
-    }
-
-    ul li {
-        list-style: none;
-    }
-
-    ul li a {
-        text-decoration: none;
-        color: white;
-        font-size: 20px;
-        margin-inline: 20px;
-    }
-
-    ul li a:hover {
-        color: black;
-        border-bottom: 2px solid black;
-    }
-
-    #bar {
-        display: none;
-        font-size: 30px;
-        cursor: pointer;
-    }
-
-    .logo {
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-    margin: 0;
-    }
-
-    .logo img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: cover;
-    }
-
-    .logo h1 {
-    font-size: 30px;
-    margin: 0;
-    }
-
-    .logo img:hover {
-    transform: scale(1.1) rotate(-5deg);
-    }
-
-    .logo h1 {
-    font-size: 28px;
-    background: linear-gradient(45deg, #ffffff, #cceeff);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    }
-
-   .container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 100px;
-    padding: 10px;
-    transition: box-shadow 0.3s ease;
-}
-.container:hover {
-    box-shadow: 0 8px 24px rgba(0, 153, 153, 0.15);
-    border-radius: 12px;
-}
-
-.profile-section,
-.availability-section {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    flex: 1;
-    min-width: 300px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-.profile-section:hover,
-.availability-section:hover {
-    box-shadow: 0 8px 20px rgba(0, 153, 153, 0.25);
-    transform: translateY(-4px);
-}
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-.profile-header img {
-    border-radius: 50%;
-    width: 100px;
-    height: 100px;
-    margin-right: 20px;
-    border: 2px solid rgb(9, 102, 102);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.profile-header img:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 12px rgba(0, 153, 153, 0.6);
-}
-
-label {
-    font-weight: bold;
-    display: block;
-    margin-top: 12px;
-    color: rgb(9, 102, 102);
-}
-
-input,
-textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1.8px solid #ccc;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-input:hover,
-textarea:hover {
-    border-color: #009999;
-    box-shadow: 0 4px 12px rgba(0, 153, 153, 0.3);
-}
-input:focus,
-textarea:focus {
-    border-color: rgb(9, 102, 102);
-    outline: none;
-    box-shadow: 0 0 10px rgba(9, 102, 102, 0.5);
-}
-
-.availability-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 8px;
-    margin-top: 10px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
-    transition: box-shadow 0.3s ease;
-}
-.availability-table:hover {
-    box-shadow: 0 6px 20px rgba(0, 153, 153, 0.3);
-}
-
-.availability-table th,
-.availability-table td {
-    border: none;
-    padding: 14px 18px;
-    text-align: left;
-    background: white;
-    transition: background-color 0.3s ease;
-}
-.availability-table th {
-    background: #cde7f0;
-    color: rgb(9, 102, 102);
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    user-select: none;
-}
-
-.availability-table tbody tr {
-    border-radius: 10px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-.availability-table tbody tr:hover {
-    background-color: #e0f2f2;
-    box-shadow: 0 4px 18px rgba(0, 153, 153, 0.3);
-}
-
-.availability-table button {
-    background-color: transparent;
-    color: red;
-    font-size: 18px;
-    border: none;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-.availability-table button:hover {
-    color: darkred;
-    transform: scale(1.1);
-}
-
-#buttonGroup {
-    margin: 20px auto;
-    width: 220px;
-    text-align: center;
-}
-#buttonGroup .btn {
-    width: 100%;
-    padding: 12px 0;
-    background: rgb(9, 102, 102);
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 8px;
-    color: white;
-    font-weight: 600;
-    box-shadow: 0 4px 14px rgba(0, 153, 153, 0.4);
-    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-}
-#buttonGroup .btn:hover {
-    background: #007BFF;
-    box-shadow: 0 6px 22px rgba(0, 123, 255, 0.6);
-    transform: translateY(-2px);
-}
-
-.add-slot-btn {
-    background: #28a745 !important;
-    color: white;
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 14px rgba(40, 167, 69, 0.5);
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-    display: inline-block;
-    text-align: center;
-    user-select: none;
-}
-.add-slot-btn:hover {
-    background: #218838 !important;
-    box-shadow: 0 6px 18px rgba(33, 136, 56, 0.7);
-    transform: translateY(-2px);
-}
-
-.section-title {
-    color: rgb(9, 102, 102);
-    font-size: 24px;
-    margin-bottom: 15px;
-    border-bottom: 3px solid #c0e7e7;
-    padding-bottom: 6px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    user-select: none;
-}
-
-.name-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.title-label {
-    font-weight: bold;
-    font-size: 20px;
-    color: rgb(9, 102, 102);
-    white-space: nowrap;
-}
-
-.name-input {
-    flex: 1;
-    padding: 12px;
-    font-size: 16px;
-    border: 1.8px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.name-input:hover {
-    border-color: #009999;
-    box-shadow: 0 4px 12px rgba(0, 153, 153, 0.3);
-}
-.name-input:focus {
-    border-color: rgb(9, 102, 102);
-    outline: none;
-    box-shadow: 0 0 12px rgba(9, 102, 102, 0.6);
-}
-
-.spinner {
-    width: 48px;
-    height: 48px;
-    border: 5px solid #d0f0f0;
-    border-top: 5px solid #009999;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.slots-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px 20px;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.slots-container > label {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    cursor: pointer;
-    white-space: nowrap;
-    user-select: none;
-    transition: color 0.3s ease;
-}
-.slots-container > label:hover {
-    color: #007BFF;
-}
-
-.slots-container > label input[type="checkbox"] {
-    margin-right: 6px;
-    cursor: pointer;
-    width: 18px;
-    height: 18px;
-    transition: transform 0.2s ease;
-}
-.slots-container > label input[type="checkbox"]:hover {
-    transform: scale(1.2);
-}
-/* Switch container */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 28px;
-}
-
-/* Hide default checkbox */
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-/* Slider track */
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: red;
-    transition: .4s;
-    border-radius: 28px;
-}
-
-/* Slider circle */
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-
-/* Checked state */
-input:checked + .slider {
-    background-color: green;
-}
-
-input:checked + .slider:before {
-    transform: translateX(22px);
-}
-
-/* Rounded style */
-.slider.round {
-    border-radius: 28px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
-}
-.switch input:disabled + .slider {
-    pointer-events: none;
-}
-.switch input:disabled {
-    pointer-events: none;
-}
-
-
-/* Disabled state */
-.switch input:disabled + .slider {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-    #loadingOverlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(255, 255, 255, 0.7);
-        z-index: 2000;
-        backdrop-filter: blur(4px);
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-    }
-
-    #loadingOverlay>div>div:last-child {
-        margin-top: 12px;
-        font-size: 18px;
-        color: #004d4d;
-        font-weight: 500;
-    }
-
-    #toast {
-        display: none;
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #009999;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 5px;
-        z-index: 3000;
-        font-size: 16px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Media Queries */
-    @media (max-width: 768px) {
+    <style>
         body {
-            padding: 10px;
-        }
-
-        .container {
-            flex-direction: column;
-            margin-top: 120px;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f7fa;
+            color: #004d4d;
         }
 
         nav {
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 10px;
-        }
-
-        .logo h1 {
-            font-size: 22px;
-        }
-
-        nav ul {
-            /* display: none; */
-            flex-direction: column;
-            width: 100%;
-            position: absolute;
-            top: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            position: fixed;
+            top: 0;
             left: 0;
+            width: 100%;
             background-color: rgb(9, 102, 102);
-            /* transition: max-height 0.3s ease, opacity 0.4s ease; */
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;         
-            transition: max-height 0.4s ease, opacity 0.4s ease;
+            color: white;
+            z-index: 1000;
+            padding: 10px 20px;
         }
 
-        nav ul.active {
-            /* display: flex; */
-            max-height: 300px;
-            opacity: 1;
+        ul {
+            display: flex;
         }
 
-        nav ul li {
-            padding: 15px 0;
-            text-align: center;
+        ul li {
+            list-style: none;
         }
 
-        nav ul li a {
-            font-size: 16px;
-            margin: 5px 0;
-            margin-right: 10px;
+        ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            margin-inline: 20px;
+        }
+
+        ul li a:hover {
+            color: black;
+            border-bottom: 2px solid black;
         }
 
         #bar {
-            display: block;
-            position: absolute;
-            right: 50px;
-            top: 20px;
-            font-size: 30px;
+            display: none;
+            font-size: 28px;
             cursor: pointer;
-            z-index: 1001;
-        }
-    }
-
-    @media (max-width: 900px) {
-        .slots-container {
-            grid-template-columns: repeat(2, 1fr);
-            /* 2 columns on medium screens */
-            max-width: 400px;
-        }
-    }
-
-    @media (max-width: 600px) {
-        .slots-container {
-            grid-template-columns: 1fr;
-            /* 1 column on small screens */
-            max-width: 300px;
         }
 
-        .slots-container>label {
-            white-space: normal;
-            /* allow wrapping */
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
         }
-    }
 
-/* ==== Fullscreen Modal Styling ==== */
-.modal {
-  display: none; /* hidden by default */
-  position: fixed;
-  inset: 0; /* shorthand for top:0; right:0; bottom:0; left:0 */
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  z-index: 10000; /* make sure it's above everything */
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease;
-}
+        .logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
 
-.modal-content {
-  background: #fff;
-  padding: 25px 30px;
-  border-radius: 14px;
-  width: 440px;
-  max-width: 95%;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  position: relative;
-  animation: slideDown 0.3s ease;
-}
+        .logo h1 {
+            font-size: 28px;
+            background: linear-gradient(45deg, #ffffff, #cceeff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-.modal-header {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: rgb(9, 102, 102);
-  margin-bottom: 15px;
-}
+        .container {
+            max-width: 900px;
+            margin: 100px auto 50px;
+            padding: 20px;
+        }
 
-/* Close icon */
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 1.5rem;
-  color: #888;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.modal-close:hover {
-  color: #000;
-}
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-.modal-footer {
-  margin-top: 18px;
-  text-align: right;
-}
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+        }
 
-.modal-footer .btn {
-  padding: 7px 16px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-}
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes slideDown {
-  from { transform: translateY(-25px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-.availability-buttons {
-    display: flex;
-    gap: 1px; /* space between the buttons */
-    margin-top: 12px; /* optional spacing from table */
-}
-#password-change-container {
-    margin-top: 20px;
-}
+        .avatar-wrapper {
+            position: relative;
+        }
 
-/* Change Password Button Styling */
-#change-password-btn {
-    background: linear-gradient(90deg, #4CAF50, #45A049); /* nice green gradient */
-    color: #fff;
+        .avatar-wrapper img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid #096666;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .avatar-wrapper img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 12px rgba(9, 102, 102, 0.6);
+        }
+
+        .edit-avatar {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #096666;
+            color: #fff;
+            border-radius: 50%;
+            padding: 6px;
+            cursor: pointer;
+        }
+
+        .avatar-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .profile-info p {
+            margin: 4px 0 0;
+            color: #096666;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            font-weight: 600;
+            padding: 8px 15px;
+            cursor: pointer;
+            color: #096666;
+            transition: 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            border-bottom: 3px solid #096666;
+            color: #004d4d;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            position: relative;
+            margin-top: 18px;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+            background: transparent;
+        }
+
+        .input-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            color: #999;
+            font-size: 14px;
+            pointer-events: none;
+            transition: 0.3s ease all;
+            background: #fff;
+            padding: 0 4px;
+        }
+
+        .input-group input:focus+label,
+        .input-group input:not(:placeholder-shown)+label,
+        .input-group textarea:focus+label,
+        .input-group textarea:not(:placeholder-shown)+label {
+            top: -10px;
+            left: 10px;
+            font-size: 12px;
+            color: #096666;
+        }
+
+        #password-fields {
+            display: none;
+            margin-top: 10px;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #change-password-btn {
+            background: #096666;
+            color: #fff;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        #change-password-btn:hover {
+            background: #007b7b;
+        }
+
+        #password-fields input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .action-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .action-buttons .btn {
+            padding: 12px 25px;
+            background: #096666;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .action-buttons .btn:hover {
+            background: #007b7b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #d0f0f0;
+            border-top: 5px solid #009999;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #toast {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #009999;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            z-index: 3000;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        @media(max-width:768px) {
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background-color: #096666;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            #bar {
+                display: block;
+            }
+        }
+        /* Doctor Name */
+#doctorName {
+    font-size: 28px;
+    font-weight: 700;
+    color: #004d4d;
     border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-#change-password-btn:hover {
-    background: linear-gradient(90deg, #45A049, #3e8e41);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-}
-
-#change-password-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-#change-password-btn:disabled {
-    background: #ccc;
-    color: #666;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-#password-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-#password-fields input {
-    padding: 6px 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+    background: transparent;
     width: 100%;
-    box-sizing: border-box;
+    outline: none;
+    padding: 2px 0;
+    transition: border-bottom 0.3s;
+    border-bottom: 2px solid transparent;
 }
 
+#doctorName:focus {
+    border-bottom: 2px solid #096666;
+}
 
+/* Specialization */
+#specialization {
+    font-size: 18px;
+    font-weight: 500;
+    color: #096666;
+    border: none;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    padding: 2px 0;
+    margin-top: 4px;
+    transition: border-bottom 0.3s;
+    border-bottom: 1.5px solid transparent;
+}
 
-</style>
+#specialization:focus {
+    border-bottom: 1.5px solid #096666;
+}
 
+/* Optional: smooth hover effect */
+#doctorName:hover, #specialization:hover {
+    border-bottom-color: #009999;
+}
+
+    </style>
 </head>
 
 <body>
@@ -684,204 +397,172 @@ input:checked + .slider:before {
             <li><a href="docpanel.html">Dashboard</a></li>
             <li><a href="DocAppointment.html">Appointments</a></li>
             <li><a href="docprofile.html">Profile</a></li>
+            <li><a href="docavailability.html">Manage Availability</a></li>
             <li><a href="Docfeedback.html">Feedback</a></li>
+            <li><a href="login.html">Logout</a></li>
         </ul>
     </nav>
 
     <div class="container">
-        <div class="profile-section">
-            <h2 class="section-title">Profile Information</h2>
+        <div class="card">
             <div class="profile-header">
-                <img src="https://via.placeholder.com/100" alt="Doctor Photo" id="profilePic">
-                <div class="name-row">
-                    <label class="title-label">Dr.</label>
-                    <input type="text" class="name-input" id="doctorName" value="Haniaa">
+                <div class="avatar-wrapper">
+                    <img src="https://via.placeholder.com/120" id="profilePic" alt="Doctor">
+                    <label for="fileUpload" class="edit-avatar"><i class="fas fa-camera"></i></label>
+                    <input type="file" id="fileUpload" accept="image/*" onchange="previewImage()">
                 </div>
+            <div class="profile-info">
+                <input type="text" id="doctorName" placeholder="Doctor Name">
+                <input type="text" id="specialization" placeholder="Specialization">
             </div>
-        
-            <label for="fileUpload">Change Profile Picture:</label>
-            <input type="file" id="fileUpload" accept="image/*" onchange="previewImage()">
-        
-            <label>Specialization:</label>
-            <input type="text" id="specialization" value="Dermatologist">
-        
-            <label>Qualifications:</label>
-            <textarea id="qualifications">MBBS</textarea>
-        
-            <label>Services:</label>
-            <textarea id="services">Skin Care, Acne, Pimples</textarea>
-        
-            <label>Conditions Treated:</label>
-            <textarea id="conditions"></textarea>
-        
-            <label>Experience:</label>
-            <input type="text" id="experience">
-        
-            <label>Memberships:</label>
-            <textarea id="memberships"></textarea>
-        
-            <label>Fees (in Rs.):</label>
-            <input type="number" id="fees">
-        
-            <label>Practice Locations:</label>
-            <textarea id="locations"></textarea>
-            <label>Degree:</label>
-            <input type="text" id="degree" placeholder="Enter your degree">
-            
-            <label>Address:</label>
-            <textarea id="address" placeholder="Enter your clinic or practice address"></textarea>
-            
-            <label>About:</label>
-            <textarea id="about" placeholder="Write a short description about yourself"></textarea>
-            <div id="password-change-container" style="margin-top:15px;">
-                <button type="button" id="change-password-btn" onclick="togglePasswordFields()" disabled>Change Password</button>
-                <div id="password-fields" style="display:none; margin-top:10px;">
-                    <label for="current-password">Current Password:</label>
-                    <input type="password" id="current-password" placeholder="Enter current password">
-            
-                    <label for="new-password">New Password:</label>
-                    <input type="password" id="new-password" placeholder="Enter new password">
-            
-                    <label for="confirm-password">Confirm Password:</label>
-                    <input type="password" id="confirm-password" placeholder="Confirm new password">
+
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="professional">Professional Info</button>
+                <button class="tab-btn" data-tab="personal">Personal Info</button>
+                <button class="tab-btn" data-tab="security">Security</button>
+            </div>
+
+            <div class="tab-content active" id="professional">
+                <div class="input-group">
+                    <input type="text" id="qualifications" placeholder=" ">
+                    <label>Qualifications</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="services" placeholder=" ">
+                    <label>Services</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="conditions" placeholder=" ">
+                    <label>Conditions Treated</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="experience" placeholder=" ">
+                    <label>Experience</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="memberships" placeholder=" ">
+                    <label>Memberships</label>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="fees" placeholder=" ">
+                    <label>Fees (Rs.)</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="locations" placeholder=" ">
+                    <label>Practice Locations</label>
                 </div>
             </div>
 
+            <div class="tab-content" id="personal">
+                <div class="input-group">
+                    <input type="text" id="degree" placeholder=" ">
+                    <label>Degree</label>
+                </div>
+                <div class="input-group">
+                    <textarea id="address" placeholder=" "></textarea>
+                    <label>Address</label>
+                </div>
+                <div class="input-group">
+                    <textarea id="about" placeholder=" "></textarea>
+                    <label>About</label>
+                </div>
+            </div>
 
+            <div class="tab-content" id="security">
+                <button type="button" id="change-password-btn" onclick="togglePasswordFields()" disabled>Change
+                    Password</button>
+                <div id="password-fields">
+                    <input type="password" id="current-password" placeholder="Current Password">
+                    <input type="password" id="new-password" placeholder="New Password">
+                    <input type="password" id="confirm-password" placeholder="Confirm Password">
+                </div>
+            </div>
 
-    <div class="status-section">
-        <label class="switch">
-            <input type="checkbox" id="availabilitySwitch" disabled>
-            <span class="slider round"></span>
-        </label>
-        <span id="availabilityLabel"></span>
-    </div>
-        </div>
-
-
-    <div class="availability-section">
-<h2 class="section-title">
-    Availability
-</h2>
-        <table class="availability-table" id="availabilityTable">
-
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Slots (comma-separated)</th>
-                        <th>Remove</th>
-                    </tr>
-
-                </thead>
-                <tbody></tbody>
-            </table>
-            <button class="btn add-slot-btn" onclick="addSlot()">+ Add Slot</button>
-                <button onclick="openQuickAddPopup()" class="btn add-slot-btn">Quick Add</button>
-
+            <div class="action-buttons">
+                <button class="btn" onclick="enableEditing()">Edit Profile</button>
+            </div>
         </div>
     </div>
+
     <div id="loadingOverlay">
         <div>
             <div class="spinner"></div>
-            <div>
-                Saving, please wait...
-            </div>
+            <div>Saving, please wait...</div>
         </div>
     </div>
-    
+
     <div id="toast"></div>
 
-<div id="buttonGroup">
-    <button class="btn" onclick="enableEditing()">Edit Profile</button>
-</div>
-<!-- ✅ Quick Add Availability Popup -->
-<div id="quickAddModal" class="modal">
-    <div class="modal-content">
-        <span class="modal-close" onclick="closeQuickAddPopup()">&times;</span>
-        <div class="modal-header">Quick Add Availability</div>
-
-        <!-- Days of week -->
-        <div style="margin-bottom:14px;">
-            <label><input type="checkbox" class="dayCheckbox" value="Mon"> Mon</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Tue"> Tue</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Wed"> Wed</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Thu"> Thu</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Fri"> Fri</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Sat"> Sat</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Sun"> Sun</label>
-        </div>
-
-        <!-- Time range -->
-        <div style="margin-bottom:14px;">
-            <label>From: <input type="time" id="quickStart" value="09:00"></label>
-            <label style="margin-left:12px;">To: <input type="time" id="quickEnd" value="17:00"></label>
-        </div>
-
-        <!-- Buttons -->
-        <div class="modal-footer">
-        <div class="availability-buttons">
-            <button class="btn add-slot-btn" onclick="addSlot()">+ Add Slot</button>
-            <button onclick="openQuickAddPopup()" class="btn add-slot-btn">Quick Add</button>
-        </div>
-
-        </div>
-    </div>
-</div>
-
     <script>
-        const standardSlots = [
-                "12:00 AM", "12:30 AM",
-                "01:00 AM", "01:30 AM",
-                "02:00 AM", "02:30 AM",
-                "03:00 AM", "03:30 AM",
-                "04:00 AM", "04:30 AM",
-                "05:00 AM", "05:30 AM",
-                "06:00 AM", "06:30 AM",
-                "07:00 AM", "07:30 AM",
-                "08:00 AM", "08:30 AM",
-                "09:00 AM", "09:30 AM",
-                "10:00 AM", "10:30 AM",
-                "11:00 AM", "11:30 AM",
-                "12:00 PM", "12:30 PM",
-                "01:00 PM", "01:30 PM",
-                "02:00 PM", "02:30 PM",
-                "03:00 PM", "03:30 PM",
-                "04:00 PM", "04:30 PM",
-                "05:00 PM", "05:30 PM",
-                "06:00 PM", "06:30 PM",
-                "07:00 PM", "07:30 PM",
-                "08:00 PM", "08:30 PM",
-                "09:00 PM", "09:30 PM",
-                "10:00 PM", "10:30 PM",
-                "11:00 PM", "11:30 PM"
-            ];
+        const doctorId = localStorage.getItem("doctorId");
+        let isEditing = false;
 
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDoctorProfile();
 
-          document.addEventListener('DOMContentLoaded', () => {
-                const bar = document.getElementById('bar');
-                const menu = document.querySelector('nav ul');
+            const bar = document.getElementById('bar');
+            const menu = document.querySelector('nav ul');
+            bar.addEventListener('click', () => menu.classList.toggle('active'));
 
-                bar.addEventListener('click', function () {
-                    menu.classList.toggle('active');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const target = btn.getAttribute('data-tab');
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    document.getElementById(target).classList.add('active');
                 });
             });
-        const doctorId = localStorage.getItem("doctorId");
-        let saveTimeout = null;
-        let isEditing = false;
-        let draggedRow = null;
-   function togglePasswordFields() {
-        const fields = document.getElementById("password-fields");
-        fields.style.display = fields.style.display === "none" ? "block" : "none";
-    }
+        });
+
+        function togglePasswordFields() {
+            const fields = document.getElementById('password-fields');
+            fields.style.display = fields.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function previewImage() {
+                const input = document.getElementById('fileUpload');
+                const img = document.getElementById('profilePic');
+                if (input.files && input.files[0]) {
+                    img.src = URL.createObjectURL(input.files[0]);
+                }
+            }
+
+        function enableEditing() {
+            isEditing = true;
+            toggleEditFields(true);
+            const btn = document.querySelector('.action-buttons .btn');
+            btn.textContent = 'Save Profile';
+            btn.onclick = saveProfile;
+        }
+
+        function toggleEditFields(enabled) {
+            const fields = [
+                "doctorName", "specialization", "qualifications", "services",
+                "conditions", "experience", "memberships", "fees", "locations", "fileUpload",
+                "degree", "address", "about"
+            ];
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.readOnly = !enabled;
+                    el.disabled = !enabled;
+                }
+            });
+            document.getElementById("change-password-btn").disabled = !enabled;
+        }
 
         function loadDoctorProfile() {
             const token = localStorage.getItem('authToken');
             if (!token) {
-                alert("You are not logged in. Redirecting to login page.");
+                alert("You are not logged in.");
                 window.location.href = 'login.html';
                 return;
             }
-
             fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
                 headers: { "Authorization": `Bearer ${token}` }
             })
@@ -896,162 +577,24 @@ input:checked + .slider:before {
                     document.getElementById("memberships").value = data.memberships || '';
                     document.getElementById("fees").value = data.fees || '';
                     document.getElementById("locations").value = data.locations || '';
-                    document.getElementById("profilePic").src = data.image || "https://via.placeholder.com/100";
                     document.getElementById("degree").value = data.degree || '';
+                    document.getElementById("profilePic").src = data.image
+                        ? `http://localhost:3000/${data.image}`
+                        : "https://via.placeholder.com/100";
                     document.getElementById("address").value = data.address || '';
                     document.getElementById("about").value = data.about || '';
-
-
-                    // Inside .then(data => { ... }) in loadDoctorProfile:
-                    const switchInput = document.getElementById("availabilitySwitch");
-                    const label = document.getElementById("availabilityLabel");
-
-                    switchInput.checked = data.available;
-                    label.textContent = data.available ? "Available" : "Unavailable";
-
-
-                    // When switch changes
-                    // switchInput.onchange = () => {
-                    //     toggleAvailability(switchInput.checked);
-                    //     label.textContent = switchInput.checked ? "Available" : "Unavailable";
-                    // };
-
+                    document.getElementById("change-password-btn").disabled = false;
+                    toggleEditFields(false);
                 })
                 .catch(err => {
-                    console.error("Error loading doctor profile:", err);
-                    alert("Failed to load doctor profile.");
-                });
-        }
-        function toggleAvailability(newStatus) {
-                const token = localStorage.getItem('authToken');
-                fetch(`http://localhost:3000/api/doctors/${doctorId}/status`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ available: newStatus })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        showToast(`Status updated to ${data.available ? 'Available' : 'Unavailable'}`);
-                        loadDoctorProfile();
-                    })
-                    .catch(err => {
-                        console.error("Error updating availability:", err);
-                        alert("Failed to update status");
-                    });
-            }
-
-
-        function loadAvailability() {
-            const token = localStorage.getItem('authToken');
-            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    const tbody = document.querySelector("#availabilityTable tbody");
-                    tbody.innerHTML = "";
-                    if (!data.availabilitySlots || !data.availabilitySlots.length) return;
-                    data.availabilitySlots.forEach(slot => {
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-                                <td><input type="date" value="${slot.date}"></td>
-                                <td><input type="text" value="${slot.slots.join(", ")}"></td>
-                                <td><button onclick="removeRow(this)">❌</button></td>
-                            `;
-                        tbody.appendChild(tr);
-                    });
-                    assignDragEvents();
-                })
-                .catch(err => console.error("Failed to load availability", err));
-        }
-
-       function addSlot() {
-            const tbody = document.querySelector("#availabilityTable tbody");
-            const tr = document.createElement("tr");
-
-            // Date input cell
-            const dateCell = document.createElement("td");
-            const dateInput = document.createElement("input");
-            dateInput.type = "date";
-            dateCell.appendChild(dateInput);
-
-            // Slots cell
-            const slotsCell = document.createElement("td");
-
-            // Create container div with class 'slots-container'
-            const slotsContainer = document.createElement("div");
-            slotsContainer.classList.add("slots-container");
-
-            // Add checkboxes wrapped in labels inside the container
-            standardSlots.forEach(slot => {
-                const label = document.createElement("label");
-
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.value = slot;
-
-                label.appendChild(checkbox);
-                label.append(` ${slot}`);
-
-                slotsContainer.appendChild(label);
-            });
-
-            // Append container to the cell
-            slotsCell.appendChild(slotsContainer);
-
-            // Remove button cell (unchanged)
-            const removeCell = document.createElement("td");
-            removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
-
-            tr.appendChild(dateCell);
-            tr.appendChild(slotsCell);
-            tr.appendChild(removeCell);
-
-            tbody.appendChild(tr);
-        }
-
-       function removeRow(button) {
-            const row = button.closest("tr");
-            const dateInput = row.querySelector("input[type='date']");
-
-            if (!dateInput || !dateInput.value) {
-                alert("Invalid or missing date.");
-                return;
-            }
-
-            const rawDate = dateInput.value;
-            const formattedDate = rawDate; // Already in "yyyy-MM-dd" format from input[type='date']
-            const token = localStorage.getItem("authToken");
-
-            if (!confirm(`Are you sure you want to delete availability for ${formattedDate}?`)) return;
-
-            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability/${formattedDate}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    alert("Slot deleted!");
-                    loadAvailability();
-                })
-                .catch(err => {
-                    console.error("Failed to delete slot", err);
-                    alert("Failed to delete slot");
+                    console.error(err);
+                    alert("Failed to load profile.");
                 });
         }
 
-       function saveProfile() {
+        function saveProfile() {
             const token = localStorage.getItem('authToken');
-            if (!token) {
-                alert("You are not logged in. Redirecting to login page.");
-                window.location.href = 'login.html';
-                return;
-            }
+            if (!token) return alert("You are not logged in.");
 
             const fileInput = document.getElementById("fileUpload");
             const file = fileInput.files[0];
@@ -1069,328 +612,62 @@ input:checked + .slider:before {
             profile.append("degree", document.getElementById("degree").value);
             profile.append("address", document.getElementById("address").value);
             profile.append("about", document.getElementById("about").value);
-
             if (file) profile.append("photo", file);
 
-            // Optional password change
-            // Inside saveProfile(), after collecting FormData
-           const passwordFields = document.getElementById("password-fields");
-           if (passwordFields.style.display === "block") {
-               const currentPassword = document.getElementById("current-password").value.trim();
-               const newPassword = document.getElementById("new-password").value.trim();
-               const confirmPassword = document.getElementById("confirm-password").value.trim();
+            const passwordFields = document.getElementById("password-fields");
+            if (passwordFields.style.display === "block") {
+                const currentPassword = document.getElementById("current-password").value.trim();
+                const newPassword = document.getElementById("new-password").value.trim();
+                const confirmPassword = document.getElementById("confirm-password").value.trim();
+                if (currentPassword || newPassword || confirmPassword) {
+                    if (!currentPassword || !newPassword || !confirmPassword) return alert("Fill all password fields.");
+                    if (newPassword !== confirmPassword) return alert("Passwords do not match.");
+                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/;
+                    if (!passwordRegex.test(newPassword)) return alert("Password must include uppercase, lowercase, number, special char.");
+                    profile.append("currentPassword", currentPassword);
+                    profile.append("newPassword", newPassword);
+                }
+            }
 
-               // Only proceed if user wants to change password
-               if (currentPassword || newPassword || confirmPassword) {
-                   // Check all fields are filled
-                   if (!currentPassword || !newPassword || !confirmPassword) {
-                       return alert("Please fill all password fields to change password.");
-                   }
-
-                   // Check new password matches confirmation
-                   if (newPassword !== confirmPassword) {
-                       return alert("New password and confirmation do not match.");
-                   }
-
-                   // Password strength check
-                   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
-                   if (!passwordRegex.test(newPassword)) {
-                       return alert("Password must be at least 6 characters long and include uppercase, lowercase, number, and special character.");
-                   }
-
-                   // Append to FormData to send to server
-                   profile.append("currentPassword", currentPassword);
-                   profile.append("newPassword", newPassword);
-               }
-           }
-
-
-            showLoadingOverlay();
-
-            // Merge availability slots
-            const newSlots = getCurrentAvailabilitySlots();
-            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+            showLoading(true);
+            fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                method: 'PUT',
+                body: profile,
                 headers: { "Authorization": `Bearer ${token}` }
             })
                 .then(res => res.json())
-                .then(existingData => {
-                    const existingSlots = existingData.availabilitySlots || [];
-                    const mergedSlotsMap = {};
-
-                    existingSlots.forEach(slot => mergedSlotsMap[slot.date] = new Set(slot.slots));
-                    newSlots.forEach(slot => {
-                        if (!mergedSlotsMap[slot.date]) mergedSlotsMap[slot.date] = new Set();
-                        slot.slots.forEach(s => mergedSlotsMap[slot.date].add(s));
-                    });
-
-                    const mergedSlots = Object.entries(mergedSlotsMap).map(([date, slotsSet]) => ({
-                        date,
-                        slots: Array.from(slotsSet)
-                    }));
-
-                    return Promise.all([
-                        fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                            method: "PUT",
-                            headers: { "Authorization": `Bearer ${token}` },
-                            body: profile
-                        }),
-                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`
-                            },
-                            body: JSON.stringify({ availabilitySlots: mergedSlots })
-                        })
-                    ]);
-                })
-                .then(responses => {
-                    responses.forEach(res => {
-                        if (!res.ok) throw new Error("Update failed");
-                    });
-                    hideLoadingOverlay();
-                    showToast("Profile updated successfully!");
-
-                    isEditing = false;
-                    toggleEditFields(false);
-                    loadAvailability();
-                    loadDoctorProfile();
-
-                    document.getElementById("availabilitySwitch").disabled = true;
-                    document.getElementById("buttonGroup").innerHTML = `<button class="btn" onclick="enableEditing()">Edit Profile</button>`;
+                .then(data => {
+                    showLoading(false);
+                    if (data.success) {
+                        showToast("Profile saved successfully!");
+                        toggleEditFields(false);
+                        isEditing = false;
+                        const btn = document.querySelector('.action-buttons .btn');
+                        btn.textContent = 'Edit Profile';
+                        btn.onclick = enableEditing;
+                    } else {
+                        showToast(data.message || "Failed to save profile.");
+                    }
                 })
                 .catch(err => {
-                    hideLoadingOverlay();
-                    showToast("An error occurred while saving.");
-                    console.error("Update error:", err);
+                    console.error(err);
+                    showLoading(false);
+                    showToast("An error occurred while saving profile.");
                 });
-
-            saveAvailabilityOrder();
         }
 
-        function getCurrentAvailabilitySlots() {
-                const availabilitySlots = [];
-                const rows = document.querySelectorAll("#availabilityTable tbody tr");
-
-                rows.forEach(row => {
-                    const date = row.querySelector("td:nth-child(1) input[type='date']").value;
-                    if (!date) return;
-
-                    const checkedSlots = [];
-                    const checkboxes = row.querySelectorAll("td:nth-child(2) input[type='checkbox']");
-                    checkboxes.forEach(cb => {
-                        if (cb.checked) checkedSlots.push(cb.value);
-                    });
-
-                    if (checkedSlots.length > 0) {
-                        availabilitySlots.push({ date, slots: checkedSlots });
-                    }
-                });
-
-                return availabilitySlots;
-            }
-
-    function enableEditing() {
-        isEditing = true;
-        toggleEditFields(true);
-        // document.getElementById("availabilitySwitch").disabled = false;
-            document.getElementById("change-password-btn").disabled = false;
-
-        const buttonGroup = document.getElementById("buttonGroup");
-        buttonGroup.innerHTML = `
-        <button class="btn" onclick="saveProfile()">Save Profile</button>
-        <div id="saveStatus" style="margin-top: 10px; font-size: 14px; color: green;"></div>
-    `;
-    }
-
-        function toggleEditFields(enabled) {
-            const fields = [
-                "doctorName", "specialization", "qualifications", "services",
-                "conditions", "experience", "memberships", "fees", "locations", "fileUpload"
-            ];
-            fields.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.readOnly = !enabled;
-                    el.disabled = !enabled;
-                }
-            });
-
-            document.querySelectorAll("#availabilityTable input").forEach(input => {
-                input.readOnly = !enabled;
-                input.disabled = !enabled;
-            });
-
-            const addSlotBtn = document.querySelector(".add-slot-btn");
-            if (addSlotBtn) addSlotBtn.style.display = enabled ? "inline-block" : "none";
-
-            document.querySelectorAll(".availability-table button").forEach(btn => {
-                btn.style.display = enabled ? "inline-block" : "none";
-            });
+        function showLoading(show) {
+            const overlay = document.getElementById("loadingOverlay");
+            overlay.style.display = show ? "flex" : "none";
         }
 
-        function dragStart(e) {
-            draggedRow = e.currentTarget;
-            e.dataTransfer.effectAllowed = 'move';
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg;
+            toast.style.display = "block";
+            setTimeout(() => toast.style.display = "none", 3000);
         }
-
-        function dragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function drop(e) {
-            e.preventDefault();
-            if (draggedRow && draggedRow !== e.currentTarget) {
-                const tbody = draggedRow.parentNode;
-                tbody.insertBefore(draggedRow, e.currentTarget.nextSibling);
-                // autoSaveProfile();
-            }
-        }
-
-        function assignDragEvents() {
-            document.querySelectorAll("#availabilityTable tbody tr").forEach(row => {
-                row.setAttribute("draggable", true);
-                row.ondragstart = dragStart;
-                row.ondragover = dragOver;
-                row.ondrop = drop;
-            });
-        }
-
-        function showLoadingOverlay() {
-                const overlay = document.getElementById('loadingOverlay');
-                overlay.style.display = 'flex';
-            }
-
-            function hideLoadingOverlay() {
-                const overlay = document.getElementById('loadingOverlay');
-                overlay.style.display = 'none';
-            }
-
-            function showToast(message, duration = 3000) {
-                const toast = document.getElementById('toast');
-                toast.textContent = message;
-                toast.style.display = 'block';
-                setTimeout(() => {
-                    toast.style.display = 'none';
-                }, duration);
-            }
-            function previewImage() {
-                    const input = document.getElementById('fileUpload');
-                    const img = document.getElementById('profilePic');
-
-                    if (input.files && input.files[0]) {
-                        img.src = URL.createObjectURL(input.files[0]); 
-                    }
-                }
-                function saveAvailabilityOrder() {
-                        const rows = document.querySelectorAll("#availabilityTable tbody tr");
-                        const newOrder = Array.from(rows).map(row => row.dataset.date); // or data-id
-
-                        const doctorId = localStorage.getItem("doctorId");
-                        const token = localStorage.getItem("authToken");
-
-                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability/order`, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`
-                            },
-                            body: JSON.stringify({ order: newOrder })
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                console.log("Availability order saved!");
-                            })
-                            .catch(err => {
-                                console.error("Failed to save availability order", err);
-                            });
-                    }
-
-        window.onload = () => {
-            loadDoctorProfile();
-            loadAvailability();
-            toggleEditFields(false);
-            document.getElementById("buttonGroup").innerHTML = `
-                    <button class="btn" onclick="enableEditing()">Edit Profile</button>
-                `;
-        };
-       function openQuickAddPopup() {
-            document.getElementById("quickAddModal").style.display = "flex";
-        }
-
-        function closeQuickAddPopup() {
-            document.getElementById("quickAddModal").style.display = "none";
-        }
-
-        function applyQuickAvailability() {
-            const days = Array.from(document.querySelectorAll('.dayCheckbox:checked')).map(cb => cb.value);
-            const start = document.getElementById('quickStart').value;
-            const end = document.getElementById('quickEnd').value;
-
-            if (!days.length || !start || !end) {
-                alert("Please select days and time range.");
-                return;
-            }
-
-            // Generate 30-min slots
-            function generateSlots(start, end) {
-                const slots = [];
-                let [sh, sm] = start.split(':').map(Number);
-                let [eh, em] = end.split(':').map(Number);
-                let startTime = new Date(2000, 0, 1, sh, sm);
-                let endTime = new Date(2000, 0, 1, eh, em);
-
-                while (startTime < endTime) {
-                    let h = startTime.getHours();
-                    let m = startTime.getMinutes();
-                    let ampm = h >= 12 ? "PM" : "AM";
-                    let displayH = h % 12 || 12;
-                    let displayM = m.toString().padStart(2, '0');
-                    slots.push(`${displayH}:${displayM} ${ampm}`);
-                    startTime.setMinutes(startTime.getMinutes() + 30);
-                }
-                return slots;
-            }
-
-            const slotList = generateSlots(start, end);
-            const tbody = document.querySelector("#availabilityTable tbody");
-
-            days.forEach(day => {
-                const today = new Date();
-                const dayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(day);
-
-                const diff = (dayIndex - today.getDay() + 7) % 7;
-                const targetDate = new Date(today);
-                targetDate.setDate(today.getDate() + diff);
-
-                const formattedDate = targetDate.toISOString().split("T")[0];
-
-                const tr = document.createElement("tr");
-
-                // ✅ create checkboxes for each slot (so saveProfile works)
-                let slotCheckboxes = slotList.map(s =>
-                    `<label><input type="checkbox" checked value="${s}"> ${s}</label>`
-                ).join(" ");
-
-                tr.innerHTML = `
-            <td><input type="date" value="${formattedDate}"></td>
-            <td>${slotCheckboxes}</td>
-            <td><button onclick="removeRow(this)">❌</button></td>
-        `;
-
-                tbody.appendChild(tr);
-            });
-
-            closeQuickAddPopup();
-            showToast("Availability added!");
-        }
-
     </script>
-
-    
-    
-
 </body>
 
 </html>

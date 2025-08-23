@@ -394,7 +394,7 @@ body::before {
         const email = sessionStorage.getItem('pendingOtpEmail');
         const otp = document.getElementById('otp').value;
 
-        if (!otp || !email) {  // Check both fields
+        if (!otp || !email) {  
             alert('Please enter both email and OTP.');
             return;
         }

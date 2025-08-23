@@ -812,12 +812,19 @@ p.availability.unavailable {
                     return response.json();
                 })
                 .then(doctor => {
+                    // Determine today's date
+                    const todayStr = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
+
+                    // Check if doctor has slots for today
+                    const hasSlotsToday = doctor.availabilitySlots?.some(slot => slot.date === todayStr && slot.slots.length > 0);
+
                     profileDiv.innerHTML = `
                             <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}">
                             <h2>${doctor.name}</h2>
-                            <p class="availability ${doctor.available ? "available" : "unavailable"}">
-                                ${doctor.available ? "Available" : "Not Available"}
+                            <p class="availability ${hasSlotsToday ? "available" : "unavailable"}">
+                            ${hasSlotsToday ? "Available " : "Not Available "}
                             </p>
+
                             <p><strong>Specialty:</strong> ${doctor.speciality}</p>
                             <p><strong>Experience:</strong> ${doctor.experience} years</p>
                             <p><strong>Degree:</strong> ${doctor.degree}</p>

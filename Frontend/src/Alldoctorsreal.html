@@ -785,35 +785,40 @@ nav ul li a:hover {
                     doctors.forEach((doctor) => {
                         const card = document.createElement("div");
                         card.className = "card";
+
+                        const todayStr = new Date().toISOString().split("T")[0]; 
+                        const hasSlotsToday = doctor.availabilitySlots?.some(slot => slot.date === todayStr && slot.slots.length > 0);
+
                         card.innerHTML = `
-                        <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" class="doctor-img" />
-                        <div class="card-content">
-                            <h3 class="doctor-name">${doctor.name}</h3>
-                            <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>
-                            <p><strong>Experience:</strong> ${doctor.experience} years</p>
-                            <p class="availability ${doctor.available ? "available" : "unavailable"}">
-                                ${doctor.available ? "Available" : "Not Available"}
-                            </p>
-                            <p class="rating">
-                            ${doctor.averageRating > 0 ? generateStars(doctor.averageRating) : "No rating yet"}
-                            </p>
-                            <a href="doctor.html?id=${encodeURIComponent(doctor._id)}" class="book-btn">View Profile</a>
-                        </div>
-                    `;
+        <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" class="doctor-img" />
+        <div class="card-content">
+            <h3 class="doctor-name">${doctor.name}</h3>
+            <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>
+            <p><strong>Experience:</strong> ${doctor.experience} years</p>
+            <p class="availability ${hasSlotsToday ? "available" : "unavailable"}">
+                ${hasSlotsToday ? "Available" : "Not Available"}
+            </p>
+            <p class="rating">
+                ${doctor.averageRating > 0 ? generateStars(doctor.averageRating) : "No rating yet"}
+            </p>
+            <a href="doctor.html?id=${encodeURIComponent(doctor._id)}" class="book-btn">View Profile</a>
+        </div>
+    `;
 
                         card.addEventListener("click", () => {
                             window.location.href = `doctor.html?id=${doctor._id}`;
                         });
 
+                        // Append based on speciality filter
                         if (specialityParam) {
                             if (doctor.speciality.toLowerCase().includes(specialityParam)) {
                                 doctorList.appendChild(card);
-                                foundSpecialityMatch = true;
                             }
                         } else {
                             doctorList.appendChild(card);
                         }
                     });
+
 
                     if (specialityParam && !foundSpecialityMatch) {
                         doctorList.innerHTML = `<p>No doctors found for ${specialityParam}.</p>`;

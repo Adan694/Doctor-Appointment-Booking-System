@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Profile Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 30px;
+        background-color: #e6f2ff;
+        display: flex;
+        flex-direction: column;
+    }
+
+    nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        z-index: 1000;
+        padding: 10px 20px;
+    }
+
+    ul {
+        display: flex;
+    }
+
+    ul li {
+        list-style: none;
+    }
+
+    ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 20px;
+        margin-inline: 20px;
+    }
+
+    ul li a:hover {
+        color: black;
+        border-bottom: 2px solid black;
+    }
+
+    #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+    }
+
+    .logo {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin: 0;
+    }
+
+    .logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    }
+
+    .logo h1 {
+    font-size: 30px;
+    margin: 0;
+    }
+
+    .logo img:hover {
+    transform: scale(1.1) rotate(-5deg);
+    }
+
+    .logo h1 {
+    font-size: 28px;
+    background: linear-gradient(45deg, #ffffff, #cceeff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    }
+
+   
+
+.availability-section {
+    margin-top: 100px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    flex: 1;
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.availability-section:hover {
+    box-shadow: 0 8px 20px rgba(0, 153, 153, 0.25);
+    transform: translateY(-4px);
+}
+
+
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 12px;
+    color: rgb(9, 102, 102);
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1.8px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+input:hover,
+textarea:hover {
+    border-color: #009999;
+    box-shadow: 0 4px 12px rgba(0, 153, 153, 0.3);
+}
+input:focus,
+textarea:focus {
+    border-color: rgb(9, 102, 102);
+    outline: none;
+    box-shadow: 0 0 10px rgba(9, 102, 102, 0.5);
+}
+
+.availability-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    margin-top: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+    transition: box-shadow 0.3s ease;
+}
+.availability-table:hover {
+    box-shadow: 0 6px 20px rgba(0, 153, 153, 0.3);
+}
+
+.availability-table th,
+.availability-table td {
+    border: none;
+    padding: 14px 18px;
+    text-align: left;
+    background: white;
+    transition: background-color 0.3s ease;
+}
+.availability-table th {
+    background: #cde7f0;
+    color: rgb(9, 102, 102);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    user-select: none;
+}
+
+.availability-table tbody tr {
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.availability-table tbody tr:hover {
+    background-color: #e0f2f2;
+    box-shadow: 0 4px 18px rgba(0, 153, 153, 0.3);
+}
+
+.availability-table button {
+    background-color: transparent;
+    color: red;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+.availability-table button:hover {
+    color: darkred;
+    transform: scale(1.1);
+}
+
+#buttonGroup {
+    margin: 20px auto;
+    width: 220px;
+    text-align: center;
+}
+#buttonGroup .btn {
+    width: 100%;
+    padding: 12px 0;
+    background: rgb(9, 102, 102);
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(0, 153, 153, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+#buttonGroup .btn:hover {
+    background: #007BFF;
+    box-shadow: 0 6px 22px rgba(0, 123, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+.add-slot-btn {
+    background: #28a745 !important;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(40, 167, 69, 0.5);
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    display: inline-block;
+    text-align: center;
+    user-select: none;
+}
+.add-slot-btn:hover {
+    background: #218838 !important;
+    box-shadow: 0 6px 18px rgba(33, 136, 56, 0.7);
+    transform: translateY(-2px);
+}
+
+.section-title {
+    color: rgb(9, 102, 102);
+    font-size: 24px;
+    margin-bottom: 15px;
+    border-bottom: 3px solid #c0e7e7;
+    padding-bottom: 6px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    user-select: none;
+}
+
+.name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.title-label {
+    font-weight: bold;
+    font-size: 20px;
+    color: rgb(9, 102, 102);
+    white-space: nowrap;
+}
+
+.name-input {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    border: 1.8px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.name-input:hover {
+    border-color: #009999;
+    box-shadow: 0 4px 12px rgba(0, 153, 153, 0.3);
+}
+.name-input:focus {
+    border-color: rgb(9, 102, 102);
+    outline: none;
+    box-shadow: 0 0 12px rgba(9, 102, 102, 0.6);
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #d0f0f0;
+    border-top: 5px solid #009999;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.slots-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.slots-container > label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+.slots-container > label:hover {
+    color: #007BFF;
+}
+
+.slots-container > label input[type="checkbox"] {
+    margin-right: 6px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s ease;
+}
+.slots-container > label input[type="checkbox"]:hover {
+    transform: scale(1.2);
+}
+
+
+
+    #loadingOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    #loadingOverlay>div>div:last-child {
+        margin-top: 12px;
+        font-size: 18px;
+        color: #004d4d;
+        font-weight: 500;
+    }
+
+    #toast {
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #009999;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        z-index: 3000;
+        font-size: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+
+        .container {
+            flex-direction: column;
+            margin-top: 120px;
+        }
+
+        nav {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 10px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+        }
+
+        nav ul {
+            flex-direction: column;
+            width: 100%;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            background-color: rgb(9, 102, 102);
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;         
+            transition: max-height 0.4s ease, opacity 0.4s ease;
+        }
+
+        nav ul.active {
+            max-height: 300px;
+            opacity: 1;
+        }
+
+        nav ul li {
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        nav ul li a {
+            font-size: 16px;
+            margin: 5px 0;
+            margin-right: 10px;
+        }
+
+        #bar {
+            display: block;
+            position: absolute;
+            right: 50px;
+            top: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+    }
+
+    @media (max-width: 900px) {
+        .slots-container {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 400px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .slots-container {
+            grid-template-columns: 1fr;
+            max-width: 300px;
+        }
+
+        .slots-container>label {
+            white-space: normal;
+        }
+    }
+
+.modal {
+  display: none; 
+  position: fixed;
+  inset: 0; 
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 10000; 
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 14px;
+  width: 440px;
+  max-width: 95%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: relative;
+  animation: slideDown 0.3s ease;
+}
+
+.modal-header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgb(9, 102, 102);
+  margin-bottom: 15px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.modal-close:hover {
+  color: #000;
+}
+
+.modal-footer {
+  margin-top: 18px;
+  text-align: right;
+}
+
+.modal-footer .btn {
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideDown {
+  from { transform: translateY(-25px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+</style>
+
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <img src="images/Da.png" alt="DocAssist Logo">
+            <h1>DocAssist</h1>
+        </div>
+        <i id="bar" class="fa-solid fa-bars"></i>
+        <ul>
+            <li><a href="docpanel.html">Dashboard</a></li>
+            <li><a href="DocAppointment.html">Appointments</a></li>
+            <li><a href="docprofile.html">Profile</a></li>
+            <li><a href="docavailability.html">Manage Availability</a></li>
+            <li><a href="Docfeedback.html">Feedback</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="availability-section">
+<h2 class="section-title">
+    Availability
+</h2>
+        <table class="availability-table" id="availabilityTable">
+
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Slots (comma-separated)</th>
+                        <th>Remove</th>
+                    </tr>
+
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button class="btn add-slot-btn" onclick="addSlot()">+ Add Slot</button>
+                <button onclick="openQuickAddPopup()" class="btn add-slot-btn">Quick Add</button>
+
+        </div>
+    </div>
+    <div id="loadingOverlay">
+        <div>
+            <div class="spinner"></div>
+            <div>
+                Saving, please wait...
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast"></div>
+
+<div id="buttonGroup">
+    <button class="btn" onclick="enableEditing()">Edit Profile</button>
+</div>
+<!-- ✅ Quick Add Availability Popup -->
+<div id="quickAddModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeQuickAddPopup()">&times;</span>
+        <div class="modal-header">Quick Add Availability</div>
+
+        <!-- Days of week -->
+        <div style="margin-bottom:14px;">
+            <label><input type="checkbox" class="dayCheckbox" value="Mon"> Mon</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Tue"> Tue</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Wed"> Wed</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Thu"> Thu</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Fri"> Fri</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Sat"> Sat</label>
+            <label><input type="checkbox" class="dayCheckbox" value="Sun"> Sun</label>
+        </div>
+
+        <!-- Time range -->
+        <div style="margin-bottom:14px;">
+            <label>From: <input type="time" id="quickStart" value="09:00"></label>
+            <label style="margin-left:12px;">To: <input type="time" id="quickEnd" value="17:00"></label>
+        </div>
+
+        <!-- Buttons -->
+        <div class="modal-footer">
+            <button class="btn" onclick="applyQuickAvailability()">Save Availability</button>
+            <button class="btn" onclick="closeQuickAddPopup()">Cancel</button>
+        </div>
+        <div class="availability-buttons">
+        </div>
+
+        </div>
+    </div>
+</div>
+
+    <script>
+        const standardSlots = [
+                "12:00 AM", "12:30 AM",
+                "01:00 AM", "01:30 AM",
+                "02:00 AM", "02:30 AM",
+                "03:00 AM", "03:30 AM",
+                "04:00 AM", "04:30 AM",
+                "05:00 AM", "05:30 AM",
+                "06:00 AM", "06:30 AM",
+                "07:00 AM", "07:30 AM",
+                "08:00 AM", "08:30 AM",
+                "09:00 AM", "09:30 AM",
+                "10:00 AM", "10:30 AM",
+                "11:00 AM", "11:30 AM",
+                "12:00 PM", "12:30 PM",
+                "01:00 PM", "01:30 PM",
+                "02:00 PM", "02:30 PM",
+                "03:00 PM", "03:30 PM",
+                "04:00 PM", "04:30 PM",
+                "05:00 PM", "05:30 PM",
+                "06:00 PM", "06:30 PM",
+                "07:00 PM", "07:30 PM",
+                "08:00 PM", "08:30 PM",
+                "09:00 PM", "09:30 PM",
+                "10:00 PM", "10:30 PM",
+                "11:00 PM", "11:30 PM"
+            ];
+
+
+          document.addEventListener('DOMContentLoaded', () => {
+                const bar = document.getElementById('bar');
+                const menu = document.querySelector('nav ul');
+                const logoutButton = document.getElementById('logoutBtn');
+              if (logoutButton) {
+                  logoutButton.addEventListener('click', logout);
+              }
+
+
+                bar.addEventListener('click', function () {
+                    menu.classList.toggle('active');
+                });
+            });
+        const doctorId = localStorage.getItem("doctorId");
+        let saveTimeout = null;
+        let isEditing = false;
+        let draggedRow = null;
+   function togglePasswordFields() {
+        const fields = document.getElementById("password-fields");
+        fields.style.display = fields.style.display === "none" ? "block" : "none";
+    }
+
+        
+        function toggleAvailability(newStatus) {
+                const token = localStorage.getItem('authToken');
+                fetch(`http://localhost:3000/api/doctors/${doctorId}/status`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ available: newStatus })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        showToast(`Status updated to ${data.available ? 'Available' : 'Unavailable'}`);
+                        loadDoctorProfile();
+                    })
+                    .catch(err => {
+                        console.error("Error updating availability:", err);
+                        alert("Failed to update status");
+                    });
+            }
+
+
+        function loadAvailability() {
+            const token = localStorage.getItem('authToken');
+            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const tbody = document.querySelector("#availabilityTable tbody");
+                    tbody.innerHTML = "";
+                    if (!data.availabilitySlots || !data.availabilitySlots.length) return;
+                    data.availabilitySlots.forEach(slot => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                                <td><input type="date" value="${slot.date}"></td>
+                                <td><input type="text" value="${slot.slots.join(", ")}"></td>
+                                <td><button onclick="removeRow(this)">❌</button></td>
+                            `;
+                        tbody.appendChild(tr);
+                    });
+                    assignDragEvents();
+                })
+                .catch(err => console.error("Failed to load availability", err));
+        }
+
+       // Max slots per day
+        const MAX_SLOTS_PER_DAY = 16;
+
+        // Helper to get today in yyyy-mm-dd format
+        function getTodayDate() {
+            return new Date().toISOString().split("T")[0];
+        }
+
+        // Add single slot row
+        function addSlot() {
+            const tbody = document.querySelector("#availabilityTable tbody");
+            const tr = document.createElement("tr");
+
+            // Date input cell
+            const dateCell = document.createElement("td");
+            const dateInput = document.createElement("input");
+            dateInput.type = "date";
+            dateInput.min = getTodayDate(); // Prevent past dates
+            dateCell.appendChild(dateInput);
+
+            // Slots cell
+            const slotsCell = document.createElement("td");
+            const slotsContainer = document.createElement("div");
+            slotsContainer.classList.add("slots-container");
+
+            standardSlots.forEach(slot => {
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.value = slot;
+
+                label.appendChild(checkbox);
+                label.append(` ${slot}`);
+                slotsContainer.appendChild(label);
+            });
+
+            slotsCell.appendChild(slotsContainer);
+
+            // Remove button
+            const removeCell = document.createElement("td");
+            removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
+
+            tr.appendChild(dateCell);
+            tr.appendChild(slotsCell);
+            tr.appendChild(removeCell);
+
+            tbody.appendChild(tr);
+        }
+
+        // Quick Add Availability
+        function applyQuickAvailability() {
+            const days = Array.from(document.querySelectorAll('.dayCheckbox:checked')).map(cb => cb.value);
+            const start = document.getElementById('quickStart').value;
+            const end = document.getElementById('quickEnd').value;
+
+            if (!days.length) return alert("Please select at least one day.");
+            if (!start || !end) return alert("Please select start and end times.");
+
+            const startTime = new Date(`1970-01-01T${start}:00`);
+            const endTime = new Date(`1970-01-01T${end}:00`);
+            if (endTime <= startTime) return alert("End time must be after start time.");
+
+            // Generate 30-min slots
+            const slotList = [];
+            let current = new Date(startTime);
+            while (current < endTime) {
+                let h = current.getHours();
+                let m = current.getMinutes();
+                let ampm = h >= 12 ? "PM" : "AM";
+                let displayH = h % 12 || 12;
+                let displayM = m.toString().padStart(2, '0');
+                slotList.push(`${displayH}:${displayM} ${ampm}`);
+                current.setMinutes(current.getMinutes() + 30);
+            }
+
+            if (slotList.length > MAX_SLOTS_PER_DAY) return alert(`Cannot add more than ${MAX_SLOTS_PER_DAY} slots per day.`);
+
+            const tbody = document.querySelector("#availabilityTable tbody");
+            const today = new Date();
+
+            days.forEach(day => {
+                const dayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(day);
+                const diff = (dayIndex - today.getDay() + 7) % 7;
+                const targetDate = new Date(today);
+                targetDate.setDate(today.getDate() + diff);
+                const formattedDate = targetDate.toISOString().split("T")[0];
+
+                // Check if date already exists in table
+                const existingRow = Array.from(tbody.querySelectorAll("tr")).find(row => row.querySelector("input[type='date']").value === formattedDate);
+                if (existingRow) return; // Skip duplicate date
+
+                // Create row
+                const tr = document.createElement("tr");
+                const dateCell = document.createElement("td");
+                const dateInput = document.createElement("input");
+                dateInput.type = "date";
+                dateInput.value = formattedDate;
+                dateInput.min = getTodayDate();
+                dateCell.appendChild(dateInput);
+                tr.appendChild(dateCell);
+
+                const slotsCell = document.createElement("td");
+                const slotsContainer = document.createElement("div");
+                slotsContainer.classList.add("slots-container");
+
+                slotList.forEach(slot => {
+                    const label = document.createElement("label");
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.checked = true;
+                    checkbox.value = slot;
+
+                    label.appendChild(checkbox);
+                    label.append(` ${slot}`);
+                    slotsContainer.appendChild(label);
+                });
+
+                slotsCell.appendChild(slotsContainer);
+                tr.appendChild(slotsCell);
+
+                const removeCell = document.createElement("td");
+                removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
+                tr.appendChild(removeCell);
+
+                tbody.appendChild(tr);
+            });
+
+            closeQuickAddPopup();
+            showToast("Availability added!");
+        }
+
+
+       function removeRow(button) {
+            const row = button.closest("tr");
+            const dateInput = row.querySelector("input[type='date']");
+
+            if (!dateInput || !dateInput.value) {
+                alert("Invalid or missing date.");
+                return;
+            }
+
+            const rawDate = dateInput.value;
+            const formattedDate = rawDate; // Already in "yyyy-MM-dd" format from input[type='date']
+            const token = localStorage.getItem("authToken");
+
+            if (!confirm(`Are you sure you want to delete availability for ${formattedDate}?`)) return;
+
+            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability/${formattedDate}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    alert("Slot deleted!");
+                    loadAvailability();
+                })
+                .catch(err => {
+                    console.error("Failed to delete slot", err);
+                    alert("Failed to delete slot");
+                });
+        }
+
+       function saveProfile() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert("You are not logged in. Redirecting to login page.");
+                window.location.href = 'login.html';
+                return;
+            }
+            // Merge availability slots
+            const newSlots = getCurrentAvailabilitySlots();
+            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+                .then(res => res.json())
+                .then(existingData => {
+                    const existingSlots = existingData.availabilitySlots || [];
+                    const mergedSlotsMap = {};
+
+                    existingSlots.forEach(slot => mergedSlotsMap[slot.date] = new Set(slot.slots));
+                    newSlots.forEach(slot => {
+                        if (!mergedSlotsMap[slot.date]) mergedSlotsMap[slot.date] = new Set();
+                        slot.slots.forEach(s => mergedSlotsMap[slot.date].add(s));
+                    });
+
+                    const mergedSlots = Object.entries(mergedSlotsMap).map(([date, slotsSet]) => ({
+                        date,
+                        slots: Array.from(slotsSet)
+                    }));
+
+                    return Promise.all([
+                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ availabilitySlots: mergedSlots })
+                        })
+                    ]);
+                })
+                .then(responses => {
+                    responses.forEach(res => {
+                        if (!res.ok) throw new Error("Update failed");
+                    });
+                    hideLoadingOverlay();
+                    showToast("Profile updated successfully!");
+
+                    isEditing = false;
+                    toggleEditFields(false);
+                    loadAvailability();
+
+                    document.getElementById("buttonGroup").innerHTML = `<button class="btn" onclick="enableEditing()">Edit Profile</button>`;
+                })
+                .catch(err => {
+                    hideLoadingOverlay();
+                    showToast("An error occurred while saving.");
+                    console.error("Update error:", err);
+                });
+
+            saveAvailabilityOrder();
+        }
+
+        function getCurrentAvailabilitySlots() {
+                const availabilitySlots = [];
+                const rows = document.querySelectorAll("#availabilityTable tbody tr");
+
+                rows.forEach(row => {
+                    const date = row.querySelector("td:nth-child(1) input[type='date']").value;
+                    if (!date) return;
+
+                    const checkedSlots = [];
+                    const checkboxes = row.querySelectorAll("td:nth-child(2) input[type='checkbox']");
+                    checkboxes.forEach(cb => {
+                        if (cb.checked) checkedSlots.push(cb.value);
+                    });
+
+                    if (checkedSlots.length > 0) {
+                        availabilitySlots.push({ date, slots: checkedSlots });
+                    }
+                });
+
+                return availabilitySlots;
+            }
+
+    function enableEditing() {
+        isEditing = true;
+        toggleEditFields(true);
+        const buttonGroup = document.getElementById("buttonGroup");
+        buttonGroup.innerHTML = `
+        <button class="btn" onclick="saveProfile()">Save Profile</button>
+        <div id="saveStatus" style="margin-top: 10px; font-size: 14px; color: green;"></div>
+    `;
+    }
+
+        function toggleEditFields(enabled) {
+
+            document.querySelectorAll("#availabilityTable input").forEach(input => {
+                input.readOnly = !enabled;
+                input.disabled = !enabled;
+            });
+
+            const addSlotBtn = document.querySelector(".add-slot-btn");
+            if (addSlotBtn) addSlotBtn.style.display = enabled ? "inline-block" : "none";
+
+            document.querySelectorAll(".availability-table button").forEach(btn => {
+                btn.style.display = enabled ? "inline-block" : "none";
+            });
+        }
+
+        function dragStart(e) {
+            draggedRow = e.currentTarget;
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            if (draggedRow && draggedRow !== e.currentTarget) {
+                const tbody = draggedRow.parentNode;
+                tbody.insertBefore(draggedRow, e.currentTarget.nextSibling);
+                // autoSaveProfile();
+            }
+        }
+
+        function assignDragEvents() {
+            document.querySelectorAll("#availabilityTable tbody tr").forEach(row => {
+                row.setAttribute("draggable", true);
+                row.ondragstart = dragStart;
+                row.ondragover = dragOver;
+                row.ondrop = drop;
+            });
+        }
+
+        function showLoadingOverlay() {
+                const overlay = document.getElementById('loadingOverlay');
+                overlay.style.display = 'flex';
+            }
+
+            function hideLoadingOverlay() {
+                const overlay = document.getElementById('loadingOverlay');
+                overlay.style.display = 'none';
+            }
+
+            function showToast(message, duration = 3000) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, duration);
+            }
+            // function previewImage() {
+            //         const input = document.getElementById('fileUpload');
+            //         const img = document.getElementById('profilePic');
+
+            //         if (input.files && input.files[0]) {
+            //             img.src = URL.createObjectURL(input.files[0]); 
+            //         }
+            //     }
+                function saveAvailabilityOrder() {
+                        const rows = document.querySelectorAll("#availabilityTable tbody tr");
+                        const newOrder = Array.from(rows).map(row => row.dataset.date); // or data-id
+
+                        const doctorId = localStorage.getItem("doctorId");
+                        const token = localStorage.getItem("authToken");
+
+                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability/order`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ order: newOrder })
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                console.log("Availability order saved!");
+                            })
+                            .catch(err => {
+                                console.error("Failed to save availability order", err);
+                            });
+                    }
+
+        window.onload = () => {
+            loadAvailability();
+            toggleEditFields(false);
+            document.getElementById("buttonGroup").innerHTML = `
+                    <button class="btn" onclick="enableEditing()">Edit Profile</button>
+                `;
+        };
+       function openQuickAddPopup() {
+            document.getElementById("quickAddModal").style.display = "flex";
+        }
+
+        function closeQuickAddPopup() {
+            document.getElementById("quickAddModal").style.display = "none";
+        }
+
+       
+
+    </script>
+
+    
+    
+
+</body>
+
+</html>
