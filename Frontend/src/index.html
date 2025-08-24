@@ -579,10 +579,11 @@
           document.getElementById('logoutBtn').addEventListener('click', logout);
 
         function logout() {
-                localStorage.removeItem('token');
-                localStorage.removeItem('patientId');
-                localStorage.removeItem('doctorId');
-                localStorage.removeItem('role');
+                // localStorage.removeItem('token');
+                // localStorage.removeItem('patientId');
+                // localStorage.removeItem('doctorId');
+                // localStorage.removeItem('role');
+                 localStorage.clear();
                 showToast("Logged out successfully!");
                 setTimeout(() => {
                     window.location.href = 'login.html';

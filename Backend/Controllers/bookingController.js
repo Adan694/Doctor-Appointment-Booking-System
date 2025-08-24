@@ -7,7 +7,7 @@ const formatMessage = require('../Utils/formatAppointmentMessage');
 
 // Book Appointment
 const bookAppointment = async (req, res) => {
-const { patientId, doctorId, date, time, name, phone, age } = req.body;
+const { patientId, doctorId, date, time, name, phone, age, issue } = req.body;
 
   if (!patientId || !doctorId || !date || !time) {
     return res.status(400).json({ success: false, message: "All fields are required." });
@@ -95,9 +95,10 @@ const token = await generateToken(doctorId, formattedDate);
       time,
       name: req.body.name,
       phone: req.body.phone,
-      email: patient.email,          // use patient email
+      email: req.body.email,
       age,
-      token 
+      token,
+      issue
     });
     await newBooking.save();
 
@@ -120,7 +121,8 @@ const token = await generateToken(doctorId, formattedDate);
       name: newBooking.name, 
       phone: newBooking.phone,
       age: newBooking.age,
-      token: newBooking.token 
+        token: newBooking.token,
+      issue: newBooking.issue
   },
       recipient: 'patient'
     });
@@ -133,12 +135,18 @@ const token = await generateToken(doctorId, formattedDate);
       name: newBooking.name, 
       phone: newBooking.phone,
       age: newBooking.age,
-      token: newBooking.token 
+        token: newBooking.token,
+      issue: newBooking.issue
       },
       recipient: 'doctor'
     });
 
-    await notifyAll({ patient, message: patientMessage });
+    // await notifyAll({ patient, message: patientMessage });
+await notifyAll({
+  patient: { ...patient.toObject(), email: newBooking.email },
+  message: patientMessage
+});
+
     await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
     // Fetch the admin (assuming role field exists in User model)
 const admin = await User.findOne({ role: 'admin' });
@@ -378,7 +386,10 @@ const updatedAppointment = await appointment.save();
       action,
       appointment: updatedAppointment,
       doctor: formattedDoctor,
-      patient,
+      patient: {
+    ...patient.toObject(),
+    issue: updatedAppointment.issue || ""
+    },
       recipient: 'patient'
     });
 
@@ -386,7 +397,10 @@ const updatedAppointment = await appointment.save();
       action,
       appointment: updatedAppointment,
       doctor: formattedDoctor,
-      patient,
+      patient: {
+      ...patient.toObject(),
+      issue: updatedAppointment.issue || ""
+      },
       recipient: 'doctor'
     });
 
@@ -484,7 +498,10 @@ const updateAppointmentStatus = async (req, res) => {
         action,
         appointment: updatedAppointment,
         doctor: formattedDoctor,
-        patient,
+        patient: {
+    ...patient.toObject(),
+    issue: updatedAppointment.issue || ""
+       },
         recipient: 'patient'
       });
 
@@ -492,7 +509,10 @@ const updateAppointmentStatus = async (req, res) => {
         action,
         appointment: updatedAppointment,
         doctor: formattedDoctor,
-        patient,
+        patient: {
+    ...patient.toObject(),
+    issue: updatedAppointment.issue || ""
+},
         recipient: 'doctor'
       });
 

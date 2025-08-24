@@ -4,6 +4,7 @@ const formatMessage = ({ action, appointment, doctor, patient, recipient }) => {
   // Safe fallbacks
   const patientName = patient?.name || 'the patient';
   const doctorName = doctor?.name || 'the doctor';
+const issueText = appointment?.issue || 'N/A';
 
   const appointmentDate = appointment?.date
     ? new Date(appointment.date).toLocaleDateString()
@@ -25,6 +26,7 @@ Doctor: Dr. ${doctorName}
 Date: ${appointmentDate}  
 Time: ${appointmentTime}
 Age: ${patient.age || 'N/A'}
+Issue: ${issueText}
 Token Number: ${appointment.token || 'N/A'}
 
 Please arrive at least 10 minutes before your scheduled time and bring any necessary medical records.
@@ -43,6 +45,7 @@ Phone: ${patient.phone || 'N/A'}
 Date: ${appointmentDate}  
 Time: ${appointmentTime}
 Age: ${patient.age || 'N/A'}
+Issue: ${issueText}
 Token Number: ${appointment.token || 'N/A'}
 
 Please prepare accordingly.
@@ -173,6 +176,7 @@ Your appointment with Dr. ${doctorName} has been rescheduled.
 New Appointment Details:  
 Date: ${appointmentDate}  
 Time: ${appointmentTime}  
+Issue: ${issueText}
 Token Number: ${appointment.token || 'N/A'}
 
 If the new time is inconvenient, please contact our office to arrange an alternative slot.
@@ -192,6 +196,7 @@ has been rescheduled to:
 
 Date: ${appointmentDate}  
 Time: ${appointmentTime}
+Issue: ${issueText}
 Token Number: ${appointment.token || 'N/A'}
 
 Kind regards,  
@@ -224,6 +229,7 @@ Your appointment with Dr. ${doctorName} has been rescheduled by our clinic admin
 📅 New Appointment Details:  
 Date: ${appointmentDate}  
 Time: ${appointmentTime} 
+Issue: ${issueText}
 Token Number: ${appointment.token || 'N/A'}
 
 If this time is not convenient, please reach out to our office to arrange another slot.
@@ -240,6 +246,7 @@ The following appointment has been rescheduled by the administrator:
 👤 Patient: ${patientName}  
 📅 Date: ${appointmentDate}  
 ⏰ Time: ${appointmentTime}  
+Issue: ${issueText}
 Token Number: ${appointment.token || 'N/A'}
 
 Please review your updated schedule.

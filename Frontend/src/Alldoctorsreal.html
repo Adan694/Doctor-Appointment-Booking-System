@@ -731,6 +731,7 @@ nav ul li a:hover {
             }
 
             window.logout = function () {
+                 localStorage.clear();
                 localStorage.removeItem("userRole");
                 updateNavbar();
                 location.reload();
@@ -780,13 +781,13 @@ nav ul li a:hover {
                         noDoctorsMessage.style.display = "none";
                     }
 
-                    let foundSpecialityMatch = false;
+                   let foundSpecialityMatch = false;
 
                     doctors.forEach((doctor) => {
                         const card = document.createElement("div");
                         card.className = "card";
 
-                        const todayStr = new Date().toISOString().split("T")[0]; 
+                        const todayStr = new Date().toISOString().split("T")[0];
                         const hasSlotsToday = doctor.availabilitySlots?.some(slot => slot.date === todayStr && slot.slots.length > 0);
 
                         card.innerHTML = `
@@ -805,24 +806,21 @@ nav ul li a:hover {
         </div>
     `;
 
-                        card.addEventListener("click", () => {
-                            window.location.href = `doctor.html?id=${doctor._id}`;
-                        });
-
                         // Append based on speciality filter
                         if (specialityParam) {
-                            if (doctor.speciality.toLowerCase().includes(specialityParam)) {
+                            if (doctor.speciality.toLowerCase() === specialityParam) {
                                 doctorList.appendChild(card);
+                                foundSpecialityMatch = true; // ✅ set flag here
                             }
                         } else {
                             doctorList.appendChild(card);
                         }
                     });
 
-
                     if (specialityParam && !foundSpecialityMatch) {
                         doctorList.innerHTML = `<p>No doctors found for ${specialityParam}.</p>`;
                     }
+
                 })
                 .catch((error) => {
                     doctorList.innerHTML = "<p style='color: red;'>Failed to load doctors. Please try again later.</p>";

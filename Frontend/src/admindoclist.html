@@ -242,6 +242,7 @@ button:hover {
 .btn-delete:hover {
     background-color: #a71d2a;
 }
+
 /* Scrollbar for Sidebar */
 nav::-webkit-scrollbar {
     width: 6px;
@@ -459,6 +460,8 @@ nav::-webkit-scrollbar-thumb {
                             <div class="btn-group">
                             <button class="btn btn-edit" onclick="goToDoctorProfile('${doctor._id}')">Edit</button>
                             <button class="btn btn-delete" onclick="deleteDoctor('${doctor._id}')">Delete</button>
+                            <button class="btn btn-appointments" onclick="seeAppointments('${doctor._id}')">See Appointments</button>
+
                             </div>`;
                 } else {
                     buttonsHtml = '';
@@ -481,85 +484,12 @@ nav::-webkit-scrollbar-thumb {
             });
         }
 
-        // Open edit modal and populate form
-        // async function openEditModal(doctorId) {
-        //     try {
-        //         const response = await fetch(`${apiBaseUrl}/${doctorId}`);
-        //         if (!response.ok) throw new Error('Failed to fetch doctor details');
-        //         const doctor = await response.json();
+        function seeAppointments(doctorId) {
+                if (!doctorId) return alert("Invalid doctor ID");
+                window.location.href = `doctor-appointments.html?doctorId=${doctorId}`;
+            }
 
-        //         document.getElementById('doctorId').value = doctor._id;
-        //         document.getElementById('name').value = doctor.name || '';
-        //         document.getElementById('speciality').value = doctor.speciality || '';
-        //         document.getElementById('experience').value = doctor.experience || '';
-        //         document.getElementById('rating').value = doctor.rating || '';
-        //         document.getElementById('about').value = doctor.about || '';
 
-        //         document.getElementById('editModal').style.display = 'block';
-        //     } catch (error) {
-        //         alert(error.message);
-        //     }
-        // }
-
-        // // Close modal
-        // document.getElementById('modalClose').onclick = function () {
-        //     document.getElementById('editModal').style.display = 'none';
-        // };
-
-        // window.onclick = function (event) {
-        //     const modal = document.getElementById('editModal');
-        //     if (event.target === modal) {
-        //         modal.style.display = 'none';
-        //     }
-        // };
-
-        // Handle edit form submission
-        // document.getElementById('editDoctorForm').addEventListener('submit', async function (e) {
-        //     e.preventDefault();
-
-        //     const doctorId = document.getElementById('doctorId').value;
-        //     const updatedDoctor = {
-        //         name: document.getElementById('name').value,
-        //         speciality: document.getElementById('speciality').value,
-        //         experience: document.getElementById('experience').value,
-        //         rating: parseFloat(document.getElementById('rating').value),
-        //         about: document.getElementById('about').value,
-        //     };
-
-        //     try {
-        //         const token = localStorage.getItem('authToken');
-        //         if (!token) {
-        //             alert('Authentication token missing. Please login again.');
-        //             window.location.href = 'login.html';
-        //             return;
-        //         }
-
-        //         const response = await fetch(`${apiBaseUrl}/${doctorId}`, {
-        //             method: 'PUT',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'Authorization': `Bearer ${token}`
-        //             },
-        //             body: JSON.stringify(updatedDoctor),
-        //         });
-
-        //         if (response.status === 403) {
-        //             alert('Session expired or unauthorized. Please login again.');
-        //             localStorage.removeItem('authToken');
-        //             localStorage.removeItem('userRole');
-        //             window.location.href = 'login.html';
-        //             return;
-        //         }
-
-        //         if (!response.ok) throw new Error('Failed to update doctor');
-
-        //         alert('Doctor profile updated successfully');
-        //         document.getElementById('editModal').style.display = 'none';
-        //         fetchDoctors();
-        //     } catch (error) {
-        //         alert(error.message);
-        //     }
-        // });
     function goToDoctorProfile(doctorId) {
         if (!doctorId) return alert("Invalid doctor ID");
         window.location.href = `doctor.html?id=${doctorId}`;

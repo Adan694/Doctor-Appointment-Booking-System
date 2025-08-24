@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Appointments</title>
+    <style>
+      /* ==== GLOBAL LAYOUT ==== */
+ * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            height: 100vh;
+            background-color: #e6f2ff;
+        }
+ /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: rgb(9, 102, 102);
+            padding: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sidebar h2 {
+            font-size: 30px;
+            color: white;
+            margin: 0 0 40px 20px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
+        .sidebar ul li {
+            padding: 12px 20px;
+            margin: 10px 0;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            display: block;
+            border-radius: 6px;
+            padding: 10px 15px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #e8f0fe;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+
+       /* Content */
+.content {
+    flex: 1;
+    padding: 20px;
+    background-color: #e6f2ff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+}
+
+.content:hover {
+    background-color: #d8eaf8;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: rgb(9, 102, 102);
+    color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.header:hover {
+    background-color: #075b5b;
+}
+
+.header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+/* Menu Bar Icon */
+#bar {
+    display: none;
+    font-size: 30px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+#bar:hover {
+    color: #28a745;
+}
+
+/* Logout Button */
+.logout-button {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 3px 6px rgba(40, 167, 69, 0.4);
+}
+
+.logout-button:hover {
+    background-color: #b02a37;
+    box-shadow: 0 5px 12px rgba(176, 42, 55, 0.7);
+}
+
+
+/* ==== APPOINTMENTS LIST ==== */
+#appointmentsList {
+  width: 100%;
+  max-width: 1000px; /* wider container */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 10px;
+}
+
+/* ==== THEME HOVER EFFECTS (TEAL FOCUS) ==== */
+.appointment-card {
+  position: relative;
+  border: 1px solid #e0e6f1;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.appointment-card:hover {
+  border-color: #096666; /* teal highlight */
+  background-color: #f2fbfa; /* very light teal wash */
+  box-shadow: 0 12px 24px rgba(9, 102, 102, 0.15);
+}
+
+/* subtle left accent bar */
+.appointment-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: #096666;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+  border-radius: 18px 0 0 18px;
+}
+
+.appointment-card:hover::before {
+  transform: scaleY(1);
+}
+
+/* status pill hover */
+.status:hover {
+  box-shadow: 0 0 10px rgba(9, 102, 102, 0.3); /* teal glow */
+  transform: scale(1.05);
+  transition: all 0.25s ease;
+}
+
+/* Header bar */
+.appointment-card .header {
+  background: linear-gradient(135deg, #4da6ff, #096666);
+  color: #fff;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Body */
+.appointment-card .body {
+  padding: 20px 24px;
+  color: #333;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Patient info */
+.appointment-card .patient {
+  font-size: 1.05rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.appointment-card .patient::before {
+  font-size: 1.2rem;
+}
+
+/* Date info */
+.appointment-card .date {
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #444;
+}
+
+.appointment-card .date::before {
+  content: "🗓️";
+  font-size: 1.2rem;
+}
+
+/* ==== STATUS PILL ==== */
+.status {
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  letter-spacing: 0.4px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.status.pending {
+  color: #b37400;
+  background: #fff3e0;
+  border: 1px solid #ffcc80;
+}
+
+.status.confirmed {
+  color: #1d7a1d;
+  background: #e6f7e6;
+  border: 1px solid #9be29b;
+}
+
+.status.cancelled {
+  color: #b22b27;
+  background: #ffe6e6;
+  border: 1px solid #ff9999;
+}
+
+/* ==== ANIMATIONS ==== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==== PAGINATION ==== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 35px 0 15px;
+  gap: 18px;
+}
+
+.pagination button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+}
+
+.pagination button:disabled {
+  background: #eaeaea;
+  color: #888;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.pagination .prev-btn {
+  background: #4da6ff;
+  color: white;
+}
+
+.pagination .prev-btn:hover:not(:disabled) {
+  background: #1d7ad9;
+}
+
+.pagination .next-btn {
+  background: #096666;
+  color: white;
+}
+
+.pagination .next-btn:hover:not(:disabled) {
+  background: #044242;
+}
+
+.pagination .page-info {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+    </style>
+</head>
+
+<body>
+<div class="sidebar">
+    <h2>DocAssist</h2>
+    <ul>
+        <li><a href="Adminpanel.html">Dashboard</a></li>
+        <li><a href="adminappoint.html">Appointments</a></li>
+        <li><a href="add-doctors.html">Add Doctor</a></li>
+        <li><a href="admindoclist.html">Doctors List</a></li>
+        <li><a href="patients-list.html">Patients List</a></li>
+        <li><a href="settings.html">Profile</a></li>
+    </ul>
+</div>
+<div id="overlay"></div>
+<div class="content">
+    <div class="header">
+        <i id="bar" class="fa-solid fa-bars"></i>
+<h1 id="doctorNameHeading"></h1>
+        <button id="logoutBtn" class="logout-button">Logout</button>
+    </div>
+        <div id="appointmentsList">Loading...</div>
+    <div id="pagination" class="pagination"></div>
+
+    <script>
+         const bar = document.getElementById('bar');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('overlay');
+
+            bar.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function () {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+              document.getElementById('logoutBtn').addEventListener('click', () => {
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userRole');
+                    window.location.href = 'login.html';
+                });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const doctorId = urlParams.get("doctorId");
+        const apiBaseUrl = `http://localhost:3000/api/appointments/doctor/${doctorId}`;
+
+        let allAppointments = [];
+        let currentPage = 1;
+        const itemsPerPage = 5;
+    async function fetchDoctorDetails() {
+        try {
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                alert("Please log in again.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Assuming your API endpoint looks like this:
+            const response = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error("Failed to fetch doctor details");
+
+            const doctor = await response.json();
+            // doctor.name or doctor.fullName depending on your backend
+            document.getElementById("doctorNameHeading").textContent = `Dr. ${doctor.name}'s Appointments`;
+
+        } catch (err) {
+            console.error("Error fetching doctor details:", err.message);
+        }
+    }
+
+    fetchDoctorDetails();
+
+        async function fetchAppointments() {
+            try {
+                const token = localStorage.getItem("authToken");
+                if (!token) {
+                    alert("Please log in again.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                const response = await fetch(apiBaseUrl, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error("Failed to fetch appointments");
+                allAppointments = await response.json();
+
+                renderAppointments();
+                renderPagination();
+            } catch (err) {
+                document.getElementById("appointmentsList").innerText = err.message;
+            }
+        }
+
+        function renderAppointments() {
+            const container = document.getElementById("appointmentsList");
+            container.innerHTML = "";
+
+            if (allAppointments.length === 0) {
+                container.innerHTML = "<p>No appointments found for this doctor.</p>";
+                return;
+            }
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const appointments = allAppointments.slice(start, end);
+
+            appointments.forEach(app => {
+                console.log("Appointment object received:", app);
+
+                const patientName = app.patientName
+                    || app.patientId?.name
+                    || app.patientId?.fullName
+                    || "Unknown Patient";
+
+                const appointmentDateTime = parseAppointmentDate(app.date, app.time);
+
+                const div = document.createElement("div");
+                div.className = "appointment-card";
+                 div.innerHTML = `
+          <div class="header">
+            <span>Appointment</span>
+            <span class="status ${app.status.toLowerCase()}">${app.status}</span>
+          </div>
+          <div class="body">
+            <p class="patient"><strong>Patient:</strong> ${patientName}</p>
+            <p class="date"><strong>Date:</strong> ${appointmentDateTime}</p>
+          </div>
+        `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(allAppointments.length / itemsPerPage);
+            const pagination = document.getElementById("pagination");
+            pagination.innerHTML = "";
+
+            if (totalPages <= 1) return;
+
+            const prevBtn = document.createElement("button");
+            prevBtn.textContent = "Previous";
+            prevBtn.className = "prev-btn";
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => {
+                currentPage--;
+                renderAppointments();
+                renderPagination();
+            };
+            pagination.appendChild(prevBtn);
+
+            const pageInfo = document.createElement("span");
+            pageInfo.className = "page-info";
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            pagination.appendChild(pageInfo);
+
+            const nextBtn = document.createElement("button");
+            nextBtn.textContent = "Next";
+            nextBtn.className = "next-btn";
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => {
+                currentPage++;
+                renderAppointments();
+                renderPagination();
+            };
+            pagination.appendChild(nextBtn);
+        }
+
+        function parseAppointmentDate(dateStr, timeStr) {
+            if (!dateStr || !timeStr) return "Invalid Date";
+            const datePart = new Date(dateStr).toISOString().split("T")[0];
+            let cleanTime = timeStr.replace(/:\d{2}$/, "");
+            const dateTimeStr = `${datePart} ${cleanTime}`;
+            const parsed = new Date(dateTimeStr);
+
+            return isNaN(parsed) ? "Invalid Date" : parsed.toLocaleString("en-US", {
+                dateStyle: "medium",
+                timeStyle: "short"
+            });
+        }
+
+        fetchAppointments();
+    </script>
+</body>
+
+</html>

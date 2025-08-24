@@ -842,6 +842,11 @@ body {
     <label for="modalAge">Age</label>
     <input type="number" id="modalAge" min="0" max="120" />
 </div>
+<div class="form-group">
+    <label for="modalIssue">Issue / Problem</label>
+    <textarea id="modalIssue" rows="3" placeholder="Briefly describe your medical issue"></textarea>
+</div>
+
 
                 <div class="form-group">
                     <label for="modalDate">Date</label>
@@ -950,6 +955,8 @@ body {
                 }
 
                 window.logout = function () {
+
+                 localStorage.clear();
                     localStorage.removeItem("userRole");
                     updateNavbar();
                     location.reload();
@@ -1218,6 +1225,8 @@ body {
 
                             document.getElementById('modalName').value = '';
                             document.getElementById('modalPhone').value = '';
+                            document.getElementById('modalIssue').value = '';
+
 
                         }
 
@@ -1229,6 +1238,8 @@ body {
                             const phoneError = document.getElementById('phoneError');
                             const email = document.getElementById('modalEmail').value.trim();
                            const age = document.getElementById('modalAge').value.trim();
+                           const issue = document.getElementById('modalIssue').value.trim();
+
 
                             // Regex for Pakistani mobile (03XXXXXXXXX) or landline (0XXXXXXXXX)
                             const pkPhoneRegex = /^(03[0-9]{9}|0[0-9]{9,10})$/;
@@ -1237,7 +1248,7 @@ body {
                             phoneError.style.display = "none";
                             phoneError.textContent = "";
 
-                            if (!name || !phone || !email || !age) {
+                           if (!name || !phone || !email || !age || !issue) {
                                showToast("Please enter all details.");
                                return;
                             }
@@ -1253,7 +1264,7 @@ body {
                             fetch(`http://localhost:3000/api/appointments`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ patientId, doctorId, date: selectedDate, time: selectedTime, name, phone, email, age })
+                                body: JSON.stringify({ patientId, doctorId, date: selectedDate, time: selectedTime, name, phone, email, age, issue })
                             })
                                 .then(res => res.json())
                                 .then(data => {

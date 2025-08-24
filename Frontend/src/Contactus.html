@@ -583,6 +583,7 @@ nav ul li a:hover {
 
     // ✅ Logout function
     function logout() {
+         localStorage.clear();
         console.log("🚪 Logging out...");
         localStorage.removeItem('userRole');
         alert('Logged out successfully.');
