@@ -527,37 +527,36 @@
         </div>
         <div class="booking-actions">
             <span class="status ${bookingStatus}">${capitalizeFirstLetter(bookingStatus)}</span>
-            <button onclick="removeBooking('${patientName}', '${bookingDate}')">&times;</button>
         </div>
     `;
             document.getElementById('booking-list').appendChild(newBooking);
         }
 
 
-    function removeBooking(patientName, bookingDate) {
-            if (!confirm("Do you want to remove this booking from the page?\n(Note: This won't cancel the appointment)")) {
-                return;
-            }
+    // function removeBooking(patientName, bookingDate) {
+    //         if (!confirm("Do you want to remove this booking from the page?\n(Note: This won't cancel the appointment)")) {
+    //             return;
+    //         }
 
-            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    //         let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
 
-            // Find the booking to remove by name + date
-            const removed = bookings.find(
-            booking =>
-                (booking.patientName || booking.patientId?.name) === patientName &&
-                new Date(booking.date).toLocaleDateString() === bookingDate
-        );
+    //         // Find the booking to remove by name + date
+    //         const removed = bookings.find(
+    //         booking =>
+    //             (booking.patientName || booking.patientId?.name) === patientName &&
+    //             new Date(booking.date).toLocaleDateString() === bookingDate
+    //     );
 
 
-            if (!removed) return;
+    //         if (!removed) return;
 
-            let removedIds = JSON.parse(localStorage.getItem('removedBookingIds')) || [];
-            if (removed._id && !removedIds.includes(removed._id)) {
-                removedIds.push(removed._id);
-                localStorage.setItem('removedBookingIds', JSON.stringify(removedIds));
-            }
-            renderBookings();
-        }
+    //         let removedIds = JSON.parse(localStorage.getItem('removedBookingIds')) || [];
+    //         if (removed._id && !removedIds.includes(removed._id)) {
+    //             removedIds.push(removed._id);
+    //             localStorage.setItem('removedBookingIds', JSON.stringify(removedIds));
+    //         }
+    //         renderBookings();
+    //     }
     
     function renderBookings() {
         let bookings = JSON.parse(localStorage.getItem('bookings')) || [];

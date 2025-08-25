@@ -1004,11 +1004,25 @@ body {
                     const datesContainer = document.createElement('div');
                     datesContainer.className = 'dates-container';
 
-                    data.availabilitySlots.forEach((slot, index) => {
+                    // Filter only dates that have at least one future slot
+                    const futureDates = data.availabilitySlots.filter(slot => {
+                        return slot.slots.some(time => {
+                            const slotDateTime = new Date(`${slot.date} ${time}`);
+                            return slotDateTime > new Date(); // keep only future slots
+                        });
+                    });
+
+                    if (!futureDates.length) {
+                        bookingInfoDiv.innerHTML = '<p>No future availability slots.</p>';
+                        return;
+                    }
+
+                    // Now create buttons only for future dates
+                    futureDates.forEach((slot, index) => {
                         const dateBtn = document.createElement('button');
                         dateBtn.textContent = slot.date;
-                        dateBtn.className = 'time-slot'; // reuse styling
-                        if (index === 0) dateBtn.classList.add('selected'); // auto select first date
+                        dateBtn.className = 'time-slot';
+                        if (index === 0) dateBtn.classList.add('selected');
                         dateBtn.addEventListener('click', () => {
                             document.querySelectorAll('.dates-container .time-slot').forEach(b => b.classList.remove('selected'));
                             dateBtn.classList.add('selected');
@@ -1016,6 +1030,7 @@ body {
                         });
                         datesContainer.appendChild(dateBtn);
                     });
+
 
                     bookingInfoDiv.appendChild(datesContainer);
 

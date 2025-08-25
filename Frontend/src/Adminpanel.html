@@ -444,8 +444,7 @@
             <div>Admin Dashboard</div>
 <div id="notificationBell" style="position: relative; cursor: pointer; margin-right: 20px;">
     <i class="fa-solid fa-bell"></i>
-    <span id="notificationCount">
-    </span>
+    <span id="notificationCount"></span>
 </div>
            
 
@@ -524,6 +523,7 @@
             fetchTodaysAppointments();
             renderCharts();
             fetchUnreadNotificationCount(); 
+            setInterval(fetchUnreadNotificationCount, 30000);
         });
 
     async function markAllNotificationsAsRead() {
@@ -538,6 +538,9 @@
             // After marking read, update UI immediately
             document.getElementById('notificationCount').style.display = 'none';
             document.getElementById('notificationCount').textContent = '';
+            document.getElementById('notificationCount').textContent = '0';
+            document.getElementById('notificationCount').style.backgroundColor = 'gray';
+
         } catch (error) {
             console.error('Error marking notifications as read:', error);
         }

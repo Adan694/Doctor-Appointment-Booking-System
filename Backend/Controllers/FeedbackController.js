@@ -46,7 +46,8 @@ await Doctor.findByIdAndUpdate(doctorId, {
                 patient: null,
                 doctor: null,
                 admin,
-                message
+                message,
+                type: 'feedback'
             });
         }
         res.status(201).json({ message: 'Feedback submitted successfully' });
@@ -173,6 +174,8 @@ const getFeedbackNotificationCount = async (req, res) => {
     try {
         const admin = await User.findOne({ role: 'admin' });
         if (!admin) return res.status(404).json({ message: 'Admin not found' });
+         const allNotifications = await Notification.find({ userId: admin._id });
+        console.log('All notifications for admin:', allNotifications);
 
         const count = await Notification.countDocuments({
             userId: admin._id,

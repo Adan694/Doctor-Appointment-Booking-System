@@ -674,15 +674,49 @@ textarea:focus {
                     const tbody = document.querySelector("#availabilityTable tbody");
                     tbody.innerHTML = "";
                     if (!data.availabilitySlots || !data.availabilitySlots.length) return;
+                    // ✅ Group slots by date before rendering
+                    const grouped = {};
                     data.availabilitySlots.forEach(slot => {
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-                                <td><input type="date" value="${slot.date}"></td>
-                                <td><input type="text" value="${slot.slots.join(", ")}"></td>
-                                <td><button onclick="removeRow(this)">❌</button></td>
-                            `;
-                        tbody.appendChild(tr);
+                        const slotDateKey = new Date(slot.date).toISOString().split("T")[0];
+                        if (!grouped[slotDateKey]) grouped[slotDateKey] = [];
+                        grouped[slotDateKey].push(...slot.slots);
                     });
+
+                    // ✅ Now render each grouped date only once
+                    Object.entries(grouped).forEach(([date, slots]) => {
+                        const slotDate = new Date(date);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+
+                        if (slotDate >= today) {
+                            // Filter out past time slots for today
+                            let filteredSlots = slots;
+                            if (slotDate.toDateString() === today.toDateString()) {
+                                const now = new Date();
+                                filteredSlots = slots.filter(s => {
+                                    const [time, ampm] = s.split(" ");
+                                    let [h, m] = time.split(":").map(Number);
+                                    if (ampm === "PM" && h !== 12) h += 12;
+                                    if (ampm === "AM" && h === 12) h = 0;
+                                    const slotTime = new Date();
+                                    slotTime.setHours(h, m, 0, 0);
+                                    return slotTime >= now;
+                                });
+                            }
+
+                            if (filteredSlots.length === 0) return;
+
+                            const tr = document.createElement("tr");
+                            tr.innerHTML = `
+            <td><input type="date" value="${date}"></td>
+            <td><span class="slot-text">${filteredSlots.join(", ")}</span></td>
+            <td><button onclick="removeRow(this)">❌</button></td>
+        `;
+                            tbody.appendChild(tr);
+                        }
+                    });
+
+
                     assignDragEvents();
                 })
                 .catch(err => console.error("Failed to load availability", err));
@@ -838,48 +872,30 @@ textarea:focus {
                 });
         }
 
-       function saveProfile() {
+      function saveProfile() {
             const token = localStorage.getItem('authToken');
             if (!token) {
                 alert("You are not logged in. Redirecting to login page.");
                 window.location.href = 'login.html';
                 return;
             }
+
             const newSlots = getCurrentAvailabilitySlots();
+            console.log("Saving payload:", newSlots);
+
             fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                headers: { "Authorization": `Bearer ${token}` }
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ availabilitySlots: newSlots })
             })
-                .then(res => res.json())
-                .then(existingData => {
-                    const existingSlots = existingData.availabilitySlots || [];
-                    const mergedSlotsMap = {};
-
-                    existingSlots.forEach(slot => mergedSlotsMap[slot.date] = new Set(slot.slots));
-                    newSlots.forEach(slot => {
-                        if (!mergedSlotsMap[slot.date]) mergedSlotsMap[slot.date] = new Set();
-                        slot.slots.forEach(s => mergedSlotsMap[slot.date].add(s));
-                    });
-
-                    const mergedSlots = Object.entries(mergedSlotsMap).map(([date, slotsSet]) => ({
-                        date,
-                        slots: Array.from(slotsSet)
-                    }));
-
-                    return Promise.all([
-                        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${token}`
-                            },
-                            body: JSON.stringify({ availabilitySlots: mergedSlots })
-                        })
-                    ]);
+                .then(res => {
+                    if (!res.ok) throw new Error("Update failed");
+                    return res.json();
                 })
-                .then(responses => {
-                    responses.forEach(res => {
-                        if (!res.ok) throw new Error("Update failed");
-                    });
+                .then(() => {
                     hideLoadingOverlay();
                     showToast("Profile updated successfully!");
 
@@ -887,7 +903,8 @@ textarea:focus {
                     toggleEditFields(false);
                     loadAvailability();
 
-                    document.getElementById("buttonGroup").innerHTML = `<button class="btn" onclick="enableEditing()">Edit Profile</button>`;
+                    document.getElementById("buttonGroup").innerHTML =
+                        `<button class="btn" onclick="enableEditing()">Edit Profile</button>`;
                 })
                 .catch(err => {
                     hideLoadingOverlay();
@@ -908,9 +925,18 @@ textarea:focus {
 
                     const checkedSlots = [];
                     const checkboxes = row.querySelectorAll("td:nth-child(2) input[type='checkbox']");
-                    checkboxes.forEach(cb => {
-                        if (cb.checked) checkedSlots.push(cb.value);
-                    });
+                    if (checkboxes.length > 0) {
+                        checkboxes.forEach(cb => {
+                            if (cb.checked) checkedSlots.push(cb.value);
+                        });
+                    } else {
+                        // fallback: read from span when not in edit mode
+                        const slotText = row.querySelector("td:nth-child(2) .slot-text")?.textContent || "";
+                        if (slotText) {
+                            checkedSlots.push(...slotText.split(",").map(s => s.trim()));
+                        }
+                    }
+
 
                     if (checkedSlots.length > 0) {
                         availabilitySlots.push({ date, slots: checkedSlots });
@@ -930,17 +956,61 @@ textarea:focus {
     `;
     }
 
-        function toggleEditFields(enabled) {
+       function toggleEditFields(enabled) {
+            document.querySelectorAll("#availabilityTable tbody tr").forEach(row => {
+                const dateInput = row.querySelector("td:nth-child(1) input[type='date']");
+                const slotsCell = row.querySelector("td:nth-child(2)");
+                const removeBtn = row.querySelector("td:nth-child(3) button");
 
-            document.querySelectorAll("#availabilityTable input").forEach(input => {
-                input.readOnly = !enabled;
-                input.disabled = !enabled;
+                if (enabled) {
+                    // Enable date input
+                    dateInput.disabled = false;
+
+                    // Get slot text (if exists)
+                    const slotTextEl = slotsCell.querySelector(".slot-text");
+                    if (!slotTextEl) return; // nothing to convert
+                    const slotText = slotTextEl.textContent.trim();
+                    const activeSlots = slotText ? slotText.split(",").map(s => s.trim()) : [];
+
+                    // Build checkboxes only for active slots
+                    const slotsContainer = document.createElement("div");
+                    slotsContainer.classList.add("slots-container");
+
+                    activeSlots.forEach(slot => {
+                        const label = document.createElement("label");
+                        const checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
+                        checkbox.value = slot;
+                        checkbox.checked = true;
+                        label.appendChild(checkbox);
+                        label.append(` ${slot}`);
+                        slotsContainer.appendChild(label);
+                    });
+
+                    slotsCell.innerHTML = "";
+                    slotsCell.appendChild(slotsContainer);
+
+                    removeBtn.style.display = "inline-block";
+                } else {
+                    // Disable date input
+                    dateInput.disabled = true;
+
+                    // Convert checkboxes back to text
+                    const checkboxes = slotsCell.querySelectorAll("input[type='checkbox']");
+                    if (checkboxes.length) {
+                        const checked = Array.from(checkboxes)
+                            .filter(cb => cb.checked)
+                            .map(cb => cb.value);
+
+                        slotsCell.innerHTML = `<span class="slot-text">${checked.join(", ")}</span>`;
+                    }
+
+                    removeBtn.style.display = "none";
+                }
             });
 
-            const addSlotBtn = document.querySelector(".add-slot-btn");
-            if (addSlotBtn) addSlotBtn.style.display = enabled ? "inline-block" : "none";
-
-            document.querySelectorAll(".availability-table button").forEach(btn => {
+            // Toggle Add Slot & Quick Add buttons
+            document.querySelectorAll(".add-slot-btn").forEach(btn => {
                 btn.style.display = enabled ? "inline-block" : "none";
             });
         }

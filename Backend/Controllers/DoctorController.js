@@ -203,39 +203,18 @@ const updateDoctorAvailability = async (req, res) => {
       return res.status(404).json({ message: 'Doctor not found' });
     }
 
-    const existingSlots = doctor.availabilitySlots || [];
+    // ✅ Replace the entire availability with what frontend sends
+    doctor.availabilitySlots = newSlots.map(newSlot => ({
+      date: new Date(newSlot.date).toISOString().split("T")[0],
+      slots: newSlot.slots.map(s => s.trim())
+    }));
 
-    newSlots.forEach(newSlot => {
-      const newSlotDate = new Date(newSlot.date).toISOString().split('T')[0];
-
-      const existingIndex = existingSlots.findIndex(slot => {
-        const existingSlotDate = new Date(slot.date).toISOString().split('T')[0];
-        return existingSlotDate === newSlotDate;
-      });
-
-      if (existingIndex >= 0) {
-        existingSlots[existingIndex].slots = Array.from(new Set([
-          ...existingSlots[existingIndex].slots,
-          ...newSlot.slots.map(s => s.trim())
-        ]));
-      } else {
-        existingSlots.push({
-          date: newSlotDate,
-          slots: newSlot.slots.map(s => s.trim())
-        });
-      }
-    });
-
-    doctor.availabilitySlots = existingSlots;
-    doctor.markModified('availabilitySlots'); 
-
-    console.log("Saving availabilitySlots:", doctor.availabilitySlots);
-
+    doctor.markModified("availabilitySlots");
     await doctor.save();
 
     res.status(200).json({ availabilitySlots: doctor.availabilitySlots });
   } catch (error) {
-    console.error(" Error updating availability:", error);
+    console.error("Error updating availability:", error);
     res.status(500).json({ message: "Failed to update availability" });
   }
 };
