@@ -11,13 +11,9 @@ const handleContactForm = async (req, res) => {
     }
 
     try {
-        // 1. Save to database
         const newContact = new Contact({ email, name, phone, message });
-        // console.log('Saving to DB:', newContact);
-
         await newContact.save();
 
-        // 2. Send email to admin
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -28,7 +24,6 @@ const handleContactForm = async (req, res) => {
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            // to: 'ashehzad0100@gmail.com', 
             to: 'kartizafar76@gmail.com', 
             subject: 'New Contact Form Submission',
             html: `
@@ -43,8 +38,6 @@ const handleContactForm = async (req, res) => {
 
 
         await transporter.sendMail(mailOptions);
-
-        // 4. Confirmation email to user
         const userMailOptions = {
             from: process.env.EMAIL_USER,
             to: email,

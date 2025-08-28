@@ -211,8 +211,6 @@ const markAllFeedbackNotificationsAsRead = async (req, res) => {
     }
 };
 
-
-
 module.exports = {
     submitFeedback,
     getFeedbackByDoctor,

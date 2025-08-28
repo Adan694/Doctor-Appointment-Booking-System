@@ -112,7 +112,6 @@ const updateDoctor = async (req, res) => {
     const doctor = await Doctor.findById(req.params.id);
     if (!doctor) return res.status(404).json({ message: 'Doctor not found.' });
 
-    // Optional password change
     if (currentPassword && newPassword) {
         const isMatch = await bcrypt.compare(currentPassword, doctor.password);
         if (!isMatch) return res.status(400).json({ message: 'Current password is incorrect.' });
@@ -121,7 +120,7 @@ const updateDoctor = async (req, res) => {
         updateFields.password = hashedPassword;
     }
 
-    delete updateFields.email; // keep email immutable if desired
+    delete updateFields.email; 
 
     if (req.file) updateFields.photo = req.file.filename;
 
@@ -138,22 +137,8 @@ const updateDoctor = async (req, res) => {
   }
 };
 
-
-// const deleteDoctor = async (req, res) => {
-//   try {
-//       const doctor = await Doctor.findByIdAndDelete(req.params.id);
-//       if (!doctor) {
-//           return res.status(404).json({ message: 'Doctor not found.' });
-//       }
-//       res.status(200).json({ message: 'Doctor deleted successfully.' });
-//   } catch (error) {
-//       console.error('Error deleting doctor:', error);
-//       res.status(500).json({ message: 'Internal server error.' });
-//   }
-// };
 const deleteDoctor = async (req, res) => {
     try {
-        // 1️⃣ Find the doctor first (before deleting)
         const doctor = await Doctor.findById(req.params.id);
         if (!doctor) {
             return res.status(404).json({ message: 'Doctor not found.' });
@@ -203,7 +188,6 @@ const updateDoctorAvailability = async (req, res) => {
       return res.status(404).json({ message: 'Doctor not found' });
     }
 
-    // ✅ Replace the entire availability with what frontend sends
     doctor.availabilitySlots = newSlots.map(newSlot => ({
       date: new Date(newSlot.date).toISOString().split("T")[0],
       slots: newSlot.slots.map(s => s.trim())

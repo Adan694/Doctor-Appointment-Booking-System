@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const notifyAll = require('../Utils/notifyAll');
 const formatMessage = require('../Utils/formatAppointmentMessage');
 
-// Book Appointment
 const bookAppointment = async (req, res) => {
 const { patientId, doctorId, date, time, name, phone, age, issue } = req.body;
 
@@ -46,7 +45,7 @@ const existingBooking = await Booking.findOne({
   doctorId,
   date: new Date(formattedDate),
   time,
-  status: { $nin: ['cancelled', 'missed'] }  // ❌ ignore cancelled/missed
+  status: { $nin: ['cancelled', 'missed'] }  
 });
     if (existingBooking) {
       return res.status(409).json({ success: false, message: "Slot already booked." });
@@ -61,7 +60,6 @@ const patientConflict = await Booking.findOne({
     if (patientConflict) {
       return res.status(409).json({ success: false, message: "You already have an appointment at this time with another doctor." });
     }
-    //daily limit code
 const maxDailyAppointments = 5; 
 const patientAppointmentsToday = await Booking.countDocuments({
   patientId,
@@ -75,7 +73,6 @@ if (patientAppointmentsToday >= maxDailyAppointments) {
     message: `You cannot book more than ${maxDailyAppointments} appointments in a single day.`
   });
 }
-//daily limit code
 
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) return res.status(404).json({ success: false, message: "Doctor not found" });
@@ -90,29 +87,23 @@ const generateToken = async (doctorId, date) => {
   let exists = true;
 
   while (exists) {
-    token = Math.floor(100 + Math.random() * 900); // 100–999
+    token = Math.floor(100 + Math.random() * 900); 
     exists = await Booking.findOne({ doctorId, date: new Date(date), token });
   }
   return token;
 };
 
 const token = await generateToken(doctorId, formattedDate);
-// Generate patientNumber (incremental per user)
 const generatePatientNumber = async (patientId, name) => {
-  // normalize name: lowercase + trim extra spaces
   const normalizedName = name.trim().toLowerCase();
-
-  // 🔍 Check if this patient (user + normalized name) already has a patientNumber
   const existingBooking = await Booking.findOne({
     patientId,
-    normalizedName, // <- we'll store alongside real name
+    normalizedName, 
   }).sort({ createdAt: 1 });
 
   if (existingBooking) {
-    return existingBooking.patientNumber; // ✅ reuse same number for same name
+    return existingBooking.patientNumber; 
   }
-
-  // If new member name under this user → assign next number
   const lastBooking = await Booking.findOne({ patientId })
     .sort({ createdAt: -1 });
 
@@ -180,14 +171,12 @@ const patientNumber = await generatePatientNumber(patientId, name);
       recipient: 'doctor'
     });
 
-    // await notifyAll({ patient, message: patientMessage });
 await notifyAll({
   patient: { ...patient.toObject(), email: newBooking.email },
   message: patientMessage
 });
 
-    await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
-    // Fetch the admin (assuming role field exists in User model)
+await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
 const admin = await User.findOne({ role: 'admin' });
 
 if (admin) {
@@ -224,8 +213,6 @@ if (admin) {
   }
 };
 
-
-
 const cancelAppointment = async (req, res) => {
   try {
     console.log("📍 Cancel appointment triggered");
@@ -235,28 +222,28 @@ const cancelAppointment = async (req, res) => {
 
     const booking = await Booking.findById(bookingId);
     if (!booking) {
-      console.log("❌ Booking not found");
+      console.log(" Booking not found");
       return res.status(404).json({ message: 'Booking not found' });
     }
 
     if (booking.status === 'cancelled') {
-      console.log("⚠️ Booking already cancelled");
+      console.log(" Booking already cancelled");
       return res.status(400).json({ message: 'Booking already cancelled' });
     }
 
     booking.status = 'cancelled';
     await booking.save();
-    console.log("✅ Booking status updated");
+    console.log(" Booking status updated");
 
     const doctor = await Doctor.findById(booking.doctorId);
     if (!doctor) {
-      console.log("❌ Doctor not found");
+      console.log(" Doctor not found");
       return res.status(404).json({ message: 'Doctor not found' });
     }
 
     const bookingDate = booking.date.toISOString().split('T')[0];
     const bookingTime = booking.time?.trim();
-    console.log("📆 Booking date:", bookingDate, "⏰ time:", bookingTime);
+    console.log(" Booking date:", bookingDate, " time:", bookingTime);
 
     let slot = doctor.availabilitySlots.find(s => {
       const slotDate = new Date(s.date).toISOString().split('T')[0];
@@ -277,27 +264,27 @@ const now = new Date();
 if ((slotDateTime - now) >= 30 * 60 * 1000) {
   if (slot) {
     if (!slot.slots.includes(bookingTime)) {
-      console.log("➕ Adding time to existing slot");
+      console.log(" Adding time to existing slot");
       slot.slots.push(bookingTime);
     } else {
-      console.log("✅ Time already present in slot");
+      console.log("Time already present in slot");
     }
   } else {
-    console.log("🆕 Creating new slot for:", bookingDate);
+    console.log(" Creating new slot for:", bookingDate);
     doctor.availabilitySlots.push({
       date: bookingDate,
       slots: [bookingTime]
     });
   }
 } else {
-  console.log("⏳ Slot not restored (less than 30 mins remain)");
+  console.log(" Slot not restored (less than 30 mins remain)");
 }
 
 
     await doctor.save();
-    console.log("💾 Doctor saved with updated availability:", doctor.availabilitySlots);
+    console.log(" Doctor saved with updated availability:", doctor.availabilitySlots);
 
-    console.log("📍 Cancel flow reached");
+    console.log(" Cancel flow reached");
     console.log("Booking data:", booking);
 
     const patient = await User.findById(booking.patientId);
@@ -312,7 +299,7 @@ if ((slotDateTime - now) >= 30 * 60 * 1000) {
       name: doctorData?.name,
       role: doctorData?.role || 'doctor'
     };
-    console.log("🔍 formattedDoctor debug:", formattedDoctor);
+    console.log("formattedDoctor debug:", formattedDoctor);
 
 
     const action = canceledBy === 'doctor' ? 'cancel-doctor' : 'cancel-patient';
@@ -350,7 +337,7 @@ if ((slotDateTime - now) >= 30 * 60 * 1000) {
     return res.status(200).json({ message: 'Booking cancelled and slot restored' });
 
   } catch (err) {
-    console.error('❌ Cancel booking error:', err);
+    console.error(' Cancel booking error:', err);
     return res.status(500).json({ message: 'Server error' });
   }
 };
@@ -359,18 +346,16 @@ const generateToken = async (doctorId, date) => {
   let exists = true;
 
   while (exists) {
-    token = Math.floor(100 + Math.random() * 900); // 100–999
+    token = Math.floor(100 + Math.random() * 900); 
     exists = await Booking.findOne({ doctorId, date: new Date(date), token });
   }
   return token;
 };
 
-// Reschedule Appointment
 const rescheduleAppointment = async (req, res) => {
   const { id } = req.params;
-  const { newDate, newTime, rescheduledBy } = req.body; // 'doctor' or 'admin'
+  const { newDate, newTime, rescheduledBy } = req.body; 
 
-  // Optional: validate rescheduledBy
   if (!['doctor', 'admin'].includes(rescheduledBy)) {
     return res.status(400).json({ success: false, message: "Invalid rescheduler role." });
   }
@@ -383,7 +368,6 @@ const rescheduleAppointment = async (req, res) => {
       return res.status(404).json({ success: false, message: "Appointment not found" });
     }
 
-    // Check for conflicts
     const conflict = await Booking.findOne({
       doctorId: currentAppointment.doctorId,
       date: new Date(formattedDate),
@@ -395,8 +379,6 @@ const rescheduleAppointment = async (req, res) => {
       return res.status(409).json({ success: false, message: "Doctor already has an appointment at this time." });
     }
 
-    // Update appointment
-    // Fetch and update manually
 const appointment = await Booking.findById(id);
 if (!appointment) {
   return res.status(404).json({ success: false, message: "Appointment not found" });
@@ -410,11 +392,8 @@ appointment.rescheduledBy = rescheduledBy;
 if (oldDate !== newDateFormatted) {
   appointment.token = await generateToken(appointment.doctorId, newDateFormatted);
 }
-// Save the updated appointment
 const updatedAppointment = await appointment.save();
 
-
-    // Remove the slot from doctor's availability
     await Doctor.updateOne(
       { _id: currentAppointment.doctorId, "availabilitySlots.date": newDate },
       { $pull: { "availabilitySlots.$.slots": newTime } }
@@ -434,7 +413,6 @@ const updatedAppointment = await appointment.save();
       role: doctorData.role || 'doctor'
     };
 
-    // Adjust action message based on who rescheduled
     const action = rescheduledBy === 'admin' ? 'reschedule-admin' : 'reschedule-doctor';
 
     const patientMessage = formatMessage({
@@ -508,23 +486,11 @@ const getDoctorAppointments = async (req, res) => {
   }
 };
 
-// const updateAppointmentStatus = async (req, res) => {
-//   const { id } = req.params;
-//   const { status } = req.body;
-//   try {
-//     const updated = await Booking.findByIdAndUpdate(id, { status }, { new: true });
-//     if (!updated) return res.status(404).json({ success: false, message: "Appointment not found" });
-//     res.status(200).json({ success: true, appointment: updated });
-//   } catch (error) {
-//     res.status(500).json({ message: "Failed to update appointment" });
-//   }
-// };
 const updateAppointmentStatus = async (req, res) => {
   try {
     const { status, cancelledBy } = req.body;
     const id = req.params.id;
 
-    // Update the appointment status in DB
     const updatedAppointment = await Booking.findByIdAndUpdate(
       id,
       { status },
@@ -535,7 +501,6 @@ const updateAppointmentStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Appointment not found' });
     }
 
-    // ✅ If status is "Cancelled", send notifications like cancelAppointment
     if (status === 'Cancelled') {
       const patient = await User.findById(updatedAppointment.patientId);
       const doctorData = await Doctor.findById(updatedAppointment.doctorId);
@@ -580,7 +545,6 @@ const updateAppointmentStatus = async (req, res) => {
       console.log("✅ Cancellation notifications sent successfully");
     }
 
-    // ✅ If status is "Completed", send notifications
 if (status === 'completed' || status === 'Completed') {
   const patient = await User.findById(updatedAppointment.patientId);
   const doctorData = await Doctor.findById(updatedAppointment.doctorId);
@@ -611,22 +575,18 @@ if (status === 'completed' || status === 'Completed') {
       recipient: 'doctor'
     });
 
-    // Send notifications
     await notifyAll({ patient, message: patientMessage });
     await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
   }
 }
 
 
-    // ✅ New logic: Handle missed appointment & block at 4th miss
     if (status === 'Missed') {
   const patient = await User.findById(updatedAppointment.patientId);
 
   if (patient) {
-    // Increase missed count
     patient.missedAppointments = (patient.missedAppointments || 0) + 1;
 
-    // On 4th missed appointment → warning only
     if (patient.missedAppointments === 4) {
       const warningMessage = formatMessage({
         action: 'warning',
@@ -644,11 +604,7 @@ await User.updateOne(
 );
     }
 
-    // On 5th missed appointment → block for 7 days
     else if (patient.missedAppointments >= 5 && !patient.isBlocked) {
-      // patient.isBlocked = true;
-      // patient.blockedUntil = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // block 7 days
-      // await patient.save();
 await User.updateOne(
   { _id: patient._id },
   {
@@ -665,7 +621,7 @@ await User.updateOne(
         recipient: 'patient'
       });
 
-      console.log("🚫 Sending block notification to patient...");
+      console.log(" Sending block notification to patient...");
       await notifyAll({ patient, message: blockMessage });
     } else {
 await User.updateOne(
@@ -679,7 +635,7 @@ await User.updateOne(
     res.status(200).json({ success: true, appointment: updatedAppointment });
 
   } catch (err) {
-    console.error('❌ Error updating appointment status:', err);
+    console.error(' Error updating appointment status:', err);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };

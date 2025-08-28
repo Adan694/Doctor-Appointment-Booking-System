@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { User } = require('../models/users'); 
-// const Otp = require('../models/otp'); 
 const nodemailer = require('nodemailer');
 const Doctor  = require('../models/doctors'); 
 
@@ -35,26 +34,10 @@ function generateToken(user) {
 
     return token;
 }
-// function generateToken(user) {
-//     const token = jwt.sign(
-//         { email: user.email, role: user.role },
-//         process.env.JWT_SECRET || 'secret-123', // More secure
-//         { expiresIn: '1h' }
-//     );
-
-//     console.log('\n================ JWT Token ================\n');
-//     console.log(token);
-//     console.log('\n===========================================\n');
-
-//     return token;
-// }
-
 
 async function sendOtpToEmail(email) {
     const otp = Math.floor(100000 + Math.random() * 900000);
-    const expiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    // Save OTP and expiration in user document
+    const expiration = new Date(Date.now() + 10 * 60 * 1000); 
     const user = await User.findOneAndUpdate(
         { email },
         { otp: otp, otpExpiration: expiration },
@@ -104,7 +87,6 @@ async function verifyOtp(email, otp) {
         throw new Error('Invalid OTP');
     }
 
-    // Clear OTP after successful verification
     user.otp = null;
     user.otpExpiration = null;
     await user.save();
@@ -112,7 +94,6 @@ async function verifyOtp(email, otp) {
     return { success: true, message: 'OTP verified successfully' };
 }
 
-// Controller function for signup
 async function signup(req, res) {
     const { email, password, role, name, phone, cnic } = req.body;
 
@@ -189,7 +170,6 @@ async function login(req, res) {
     }
 }
 
-// Controller function to request OTP
 async function requestOtp(req, res) {
     const { email } = req.body;
 
@@ -206,7 +186,6 @@ async function requestOtp(req, res) {
     }
 }
 
-// Controller function to verify OTP
 async function verifyOtpController(req, res) {
     const { email, otp } = req.body;
     try {
@@ -258,7 +237,6 @@ async function resetPassword(req, res) {
         res.status(400).json({ message: error.message });
     }
 }
-
 
 module.exports = {
     insertUser,

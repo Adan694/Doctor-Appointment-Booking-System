@@ -172,14 +172,12 @@ const getFeedbackAlerts = async (req, res) => {
 
 const getLatestBookings = async (req, res) => {
   try {
-    // Fetch latest 5 bookings sorted by date descending
     const bookings = await Booking.find()
       .sort({ date: -1 })
       .limit(5)
       .populate('doctorId', 'name')
       .populate('patientId', 'name');
 
-    // Map bookings to desired format
     const formattedBookings = bookings.map(b => ({
       doctorName: b.doctorId ? b.doctorId.name : 'Unknown Doctor',
       patientName: b.patientId ? b.patientId.name : 'Unknown Patient',
@@ -202,7 +200,6 @@ const getTotalAppointmentsCount = async (req, res) => {
   }
 };
 
-// Get patients count time series for last 7 days
 const getPatientsTimeSeries = async (req, res) => {
   try {
     const today = new Date();
