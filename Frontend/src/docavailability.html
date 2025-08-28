@@ -671,6 +671,8 @@ textarea:focus {
             })
                 .then(res => res.json())
                 .then(data => {
+                        console.log("Backend availability response:", JSON.stringify(data.availabilitySlots, null, 2));
+
                     const tbody = document.querySelector("#availabilityTable tbody");
                     tbody.innerHTML = "";
                     if (!data.availabilitySlots || !data.availabilitySlots.length) return;
@@ -683,7 +685,22 @@ textarea:focus {
                     });
 
                     // ✅ Now render each grouped date only once
-                    Object.entries(grouped).forEach(([date, slots]) => {
+                    // Sort dates in ascending order
+                    const sortedDates = Object.keys(grouped).sort((a, b) => new Date(a) - new Date(b));
+                    sortedDates.forEach(date => {
+                        let slots = grouped[date];
+                        // Sort slots within each date
+                        slots.sort((a, b) => {
+                            const parseTime = s => {
+                                const [time, ampm] = s.split(" ");
+                                let [h, m] = time.split(":").map(Number);
+                                if (ampm === "PM" && h !== 12) h += 12;
+                                if (ampm === "AM" && h === 12) h = 0;
+                                return h * 60 + m;
+                            };
+                            return parseTime(a) - parseTime(b);
+                        });
+
                         const slotDate = new Date(date);
                         const today = new Date();
                         today.setHours(0, 0, 0, 0);

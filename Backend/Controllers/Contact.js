@@ -40,7 +40,6 @@ const handleContactForm = async (req, res) => {
 
             `
         };
-        // console.log('Email content being sent:', mailOptions.html);
 
 
         await transporter.sendMail(mailOptions);

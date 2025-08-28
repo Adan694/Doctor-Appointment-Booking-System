@@ -1,428 +1,632 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login & Registration Form </title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Login & Registration Form</title>
     <style>
-        /* Import Google font - Poppins */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
 
-body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: 'Poppins', sans-serif;
-    height: 100vh;
-}
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: "Poppins", sans-serif;
+        height: 100vh;
+      }
 
-body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image: url('images/medical.jpg');
-    background-size: cover;
-    background-position: center;
-    animation: panZoom 20s infinite alternate ease-in-out;
-    z-index: -1;
-}
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("images/medical.jpg");
+        background-size: cover;
+        background-position: center;
+        animation: panZoom 20s infinite alternate ease-in-out;
+        z-index: -1;
+      }
 
-@keyframes panZoom {
-    0% {
-        transform: scale(1) translate(0, 0);
-    }
-    50% {
-        transform: scale(1.1) translate(-2%, -2%);
-    }
-    100% {
-        transform: scale(1) translate(0, 0);
-    }
-}
+      @keyframes panZoom {
+        0% {
+          transform: scale(1) translate(0, 0);
+        }
+        50% {
+          transform: scale(1.1) translate(-2%, -2%);
+        }
+        100% {
+          transform: scale(1) translate(0, 0);
+        }
+      }
 
-/* Container styling */
-.container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 430px;
-    width: 100%;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+      .container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 430px;
+        width: 100%;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
 
-.container:hover {
-    transform: translate(-50%, -50%) scale(1.01);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
-}
+      .container:hover {
+        transform: translate(-50%, -50%) scale(1.01);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+      }
 
-/* Hide/Show login/register sections */
-.container .registration { display: none; }
-#check:checked ~ .registration { display: block; }
-#check:checked ~ .login { display: none; }
-#check { display: none; }
+      .container .registration {
+        display: none;
+      }
 
-/* Form wrapper */
-.container .form {
-    padding: 2rem;
-}
+      #check:checked ~ .registration {
+        display: block;
+      }
 
-/* Form title */
-.form header {
-    font-size: 2rem;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #064f4f;
-    letter-spacing: 0.5px;
-    position: relative;
-    cursor: default;
-    transition: color 0.3s ease;
-}
+      #check:checked ~ .login {
+        display: none;
+      }
+      #check {
+        display: none;
+      }
 
-/* Animated underline effect */
-.form header::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: -5px;
-    transform: translateX(-50%) scaleX(0);
-    width: 60%;
-    height: 2px;
-    background-color: #009688;
-    transition: transform 0.3s ease;
-    transform-origin: center;
-}
+      .container .form {
+        padding: 2rem;
+      }
 
-.form header:hover {
-    color: #009688;
-}
+      .form header {
+        font-size: 2rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #064f4f;
+        letter-spacing: 0.5px;
+        position: relative;
+        cursor: default;
+        transition: color 0.3s ease;
+      }
 
-.form header:hover::after {
-    transform: translateX(-50%) scaleX(1);
-}
+      .form header::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -5px;
+        transform: translateX(-50%) scaleX(0);
+        width: 60%;
+        height: 2px;
+        background-color: #009688;
+        transition: transform 0.3s ease;
+        transform-origin: center;
+      }
 
-/* Inputs & selects */
-.form input,
-.form select {
-    height: 55px;
-    width: 100%;
-    padding: 0 15px;
-    font-size: 16px;
-    margin-bottom: 1.3rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    outline: none;
-    background: #fafafa;
-    transition: all 0.3s ease;
-}
+      .form header:hover {
+        color: #009688;
+      }
 
-.form input:hover,
-.form select:hover {
-    border-color: #00bfa5;
-    background: #f0fdfa;
-}
+      .form header:hover::after {
+        transform: translateX(-50%) scaleX(1);
+      }
 
-.form input:focus,
-.form select:focus {
-    border-color: #00bfa5;
-    box-shadow: 0 0 8px rgba(0, 191, 165, 0.4);
-    background: #ffffff;
-}
+      .form input,
+      .form select {
+        height: 55px;
+        width: 100%;
+        padding: 0 15px;
+        font-size: 16px;
+        margin-bottom: 1.3rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        outline: none;
+        background: #fafafa;
+        transition: all 0.3s ease;
+      }
 
-/* Links */
-.form a {
-    font-size: 15px;
-    color: #00796b;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
+      .form input:hover,
+      .form select:hover {
+        border-color: #00bfa5;
+        background: #f0fdfa;
+      }
 
-.form a:hover {
-    text-decoration: underline;
-    color: #004d40;
-}
+      .form input:focus,
+      .form select:focus {
+        border-color: #00bfa5;
+        box-shadow: 0 0 8px rgba(0, 191, 165, 0.4);
+        background: #ffffff;
+      }
 
-/* Button */
-.form input.button {
-    color: #fff;
-    background: linear-gradient(135deg, #009688, #00796b);
-    font-size: 1.1rem;
-    font-weight: 500;
-    letter-spacing: 1px;
-    margin-top: 1.5rem;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
+      .form a {
+        font-size: 15px;
+        color: #00796b;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
 
-.form input.button:hover {
-    background: linear-gradient(135deg, #00796b, #004d40);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 150, 136, 0.3);
-}
+      .form a:hover {
+        text-decoration: underline;
+        color: #004d40;
+      }
 
-/* Signup link */
-.signup {
-    font-size: 15px;
-    text-align: center;
-    margin-top: 1rem;
-    color: #555;
-}
+      .form input.button {
+        color: #fff;
+        background: linear-gradient(135deg, #009688, #00796b);
+        font-size: 1.1rem;
+        font-weight: 500;
+        letter-spacing: 1px;
+        margin-top: 1.5rem;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
 
-.signup label {
-    color: #009579;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
+      .form input.button:hover {
+        background: linear-gradient(135deg, #00796b, #004d40);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 150, 136, 0.3);
+      }
 
-.signup label:hover {
-    text-decoration: underline;
-    color: #006653;
-}
+      .signup {
+        font-size: 15px;
+        text-align: center;
+        margin-top: 1rem;
+        color: #555;
+      }
 
+      .signup label {
+        color: #009579;
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .signup label:hover {
+        text-decoration: underline;
+        color: #006653;
+      }
+      .error {
+        color: red;
+        font-size: 12px;
+      }
+      .valid {
+        color: green;
+        font-size: 12px;
+      }
+      .container {
+        max-height: 90vh;
+        overflow-y: auto;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <input type="checkbox" id="check">
-        <div class="login form">
-            <header>Login</header>
-            <form id="login-form" onsubmit="event.preventDefault(); redirectUser();">
-                <select id="login-role" required>
-                    <option value="" disabled selected>Select your role</option>
-                    <option value="admin">Admin</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="patient">Patient</option>
-                </select>
+      <input type="checkbox" id="check" />
+      <div class="login form">
+        <header>Login</header>
+        <form
+          id="login-form"
+          onsubmit="event.preventDefault(); redirectUser();"
+        >
+          <select id="login-role" required>
+            <option value="" disabled selected>Select your role</option>
+            <option value="admin">Admin</option>
+            <option value="doctor">Doctor</option>
+            <option value="patient">Patient</option>
+          </select>
 
-                <input type="text" id="login-email" placeholder="Enter your email" required>
-                <input type="password" id="login-password" placeholder="Enter your password" required>
-                <a href="forgotpassword.html">Forgot password?</a>
-                <input type="submit" class="button" value="Login">
-            </form>
-            <div class="signup">
-                <span class="signup">Don't have an account?
-                    <label for="check">Signup</label>
-                </span>
-            </div>
+          <input
+            type="text"
+            id="login-email"
+            placeholder="Enter your email"
+            required
+          />
+          <small id="login-email-error" class="error"></small>
+          <input
+            type="password"
+            id="login-password"
+            placeholder="Enter your password"
+            required
+          />
+          <small id="login-password-error" class="error"></small>
+          <a href="forgotpassword.html">Forgot password?</a>
+          <input type="submit" class="button" value="Login" />
+        </form>
+        <div class="signup">
+          <span class="signup"
+            >Don't have an account?
+            <label for="check">Signup</label>
+          </span>
         </div>
-        <div class="registration form">
-            <header>Signup</header>
-            <form id="signup-form" onsubmit="event.preventDefault(); handleSignup();">
-                <input type="hidden" id="signup-role" value="patient">
-                <input type="text" id="signup-email" placeholder="Enter your email" required>
-                <input type="password" id="signup-password" placeholder="Create a password" required>
-                <input type="password" id="confirm-password" placeholder="Confirm your password" required>
-                <input type="submit" class="button" value="Signup">
-            </form>
-            <div class="signup">
-                <span class="signup">Already have an account?
-                    <label for="check">Login</label>
-                </span>
-            </div>
+      </div>
+      <div class="registration form">
+        <header>Signup</header>
+        <form
+          id="signup-form"
+          onsubmit="event.preventDefault(); handleSignup();"
+        >
+          <input type="hidden" id="signup-role" value="patient" />
+          <input
+            type="text"
+            id="signup-name"
+            maxlength="50"
+            placeholder="Enter your name"
+            required
+          />
+          <small id="signup-name-error" class="error"></small>
+
+          <input
+            type="text"
+            id="signup-phone"
+            placeholder="Enter your Phone number"
+            required
+          />
+          <small id="signup-phone-error" class="error"></small>
+
+          <input
+            type="text"
+            id="signup-cnic"
+            placeholder="Enter your CNIC (e.g. 35202-1234567-1)"
+            required
+          />
+          <small id="signup-cnic-error" class="error"></small>
+
+          <input
+            type="text"
+            id="signup-email"
+            placeholder="Enter your email"
+            required
+          />
+          <small id="signup-email-error" class="error"></small>
+
+          <input
+            type="password"
+            id="signup-password"
+            placeholder="Create a password"
+            required
+          />
+          <small id="signup-password-error" class="error"></small>
+
+          <input
+            type="password"
+            id="confirm-password"
+            placeholder="Confirm your password"
+            required
+          />
+          <small id="confirm-password-error" class="error"></small>
+
+          <input type="submit" class="button" value="Signup" />
+        </form>
+        <div class="signup">
+          <span class="signup"
+            >Already have an account?
+            <label for="check">Login</label>
+          </span>
         </div>
+      </div>
     </div>
 
     <script>
-    function redirectUser() {
-        const role = document.getElementById('login-role').value;
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
+      function validateName(name) {
+        const regex = /^[A-Za-z\s]+$/;
+        if (!name) return "Name is required.";
+        if (name.length < 3) return "Name must be at least 3 characters long.";
+        if (!regex.test(name))
+          return "Name can only contain letters and spaces.";
+        return "";
+      }
 
-        // Basic validation
-        if (!email || !password) {
-            alert('Please enter both email and password.');
-            return;
+      function validatePhone(phone) {
+        if (!phone) return "Phone number is required.";
+        const cleaned = phone.replace(/[\s-]/g, "");
+        const pkRegex = /^(?:\+92|92|0)?(3\d{9}|[2-9]\d{7,9})$/;
+        if (!pkRegex.test(cleaned)) {
+          return "Enter a valid Pakistani phone number (e.g., 03XXXXXXXXX or PTCL).";
         }
+        return "";
+      }
 
-        if (password.length < 6) {
-            alert('Password must be at least 6 characters long.');
-            return;
+      function validateEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) return "Email is required.";
+        if (!regex.test(email)) return "Enter a valid email address.";
+        return "";
+      }
+
+      function validatePassword(password) {
+        const strongPassword = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
+        if (!password) return "Password is required.";
+        if (!strongPassword.test(password))
+          return "Must be 6+ chars, include a letter, number & special char.";
+        return "";
+      }
+
+      function validateConfirmPassword(password, confirmPassword) {
+        if (!confirmPassword) return "Please confirm your password.";
+        if (password !== confirmPassword) return "Passwords do not match.";
+        return "";
+      }
+      function validateCnic(cnic) {
+        if (!cnic) return "CNIC is required.";
+        // Allow 13 digits OR 5-7-1 format with dashes
+        const cnicRegex = /^([0-9]{5}-[0-9]{7}-[0-9]{1}|[0-9]{13})$/;
+        if (!cnicRegex.test(cnic)) {
+          return "Enter a valid CNIC (e.g., 35202-1234567-1 or 13 digits).";
         }
+        return "";
+      }
 
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(email)) {
-            alert('Please enter a valid email address.');
-            return;
+      document.getElementById("signup-name").addEventListener("input", (e) => {
+        document.getElementById("signup-name-error").textContent = validateName(
+          e.target.value
+        );
+      });
+
+      document.getElementById("signup-phone").addEventListener("input", (e) => {
+        document.getElementById("signup-phone-error").textContent =
+          validatePhone(e.target.value);
+      });
+
+      document.getElementById("signup-email").addEventListener("input", (e) => {
+        document.getElementById("signup-email-error").textContent =
+          validateEmail(e.target.value);
+      });
+
+      document
+        .getElementById("signup-password")
+        .addEventListener("input", (e) => {
+          document.getElementById("signup-password-error").textContent =
+            validatePassword(e.target.value);
+        });
+
+      document
+        .getElementById("confirm-password")
+        .addEventListener("input", (e) => {
+          const password = document.getElementById("signup-password").value;
+          document.getElementById("confirm-password-error").textContent =
+            validateConfirmPassword(password, e.target.value);
+        });
+      document.getElementById("signup-cnic").addEventListener("input", (e) => {
+        document.getElementById("signup-cnic-error").textContent = validateCnic(
+          e.target.value
+        );
+      });
+
+      document
+        .getElementById("login-email")
+        .addEventListener("input", function () {
+          const error = document.getElementById("login-email-error");
+          const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!regex.test(this.value)) {
+            error.textContent = "Enter a valid email address.";
+          } else {
+            error.textContent = "";
+          }
+        });
+
+      document
+        .getElementById("login-password")
+        .addEventListener("input", function () {
+          const error = document.getElementById("login-password-error");
+          const password = this.value;
+          const strongPassword = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
+
+          if (!strongPassword.test(password)) {
+            error.textContent =
+              "Must be 6+ chars, include a letter, number & special char.";
+            error.className = "error";
+          } else {
+            error.textContent = "Valid password ✔";
+            error.className = "valid";
+          }
+        });
+
+      function redirectUser() {
+        const role = document.getElementById("login-role").value;
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+
+        const emailError = validateEmail(email);
+        const passwordError = validatePassword(password);
+
+        document.getElementById("login-email-error").textContent = emailError;
+        document.getElementById("login-password-error").textContent =
+          passwordError;
+
+        if (emailError || passwordError) {
+          console.log("❌ Login blocked due to errors:", {
+            emailError,
+            passwordError,
+          });
+          alert("Please fix errors before logging in.");
+          return;
         }
 
         if (!role) {
-            alert('Please select your role.');
-            return;
+          alert("Please select your role.");
+          return;
         }
-
-        // Perform login
-        fetch('http://localhost:3000/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password, role })
+        fetch("http://localhost:3000/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password, role }),
         })
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(err => { throw new Error(err.message); });
-                }
-                return res.json();
-            })
-            .then(data => {
-                const { token, role, patientId } = data; 
-                localStorage.setItem('authToken', token);
-                console.log('Saved token:', localStorage.getItem('authToken'));
-
-                localStorage.setItem('userRole', role);
-                sessionStorage.setItem('userRole', role);
-                localStorage.setItem('patientId', patientId); 
-
-                console.log("Stored Patient ID:", localStorage.getItem('patientId')); 
-
-                // Store doctorId if role is doctor
-                if (role === 'doctor') {
-                    if (data.doctor && data.doctor._id) {
-                        localStorage.setItem('doctorId', data.doctor._id);
-                        console.log('Doctor ID saved:', data.doctor._id);
-                        window.location.href = 'docpanel.html'; 
-                        return;
-                    } else {
-                        alert('Doctor ID not found in login response.');
-                        return;
-                    }
-                }
-
-                // Redirect other roles
-                if (role === 'admin') {
-                    window.location.href = 'Adminpanel.html';
-                } else if (role === 'patient') {
-                    window.location.href = 'index.html';
-                } else {
-                    alert('Unrecognized role.');
-                }
-            })
-            .catch(err => {
-                alert(`Login failed: ${err.message}`);
-                if (role === 'patient') {
-                    document.getElementById('check').checked = true;
-                }
-            });
-    }
-
-
-        async function handleSignup() {
-                const role = document.getElementById('signup-role').value;
-                const email = document.getElementById('signup-email').value;
-                const password = document.getElementById('signup-password').value;
-                const confirmPassword = document.getElementById('confirm-password').value;
-
-                if (!email || !password || !confirmPassword || !role ) {
-                    alert('Please fill out all fields.');
-                    return;
-                }
-
-                if (password !== confirmPassword) {
-                    alert('Passwords do not match.');
-                    return;
-                }
-
-                // Check if the password meets strength criteria
-            const passwordStrengthPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-            if (!passwordStrengthPattern.test(password)) {
-                alert('Password must be at least 6 characters long and include at least one letter, one number, and one special character.');
-                return;
+          .then((res) => {
+            if (!res.ok) {
+              return res.json().then((err) => {
+                throw new Error(err.message);
+              });
             }
-            
-            // Validate email format using a regular expression
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                alert('Please enter a valid email address.');
+            return res.json();
+          })
+          .then((data) => {
+            const { token, role, patientId } = data;
+            localStorage.setItem("authToken", token);
+            console.log("Saved token:", localStorage.getItem("authToken"));
+            localStorage.setItem("userRole", role);
+            sessionStorage.setItem("userRole", role);
+            localStorage.setItem("patientId", patientId);
+            console.log(
+              "Stored Patient ID:",
+              localStorage.getItem("patientId")
+            );
+
+            if (role === "doctor") {
+              if (data.doctor && data.doctor._id) {
+                localStorage.setItem("doctorId", data.doctor._id);
+                console.log("Doctor ID saved:", data.doctor._id);
+                window.location.href = "docpanel.html";
                 return;
+              } else {
+                alert("Doctor ID not found in login response.");
+                return;
+              }
             }
 
-               // Proceed with signup
-            const response = await fetch('http://localhost:3000/auth/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password, role })
-            });
-
-           if (response.ok) {
-                alert('Signup successful! Please check your email for the OTP.');
-                sessionStorage.setItem('pendingOtpEmail', email);
-                await requestOtp(email);
-                window.location.href = `verify-otp.html?email=${encodeURIComponent(email)}`;
+            if (role === "admin") {
+              window.location.href = "Adminpanel.html";
+            } else if (role === "patient") {
+              window.location.href = "index.html";
             } else {
-                const contentType = response.headers.get("content-type");
-                let errorMessage = "An error occurred during signup. Please try again.";
-
-                if (contentType && contentType.includes("application/json")) {
-                    const errorData = await response.json();
-                    errorMessage = errorData.message || errorMessage;
-                } else {
-                    const errorText = await response.text();
-                    errorMessage = errorText || errorMessage;
-                }
-
-                alert(errorMessage);
+              alert("Unrecognized role.");
             }
+          })
+          .catch((err) => {
+            alert(`Login failed: ${err.message}`);
+            if (role === "patient") {
+              document.getElementById("check").checked = true;
+            }
+          });
+      }
+
+      async function handleSignup() {
+        const role = document.getElementById("signup-role").value;
+        const email = document.getElementById("signup-email").value;
+        const name = document.getElementById("signup-name").value;
+        const phone = document.getElementById("signup-phone").value;
+        const password = document.getElementById("signup-password").value;
+        const confirmPassword =
+          document.getElementById("confirm-password").value;
+        const cnic = document.getElementById("signup-cnic").value.trim();
+
+        const errors = {
+          name: validateName(name),
+          phone: validatePhone(phone),
+          email: validateEmail(email),
+          password: validatePassword(password),
+          confirm: validateConfirmPassword(password, confirmPassword),
+          cnic: validateCnic(cnic),
+        };
+        document.getElementById("signup-name-error").textContent = errors.name;
+        document.getElementById("signup-phone-error").textContent =
+          errors.phone;
+        document.getElementById("signup-cnic-error").textContent = errors.cnic;
+        document.getElementById("signup-email-error").textContent =
+          errors.email;
+        document.getElementById("signup-password-error").textContent =
+          errors.password;
+        document.getElementById("confirm-password-error").textContent =
+          errors.confirm;
+
+        if (
+          errors.name ||
+          errors.phone ||
+          errors.cnic ||
+          errors.email ||
+          errors.password ||
+          errors.confirm
+        ) {
+          console.log("❌ Signup blocked due to errors:", errors);
+          alert("Please fix the highlighted errors before signing up.");
+          return;
         }
-        async function requestOtp(email) {
-                const response = await fetch('http://localhost:3000/auth/request-otp', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
-                });
+        const response = await fetch("http://localhost:3000/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, role, name, phone, cnic }),
+        });
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || 'Error sending OTP');
-                }
-            }
-    async function verifyOtp() {
-        const email = sessionStorage.getItem('pendingOtpEmail');
-        const otp = document.getElementById('otp').value;
+        if (response.ok) {
+          alert("Signup successful! Please check your email for the OTP.");
+          sessionStorage.setItem("pendingOtpEmail", email);
+          await requestOtp(email);
+          window.location.href = `verify-otp.html?email=${encodeURIComponent(
+            email
+          )}`;
+        } else {
+          const contentType = response.headers.get("content-type");
+          let errorMessage =
+            "An error occurred during signup. Please try again.";
 
-        if (!otp || !email) {  
-            alert('Please enter both email and OTP.');
-            return;
+          if (contentType && contentType.includes("application/json")) {
+            const errorData = await response.json();
+            errorMessage = errorData.message || errorMessage;
+          } else {
+            const errorText = await response.text();
+            errorMessage = errorText || errorMessage;
+          }
+          alert(errorMessage);
+        }
+      }
+      async function requestOtp(email) {
+        const response = await fetch("http://localhost:3000/auth/request-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || "Error sending OTP");
+        }
+      }
+      async function verifyOtp() {
+        const email = sessionStorage.getItem("pendingOtpEmail");
+        const otp = document.getElementById("otp").value;
+
+        if (!otp || !email) {
+          alert("Please enter both email and OTP.");
+          return;
         }
 
         try {
-            console.log('Email:', email);
-            console.log('OTP:', otp);
-            const response = await fetch('http://localhost:3000/auth/verify-otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, otp })
-            });
-
-            const responseData = await response.json();
-            console.log('Response Status:', response.status);
-            console.log('Response Data:', responseData);
-
-            if (!response.ok) {
-                throw new Error(responseData.message || 'Invalid OTP');
+          console.log("Email:", email);
+          console.log("OTP:", otp);
+          const response = await fetch(
+            "http://localhost:3000/auth/verify-otp",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, otp }),
             }
+          );
 
-            alert('OTP verified successfully! You can now login.');
-            window.location.href = 'login.html';
+          const responseData = await response.json();
+          console.log("Response Status:", response.status);
+          console.log("Response Data:", responseData);
+
+          if (!response.ok) {
+            throw new Error(responseData.message || "Invalid OTP");
+          }
+
+          alert("OTP verified successfully! You can now login.");
+          window.location.href = "login.html";
         } catch (error) {
-            alert(error.message);
+          alert(error.message);
         }
-    }
+      }
     </script>
-</body>
-
+  </body>
 </html>

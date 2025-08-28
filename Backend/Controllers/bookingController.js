@@ -24,12 +24,13 @@ const { patientId, doctorId, date, time, name, phone, age, issue } = req.body;
       return res.status(404).json({ success: false, message: "Patient not found" });
     }
 
-    if (patient.isBlocked && patient.unblockDate && patient.unblockDate <= new Date()) {
-      patient.isBlocked = false;
-      patient.missedAppointments = 0;
-      patient.unblockDate = null;
-      await patient.save();
-    }
+    if (patient.isBlocked && patient.blockedUntil && patient.blockedUntil <= new Date()) {
+  patient.isBlocked = false;
+  patient.missedAppointments = 0;
+  patient.blockedUntil = null;
+  await patient.save();
+}
+
 
     if (patient.isBlocked) {
       return res.status(403).json({
@@ -41,12 +42,22 @@ const { patientId, doctorId, date, time, name, phone, age, issue } = req.body;
 
     const formattedDate = new Date(date).toISOString().split('T')[0];
 
-    const existingBooking = await Booking.findOne({ doctorId, date: new Date(formattedDate), time });
+const existingBooking = await Booking.findOne({
+  doctorId,
+  date: new Date(formattedDate),
+  time,
+  status: { $nin: ['cancelled', 'missed'] }  // ❌ ignore cancelled/missed
+});
     if (existingBooking) {
       return res.status(409).json({ success: false, message: "Slot already booked." });
     }
 
-    const patientConflict = await Booking.findOne({ patientId, date: new Date(formattedDate), time });
+const patientConflict = await Booking.findOne({
+  patientId,
+  date: new Date(formattedDate),
+  time,
+  status: { $nin: ['cancelled', 'missed'] }
+});
     if (patientConflict) {
       return res.status(409).json({ success: false, message: "You already have an appointment at this time with another doctor." });
     }
@@ -86,14 +97,42 @@ const generateToken = async (doctorId, date) => {
 };
 
 const token = await generateToken(doctorId, formattedDate);
+// Generate patientNumber (incremental per user)
+const generatePatientNumber = async (patientId, name) => {
+  // normalize name: lowercase + trim extra spaces
+  const normalizedName = name.trim().toLowerCase();
 
+  // 🔍 Check if this patient (user + normalized name) already has a patientNumber
+  const existingBooking = await Booking.findOne({
+    patientId,
+    normalizedName, // <- we'll store alongside real name
+  }).sort({ createdAt: 1 });
+
+  if (existingBooking) {
+    return existingBooking.patientNumber; // ✅ reuse same number for same name
+  }
+
+  // If new member name under this user → assign next number
+  const lastBooking = await Booking.findOne({ patientId })
+    .sort({ createdAt: -1 });
+
+  const lastNumber = lastBooking
+    ? parseInt(lastBooking.patientNumber.split("-").pop(), 10)
+    : 0;
+
+  return `${patientId.toString().slice(-4)}-${lastNumber + 1}`;
+};
+
+const patientNumber = await generatePatientNumber(patientId, name);
 
     const newBooking = new Booking({
       patientId,
       doctorId,
+      patientNumber,
       date: new Date(formattedDate),
       time,
       name: req.body.name,
+      normalizedName: name.trim().toLowerCase(), 
       phone: req.body.phone,
       email: req.body.email,
       age,
@@ -224,20 +263,36 @@ const cancelAppointment = async (req, res) => {
       return slotDate === bookingDate;
     });
 
-    if (slot) {
-      if (!slot.slots.includes(bookingTime)) {
-        console.log("➕ Adding time to existing slot");
-        slot.slots.push(bookingTime);
-      } else {
-        console.log("✅ Time already present in slot");
-      }
+    // Parse booking date + time into full Date object
+const [time, ampm] = bookingTime.split(" ");
+let [hours, minutes] = time.split(":").map(Number);
+if (ampm === "PM" && hours !== 12) hours += 12;
+if (ampm === "AM" && hours === 12) hours = 0;
+
+const slotDateTime = new Date(booking.date);
+slotDateTime.setHours(hours, minutes, 0, 0);
+
+// Check if >= 30 mins remain
+const now = new Date();
+if ((slotDateTime - now) >= 30 * 60 * 1000) {
+  if (slot) {
+    if (!slot.slots.includes(bookingTime)) {
+      console.log("➕ Adding time to existing slot");
+      slot.slots.push(bookingTime);
     } else {
-      console.log("🆕 Creating new slot for:", bookingDate);
-      doctor.availabilitySlots.push({
-        date: bookingDate,
-        slots: [bookingTime]
-      });
+      console.log("✅ Time already present in slot");
     }
+  } else {
+    console.log("🆕 Creating new slot for:", bookingDate);
+    doctor.availabilitySlots.push({
+      date: bookingDate,
+      slots: [bookingTime]
+    });
+  }
+} else {
+  console.log("⏳ Slot not restored (less than 30 mins remain)");
+}
+
 
     await doctor.save();
     console.log("💾 Doctor saved with updated availability:", doctor.availabilitySlots);
@@ -565,34 +620,61 @@ if (status === 'completed' || status === 'Completed') {
 
     // ✅ New logic: Handle missed appointment & block at 4th miss
     if (status === 'Missed') {
-      const patient = await User.findById(updatedAppointment.patientId);
+  const patient = await User.findById(updatedAppointment.patientId);
 
-      if (patient) {
-        // Increase missed count
-        patient.missedAppointments = (patient.missedAppointments || 0) + 1;
+  if (patient) {
+    // Increase missed count
+    patient.missedAppointments = (patient.missedAppointments || 0) + 1;
 
-        // If 4th missed appointment, block for 7 days and notify
-        if (patient.missedAppointments >= 4 && !patient.isBlocked) {
-          patient.isBlocked = true;
-          patient.blockedUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days block
+    // On 4th missed appointment → warning only
+    if (patient.missedAppointments === 4) {
+      const warningMessage = formatMessage({
+        action: 'warning',
+        appointment: updatedAppointment,
+        doctor: null,
+        patient,
+        recipient: 'patient'
+      });
 
-          await patient.save();
-
-          const blockMessage = formatMessage({
-            action: 'block',
-            appointment: updatedAppointment,
-            doctor: null,
-            patient,
-            recipient: 'patient'
-          });
-
-          console.log("🚫 Sending block notification to patient...");
-          await notifyAll({ patient, message: blockMessage });
-        } else {
-          await patient.save();
-        }
-      }
+      console.log("⚠️ Sending warning notification to patient...");
+      await notifyAll({ patient, message: warningMessage });
+await User.updateOne(
+  { _id: patient._id },
+  { $inc: { missedAppointments: 1 } }
+);
     }
+
+    // On 5th missed appointment → block for 7 days
+    else if (patient.missedAppointments >= 5 && !patient.isBlocked) {
+      // patient.isBlocked = true;
+      // patient.blockedUntil = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // block 7 days
+      // await patient.save();
+await User.updateOne(
+  { _id: patient._id },
+  {
+    $inc: { missedAppointments: 1 },
+    $set: { isBlocked: true, blockedUntil: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) }
+  }
+);
+
+      const blockMessage = formatMessage({
+        action: 'block',
+        appointment: updatedAppointment,
+        doctor: null,
+        patient,
+        recipient: 'patient'
+      });
+
+      console.log("🚫 Sending block notification to patient...");
+      await notifyAll({ patient, message: blockMessage });
+    } else {
+await User.updateOne(
+  { _id: patient._id },
+  { $inc: { missedAppointments: 1 } }
+);
+    }
+  }
+}
 
     res.status(200).json({ success: true, appointment: updatedAppointment });
 

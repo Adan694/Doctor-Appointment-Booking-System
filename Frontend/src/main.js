@@ -10,55 +10,52 @@ document.addEventListener('DOMContentLoaded', function () {
     const doctorContainer = document.getElementById("doctorContainer");
 
     // Load doctors from API
-    if (doctorContainer) {
-        const loadingMessage = document.createElement("p");
-        loadingMessage.textContent = "Loading doctors...";
-        doctorContainer.appendChild(loadingMessage);
+    // if (doctorContainer) {
+    //     const loadingMessage = document.createElement("p");
+    //     loadingMessage.textContent = "Loading doctors...";
+    //     doctorContainer.appendChild(loadingMessage);
 
-        fetch("http://localhost:3000/api/doctors/alldoctors")
-            .then((res) => {
-                if (!res.ok) throw new Error("Failed to fetch doctors");
-                return res.json();
-            })
-            .then((doctors) => {
-                doctorContainer.innerHTML = "";
+    //     fetch("http://localhost:3000/api/doctors/alldoctors")
+    //         .then((res) => {
+    //             if (!res.ok) throw new Error("Failed to fetch doctors");
+    //             return res.json();
+    //         })
+    //         .then((doctors) => {
+    //             doctorContainer.innerHTML = "";
 
-                const displayedDoctors = doctors.slice(0, 3);
-                displayedDoctors.forEach((doctor) => {
-                    const card = document.createElement("div");
-                    card.className = "card";
-                    card.innerHTML = `
-                        <img src="${doctor.image}" alt="${doctor.name}" />
-                        <p><strong>${doctor.name}</strong></p>
-                        <p class="speciality">${doctor.speciality}</p>
-                    `;
-                    card.addEventListener("click", () => {
-                        window.location.href = `doctor.html?id=${encodeURIComponent(doctor._id)}`;
-                    });
+    //             const displayedDoctors = doctors.slice(0, 3);
+    //             displayedDoctors.forEach((doctor) => {
+    //                 const card = document.createElement("div");
+    //                 card.className = "card";
+    //                 card.innerHTML = `
+    //                     <img src="${doctor.image}" alt="${doctor.name}" />
+    //                     <p><strong>${doctor.name}</strong></p>
+    //                     <p class="speciality">${doctor.speciality}</p>
+    //                 `;
+    //                 card.addEventListener("click", () => {
+    //                     window.location.href = `doctor.html?id=${encodeURIComponent(doctor._id)}`;
+    //                 });
 
-                    doctorContainer.appendChild(card);
-                });
-            })
-            .catch((err) => {
-                doctorContainer.innerHTML = "<p style='color:red;'>Failed to load doctors.</p>";
-                console.error("Error:", err);
-            });
-    }
+    //                 doctorContainer.appendChild(card);
+    //             });
+    //         })
+    //         .catch((err) => {
+    //             doctorContainer.innerHTML = "<p style='color:red;'>Failed to load doctors.</p>";
+    //             console.error("Error:", err);
+    //         });
+    // }
 // Update navigation bar based on user role
 function updateNavbar() {
     const profileMenu = document.getElementById('profileMenu');
     const authButton = document.getElementById('authButton');
     const userRole = localStorage.getItem('userRole');
-
-    // ✅ define dropdown UL inside profileMenu
     const dropdown = profileMenu ? profileMenu.querySelector('.dropdown-menu') : null;
 
     if (userRole === 'patient') {
         if (profileMenu) profileMenu.style.display = 'block';
-        if (authButton) authButton.style.display = 'none'; // hide login/logout button area
+        if (authButton) authButton.style.display = 'none';
 
-        // ✅ Add Logout inside dropdown if not already added
-       if (dropdown && !document.getElementById('logoutLink')) {
+    if (dropdown && !document.getElementById('logoutLink')) {
     const logoutLi = document.createElement('li');
     logoutLi.innerHTML = `
         <a href="javascript:void(0);" id="logoutLink" class="logout-button" onclick="logout()">
@@ -67,7 +64,6 @@ function updateNavbar() {
     `;
     dropdown.appendChild(logoutLi);
 }
-
     } else {
         if (profileMenu) profileMenu.style.display = 'none';
         if (authButton) {
@@ -81,7 +77,6 @@ function updateNavbar() {
     }
 }
 
-// Profile icon click event
 const profileMenu = document.getElementById('profileMenu');
 if (profileMenu) {
     const profileIcon = profileMenu.querySelector('.profile-icon');
@@ -98,17 +93,14 @@ if (profileMenu) {
 }
 
 updateNavbar();
-
-// Logout function
 window.logout = function () {
     console.log("🚪 Logging out...");
-    localStorage.removeItem('userRole');
+    localStorage.clear();
     updateNavbar();
     location.reload();
 };
 
 
-// Mobile menu toggle
 const bar = document.getElementById('bar');
 if (bar) {
     bar.addEventListener('click', function () {
@@ -117,15 +109,14 @@ if (bar) {
     });
 }
 
-    // Initialize slides for patient cards
-    slide.forEach(function (slides, index) {
-        slides.style.left = `${index * 100}%`;
+slide.forEach(function (slides, index) {
+    slides.style.left = `${index * 100}%`;
     });
-    function myFun() {
-        slide.forEach(function (curVal) {
-            curVal.style.transform = `translateX(-${count * 99}%)`;
-        });
-    }
+function myFun() {
+    slide.forEach(function (curVal) {
+    curVal.style.transform = `translateX(-${count * 99}%)`;
+    });
+}
 
 const prevArrow = document.getElementById('prevArrow');
 const nextArrow = document.getElementById('nextArrow');
@@ -141,53 +132,30 @@ nextArrow.addEventListener('click', () => {
     if (count >= slide.length) count = 0;
     myFun();
 });
-
-    // card.forEach(function (cards) {
-    //     cards.addEventListener("click", function () {
-    //         console.log(cards.firstElementChild.src);
-    //         document.querySelector(".content").style.display = "block";
-    //         document.querySelector(".contentDetail").innerHTML = `
-    //             <img src=${cards.firstElementChild.src}>
-    //             <div>
-    //                 <h1>Dr Alexa Zoan</h1>
-    //                 <p>Experienced surgeon specializing in minimally invasive procedures.</p>
-    //                 <p>Experience: 10 Years</p>
-    //             </div>
-    //         `;
-    //         closeBtn.addEventListener("click", function () {
-    //             document.querySelector(".content").style.display = "none";
-    //         });
-    //     });
-    // });
-
-     // Connect button event for login validation
+    
     if (connectBtn) {
         connectBtn.addEventListener("click", function () {
             let email = document.getElementById("email");
             let pass = document.getElementById("pass");
             let contact = document.getElementById("contact");
 
-            // Email validation
             let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(email.value)) {
                 alert("Invalid email address");
                 return;
             }
 
-            // Contact number validation
-            let contactRegex = /^[0-9]{11}$/;
+            let contactRegex = /^((\+92|0)3[0-9]{9}|0[1-9][0-9]{8,9})$/;
             if (!contactRegex.test(contact.value)) {
                 alert("Invalid contact number");
                 return;
             }
 
-            // Password validation
-            if (pass.value.length < 8) {
-                alert("Password must be at least 8 characters long");
+            if (pass.value.length < 6) {
+                alert("Password must be at least 6 characters long");
                 return;
             }
 
-            // Check if all fields are filled
             if (email.value === "" || pass.value === "" || contact.value === "") {
                 alert("Please Enter Details");
             } else {
@@ -198,16 +166,49 @@ nextArrow.addEventListener('click', () => {
         });
     }
 
-    // Contact form submission
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const message = document.getElementById('message').value;
+            const email = document.getElementById('email').value.trim();
+const name = document.getElementById('name').value.trim();
+const phone = document.getElementById('phone').value.trim();
+const message = document.getElementById('message').value.trim();
+
+let isValid = true;
+
+// 📧 Email validation
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailRegex.test(email)) {
+    alert("Please enter a valid email address.");
+    isValid = false;
+}
+
+// 👤 Name validation
+if (name.length < 2) {
+    alert("Please enter your full name (at least 2 characters).");
+    isValid = false;
+}
+
+// 📱 Pakistani phone validation (Mobile or PTCL, with optional +92)
+const pkPhoneRegex = /^((\+92|0)3[0-9]{9}|0[1-9][0-9]{8,9})$/;
+if (!pkPhoneRegex.test(phone)) {
+    alert("Please enter a valid Pakistani mobile or PTCL number.");
+    isValid = false;
+}
+
+// 📝 Message validation
+if (message.length === 0) {
+    alert("Please enter a message.");
+    isValid = false;
+}
+
+if (!isValid) return;
+
+// ✅ If all checks pass, proceed with form submission (fetch or whatever)
+alert("Form is valid, submitting...");
+
 
             const data = { email, name, phone, message };
 
@@ -229,14 +230,11 @@ nextArrow.addEventListener('click', () => {
         });
     }
 
-     // Animate words in specified selector
     function animateWords(selector, delay = 300) {
         const el = document.querySelector(selector);
             const rawHTML = el.innerHTML.replace(/<br\s*\/?>/gi, '[[BR]]');
         const words = rawHTML.split(' ');
-
         el.innerHTML = ''; 
-
         let index = 0;
 
         words.forEach((word) => {
@@ -268,22 +266,17 @@ nextArrow.addEventListener('click', () => {
     }
     animateWords('#heading1', 200);
     animateWords('#heading3', 300);
-    function showToast(msg) {
-        alert(msg); 
-    }
 })
-// Open Popup
+
 function openSpecialityPopup() {
     document.getElementById("specialityPopup").style.display = "flex";
     document.body.style.overflow = "hidden";  
 }
 
-// Close Popup
 function closeSpecialityPopup() {
     document.getElementById("specialityPopup").style.display = "none";
     document.body.style.overflow = "auto";   
 }
-
 
 function goToSpeciality(speciality) {
   window.location.href = "Alldoctorsreal.html?speciality=" + encodeURIComponent(speciality);

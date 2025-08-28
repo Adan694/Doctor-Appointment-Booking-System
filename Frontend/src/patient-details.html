@@ -330,38 +330,52 @@
         let currentPage = 1;
         const itemsPerPage = 10;
 
-        function renderAppointments() {
-                if (appointments.length === 0) {
-                    document.getElementById('appointments').innerHTML = "<h2>Appointments</h2><p>No appointments found.</p>";
-                    return;
-                }
+       function renderAppointments() {
+            if (appointments.length === 0) {
+                document.getElementById('appointments').innerHTML = "<h2>Appointments</h2><p>No appointments found.</p>";
+                return;
+            }
 
-                const start = (currentPage - 1) * itemsPerPage;
-                const end = start + itemsPerPage;
-                const paginatedApps = appointments.slice(start, end);
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedApps = appointments.slice(start, end);
 
-                let tableHTML = `<h2>Appointments</h2>
-        <table>
-            <thead>
-                <tr><th>Date & Time</th><th>Status</th></tr>
-            </thead>
-            <tbody>`;
+            let tableHTML = `<h2>Appointments</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>name</th>
+                <th>Date & Time</th>
+                <th>Doctor</th>
+                <th>Patient Number</th>
+                <th>Token</th>
+                <th>Issue</th>
+                <th>Status</th>
+                <th>Feedback</th>
+            </tr>
+        </thead>
+        <tbody>`;
 
-                paginatedApps.forEach(a => {
-                    // Combine date + time into a single Date object
-                    const dateTimeString = `${a.date.split('T')[0]} ${a.time}`;
-                    const appointmentDate = new Date(dateTimeString);
+            paginatedApps.forEach(a => {
+                const dateTimeString = `${a.date.split('T')[0]} ${a.time}`;
+                const appointmentDate = new Date(dateTimeString);
 
-                    tableHTML += `<tr>
+                tableHTML += `<tr>
+                    <td>${a.name}</td>
             <td>${appointmentDate.toLocaleDateString()} ${a.time}</td>
+            <td>${a.doctorId?.name || a.doctorId || 'N/A'}</td>
+            <td>${a.patientNumber || 'N/A'}</td>
+            <td>${a.token}</td>
+            <td>${a.issue || '-'}</td>
             <td>${a.status}</td>
+            <td>${a.feedback || '-'}</td>
         </tr>`;
-                });
+            });
 
-                tableHTML += "</tbody></table>";
+            tableHTML += "</tbody></table>";
 
-                // Pagination controls
-                tableHTML += `
+            // Pagination controls
+            tableHTML += `
         <div class="pagination">
             <button onclick="prevPage()" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
             <span>Page ${currentPage} of ${Math.ceil(appointments.length / itemsPerPage)}</span>
@@ -369,8 +383,9 @@
         </div>
     `;
 
-                document.getElementById('appointments').innerHTML = tableHTML;
-            }
+            document.getElementById('appointments').innerHTML = tableHTML;
+        }
+
 
         function nextPage() {
             if ((currentPage * itemsPerPage) < appointments.length) {
@@ -387,31 +402,41 @@
         }
 
         async function fetchPatientDetails() {
-            try {
-                // Fetch patient info
-                const res = await fetch(`http://localhost:3000/api/admin/patients/${patientId}`, {
-                    headers: { Authorization: 'Bearer ' + token }
-                });
-                const patient = await res.json();
-                document.getElementById('patient-info').innerHTML = `
-                    <h2>Basic Info</h2>
-                    <p><strong>Name:</strong> ${patient.name || ''}</p>
-                    <p><strong>Email:</strong> ${patient.email || ''}</p>
-                    <p><strong>Phone:</strong> ${patient.phone || ''}</p>
-                `;
+                try {
+                    // Fetch patient info
+                    const res = await fetch(`http://localhost:3000/api/admin/patients/${patientId}`, {
+                        headers: { Authorization: 'Bearer ' + token }
+                    });
+                    const patient = await res.json();
 
-                // Fetch appointments
-                const res2 = await fetch(`http://localhost:3000/api/admin/patients/${patientId}/appointments`, {
-                    headers: { Authorization: 'Bearer ' + token }
-                });
-                appointments = await res2.json();
-                renderAppointments();
+                    // Show full profile data
+                    document.getElementById('patient-info').innerHTML = `
+            <h2>Profile Info</h2>
+            <p><strong>Name:</strong> ${patient.name || ''}</p>
+            <p><strong>Email:</strong> ${patient.email || ''}</p>
+            <p><strong>Phone:</strong> ${patient.phone || ''}</p>
+            <p><strong>Age:</strong> ${patient.age || ''}</p>
+            <p><strong>DOB:</strong> ${patient.dob || ''}</p>
+            <p><strong>Gender:</strong> ${patient.gender || ''}</p>
+            <p><strong>Role:</strong> ${patient.role || ''}</p>
+            <p><strong>Missed Appointments:</strong> ${patient.missedAppointments || 0}</p>
+            <p><strong>Blocked:</strong> ${patient.isBlocked ? 'Yes' : 'No'}</p>
+            ${patient.unblockDate ? `<p><strong>Unblock Date:</strong> ${new Date(patient.unblockDate).toLocaleDateString()}</p>` : ''}
+        `;
 
-            } catch (err) {
-                console.error(err);
-                alert("Error loading patient data");
+                    // Fetch appointments
+                    const res2 = await fetch(`http://localhost:3000/api/admin/patients/${patientId}/appointments`, {
+                        headers: { Authorization: 'Bearer ' + token }
+                    });
+                    appointments = await res2.json();
+                    renderAppointments();
+
+                } catch (err) {
+                    console.error(err);
+                    alert("Error loading patient data");
+                }
             }
-        }
+
 
         fetchPatientDetails();
     </script>

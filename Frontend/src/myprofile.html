@@ -605,6 +605,10 @@ nav ul li a:hover {
 
 <label for="edit-gender"><i class="fas fa-venus-mars"></i> Gender:</label>
 <p id="displayGender"></p>
+
+<label for="edit-cnic"><i class="fas fa-id-card"></i> CNIC:</label>
+<p id="displayCnic"></p>
+
                 </div>
                 <div id="password-change-container" style="display:none; margin-top:15px;">
                     <button type="button" id="change-password-btn" class="btn-feedback">Change Password</button>
@@ -662,21 +666,6 @@ nav ul li a:hover {
             <li><a href="Faqs.html">FAQS</a></li>
         </ul>
     </div>
-    <div class="text">
-        <h3>Doctors' Specialties</h3>
-        <div class="specialties-columns">
-            <p>Cardiology</p>
-            <p>Dermatology</p>
-            <p>Pediatrics</p>
-            <p>Orthopedics</p>
-            <p>Gynecology</p>
-            <p>Neurology</p>
-            <p>Gastroenterology</p>
-            <p>Oncology</p>
-            <p>Radiology</p>
-            <p>Psychiatry</p>
-        </div>
-    </div>
     <div class="Legal">
         <h3>Legal</h3>
         <ul>
@@ -733,6 +722,8 @@ nav ul li a:hover {
                 document.getElementById('displayAge').innerText = data.age || '';
                 document.getElementById('displayDob').innerText = data.dob || '';
                 document.getElementById('displayGender').innerText = data.gender || 'male';
+                document.getElementById('displayCnic').innerText = data.cnic || '';
+
                 hideLoader();
             })
             .catch(error => {
@@ -754,7 +745,7 @@ nav ul li a:hover {
 
             profileInfo.querySelectorAll('p').forEach(p => {
                 const label = p.previousElementSibling.innerText.toLowerCase().replace(/[^a-z]/g, '');
-                const key = { name: 'name', email: 'email', phone: 'phone', phonenumber: 'phone', age: 'age', dob: 'dob', dateofbirth: 'dob', gender: 'gender' }[label] || label;
+                const key = { cnic: 'cnic', name: 'name', email: 'email', phone: 'phone', phonenumber: 'phone', age: 'age', dob: 'dob', dateofbirth: 'dob', gender: 'gender' }[label] || label;
 
                 if (key === 'gender') {
                     const select = document.createElement('select');
@@ -804,12 +795,19 @@ nav ul li a:hover {
             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
             return age;
         })() : '';
+        const cnicValue = getInput('edit-cnic');
+const cnicRegex = /^[0-9]{5}-[0-9]{7}-[0-9]{1}$/;  // e.g. 12345-1234567-1
+if (cnicValue && !cnicRegex.test(cnicValue)) {
+    return alert("Please enter a valid CNIC (e.g. 12345-1234567-1).");
+}
+
 
         const updatedData = {
             name: getInput('edit-name'),
             email: getInput('edit-email'),
             phone: getInput('edit-phone'),
             dob: dobValue,
+            cnic: cnicValue,
             gender: getInput('edit-gender'),
             age: calculatedAge
         };

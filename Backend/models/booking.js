@@ -7,10 +7,12 @@ const bookingSchema = new mongoose.Schema({
     time: { type: String, required: true },
     feedback: { type: String, default: "" },
     name: { type: String },
+    normalizedName: { type: String },
     phone: { type: String },
     email: { type: String },
     age: { type: Number },
     token: { type: Number, required: true }, 
+    patientNumber: { type: String, required: true },
     status: { 
         type: String, 
         enum: ['pending', 'confirmed', 'completed', 'cancelled', 'missed'],

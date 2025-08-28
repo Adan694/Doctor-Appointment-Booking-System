@@ -841,6 +841,7 @@ body {
 <div class="form-group">
     <label for="modalAge">Age</label>
     <input type="number" id="modalAge" min="0" max="120" />
+        <small id="ageError" style="color:red; display:none;"></small>
 </div>
 <div class="form-group">
     <label for="modalIssue">Issue / Problem</label>
@@ -971,7 +972,6 @@ body {
                     profileMenu.classList.toggle("active");
                 });
 
-                // close dropdown when clicking outside
                 document.addEventListener("click", (e) => {
                     if (!profileMenu.contains(e.target)) {
                         profileMenu.classList.remove("active");
@@ -984,112 +984,134 @@ body {
 
         const params = new URLSearchParams(window.location.search);
         const doctorId = params.get("doctorId"); 
-       function loadAvailability() {
-            fetch(`http://localhost:3000/api/doctors/${doctorId}`)
-                .then(res => res.json())
-                .then(data => {
-                    const bookingInfoDiv = document.getElementById('booking-info');
-                    bookingInfoDiv.innerHTML = '';
+    
+    function loadAvailability() {
+        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`)
+            .then(res => res.json())
+            .then(data => {
+                console.log("Raw availability slots from DB:", JSON.stringify(data.availabilitySlots, null, 2));
 
-                    if (!data.availabilitySlots || !data.availabilitySlots.length) {
-                        bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
-                        return;
+                const bookingInfoDiv = document.getElementById('booking-info');
+                bookingInfoDiv.innerHTML = '';
+
+                if (!data.availabilitySlots || !data.availabilitySlots.length) {
+                    bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
+                    return;
+                }
+
+                const mergedSlots = data.availabilitySlots.reduce((acc, slot) => {
+                    const existing = acc.find(s => s.date === slot.date);
+                    if (existing) {
+                        existing.slots = [...new Set([...existing.slots, ...slot.slots])];
+                    } else {
+                        acc.push({ ...slot });
                     }
-                    data.availabilitySlots.sort((a, b) => {
-                        const dateA = new Date(a.date);
-                        const dateB = new Date(b.date);
-                        return dateA - dateB;
+                    return acc;
+                }, []);
+
+                // Sort dates ascending
+                mergedSlots.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                // Create date buttons container
+                const datesContainer = document.createElement('div');
+                datesContainer.className = 'dates-container';
+
+                // Filter only dates that have at least one future slot
+                const futureDates = mergedSlots.filter(slot => {
+                    return slot.slots.some(time => {
+                        const slotDateTime = new Date(`${slot.date} ${time}`);
+                        return slotDateTime > new Date(); 
                     });
-                    // Create date buttons container
-                    const datesContainer = document.createElement('div');
-                    datesContainer.className = 'dates-container';
-
-                    // Filter only dates that have at least one future slot
-                    const futureDates = data.availabilitySlots.filter(slot => {
-                        return slot.slots.some(time => {
-                            const slotDateTime = new Date(`${slot.date} ${time}`);
-                            return slotDateTime > new Date(); // keep only future slots
-                        });
-                    });
-
-                    if (!futureDates.length) {
-                        bookingInfoDiv.innerHTML = '<p>No future availability slots.</p>';
-                        return;
-                    }
-
-                    // Now create buttons only for future dates
-                    futureDates.forEach((slot, index) => {
-                        const dateBtn = document.createElement('button');
-                        dateBtn.textContent = slot.date;
-                        dateBtn.className = 'time-slot';
-                        if (index === 0) dateBtn.classList.add('selected');
-                        dateBtn.addEventListener('click', () => {
-                            document.querySelectorAll('.dates-container .time-slot').forEach(b => b.classList.remove('selected'));
-                            dateBtn.classList.add('selected');
-                            renderSlots(slot);
-                        });
-                        datesContainer.appendChild(dateBtn);
-                    });
-
-
-                    bookingInfoDiv.appendChild(datesContainer);
-
-                    // Create container for slots
-                    const slotsContainer = document.createElement('div');
-                    slotsContainer.id = 'slots-container';
-                    bookingInfoDiv.appendChild(slotsContainer);
-
-                    // Render slots for first date by default
-                    renderSlots(data.availabilitySlots[0]);
-
-                    function renderSlots(slot) {
-                        const slotsDiv = document.getElementById('slots-container');
-                        slotsDiv.innerHTML = '';
-                        const bookBtn = document.querySelector('.book-btn:not([onclick])');
-                        if (bookBtn) bookBtn.disabled = true;
-
-                        const timesContainer = document.createElement('div');
-                        let hasFutureSlot = false;
-
-                        slot.slots.forEach(time => {
-                            const dateTimeString = `${slot.date} ${time}`;
-                            const slotDateTime = new Date(dateTimeString);
-                            const now = new Date();
-                            if (slotDateTime < now) return;
-
-                            hasFutureSlot = true;
-
-                            const timeSlot = document.createElement('span');
-                            timeSlot.className = 'time-slot';
-                            timeSlot.textContent = time;
-                            timeSlot.dataset.date = slot.date;
-                            timeSlot.dataset.time = time;
-
-                            timeSlot.addEventListener('click', function () {
-                                document.querySelectorAll('#slots-container .time-slot').forEach(t => t.classList.remove('selected'));
-                                this.classList.add('selected');
-                            });
-
-                            timesContainer.appendChild(timeSlot);
-                        });
-
-                        if (hasFutureSlot) {
-                            slotsDiv.appendChild(timesContainer);
-                        } else {
-                            slotsDiv.innerHTML = '<p>No future slots available.</p>';
-                        }
-                    }
-
-
-                    addBookButtonIfMissing();
-                })
-                .catch(err => {
-                    document.getElementById('booking-info').innerHTML =
-                        `<p>Error fetching availability: ${err.message}</p>`;
                 });
-        }
 
-            // // Automatically load slots when page opens
+                if (!futureDates.length) {
+                    bookingInfoDiv.innerHTML = '<p>No future availability slots.</p>';
+                    return;
+                }
+
+                // Now create buttons only for future dates
+                futureDates.forEach((slot, index) => {
+                    const dateBtn = document.createElement('button');
+                    dateBtn.textContent = slot.date;
+                    dateBtn.className = 'time-slot';
+                    if (index === 0) dateBtn.classList.add('selected');
+                    dateBtn.addEventListener('click', () => {
+                        document.querySelectorAll('.dates-container .time-slot').forEach(b => b.classList.remove('selected'));
+                        dateBtn.classList.add('selected');
+                        renderSlots(slot);
+                    });
+                    datesContainer.appendChild(dateBtn);
+                });
+
+                bookingInfoDiv.appendChild(datesContainer);
+
+                const slotsContainer = document.createElement('div');
+                slotsContainer.id = 'slots-container';
+                bookingInfoDiv.appendChild(slotsContainer);
+
+                renderSlots(futureDates[0]);
+
+                function renderSlots(slot) {
+                    const slotsDiv = document.getElementById('slots-container');
+                    slotsDiv.innerHTML = '';
+                    const bookBtn = document.querySelector('.book-btn:not([onclick])');
+                    if (bookBtn) bookBtn.disabled = true;
+
+                    const timesContainer = document.createElement('div');
+                    let hasFutureSlot = false;
+
+                    slot.slots.sort((a, b) => {
+                        const parseTime = s => {
+                            const [time, ampm] = s.split(" ");
+                            let [h, m] = time.split(":").map(Number);
+                            if (ampm === "PM" && h !== 12) h += 12;
+                            if (ampm === "AM" && h === 12) h = 0;
+                            return h * 60 + m;
+                        };
+                        return parseTime(a) - parseTime(b);
+                    });
+
+                    slot.slots.forEach(time => {
+                        const dateTimeString = `${slot.date} ${time}`;
+                        const slotDateTime = new Date(dateTimeString);
+                        const now = new Date();
+
+                        // ❌ Skip past slots
+                        if (slotDateTime < now) {
+                            return;
+                        }
+
+                        hasFutureSlot = true;
+
+                        const timeSlot = document.createElement('span');
+                        timeSlot.className = 'time-slot';
+                        timeSlot.textContent = time;
+                        timeSlot.dataset.date = slot.date;
+                        timeSlot.dataset.time = time;
+
+                        timeSlot.addEventListener('click', function () {
+                            document.querySelectorAll('#slots-container .time-slot').forEach(t => t.classList.remove('selected'));
+                            this.classList.add('selected');
+                        });
+
+                        timesContainer.appendChild(timeSlot);
+                    });
+
+                    if (hasFutureSlot) {
+                        slotsDiv.appendChild(timesContainer);
+                    } else {
+                        slotsDiv.innerHTML = '<p>No future slots available.</p>';
+                    }
+                }
+
+                addBookButtonIfMissing();
+            })
+            .catch(err => {
+                document.getElementById('booking-info').innerHTML =
+                    `<p>Error fetching availability: ${err.message}</p>`;
+            });
+    }
+
             function addBookButtonIfMissing() {
                 
                 const patientId = localStorage.getItem('patientId'); 
@@ -1133,7 +1155,6 @@ body {
                     }
                 }
 
-                // Automatically load slots when page opens
                 document.addEventListener('DOMContentLoaded', loadAvailability);
 
                 function showLoadingOverlay() {
@@ -1166,13 +1187,11 @@ body {
                             const emailField = document.getElementById('modalEmail');
                             const ageField = document.getElementById('modalAge');
 
-                            // Prefill from localStorage first
                             let patientName = localStorage.getItem('patientName') || '';
                             let patientPhone = localStorage.getItem('patientPhone') || '';
                             let patientEmail = localStorage.getItem('patientEmail') || '';
-                            let patientDOB = localStorage.getItem('patientDOB'); // format: YYYY-MM-DD
+                            let patientDOB = localStorage.getItem('patientDOB'); 
 
-                            // If any key data missing, fetch from backend
                             const token = localStorage.getItem('authToken');
                             if (token && (!patientName || !patientPhone || !patientEmail || !patientDOB)) {
                                 fetch('http://localhost:3000/user/profile', {
@@ -1189,18 +1208,16 @@ body {
                                         patientEmail = data.email || patientEmail;
                                         patientDOB = data.dob || patientDOB;
 
-                                        // Update localStorage for next time
                                         localStorage.setItem('patientName', patientName);
                                         localStorage.setItem('patientPhone', patientPhone);
                                         localStorage.setItem('patientEmail', patientEmail);
                                         localStorage.setItem('patientDOB', patientDOB);
 
-                                        // Fill modal fields
                                         fillBookingModal();
                                     })
                                     .catch(err => {
                                         console.error('Could not fetch profile:', err);
-                                        fillBookingModal(); // fallback to whatever localStorage has
+                                        fillBookingModal(); 
                                     });
                             } else {
                                 fillBookingModal();
@@ -1211,7 +1228,6 @@ body {
                                 phoneField.value = patientPhone;
                                 emailField.value = patientEmail;
 
-                                // Calculate age from DOB if available
                                 if (patientDOB) {
                                     const dob = new Date(patientDOB);
                                     const today = new Date();
@@ -1252,14 +1268,23 @@ body {
                             const phone = document.getElementById('modalPhone').value.trim();
                             const phoneError = document.getElementById('phoneError');
                             const email = document.getElementById('modalEmail').value.trim();
-                           const age = document.getElementById('modalAge').value.trim();
                            const issue = document.getElementById('modalIssue').value.trim();
+                           const age = document.getElementById('modalAge').value.trim();
+                           const ageError = document.getElementById("ageError");
 
+                            if (!/^\d+$/.test(age)) {
+                            ageError.textContent = "❌ Age must be a number.";
+                            ageError.style.display = "block";
+                            return;
+                            } else if (parseInt(age) > 150) {
+                            ageError.textContent = "❌ Age cannot be greater than 150.";
+                            ageError.style.display = "block";
+                            return;
+                            } else {
+                            ageError.style.display = "none";
+                            }
 
-                            // Regex for Pakistani mobile (03XXXXXXXXX) or landline (0XXXXXXXXX)
                             const pkPhoneRegex = /^(03[0-9]{9}|0[0-9]{9,10})$/;
-
-                            // Reset error
                             phoneError.style.display = "none";
                             phoneError.textContent = "";
 
@@ -1286,14 +1311,12 @@ body {
                                     hideLoadingOverlay();
                                     closeModal();
                                     if (data.success) {
-                                        // Update localStorage with the latest booking info
                                         localStorage.setItem('patientName', name);
                                         localStorage.setItem('patientPhone', phone);
                                         localStorage.setItem('patientEmail', email);
-                                        // localStorage.setItem('patientDOB', age); // if you have DOB
                                         showToast(`✅ Appointment booked for ${selectedDate} at ${selectedTime}`);
                                     }
- else {
+                                    else {
                                         if (data.message && data.message.includes("blocked")) {
                                             showToast(`🚫 ${data.message}`, 5000);
                                         } else {
@@ -1317,28 +1340,40 @@ body {
                                 phoneError.style.marginTop = "4px";
                                 phoneError.style.display = "none";
 
-                                // Insert error div just below the phone input
                                 phoneInput.parentNode.appendChild(phoneError);
-
-                                // Regex for Pakistani mobile or landline
                                 const pkPhoneRegex = /^(03[0-9]{9}|0[1-9][0-9]{8,9})$/;
 
                                 // Live validation while typing
                                 phoneInput.addEventListener("input", () => {
                                     const phone = phoneInput.value.trim();
                                     if (phone === "") {
-                                        phoneError.style.display = "none"; // hide if empty
+                                        phoneError.style.display = "none"; 
                                     } else if (!pkPhoneRegex.test(phone)) {
                                         phoneError.textContent = "❌ Invalid Pakistani phone number (e.g., 03001234567 or 0421234567)";
                                         phoneError.style.display = "block";
                                     } else {
-                                        phoneError.style.display = "none"; // hide if valid
+                                        phoneError.style.display = "none"; 
                                     }
                                 });
                             });
-
-
+                            document.addEventListener("DOMContentLoaded", () => {
+                            const ageInput = document.getElementById("modalAge");
+                            const ageError = document.getElementById("ageError");
+                            ageInput.addEventListener("input", () => {
+                                const ageValue = ageInput.value.trim();
+                                if (ageValue === "") {
+                                    ageError.style.display = "none"; 
+                                    } else if (!/^\d+$/.test(ageValue)) {
+                                        ageError.textContent = "❌ Age must be a number.";
+                                        ageError.style.display = "block";
+                                    } else if (parseInt(ageValue) > 150) {
+                                        ageError.textContent = "❌ Age cannot be greater than 150.";
+                                        ageError.style.display = "block";
+                                    } else {
+                                        ageError.style.display = "none"; 
+                                        }
+                                        });
+                                    });
     </script>
 </body>
-
 </html>

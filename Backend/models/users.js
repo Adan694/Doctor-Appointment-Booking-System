@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  cnic: {
+    type: String,
+    required: true,
+    unique: true,
+    match: /^([0-9]{5}-[0-9]{7}-[0-9]{1}|[0-9]{13})$/, // validates 13 digits or with dashes
+  },
   name: String,
   phone: String,
   age: Number,
@@ -21,7 +27,7 @@ const userSchema = new mongoose.Schema({
   gender: { type: String, enum: ['male', 'female', 'other'] },
   missedAppointments: { type: Number, default: 0 },
   isBlocked: { type: Boolean, default: false },
-  unblockDate: { type: Date, default: null },
+  blockedUntil: { type: Date, default: null },
   otp: { type: Number },
   otpExpiration: { type: Date },
 }, { timestamps: true });

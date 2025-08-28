@@ -313,33 +313,64 @@ DocAssist System`;
       break;
 
     // ---------------- BLOCKED ACCOUNT ----------------
-    case 'block':
-      if (recipient === 'patient') {
-        message = `🚫 Account Blocked Notice
+   case 'block':
+  if (recipient === 'patient') {
+    // Calculate 3 days from now
+    const unblockDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+
+    message = `🚫 Account Blocked Notice
 
 Dear ${patientName},
 
-We regret to inform you that your account has been **temporarily blocked for 7 days** due to **4 missed appointments**.
+We regret to inform you that your account has been **temporarily blocked for 3 days** due to **5 missed appointments**.
 
 During this period, you will not be able to book new appointments.  
-Your account will automatically be unblocked on: ${patient?.blockedUntil ? new Date(patient.blockedUntil).toLocaleDateString() : 'the unblock date'}.
+Your account will automatically be unblocked on: ${unblockDate.toLocaleDateString()}.
 
 If you believe this is a mistake, please contact our support team.
 
 Kind regards,  
 DocAssist Support`;
-      } else if (recipient === 'admin') {
+  }
+ else if (recipient === 'admin') {
         message = `🚫 Patient Blocked
 
 Admin,
 
-Patient ${patientName} has been blocked for 7 days due to repeated missed appointments.
+Patient ${patientName} has been blocked for 3 days due to repeated missed appointments.
 
 📅 Unblock Date: ${patient?.blockedUntil ? new Date(patient.blockedUntil).toLocaleDateString() : 'N/A'}
 
 DocAssist System`;
       }
       break;
+    case 'warning':
+  if (recipient === 'patient') {
+    message = `⚠️ Warning: Attendance Alert
+
+Dear ${patientName},
+
+Our records show that you have missed **4 appointments**.  
+Please note: **If you miss one more appointment, your account will be blocked for 7 days** and you will not be able to book new appointments during that period.
+
+We strongly encourage you to attend your upcoming appointments on time to avoid any inconvenience.
+
+Kind regards,  
+DocAssist Support`;
+  } else if (recipient === 'admin') {
+    message = `⚠️ Warning Issued
+
+Admin,
+
+Patient ${patientName} has now missed 4 appointments.  
+A warning email has been sent to the patient.  
+
+If they miss another appointment, their account will be blocked for 7 days automatically.
+
+DocAssist System`;
+  }
+  break;
+
 
     // ---------------- DEFAULT ----------------
     default:

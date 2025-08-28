@@ -6,9 +6,9 @@ const nodemailer = require('nodemailer');
 const Doctor  = require('../models/doctors'); 
 
 // Function to insert a new user into MongoDB
-async function insertUser({ email, password, role }) {
+async function insertUser({ email, password, role, name, phone, cnic }) {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword, role });
+    const newUser = new User({ email, password: hashedPassword, role, name, phone, cnic });
     const savedUser = await newUser.save();
     return savedUser;
 }
@@ -114,10 +114,10 @@ async function verifyOtp(email, otp) {
 
 // Controller function for signup
 async function signup(req, res) {
-    const { email, password, role } = req.body;
+    const { email, password, role, name, phone, cnic } = req.body;
 
-    if (!email || !password || !role) {
-        return res.status(400).json({ message: "Email, password, and role are required." });
+    if (!email || !password || !role || !name || !phone || !cnic) {
+        return res.status(400).json({ message: "All fields are required." });
     }
 
     if (role !== 'patient') {
@@ -125,13 +125,22 @@ async function signup(req, res) {
     }
 
     try {
-        const userId = await insertUser({ email, password, role });
+        const userId = await insertUser({ email, password, role, name, phone, cnic });
         res.status(201).json({ message: 'User registered successfully. OTP sent to email.', userId });
     } catch (error) {
         console.error("Error inserting user:", error.message);
-        if (error.code === 11000 && error.keyPattern?.email) {
-            return res.status(409).json({ message: "User already exists with this email." });
-        }
+        if (error.code === 11000) {
+    if (error.keyPattern?.email) {
+        return res.status(409).json({ message: "User already exists with this email." });
+    }
+    if (error.keyPattern?.phone) {
+        return res.status(409).json({ message: "User already exists with this phone number." });
+    }
+     if (error.keyPattern?.cnic) {
+        return res.status(409).json({ message: "User already exists with this CNIC." });
+    }
+}
+
         res.status(500).json({ message: "Error registering user" });
     }
 }

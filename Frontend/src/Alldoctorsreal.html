@@ -271,11 +271,15 @@
     color: #ff4c4c; 
 }
 
+.button-container { 
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap; /* Change to nowrap to keep buttons in a single line */
+    overflow-x: auto;
+}
 
-            .book-btn {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
+.button-container a {
+    padding: 10px 25px;
     background-color: #0f8080;
     color: white;
     text-decoration: none;
@@ -284,16 +288,16 @@
     border-radius: 25px;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(15, 128, 128, 0.2);
+    text-align: center;
+    flex: none; /* Let buttons keep natural width */
 }
 
-.book-btn:hover {
+.button-container a:hover {
     background-color: #0c6b6b;
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(15, 128, 128, 0.3);
 }
 
-
-       
           nav {
          display: flex;
     align-items: center;
@@ -635,7 +639,6 @@ nav ul li a:hover {
         <div class="doctor-list"></div>
         <p class="no-doctors-message" style="display: none;">No doctors found.</p>
 
-    <!-- Footer Section -->
     <div class="footer">
         <div class="contact-info">
             <h3>Contact Us</h3>
@@ -653,21 +656,6 @@ nav ul li a:hover {
                 <li><a href="Alldoctorsreal.html">Doctors</a></li>
                 <li><a href="Faqs.html">FAQS</a></li>
             </ul>
-        </div>
-        <div class="text">
-            <h3>Doctors' Specialties</h3>
-            <div class="specialties-columns">
-                <p>Cardiology</p>
-                <p>Dermatology</p>
-                <p>Pediatrics</p>
-                <p>Orthopedics</p>
-                <p>Gynecology</p>
-                <p>Neurology</p>
-                <p>Gastroenterology</p>
-                <p>Oncology</p>
-                <p>Radiology</p>
-                <p>Psychiatry</p>
-            </div>
         </div>
         <div class="Legal">
             <h3>Legal</h3>
@@ -693,18 +681,15 @@ nav ul li a:hover {
             const bar = document.getElementById("bar");
             const menu = document.querySelector("nav ul");
 
-            /* ------------------ Navbar Logic ------------------ */
          function updateNavbar() {
-                const profileMenu = document.getElementById("profileMenu");  // <-- re-select here
+                const profileMenu = document.getElementById("profileMenu");  
                 const dropdown = profileMenu ? profileMenu.querySelector(".dropdown-menu") : null;
                 const authButton = document.getElementById("authButton");
                 const userRole = localStorage.getItem("userRole");
 
                 if (userRole === "patient") {
                     if (profileMenu) profileMenu.style.display = "inline-block";
-                    if (authButton) authButton.style.display = "none"; // hide standalone login/logout button
-
-                    // ✅ Add Logout inside dropdown if not already present
+                    if (authButton) authButton.style.display = "none"; 
                     if (dropdown && !document.getElementById("logoutLink")) {
                         const logoutLi = document.createElement("li");
                         logoutLi.innerHTML = `
@@ -713,8 +698,6 @@ nav ul li a:hover {
                 </a>
             `;
                         dropdown.appendChild(logoutLi);
-
-                        // Attach event
                         document.getElementById("logoutLink").addEventListener("click", logout);
                     }
                 } else {
@@ -738,31 +721,25 @@ nav ul li a:hover {
             };
 
             updateNavbar();
-
-            /* ------------------ Profile Dropdown ------------------ */
             profileIcon.addEventListener("click", (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 profileMenu.classList.toggle("active");
             });
 
-            // close dropdown when clicking outside
             document.addEventListener("click", (e) => {
                 if (!profileMenu.contains(e.target)) {
                     profileMenu.classList.remove("active");
                 }
             });
-            // Function to generate star rating (max 5)
             function generateStars(rating) {
                 const fullStars = Math.floor(rating);
                 const halfStar = rating % 1 >= 0.5;
                 let stars = "★".repeat(fullStars);
-                if (halfStar) stars += "☆";  // show empty star instead of ½
-                stars = stars.padEnd(5, "☆"); // fill remaining with empty stars
+                if (halfStar) stars += "☆";  
+                stars = stars.padEnd(5, "☆"); 
                 return stars;
             }
-
-            /* ------------------ Fetch & Display Doctors ------------------ */
             const params = new URLSearchParams(window.location.search);
             const specialityParam = params.get("speciality")?.toLowerCase();
 
@@ -784,33 +761,78 @@ nav ul li a:hover {
                    let foundSpecialityMatch = false;
 
                     doctors.forEach((doctor) => {
+                        console.log("Doctor:", doctor.name, doctor.availabilitySlots);
+
                         const card = document.createElement("div");
                         card.className = "card";
 
-                        const todayStr = new Date().toISOString().split("T")[0];
-                        const hasSlotsToday = doctor.availabilitySlots?.some(slot => slot.date === todayStr && slot.slots.length > 0);
+                        // const todayStr = new Date().toISOString().split("T")[0];
+                        // const hasSlotsToday = doctor.availabilitySlots?.some(slot => slot.date === todayStr && slot.slots.length > 0);
+const now = new Date();
+const todayStr = now.toISOString().split("T")[0];
+const tomorrow = new Date();
+tomorrow.setDate(now.getDate() + 1);
+const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+function parseTime12h(dateStr, timeStr) {
+    const [time, modifier] = timeStr.split(" "); // e.g. "6:00", "PM"
+    let [hours, minutes] = time.split(":").map(Number);
+
+    if (modifier === "PM" && hours < 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+
+    const dateTime = new Date(dateStr);
+    dateTime.setHours(hours, minutes, 0, 0);
+    return dateTime;
+}
+let isAvailable = false;
+
+// Check today's slots
+const todaySlot = doctor.availabilitySlots?.find(slot => slot.date === todayStr);
+if (todaySlot) {
+    const hasFutureSlotToday = todaySlot.slots.some(time => {
+        const slotDateTime = parseTime12h(todaySlot.date, time);
+        console.log("Checking slot:", time, "→", slotDateTime.toLocaleString()); // debug
+        return slotDateTime > now; // only future times
+    });
+    if (hasFutureSlotToday) {
+        isAvailable = true;
+    }
+}
+
+
+// If not available today, check tomorrow
+// if (!isAvailable) {
+//     const tomorrowSlot = doctor.availabilitySlots?.find(slot => slot.date === tomorrowStr);
+//     if (tomorrowSlot && tomorrowSlot.slots.length > 0) {
+//         isAvailable = true;
+//     }
+// }
 
                         card.innerHTML = `
-        <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" class="doctor-img" />
         <div class="card-content">
+            <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" class="doctor-img" />
             <h3 class="doctor-name">${doctor.name}</h3>
             <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>
             <p><strong>Experience:</strong> ${doctor.experience} years</p>
-            <p class="availability ${hasSlotsToday ? "available" : "unavailable"}">
-                ${hasSlotsToday ? "Available" : "Not Available"}
-            </p>
+            <p class="availability ${isAvailable ? "available" : "unavailable"}">
+   ${isAvailable ? "Available" : "Not Available"}
+</p>
+
+
             <p class="rating">
                 ${doctor.averageRating > 0 ? generateStars(doctor.averageRating) : "No rating yet"}
             </p>
+            <div class="button-container">
+            <a class="book-button" href="booking.html?doctorId=${doctor._id}">Book Appointment</a>
             <a href="doctor.html?id=${encodeURIComponent(doctor._id)}" class="book-btn">View Profile</a>
         </div>
+        </div>
     `;
-
-                        // Append based on speciality filter
                         if (specialityParam) {
                             if (doctor.speciality.toLowerCase() === specialityParam) {
                                 doctorList.appendChild(card);
-                                foundSpecialityMatch = true; // ✅ set flag here
+                                foundSpecialityMatch = true; 
                             }
                         } else {
                             doctorList.appendChild(card);
@@ -827,7 +849,6 @@ nav ul li a:hover {
                     console.error("Error fetching doctors:", error);
                 });
 
-            /* ------------------ Search Functionality ------------------ */
             function filterDoctors() {
                 const query = searchInput.value.toLowerCase();
                 const cards = document.querySelectorAll(".card");

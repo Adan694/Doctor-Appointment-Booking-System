@@ -1,937 +1,1033 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
     <title>Doctor Profile</title>
     <style>
-       body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #e6f2ff;
-    padding: 80px 0px 40px; 
-    margin: 0;
-    color: #333;
-}
-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    position: fixed;
-    top: 0%;
-    width: 100%;
-    background-color: rgb(9, 102, 102);
-    color: white;
-    z-index: 1000;
-    padding: 10px 20px;
-    left: 0%;
-}
-
-nav ul {
-    display: flex;
-    transition: max-height 0.3s ease; 
-    overflow: visible; 
-}
-nav ul.active {
-    max-height: 300px; 
-}
-
-nav ul li {
-    list-style: none;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: white;
-    font-size: 20px;
-    margin-inline: 20px;
-}
-
-nav ul li a:hover {
-    color: black;
-    border-bottom: 2px solid black;
-}
-#bar {
-    display: none; 
-    font-size: 30px; 
-    cursor: pointer; 
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-    margin: 0;
-}
-
-.logo img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: cover;
-}
-
-.logo h1 {
-    font-size: 30px;
-    margin: 0;
-}
-
-.logo img:hover {
-    transform: scale(1.1) rotate(-5deg);
-}
-
-.logo h1 {
-    font-size: 28px;
-    background: linear-gradient(45deg, #ffffff, #cceeff);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.profile-card {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-
-}
-.profile-card img {
-    border-radius: 16px;
-    object-fit: cover;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-}
-
-
-.profile-card:hover,
-.feedback-item:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    transform: translateY(-4px);
-}
-
-h2 {
-    color: rgb(9, 102, 102);
-    font-size: 30px;
-    margin: 8px 0; 
-    line-height: 1.6;
-    border-bottom: 1px solid #ddd; 
-    padding: 10px 0; 
-}
-
-.profile-card p {
-     margin: 10px 0; 
-    line-height: 1.6; 
-    font-size: 16px;
-    color: #555; 
-    padding: 10px; 
-    background-color: #f9f9f9; 
-    border-left: 5px solid rgb(9, 102, 102); 
-    border-radius: 5px; 
-    transition: background-color 0.3s ease; 
-
-}
-.profile-card strong {
-    display: block; 
-    font-weight: bold; 
-    color: rgb(9, 102, 102); 
-    margin-bottom: 4px; 
-}
-
-.profile-card p:hover {
-    background-color: #e6f2f2; 
-}
-
-.book-button {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 12px 26px;
-    background: rgb(9, 102, 102);
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 16px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.book-button:hover {
-    background: linear-gradient(to right, #218838, #1e7e34);
-    transform: translateY(-2px);
-}
-
-.availability {
-    font-weight: bold;
-    margin-top: 10px;
-}
-p.availability.available {
-    color: #28a745 !important;
-}
-
-p.availability.unavailable {
-    color: #dc3545 !important;
-}
-
-.Heading {
-    font-size: 28px;
-    font-weight: 700;
-    text-align: center;
-    color: #009999;
-    margin: 20px auto;
-    padding: 15px;
-    border: 3px solid #009999;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 700px;
-    background-color: #ffffff;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    margin-top: 40px;
-}
-
-.Heading:hover {
-    color: #007d7d;
-    border-color: #007d7d;
-    background-color: #f0fefe;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
-
-
-
-#feedback-list {
-    margin: 30px auto;
-     max-width: 1000px;
-    margin: 20px auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-
-}
-.feedback-item {
-    display: flex;
-    gap: 15px;
-    padding: 20px;
-    margin-bottom: 16px;
-    background-color: #fff;
-    border-radius: 12px;
-    border: 1px solid #e3e3e3;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    align-items: flex-start;
-
-    /* Smooth transition for hover changes */
-    transition: color 0.3s ease,
-                border-color 0.3s ease,
-                background-color 0.3s ease,
-                box-shadow 0.3s ease,
-                transform 0.3s ease;
-}
-
-.feedback-item:hover {
-    color: #007d7d;
-    border-color: #007d7d;
-    background-color: #f0fefe;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
-
-
-.feedback-avatar {
-    width: 50px;
-    height: 50px;
-    background-color: #ccc;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 18px;
-    color: white;
-    flex-shrink: 0;
-}
-
-.feedback-content {
-    flex: 1;
-}
-
-.feedback-content h4 {
-    margin: 0 0 6px;
-    font-size: 18px;
-    color: #094;
-}
-
-.star-rating {
-    color: #ffc107;
-    margin-bottom: 8px;
-}
-
-.feedback-content p {
-    margin: 4px 0;
-    font-size: 15px;
-    line-height: 1.5;
-    color: #333;
-}
-
-.feedback-actions {
-    margin-top: 10px;
-}
-
-.feedback-actions button {
-    background-color: #096666;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    cursor: pointer;
-    margin-right: 8px;
-    transition: background-color 0.2s ease;
-}
-
-.feedback-actions button:hover {
-    background-color: #0b7b7b;
-}
-
-
-.feedback-item strong {
-    font-size: 14px;
-    color: #555;
-}
-
-.feedback-actions {
-    margin-top: 12px;
-}
-
-.feedback-actions button {
-    background-color: rgb(9, 102, 102);
-    color: white;
-    border: none;
-    padding: 7px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-right: 6px;
-    font-size: 14px;
-    transition: background-color 0.2s ease;
-}
-
-.feedback-actions button.delete {
-    background-color:rgb(9, 102, 102);
-}
-
-.feedback-actions button:hover {
-    opacity: 0.9;
-}
-.profile-card input[type="text"],
-.profile-card input[type="number"],
-.profile-card textarea {
-    width: 100%;
-    padding: 10px 12px;
-    margin-top: 6px;
-    margin-bottom: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: inherit;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease;
-}
-
-.profile-card input[type="text"]:focus,
-.profile-card input[type="number"]:focus,
-.profile-card textarea:focus {
-    border-color: rgb(9, 102, 102);
-    outline: none;
-    background-color: #f4fdfd;
-}
-
-.profile-card textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-/* Dropdown */
-.dropdown {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-}
-
-.profile-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: 0 10px;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    gap: 6px;
-    border-bottom: none;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    top: calc(100% + 8px);
-    right: 0;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    list-style: none;
-    padding: 8px 0;
-    margin: 10px;
-    min-width: 180px;
-    z-index: 1000;
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    flex-direction: column;
-    overflow: visible;
-
-}
-
-
-.dropdown-menu li {
-    padding: 0;
-}
-
-.dropdown-menu li a {
-    display: inline-flex;
-    padding: 10px 16px;
-    color: #333;
-    font-size: 14px;
-    text-decoration: none;
-    white-space: nowrap;
-}
-
-.dropdown-menu li a:hover {
-    background: #f0f0f0;
-    color: #0f8080;
-}
-
-.dropdown.active .dropdown-menu {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-}
-
-
-   /* Footer */
-    .footer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 40px;
-    color: white;
-    margin-top: 66px;
-    background: linear-gradient(135deg, #096666, #064949);
-    border-top: 4px solid #0f8080;
-    margin-bottom: 0px;
-}
-
-.footer>div {
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 0 20px;
-}
-
-.footer>div:last-child {
-    border-right: none;
-}
-
-.footer h3 {
-    margin-bottom: 15px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.footer p {
-    margin: 15px 0;
-    font-size: 15px;
-}
-
-.contact-info,
-.text,
-.quick-links,
-.Legal {
-    flex: 1;
-    min-width: 200px;
-    margin: 10px;
-    flex-direction: column;
-}
-
-.quick-links ul,
-.Legal ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.quick-links li,
-.Legal li {
-    margin: 6px 0;
-    font-size: 15px;
-}
-
-.quick-links a,
-.Legal a {
-    color: #fff;
-    text-decoration: none;
-    position: relative;
-    font-weight: 600;
-    cursor: pointer;
-    padding-bottom: 3px;
-    transition: color 0.3s ease;
-}
-
-.quick-links a::after,
-.Legal a::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: white;
-    border-radius: 2px;
-    transition: width 0.3s ease, left 0.3s ease;
-}
-
-.quick-links a:hover::after,
-.Legal a:hover::after {
-    width: 100%;
-    left: 0;
-}
-
-.quick-links a:hover,
-.Legal a:hover {
-    color: white;
-    text-shadow: 0 0 5px #ffd700aa;
-}
-
-
-.specialties-columns {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
-    margin-top: 10px;
-}
-
-.text p {
-    margin-top: 12px;
-}
-
-@media (max-width: 900px) {
-    nav ul {
-    flex-direction: column;
-    position: absolute;
-    top: 100%; 
-    left: 0;
-    width: 100%;
-    background-color: rgb(9, 102, 102);
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    padding: 0;
-    margin: 0;
-    z-index: 999; 
-  }
- nav ul.active {
-        max-height: 300px; 
-    }
-    nav ul li {
-        text-align: center; 
-        margin: 10px 0; 
-    }
-    #bar {
-        display: Block; 
-    }
-    
-}
-
-@media (max-width: 900px) {
-
-    .dropdown {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .profile-icon {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 0px;
-        gap: 2px;
-        width: 30%;
-        box-sizing: border-box;
-        font-size: 20px;
-        margin-left: 210px;
-    }
-
-    .profile-icon:hover {
-        border-bottom: none;
-    }
-
-    .dropdown-menu {
-        position: static;
-        width: 80%;
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #e6f2ff;
+        padding: 80px 0px 40px;
         margin: 0;
-        margin-left: 25px;
-        box-shadow: none;
-        border: 1px solid #f0f0f0;
-        border-top: none;
-        transition: opacity 0.3s ease, max-height 0.3s ease;
-        max-height: 0;
-        overflow: hidden;
-        flex-direction: row;
-    }
+        color: #333;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        position: fixed;
+        top: 0%;
+        width: 100%;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        z-index: 1000;
+        padding: 10px 20px;
+        left: 0%;
+      }
 
-    .dropdown.active .dropdown-menu {
-        max-height: 500px;
-        opacity: 1;
-        margin-top: 0;
-    }
+      nav ul {
+        display: flex;
+        transition: max-height 0.3s ease;
+        overflow: visible;
+      }
+      nav ul.active {
+        max-height: 300px;
+      }
 
-    .dropdown-menu li a {
+      nav ul li {
+        list-style: none;
+      }
+
+      nav ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 20px;
+        margin-inline: 20px;
+      }
+
+      nav ul li a:hover {
+        color: black;
+        border-bottom: 2px solid black;
+      }
+      #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        margin: 0;
+      }
+
+      .logo img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+
+      .logo h1 {
+        font-size: 30px;
+        margin: 0;
+      }
+
+      .logo img:hover {
+        transform: scale(1.1) rotate(-5deg);
+      }
+
+      .logo h1 {
+        font-size: 28px;
+        background: linear-gradient(45deg, #ffffff, #cceeff);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .profile-card {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+      }
+      .profile-card img {
+        border-radius: 16px;
+        object-fit: cover;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .profile-card:hover,
+      .feedback-item:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
+      }
+
+      h2 {
+        color: rgb(9, 102, 102);
+        font-size: 30px;
+        margin: 8px 0;
+        line-height: 1.6;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+      }
+
+      .profile-card p {
+        margin: 10px 0;
+        line-height: 1.6;
+        font-size: 16px;
+        color: #555;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-left: 5px solid rgb(9, 102, 102);
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+      .profile-card strong {
         display: block;
-        padding: 2px 4px;
-    }
-}
+        font-weight: bold;
+        color: rgb(9, 102, 102);
+        margin-bottom: 4px;
+      }
 
+      .profile-card p:hover {
+        background-color: #e6f2f2;
+      }
 
-@media screen and (max-width: 768px) {
-  .footer {
-    flex-direction: column;
-    align-items: center; 
-    text-align: center;
-  }
+      .book-button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 26px;
+        background: rgb(9, 102, 102);
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 16px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
 
-  .footer > div {
-    width: 100%;
-    border-right: none;
-    margin-bottom: 20px;
-  }
+      .book-button:hover {
+        background: linear-gradient(to right, #218838, #1e7e34);
+        transform: translateY(-2px);
+      }
 
-  .quick-links ul,
-    .Legal ul {
+      .availability {
+        font-weight: bold;
+        margin-top: 10px;
+      }
+      p.availability.available {
+        color: #28a745 !important;
+      }
+
+      p.availability.unavailable {
+        color: #dc3545 !important;
+      }
+
+      .Heading {
+        font-size: 28px;
+        font-weight: 700;
+        text-align: center;
+        color: #009999;
+        margin: 20px auto;
+        padding: 15px;
+        border: 3px solid #009999;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 700px;
+        background-color: #ffffff;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-top: 40px;
+      }
+
+      .Heading:hover {
+        color: #007d7d;
+        border-color: #007d7d;
+        background-color: #f0fefe;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      #feedback-list {
+        margin: 30px auto;
+        max-width: 1000px;
+        margin: 20px auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      }
+      .feedback-item {
+        display: flex;
+        gap: 15px;
+        padding: 20px;
+        margin-bottom: 16px;
+        background-color: #fff;
+        border-radius: 12px;
+        border: 1px solid #e3e3e3;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        align-items: flex-start;
+
+        /* Smooth transition for hover changes */
+        transition: color 0.3s ease, border-color 0.3s ease,
+          background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      }
+
+      .feedback-item:hover {
+        color: #007d7d;
+        border-color: #007d7d;
+        background-color: #f0fefe;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .feedback-avatar {
+        width: 50px;
+        height: 50px;
+        background-color: #ccc;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .feedback-content {
+        flex: 1;
+      }
+
+      .feedback-content h4 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        color: #094;
+      }
+
+      .star-rating {
+        color: #ffc107;
+        margin-bottom: 8px;
+      }
+
+      .feedback-content p {
+        margin: 4px 0;
+        font-size: 15px;
+        line-height: 1.5;
+        color: #333;
+      }
+
+      .feedback-actions {
+        margin-top: 10px;
+      }
+
+      .feedback-actions button {
+        background-color: #096666;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        margin-right: 8px;
+        transition: background-color 0.2s ease;
+      }
+
+      .feedback-actions button:hover {
+        background-color: #0b7b7b;
+      }
+
+      .feedback-item strong {
+        font-size: 14px;
+        color: #555;
+      }
+
+      .feedback-actions {
+        margin-top: 12px;
+      }
+
+      .feedback-actions button {
+        background-color: rgb(9, 102, 102);
+        color: white;
+        border: none;
+        padding: 7px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-right: 6px;
+        font-size: 14px;
+        transition: background-color 0.2s ease;
+      }
+
+      .feedback-actions button.delete {
+        background-color: rgb(9, 102, 102);
+      }
+
+      .feedback-actions button:hover {
+        opacity: 0.9;
+      }
+      .profile-card input[type="text"],
+      .profile-card input[type="number"],
+      .profile-card textarea {
+        width: 100%;
+        padding: 10px 12px;
+        margin-top: 6px;
+        margin-bottom: 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+        font-family: inherit;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease;
+      }
+
+      .profile-card input[type="text"]:focus,
+      .profile-card input[type="number"]:focus,
+      .profile-card textarea:focus {
+        border-color: rgb(9, 102, 102);
+        outline: none;
+        background-color: #f4fdfd;
+      }
+
+      .profile-card textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      /* Dropdown */
+      .dropdown {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .profile-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 0 10px;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        gap: 6px;
+        border-bottom: none;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        top: calc(100% + 8px);
+        right: 0;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        list-style: none;
+        padding: 8px 0;
+        margin: 10px;
+        min-width: 180px;
+        z-index: 1000;
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        flex-direction: column;
+        overflow: visible;
+      }
+
+      .dropdown-menu li {
+        padding: 0;
+      }
+
+      .dropdown-menu li a {
+        display: inline-flex;
+        padding: 10px 16px;
+        color: #333;
+        font-size: 14px;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .dropdown-menu li a:hover {
+        background: #f0f0f0;
+        color: #0f8080;
+      }
+
+      .dropdown.active .dropdown-menu {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      /* Footer */
+      .footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 40px;
+        color: white;
+        margin-top: 66px;
+        background: linear-gradient(135deg, #096666, #064949);
+        border-top: 4px solid #0f8080;
+        margin-bottom: 0px;
+      }
+
+      .footer > div {
+        border-right: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0 20px;
+      }
+
+      .footer > div:last-child {
+        border-right: none;
+      }
+
+      .footer h3 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .footer p {
+        margin: 15px 0;
+        font-size: 15px;
+      }
+
+      .contact-info,
+      .text,
+      .quick-links,
+      .Legal {
+        flex: 1;
+        min-width: 200px;
+        margin: 10px;
+        flex-direction: column;
+      }
+
+      .quick-links ul,
+      .Legal ul {
+        list-style: none;
+        padding: 0;
         display: flex;
         flex-direction: column;
-        align-items: center; 
-    }
+      }
 
-    .quick-links li,
-    .Legal li {
-        margin: 5px 0;
-    }
-   .footer > div {
-      border-right: 1px solid rgba(255, 255, 255, 0.3);
-  }
-  .footer > div:last-child {
-      border-right: none;
-  }
-}
+      .quick-links li,
+      .Legal li {
+        margin: 6px 0;
+        font-size: 15px;
+      }
 
+      .quick-links a,
+      .Legal a {
+        color: #fff;
+        text-decoration: none;
+        position: relative;
+        font-weight: 600;
+        cursor: pointer;
+        padding-bottom: 3px;
+        transition: color 0.3s ease;
+      }
 
-</style>
-</head>
+      .quick-links a::after,
+      .Legal a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: white;
+        border-radius: 2px;
+        transition: width 0.3s ease, left 0.3s ease;
+      }
 
-<body>
+      .quick-links a:hover::after,
+      .Legal a:hover::after {
+        width: 100%;
+        left: 0;
+      }
+
+      .quick-links a:hover,
+      .Legal a:hover {
+        color: white;
+        text-shadow: 0 0 5px #ffd700aa;
+      }
+
+      .specialties-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+        margin-top: 10px;
+      }
+
+      .text p {
+        margin-top: 12px;
+      }
+
+      @media (max-width: 900px) {
+        nav ul {
+          flex-direction: column;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          width: 100%;
+          background-color: rgb(9, 102, 102);
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.3s ease;
+          padding: 0;
+          margin: 0;
+          z-index: 999;
+        }
+        nav ul.active {
+          max-height: 300px;
+        }
+        nav ul li {
+          text-align: center;
+          margin: 10px 0;
+        }
+        #bar {
+          display: Block;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .dropdown {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .profile-icon {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          padding: 0px;
+          gap: 2px;
+          width: 30%;
+          box-sizing: border-box;
+          font-size: 20px;
+          margin-left: 210px;
+        }
+
+        .profile-icon:hover {
+          border-bottom: none;
+        }
+
+        .dropdown-menu {
+          position: static;
+          width: 80%;
+          margin: 0;
+          margin-left: 25px;
+          box-shadow: none;
+          border: 1px solid #f0f0f0;
+          border-top: none;
+          transition: opacity 0.3s ease, max-height 0.3s ease;
+          max-height: 0;
+          overflow: hidden;
+          flex-direction: row;
+        }
+
+        .dropdown.active .dropdown-menu {
+          max-height: 500px;
+          opacity: 1;
+          margin-top: 0;
+        }
+
+        .dropdown-menu li a {
+          display: block;
+          padding: 2px 4px;
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        .footer {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .footer > div {
+          width: 100%;
+          border-right: none;
+          margin-bottom: 20px;
+        }
+
+        .quick-links ul,
+        .Legal ul {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .quick-links li,
+        .Legal li {
+          margin: 5px 0;
+        }
+        .footer > div {
+          border-right: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .footer > div:last-child {
+          border-right: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
     <nav>
-        <div class="logo">
-            <img src="images/Da.png" alt="DocAssist Logo">
-            <h1>DocAssist</h1>
-        </div>
-        <i id="bar" class="fa-solid fa-bars"></i>
-        <ul>
-            <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
-            <li><a href="Alldoctorsreal.html"><i class="fa-solid fa-user-doctor"></i> Find a Doctor</a></li>
-            <li><a href="Contactus.html"><i class="fa-solid fa-envelope"></i> Contact Us</a></li>
-            <li><a href="faqs.html"><i class="fa-solid fa-circle-question"></i> FAQs</a></li>
-            <li id="profileMenu" class="dropdown">
-                <a href="javascript:void(0);" class="profile-icon">
-                    <i class="fa-solid fa-user"></i> Account
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="myprofile.html">My Profile</a></li>
-                    <li><a href="myappointments.html">My Appointments</a></li>
-                </ul>
-            </li>
-            
-            <li id="authButton">
-                <a href="login.html" class="login-button">
-                    <i class="fa-solid fa-right-to-bracket"></i> Login
-                </a>
-            </li>
-        </ul>
+      <div class="logo">
+        <img src="images/Da.png" alt="DocAssist Logo" />
+        <h1>DocAssist</h1>
+      </div>
+      <i id="bar" class="fa-solid fa-bars"></i>
+      <ul>
+        <li>
+          <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+        </li>
+        <li>
+          <a href="Alldoctorsreal.html"
+            ><i class="fa-solid fa-user-doctor"></i> Find a Doctor</a
+          >
+        </li>
+        <li>
+          <a href="Contactus.html"
+            ><i class="fa-solid fa-envelope"></i> Contact Us</a
+          >
+        </li>
+        <li>
+          <a href="faqs.html"
+            ><i class="fa-solid fa-circle-question"></i> FAQs</a
+          >
+        </li>
+        <li id="profileMenu" class="dropdown">
+          <a href="javascript:void(0);" class="profile-icon">
+            <i class="fa-solid fa-user"></i> Account
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="myprofile.html">My Profile</a></li>
+            <li><a href="myappointments.html">My Appointments</a></li>
+          </ul>
+        </li>
+
+        <li id="authButton">
+          <a href="login.html" class="login-button">
+            <i class="fa-solid fa-right-to-bracket"></i> Login
+          </a>
+        </li>
+      </ul>
     </nav>
 
     <h3 class="Heading">Profile:</h3>
     <div class="profile-card" id="profile"></div>
-    <div id="edit-form-container" style="display: none; max-width: 800px; margin: 40px auto;"></div>
+    <div
+      id="edit-form-container"
+      style="display: none; max-width: 800px; margin: 40px auto"
+    ></div>
 
     <h3 class="Heading">Feedback:</h3>
     <div id="feedback-list"></div>
 
     <!-- Footer Section -->
     <div class="footer">
-        <div class="contact-info">
-            <h3>Contact Us</h3>
-            <p>Hospital Name</p>
-            <p>123 Main St, City, State, Zip</p>
-            <p>Phone: (123) 456-7890</p>
-            <p>Email: support@hospital.com</p>
-        </div>
+      <div class="contact-info">
+        <h3>Contact Us</h3>
+        <p>Hospital Name</p>
+        <p>123 Main St, City, State, Zip</p>
+        <p>Phone: (123) 456-7890</p>
+        <p>Email: support@hospital.com</p>
+      </div>
 
-        <div class="quick-links">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="">Home</a></li>
-                <li><a href="Aboutus.html">About Us</a></li>
-                <li><a href="">Services</a></li>
-                <li><a href="Alldoctorsreal.html">Doctors</a></li>
-                <li><a href="Faqs.html">FAQS</a></li>
-            </ul>
-        </div>
-
-        <div class="text">
-            <h3>Doctors' Specialties</h3>
-            <div class="specialties-columns">
-                <p>Cardiology</p>
-                <p>Dermatology</p>
-                <p>Pediatrics</p>
-                <p>Orthopedics</p>
-                <p>Gynecology</p>
-                <p>Neurology</p>
-                <p>Gastroenterology</p>
-                <p>Oncology</p>
-                <p>Radiology</p>
-                <p>Psychiatry</p>
-            </div>
-        </div>
-
-        <div class="Legal">
-            <h3>Legal</h3>
-            <ul>
-                <li><a href="Privacy.html">Privacy Policy</a></li>
-                <li><a href="TOS.html">Terms of Services</a></li>
-            </ul>
-        </div>
+      <div class="quick-links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="">Home</a></li>
+          <li><a href="Aboutus.html">About Us</a></li>
+          <li><a href="">Services</a></li>
+          <li><a href="Alldoctorsreal.html">Doctors</a></li>
+          <li><a href="Faqs.html">FAQS</a></li>
+        </ul>
+      </div>
+      <div class="Legal">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="Privacy.html">Privacy Policy</a></li>
+          <li><a href="TOS.html">Terms of Services</a></li>
+        </ul>
+      </div>
     </div>
 
-<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
 
     <script>
-            dayjs.extend(dayjs_plugin_relativeTime);
+      dayjs.extend(dayjs_plugin_relativeTime);
 
-             document.addEventListener("DOMContentLoaded", () => {
-                    const profileMenu = document.getElementById("profileMenu");
-                    const profileIcon = profileMenu ? profileMenu.querySelector(".profile-icon") : null;
-                    const authButton = document.getElementById("authButton");
+      document.addEventListener("DOMContentLoaded", () => {
+        const profileMenu = document.getElementById("profileMenu");
+        const profileIcon = profileMenu
+          ? profileMenu.querySelector(".profile-icon")
+          : null;
+        const authButton = document.getElementById("authButton");
 
-                    function updateNavbar() {
-                        const userRole = localStorage.getItem("userRole");
-                        const dropdown = profileMenu ? profileMenu.querySelector(".dropdown-menu") : null;
+        function updateNavbar() {
+          const userRole = localStorage.getItem("userRole");
+          const dropdown = profileMenu
+            ? profileMenu.querySelector(".dropdown-menu")
+            : null;
 
-                        if (userRole === "patient") {
-                            if (profileMenu) profileMenu.style.display = "inline-block";
-                            if (authButton) authButton.style.display = "none";
+          if (userRole === "patient") {
+            if (profileMenu) profileMenu.style.display = "inline-block";
+            if (authButton) authButton.style.display = "none";
 
-                            // Add Logout dynamically
-                            if (dropdown && !document.getElementById("logoutLink")) {
-                                const logoutLi = document.createElement("li");
-                                logoutLi.innerHTML = `
+            // Add Logout dynamically
+            if (dropdown && !document.getElementById("logoutLink")) {
+              const logoutLi = document.createElement("li");
+              logoutLi.innerHTML = `
                     <a href="javascript:void(0);" id="logoutLink">Logout</a>
                 `;
-                                dropdown.appendChild(logoutLi);
+              dropdown.appendChild(logoutLi);
 
-                                document.getElementById("logoutLink").addEventListener("click", logout);
-                            }
-                        } else {
-                            if (profileMenu) profileMenu.style.display = "none";
-                            if (authButton) {
-                                authButton.style.display = "block";
-                                authButton.innerHTML = `<a href="login.html" class="login-button"><i class="fa-solid fa-right-to-bracket"></i> Login</a>`;
-                            }
-                        }
-                    }
+              document
+                .getElementById("logoutLink")
+                .addEventListener("click", logout);
+            }
+          } else {
+            if (profileMenu) profileMenu.style.display = "none";
+            if (authButton) {
+              authButton.style.display = "block";
+              authButton.innerHTML = `<a href="login.html" class="login-button"><i class="fa-solid fa-right-to-bracket"></i> Login</a>`;
+            }
+          }
+        }
 
-                    function logout() {
-                         localStorage.clear();
-                        localStorage.removeItem("userRole");
-                        updateNavbar();
-                        location.reload();
-                    }
+        function logout() {
+          localStorage.clear();
+          localStorage.removeItem("userRole");
+          updateNavbar();
+          location.reload();
+        }
 
-                    updateNavbar();
+        updateNavbar();
 
-                    // Toggle dropdown
-                    if (profileIcon) {
-                        profileIcon.addEventListener("click", (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            profileMenu.classList.toggle("active");
-                        });
-                    }
+        // Toggle dropdown
+        if (profileIcon) {
+          profileIcon.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            profileMenu.classList.toggle("active");
+          });
+        }
 
-                    // Close dropdown when clicking outside
-                    document.addEventListener("click", (e) => {
-                        if (profileMenu && !profileMenu.contains(e.target)) {
-                            profileMenu.classList.remove("active");
-                        }
-                    });
+        // Close dropdown when clicking outside
+        document.addEventListener("click", (e) => {
+          if (profileMenu && !profileMenu.contains(e.target)) {
+            profileMenu.classList.remove("active");
+          }
+        });
 
-                    // Mobile menu toggle
-                    const bar = document.getElementById("bar");
-                    const menu = document.querySelector("nav ul");
-                    bar.addEventListener("click", () => {
-                        menu.classList.toggle("active");
-                    });
-                });
+        // Mobile menu toggle
+        const bar = document.getElementById("bar");
+        const menu = document.querySelector("nav ul");
+        bar.addEventListener("click", () => {
+          menu.classList.toggle("active");
+        });
+      });
 
-        (function () {
-            const params = new URLSearchParams(window.location.search);
-            const doctorId = params.get("id");
-            const profileDiv = document.getElementById("profile");
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const doctorId = params.get("id");
+        const profileDiv = document.getElementById("profile");
 
-            if (!doctorId || !/^[0-9a-fA-F]{24}$/.test(doctorId)) {
-                profileDiv.innerHTML = "<p>Invalid doctor ID</p>";
-                return;
+        if (!doctorId || !/^[0-9a-fA-F]{24}$/.test(doctorId)) {
+          profileDiv.innerHTML = "<p>Invalid doctor ID</p>";
+          return;
+        }
+
+        fetch(`http://localhost:3000/api/doctors/${doctorId}`)
+          .then(async (response) => {
+            if (!response.ok) throw new Error(await response.text());
+            return response.json();
+          })
+          .then((doctor) => {
+            // Determine today's and tomorrow's date
+            const now = new Date();
+            const todayStr = now.toISOString().split("T")[0];
+            const tomorrow = new Date();
+            tomorrow.setDate(now.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+            function parseTime12h(dateStr, timeStr) {
+              const [time, modifier] = timeStr.split(" "); // e.g. "10:30" "AM"
+              let [hours, minutes] = time.split(":").map(Number);
+
+              if (modifier === "PM" && hours < 12) hours += 12;
+              if (modifier === "AM" && hours === 12) hours = 0;
+
+              const dateTime = new Date(dateStr);
+              dateTime.setHours(hours, minutes, 0, 0);
+              return dateTime;
             }
 
-            fetch(`http://localhost:3000/api/doctors/${doctorId}`)
-                .then(async response => {
-                    if (!response.ok) throw new Error(await response.text());
-                    return response.json();
-                })
-                .then(doctor => {
-                    // Determine today's date
-                    const todayStr = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
+            let isAvailable = false;
+            console.log("---- Checking availability for:", doctor.name, "----");
+            console.log("Now:", now.toISOString());
+            console.log("Today:", todayStr, "Tomorrow:", tomorrowStr);
+            console.log(
+              "Doctor availabilitySlots:",
+              JSON.stringify(doctor.availabilitySlots, null, 2)
+            );
+            // Check today's slots and only mark as available if some are still upcoming
+            const todaySlot = doctor.availabilitySlots?.find(
+              (slot) => slot.date === todayStr
+            );
+            console.log("TodaySlot:", todaySlot);
 
-                    // Check if doctor has slots for today
-                    const hasSlotsToday = doctor.availabilitySlots?.some(slot => slot.date === todayStr && slot.slots.length > 0);
+            if (todaySlot) {
+              const hasFutureSlotToday = todaySlot.slots.some((time) => {
+                const slotDateTime = parseTime12h(todaySlot.date, time);
+                const isFuture = slotDateTime > now;
+                console.log(
+                  `   Slot time: ${time} → ${slotDateTime.toISOString()} | Future?`,
+                  isFuture
+                );
+                return isFuture;
+              });
 
-                    profileDiv.innerHTML = `
-                            <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}">
+              if (hasFutureSlotToday) {
+                isAvailable = true;
+              }
+            }
+
+            // If no future slots today, check tomorrow
+            // if (!isAvailable) {
+            //   const tomorrowSlot = doctor.availabilitySlots?.find(
+            //     (slot) => slot.date === tomorrowStr
+            //   );
+            //   if (tomorrowSlot && tomorrowSlot.slots.length > 0) {
+            //     isAvailable = true;
+            //   }
+            // }
+
+            profileDiv.innerHTML = `
+                            <img src="http://localhost:3000/uploads/${
+                              doctor.photo
+                            }" alt="${doctor.name}">
                             <h2>${doctor.name}</h2>
-                            <p class="availability ${hasSlotsToday ? "available" : "unavailable"}">
-                            ${hasSlotsToday ? "Available " : "Not Available "}
-                            </p>
+                            <p class="availability ${
+                              isAvailable ? "available" : "unavailable"
+                            }">
+  ${isAvailable ? "Available" : "Not Available"}
+</p>
 
-                            <p><strong>Specialty:</strong> ${doctor.speciality}</p>
-                            <p><strong>Experience:</strong> ${doctor.experience} years</p>
+
+                            <p><strong>Specialty:</strong> ${
+                              doctor.speciality
+                            }</p>
+                            <p><strong>Experience:</strong> ${
+                              doctor.experience
+                            } years</p>
                             <p><strong>Degree:</strong> ${doctor.degree}</p>
                             <p><strong>Fees:</strong> Rs. ${doctor.fees}</p>
-                            <p><strong>Address:</strong> ${doctor.address1}${doctor.address2 ? ', ' + doctor.address2 : ''}</p>
+                            <p><strong>Address:</strong> ${doctor.address1}${
+              doctor.address2 ? ", " + doctor.address2 : ""
+            }</p>
                             <p><strong>About:</strong> ${doctor.about}</p>
-                            ${doctor.qualifications ? `<p><strong>Qualifications:</strong> ${doctor.qualifications}</p>` : ''}
-                            ${doctor.services ? `<p><strong>Services:</strong> ${doctor.services}</p>` : ''}
-                            ${doctor.conditions ? `<p><strong>Conditions Treated:</strong> ${doctor.conditions}</p>` : ''}
-                            ${doctor.memberships ? `<p><strong>Memberships:</strong> ${doctor.memberships}</p>` : ''}
-                            ${doctor.locations ? `<p><strong>Locations:</strong> ${doctor.locations}</p>` : ''}
-                            <a class="book-button" href="booking.html?doctorId=${doctor._id}">Book Appointment</a>
+                            ${
+                              doctor.qualifications
+                                ? `<p><strong>Qualifications:</strong> ${doctor.qualifications}</p>`
+                                : ""
+                            }
+                            ${
+                              doctor.services
+                                ? `<p><strong>Services:</strong> ${doctor.services}</p>`
+                                : ""
+                            }
+                            ${
+                              doctor.conditions
+                                ? `<p><strong>Conditions Treated:</strong> ${doctor.conditions}</p>`
+                                : ""
+                            }
+                            ${
+                              doctor.memberships
+                                ? `<p><strong>Memberships:</strong> ${doctor.memberships}</p>`
+                                : ""
+                            }
+                            ${
+                              doctor.locations
+                                ? `<p><strong>Locations:</strong> ${doctor.locations}</p>`
+                                : ""
+                            }
+                            <a class="book-button" href="booking.html?doctorId=${
+                              doctor._id
+                            }">Book Appointment</a>
                         `;
-                    
-                    if (localStorage.getItem("userRole") === "admin") {
-                        
-                        const editBtn = document.createElement("button");
-                        editBtn.textContent = "Edit Profile";
-                        editBtn.className = "book-button";
-                        editBtn.style.backgroundColor = "#007bff";
-                        editBtn.style.marginLeft = "20px";
-                        editBtn.onclick = () => enableInlineEditing(doctor);
-                        profileDiv.appendChild(editBtn);
-                        const bookBtn = document.querySelector('.book-button');
-                        if (bookBtn) bookBtn.style.display = 'none';
-                        const backlink = document.querySelector('.back-link');
-                        if (backlink) backlink.style.display= 'none';
-                        const navbar = document.querySelector('nav');
-                        const footer = document.querySelector('.footer');
-                        if (navbar) navbar.style.display = 'none';
-                        if (footer) footer.style.display = 'none';
-                        document.body.style.marginTop = '0';
-                        document.body.style.paddingTop = '0';
-                        
-                    }
 
+            if (localStorage.getItem("userRole") === "admin") {
+              const editBtn = document.createElement("button");
+              editBtn.textContent = "Edit Profile";
+              editBtn.className = "book-button";
+              editBtn.style.backgroundColor = "#007bff";
+              editBtn.style.marginLeft = "20px";
+              editBtn.onclick = () => enableInlineEditing(doctor);
+              profileDiv.appendChild(editBtn);
+              const bookBtn = document.querySelector(".book-button");
+              if (bookBtn) bookBtn.style.display = "none";
+              const backlink = document.querySelector(".back-link");
+              if (backlink) backlink.style.display = "none";
+              const navbar = document.querySelector("nav");
+              const footer = document.querySelector(".footer");
+              if (navbar) navbar.style.display = "none";
+              if (footer) footer.style.display = "none";
+              document.body.style.marginTop = "0";
+              document.body.style.paddingTop = "0";
+            }
 
-                    fetchFeedbackForDoctor(doctorId);
-                })
-                .catch(err => {
-                    console.error("Error:", err);
-                    profileDiv.innerHTML = `<p>Error loading profile: ${err.message}</p>`;
-                });
-        })();
+            fetchFeedbackForDoctor(doctorId);
+          })
+          .catch((err) => {
+            console.error("Error:", err);
+            profileDiv.innerHTML = `<p>Error loading profile: ${err.message}</p>`;
+          });
+      })();
 
-        function fetchFeedbackForDoctor(doctorId) {
-            fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`)
-                .then(response => {
-                    if (!response.ok) throw new Error("Failed to fetch feedback");
-                    return response.json();
-                })
-                .then(feedbackList => {
-                    const feedbackDiv = document.getElementById("feedback-list");
-                    feedbackDiv.innerHTML = '';
-                    const loggedInPatientId = localStorage.getItem('patientId');
+      function fetchFeedbackForDoctor(doctorId) {
+        fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`)
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch feedback");
+            return response.json();
+          })
+          .then((feedbackList) => {
+            const feedbackDiv = document.getElementById("feedback-list");
+            feedbackDiv.innerHTML = "";
+            const loggedInPatientId = localStorage.getItem("patientId");
 
-                    feedbackList.forEach(feedback => {
-                        const feedbackElem = document.createElement("div");
-                        feedbackElem.className = "feedback-item";
-                        feedbackElem.dataset.feedbackId = feedback._id;
-                        console.log('From feedback:', feedback.patientId, typeof feedback.patientId);
-                        console.log('From storage:', loggedInPatientId, typeof loggedInPatientId);
+            feedbackList.forEach((feedback) => {
+              const feedbackElem = document.createElement("div");
+              feedbackElem.className = "feedback-item";
+              feedbackElem.dataset.feedbackId = feedback._id;
+              console.log(
+                "From feedback:",
+                feedback.patientId,
+                typeof feedback.patientId
+              );
+              console.log(
+                "From storage:",
+                loggedInPatientId,
+                typeof loggedInPatientId
+              );
 
+              let initials = (feedback.userName || "A")
+                .split(" ")
+                .map((w) => w[0])
+                .join("")
+                .toUpperCase();
+              let stars =
+                "★".repeat(feedback.rating) + "☆".repeat(5 - feedback.rating);
 
-                        let initials = (feedback.userName || "A").split(' ').map(w => w[0]).join('').toUpperCase();
-                        let stars = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
-
-                        let feedbackHTML = `
+              let feedbackHTML = `
     <div class="feedback-avatar">${initials}</div>
     <div class="feedback-content">
         <h4>${feedback.userName || "Anonymous"}</h4>
         <div class="star-rating">${stars}</div>
         <p>${feedback.comment}</p>
-<p><small><strong>Submitted:</strong> ${dayjs(feedback.timestamp).fromNow()}</small></p>
+<p><small><strong>Submitted:</strong> ${dayjs(
+                feedback.timestamp
+              ).fromNow()}</small></p>
     
 `;
-                       const userRole = localStorage.getItem("userRole");
-                        if (String(feedback.patientId) === String(loggedInPatientId) || userRole === "admin") {
-                            feedbackHTML += `
+              const userRole = localStorage.getItem("userRole");
+              if (
+                String(feedback.patientId) === String(loggedInPatientId) ||
+                userRole === "admin"
+              ) {
+                feedbackHTML += `
         <div class="feedback-actions">
-            ${(String(feedback.patientId) === String(loggedInPatientId)) ? `<button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${encodeURIComponent(feedback.comment)}')">Edit</button>` : ''}
-            <button class="delete" onclick="deleteFeedback('${feedback._id}')">Delete</button>
+            ${
+              String(feedback.patientId) === String(loggedInPatientId)
+                ? `<button onclick="editFeedback('${feedback._id}', '${
+                    feedback.rating
+                  }', '${encodeURIComponent(feedback.comment)}')">Edit</button>`
+                : ""
+            }
+            <button class="delete" onclick="deleteFeedback('${
+              feedback._id
+            }')">Delete</button>
         </div>
     `;
-                        }
+              }
 
+              feedbackHTML += `</div>`; // Close .feedback-content
 
-                        feedbackHTML += `</div>`; // Close .feedback-content
+              feedbackElem.innerHTML = feedbackHTML;
 
-                        feedbackElem.innerHTML = feedbackHTML;
+              feedbackDiv.appendChild(feedbackElem);
+            });
+          })
+          .catch((err) => {
+            console.error("Error fetching feedback:", err);
+          });
+      }
 
-                        feedbackDiv.appendChild(feedbackElem);
-                    });
-                })
-                .catch(err => {
-                    console.error("Error fetching feedback:", err);
-                });
-        }
+      function editFeedback(feedbackId, currentRating, encodedComment) {
+        const currentComment = decodeURIComponent(encodedComment);
 
-        function editFeedback(feedbackId, currentRating, encodedComment) {
-                const currentComment = decodeURIComponent(encodedComment);
+        const feedbackItem = document.querySelector(
+          `[data-feedback-id="${feedbackId}"]`
+        );
+        if (!feedbackItem) return;
 
-                const feedbackItem = document.querySelector(`[data-feedback-id="${feedbackId}"]`);
-                if (!feedbackItem) return;
-
-                feedbackItem.innerHTML = `
+        feedbackItem.innerHTML = `
         <label>Rating:</label><br>
         <input type="number" id="edit-rating-${feedbackId}" value="${currentRating}" min="1" max="5" /><br><br>
         
@@ -939,128 +1035,148 @@ p.availability.unavailable {
         <textarea id="edit-comment-${feedbackId}" rows="4">${currentComment}</textarea><br><br>
         
         <button onclick="submitEditedFeedback('${feedbackId}')">Save</button>
-        <button onclick="fetchFeedbackForDoctor('${new URLSearchParams(window.location.search).get("id")}')">Cancel</button>
+        <button onclick="fetchFeedbackForDoctor('${new URLSearchParams(
+          window.location.search
+        ).get("id")}')">Cancel</button>
     `;
-            }
+      }
 
-    function submitEditedFeedback(feedbackId) {
+      function submitEditedFeedback(feedbackId) {
         const doctorId = new URLSearchParams(window.location.search).get("id");
-        const token = localStorage.getItem('authToken');
-        const rating = document.getElementById(`edit-rating-${feedbackId}`).value;
-        const comment = document.getElementById(`edit-comment-${feedbackId}`).value;
+        const token = localStorage.getItem("authToken");
+        const rating = document.getElementById(
+          `edit-rating-${feedbackId}`
+        ).value;
+        const comment = document.getElementById(
+          `edit-comment-${feedbackId}`
+        ).value;
 
         // const updatedFeedback = { rating, comment };
         const updatedFeedback = {
-            rating: parseInt(rating, 10),
-            comment: comment.trim()
+          rating: parseInt(rating, 10),
+          comment: comment.trim(),
         };
 
         fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(updatedFeedback),
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedFeedback),
         })
-            .then(response => {
-                if (!response.ok) throw new Error("Failed to update feedback");
-                return response.json();
-            })
-            .then(data => {
-                console.log("Feedback updated:", data);
-                fetchFeedbackForDoctor(doctorId); // Reload updated feedback
-            })
-            .catch(err => {
-                console.error("Error updating feedback:", err);
-            });
-    }
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to update feedback");
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Feedback updated:", data);
+            fetchFeedbackForDoctor(doctorId); // Reload updated feedback
+          })
+          .catch((err) => {
+            console.error("Error updating feedback:", err);
+          });
+      }
 
+      function deleteFeedback(feedbackId) {
+        const confirmFeedback = confirm(
+          "Are you sure you want to delete this feedback?"
+        );
+        if (!confirmFeedback) return;
+        const token = localStorage.getItem("authToken");
+        const doctorId = new URLSearchParams(window.location.search).get("id");
+        console.log("Token in deleteFeedback:", token);
 
-        function deleteFeedback(feedbackId) {
+        fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to delete feedback");
+            console.log("Feedback deleted");
+            fetchFeedbackForDoctor(doctorId);
+          })
+          .catch((err) => {
+            console.error("Error:", err);
+          });
+      }
 
-            const confirmFeedback = confirm("Are you sure you want to delete this feedback?");
-            if (!confirmFeedback) return;
-            const token = localStorage.getItem('authToken');
-            const doctorId = new URLSearchParams(window.location.search).get("id");
-            console.log("Token in deleteFeedback:", token);
+      function enableInlineEditing(doctor) {
+        const profileDiv = document.getElementById("profile");
 
-
-            fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error("Failed to delete feedback");
-                    console.log("Feedback deleted");
-                    fetchFeedbackForDoctor(doctorId);
-                })
-                .catch(err => {
-                    console.error("Error:", err);
-                });
-        }
-       
-            function enableInlineEditing(doctor) {
-                    const profileDiv = document.getElementById("profile");
-
-                    profileDiv.innerHTML = `
-        <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}">
+        profileDiv.innerHTML = `
+        <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${
+          doctor.name
+        }">
         <h2><input type="text" id="edit-name" value="${doctor.name}" /></h2>
-        <p><strong>Specialty:</strong> <input type="text" id="edit-speciality" value="${doctor.speciality}" /></p>
-        <p><strong>Experience:</strong> <input type="number" id="edit-experience" value="${doctor.experience}" /> years</p>
-        <p><strong>Degree:</strong> <input type="text" id="edit-degree" value="${doctor.degree}" /></p>
-        <p><strong>Fees:</strong> Rs. <input type="number" id="edit-fees" value="${doctor.fees}" /></p>
+        <p><strong>Specialty:</strong> <input type="text" id="edit-speciality" value="${
+          doctor.speciality
+        }" /></p>
+        <p><strong>Experience:</strong> <input type="number" id="edit-experience" value="${
+          doctor.experience
+        }" /> years</p>
+        <p><strong>Degree:</strong> <input type="text" id="edit-degree" value="${
+          doctor.degree
+        }" /></p>
+        <p><strong>Fees:</strong> Rs. <input type="number" id="edit-fees" value="${
+          doctor.fees
+        }" /></p>
         <p><strong>Address:</strong> 
             <input type="text" id="edit-address1" value="${doctor.address1}" />
-            <input type="text" id="edit-address2" value="${doctor.address2 || ''}" />
+            <input type="text" id="edit-address2" value="${
+              doctor.address2 || ""
+            }" />
         </p>
-        <p><strong>About:</strong> <textarea id="edit-about">${doctor.about || ''}</textarea></p>
+        <p><strong>About:</strong> <textarea id="edit-about">${
+          doctor.about || ""
+        }</textarea></p>
 
-        <button class="book-button" onclick="submitInlineEdit('${doctor._id}')">Save</button>
+        <button class="book-button" onclick="submitInlineEdit('${
+          doctor._id
+        }')">Save</button>
         <button class="book-button" style="background:#6c757d;" onclick="window.location.reload()">Cancel</button>
     `;
-                }
-    function submitInlineEdit(doctorId) {
+      }
+      function submitInlineEdit(doctorId) {
         const updatedDoctor = {
-            name: document.getElementById('edit-name').value,
-            speciality: document.getElementById('edit-speciality').value,
-            experience: parseInt(document.getElementById('edit-experience').value),
-            degree: document.getElementById('edit-degree').value,
-            fees: parseInt(document.getElementById('edit-fees').value),
-            address1: document.getElementById('edit-address1').value,
-            address2: document.getElementById('edit-address2').value,
-            about: document.getElementById('edit-about').value,
+          name: document.getElementById("edit-name").value,
+          speciality: document.getElementById("edit-speciality").value,
+          experience: parseInt(
+            document.getElementById("edit-experience").value
+          ),
+          degree: document.getElementById("edit-degree").value,
+          fees: parseInt(document.getElementById("edit-fees").value),
+          address1: document.getElementById("edit-address1").value,
+          address2: document.getElementById("edit-address2").value,
+          about: document.getElementById("edit-about").value,
         };
 
         const token = localStorage.getItem("authToken");
 
         fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(updatedDoctor)
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedDoctor),
         })
-            .then(response => {
-                if (!response.ok) throw new Error("Failed to update doctor profile");
-                return response.json();
-            })
-            .then(() => {
-                alert("Profile updated successfully");
-                window.location.reload();
-            })
-            .catch(err => {
-                console.error("Error updating profile:", err);
-                alert("Error saving profile");
-            });
-    }
-
-
+          .then((response) => {
+            if (!response.ok)
+              throw new Error("Failed to update doctor profile");
+            return response.json();
+          })
+          .then(() => {
+            alert("Profile updated successfully");
+            window.location.reload();
+          })
+          .catch((err) => {
+            console.error("Error updating profile:", err);
+            alert("Error saving profile");
+          });
+      }
     </script>
-    
-</body>
-
+  </body>
 </html>

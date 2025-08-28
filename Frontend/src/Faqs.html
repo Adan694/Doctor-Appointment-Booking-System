@@ -7,13 +7,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <title>FAQs - DocAssist</title>
-    <style>
-      body {
+   <style>
+body {
     font-family: Arial, sans-serif;
     background-color: #e6f2ff;
     margin: 0;
     padding: 20px;
 }
+
 nav {
     display: flex;
     align-items: center;
@@ -27,22 +28,27 @@ nav {
     z-index: 1000;
     left: 0%;
 }
+
 nav ul {
     display: flex;
 }
+
 nav ul li {
     list-style: none;
 }
+
 nav ul li a {
     text-decoration: none;
     color: white;
     font-size: 20px;
     margin-inline: 20px;
 }
+
 nav ul li a:hover {
     color: black;
     border-bottom: 2px solid black;
 }
+
 .logo {
     display: flex;
     align-items: center;
@@ -59,20 +65,16 @@ nav ul li a:hover {
 }
 
 .logo h1 {
-    font-size: 30px;
-    margin: 0;
-}
-
-.logo img:hover {
-    transform: scale(1.1) rotate(-5deg);
-}
-
-.logo h1 {
     font-size: 28px;
+    margin: 0;
     background: linear-gradient(45deg, #ffffff, #cceeff);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.logo img:hover {
+    transform: scale(1.1) rotate(-5deg);
 }
 
 h1.FAQ {
@@ -80,8 +82,7 @@ h1.FAQ {
     font-weight: 700;
     text-align: center;
     color: #009999;
-    margin-bottom: 0px;
-    margin: 100px auto 20px auto; 
+    margin: 100px auto 20px auto;
     padding: 15px;
     border: 3px solid #009999;
     border-radius: 8px;
@@ -99,7 +100,7 @@ h1.FAQ {
 }
 
 h1.FAQ:hover {
-     color: #007d7d;
+    color: #007d7d;
     border-color: #007d7d;
     background-color: #f0fefe;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
@@ -114,9 +115,11 @@ h1.FAQ:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
+
 .faq {
     margin-bottom: 15px;
 }
+
 .faq h2 {
     cursor: pointer;
     margin: 0;
@@ -125,8 +128,6 @@ h1.FAQ:hover {
     color: white;
     border-radius: 5px;
     border: 2px solid #0f8888;
-
-    /* Smooth transition for hover changes */
     transition: background-color 0.3s ease,
                 color 0.3s ease,
                 border-color 0.3s ease,
@@ -148,11 +149,13 @@ h1.FAQ:hover {
     border-radius: 5px;
     background: #e7f9f9;
 }
+
 #bar {
     display: none;
     font-size: 30px;
     cursor: pointer;
 }
+
 .footer {
     display: flex;
     flex-wrap: wrap;
@@ -164,12 +167,12 @@ h1.FAQ:hover {
     border-top: 4px solid #0f8080;
 }
 
-.footer>div {
+.footer > div {
     border-right: 1px solid rgba(255, 255, 255, 0.3);
     padding: 0 20px;
 }
 
-.footer>div:last-child {
+.footer > div:last-child {
     border-right: none;
 }
 
@@ -244,7 +247,6 @@ h1.FAQ:hover {
     text-shadow: 0 0 5px #ffd700aa;
 }
 
-
 .specialties-columns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -266,27 +268,30 @@ h1.FAQ:hover {
         left: 0;
         background-color: rgb(9, 102, 102);
         transition: max-height 0.3s ease;
-
     }
+
     nav ul li {
         text-align: center;
         width: 70%;
         padding: 10px 0;
     }
+
     nav ul.active {
         display: flex;
     }
+
     #bar {
         z-index: 1001;
         display: block;
     }
+
     .footer {
         flex-direction: column;
         align-items: center;
         text-align: center;
     }
 
-    .footer>div {
+    .footer > div {
         width: 100%;
         border-right: none;
         margin-bottom: 20px;
@@ -302,12 +307,12 @@ h1.FAQ:hover {
         margin: 5px 0;
     }
 }
-    </style>
+</style>
+
 </head>
 
 <body>
     <div class="container">
-        <!-- Navigation -->
         <nav>
             <div class="logo">
                 <img src="images/Da.png" alt="DocAssist Logo">
@@ -358,21 +363,14 @@ h1.FAQ:hover {
                 <p>If you arrive late, please inform the receptionist. Depending on the schedule, you may have to wait
                     or reschedule.</p>
             </div>
-
-            <div class="faq">
-                <h2>Is telemedicine available?</h2>
-                <p>Yes, we offer telemedicine appointments. You can select this option while booking your appointment.
-                </p>
-            </div>
-</div>
-            <!-- Footer Section -->
+        </div>
             <div class="footer">
                 <div class="contact-info">
                     <h3>Contact Us</h3>
                     <p>Hospital Name</p>
                     <p>123 Main St, City, State, Zip</p>
                     <p>Phone: (123) 456-7890</p>
-                    <p>Email: support@hospital.com</p>
+                    <p>Email: DocAssist@hospital.com</p>
                 </div>
                 <div class="quick-links">
                     <h3>Quick Links</h3>
@@ -383,21 +381,6 @@ h1.FAQ:hover {
                         <li><a href="Alldoctorsreal.html">Doctors</a></li>
                         <li><a href="Faqs.html">FAQS</a></li>
                     </ul>
-                </div>
-                <div class="text">
-                    <h3>Doctors' Specialties</h3>
-                    <div class="specialties-columns">
-                        <p>Cardiology</p>
-                        <p>Dermatology</p>
-                        <p>Pediatrics</p>
-                        <p>Orthopedics</p>
-                        <p>Gynecology</p>
-                        <p>Neurology</p>
-                        <p>Gastroenterology</p>
-                        <p>Oncology</p>
-                        <p>Radiology</p>
-                        <p>Psychiatry</p>
-                    </div>
                 </div>
                 <div class="Legal">
                     <h3>Legal</h3>
@@ -410,7 +393,6 @@ h1.FAQ:hover {
             </div>
 
         <script>
-            // Script to toggle FAQ answers
             const faqs = document.querySelectorAll('.faq h2');
             faqs.forEach(faq => {
                 faq.addEventListener('click', () => {
@@ -421,7 +403,7 @@ h1.FAQ:hover {
 
              document.getElementById('bar').addEventListener('click', function () {
                     const menu = document.querySelector('nav ul');
-                    menu.classList.toggle('active'); // Toggle the active class to show/hide the menu
+                    menu.classList.toggle('active'); 
                 });
         </script>
 
