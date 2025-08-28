@@ -1,351 +1,383 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Privacy policy - Doctor Appointment Booking System</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Catamaran:wght@200&family=Courgette&family=Dancing+Script:wght@700&family=Edu+TAS+Beginner:wght@700&family=Lato:wght@300;900&family=Mukta:wght@700&family=Mulish:wght@300&family=Open+Sans&family=PT+Sans:ital,wght@1,700&family=Poppins:wght@300&family=Raleway:wght@100&family=Roboto&family=Roboto+Condensed:wght@700&family=Roboto+Slab&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Catamaran:wght@200&family=Courgette&family=Dancing+Script:wght@700&family=Edu+TAS+Beginner:wght@700&family=Lato:wght@300;900&family=Mukta:wght@700&family=Mulish:wght@300&family=Open+Sans&family=PT+Sans:ital,wght@1,700&family=Poppins:wght@300&family=Raleway:wght@100&family=Roboto&family=Roboto+Condensed:wght@700&family=Roboto+Slab&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #e6f2ff;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #e6f2ff;
+      }
 
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 10px 20px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        z-index: 1000;
+      }
+
+      nav ul {
+        display: flex;
+      }
+
+      nav ul li {
+        list-style: none;
+      }
+
+      nav ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 20px;
+        margin-inline: 20px;
+      }
+
+      nav ul li a:hover {
+        color: black;
+        border-bottom: 2px solid black;
+      }
+
+      #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        margin: 0;
+      }
+
+      .logo img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+
+      .logo h1 {
+        font-size: 30px;
+        margin: 0;
+      }
+
+      header {
+        background: white;
+        color: White;
+        padding: 20px;
+        text-align: center;
+        margin-top: 100px;
+      }
+
+      main {
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      header h1 {
+        color: Black;
+      }
+
+      h2 {
+        color: #333;
+      }
+
+      section {
+        background: white;
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 40px;
+        color: white;
+        margin-top: 66px;
+        background-color: rgb(9, 102, 102);
+      }
+
+      .contact-info,
+      .text {
+        flex: 1;
+        min-width: 200px;
+        margin: 10px;
+        flex-direction: column;
+      }
+
+      .specialties-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+        margin-top: 10px;
+      }
+
+      .footer h3 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .footer p {
+        margin: 15px;
+        font-size: 16px;
+      }
+
+      .quick-links,
+      .Legal {
+        flex: 1;
+        margin: 10px;
+      }
+
+      .quick-links ul,
+      .Legal ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .quick-links li,
+      .Legal li {
+        margin: 5px 0;
+        font-size: 16px;
+      }
+
+      .quick-links a,
+      .Legal a {
+        color: white;
+        text-decoration: none;
+      }
+
+      .quick-links a:hover,
+      .Legal a:hover {
+        text-decoration: underline;
+      }
+
+      .text p {
+        margin-top: 12px;
+      }
+
+      .footer > div {
+        border-right: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .footer > div:last-child {
+        border-right: none;
+      }
+      /* Media Queries for Responsiveness */
+      @media (max-width: 768px) {
         nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            padding: 10px 20px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background-color: rgb(9, 102, 102);
-            color: white;
-            z-index: 1000;
+          flex-direction: column;
+          align-items: flex-start;
         }
 
-       nav ul {
-            display: flex;
+        nav ul {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          position: absolute;
+          top: 60px;
+          left: 0;
+          background-color: rgb(9, 102, 102);
         }
 
-        nav ul li {
-            list-style: none;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 20px;
-            margin-inline: 20px;
-        }
-
-        nav ul li a:hover {
-            color: black;
-            border-bottom: 2px solid black;
+        nav ul.active {
+          display: flex;
         }
 
         #bar {
-            display: none;
-            font-size: 30px;
-            cursor: pointer;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 20px;
-            margin: 0;
-        }
-
-        .logo img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-
-        .logo h1 {
-            font-size: 30px;
-            margin: 0;
-        }
-
-        header {
-            background: white;
-            color: White;
-            padding: 20px;
-            text-align: center;
-            margin-top: 100px;
-        }
-
-        main {
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        header h1 {
-            color: Black;
-        }
-
-        h2 {
-            color: #333;
-        }
-
-        section {
-            background: white;
-            margin: 20px 0;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          display: block;
+          position: absolute;
+          right: 50px;
+          top: 20px;
+          font-size: 30px;
+          cursor: pointer;
+          z-index: 1001;
         }
 
         .footer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            padding: 40px;
-            color: white;
-            margin-top: 66px;
-            background-color: rgb(9, 102, 102);
+          flex-direction: column;
+          align-items: flex-start;
         }
 
-        .contact-info,
-        .text {
-            flex: 1;
-            min-width: 200px;
-            margin: 10px;
-            flex-direction: column;
+        .footer > div {
+          width: 100%;
+          margin: 10px 0;
+          border-right: none;
+        }
+      }
+
+      @media (max-width: 480px) {
+        ul li a {
+          font-size: 18px;
         }
 
-        .specialties-columns {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
-            margin-top: 10px;
+        header h1 {
+          font-size: 24px;
         }
 
         .footer h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
+          font-size: 16px;
         }
 
         .footer p {
-            margin: 15px;
-            font-size: 16px;
+          font-size: 14px;
         }
-
-        .quick-links,
-        .Legal {
-            flex: 1;
-            margin: 10px;
-        }
-
-        .quick-links ul,
-        .Legal ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .quick-links li,
-        .Legal li {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-
-        .quick-links a,
-        .Legal a {
-            color: white;
-            text-decoration: none;
-        }
-
-        .quick-links a:hover,
-        .Legal a:hover {
-            text-decoration: underline;
-        }
-
-        .text p {
-            margin-top: 12px;
-        }
-
-        .footer>div {
-            border-right: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .footer>div:last-child {
-            border-right: none;
-        }
-        /* Media Queries for Responsiveness */
-@media (max-width: 768px) {
-    nav {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    nav ul {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        background-color: rgb(9, 102, 102);
-    }
-
-    nav ul.active {
-        display: flex;
-    }
-
-     #bar {
-        display: block;
-        position: absolute;
-        right: 50px;
-        top: 20px;
-        font-size: 30px;
-        cursor: pointer;
-        z-index: 1001;
-    }
-
-    .footer {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .footer > div {
-        width: 100%;
-        margin: 10px 0;
-        border-right: none; 
-    }
-}
-
-@media (max-width: 480px) {
-    ul li a {
-        font-size: 18px;
-    }
-
-    header h1 {
-        font-size: 24px; 
-    }
-
-    .footer h3 {
-        font-size: 16px; 
-    }
-
-    .footer p {
-        font-size: 14px; 
-    }
-}
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <nav>
-            <div class="logo">
-                <img src="images/Da.png" alt="DocAssist Logo">
-                <h1>DocAssist</h1>
-            </div>
-            <i id="bar" class="fa-solid fa-bars"></i>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
-                <li><a href="Contactus.html">Contact Us</a></li>
-                <li><a href="faqs.html">FAQs</a></li>
-                <li id="myProfileTab" style="display: none;"><a href="myprofile.html">My Profile</a></li>
-                <li id="authButton"><a href="login.html" class="login-button">Login</a></li>
-            </ul>
-        </nav>
+      <nav>
+        <div class="logo">
+          <img src="images/Da.png" alt="DocAssist Logo" />
+          <h1>DocAssist</h1>
+        </div>
+        <i id="bar" class="fa-solid fa-bars"></i>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="Alldoctorsreal.html">Find a Doctor</a></li>
+          <li><a href="Contactus.html">Contact Us</a></li>
+          <li><a href="faqs.html">FAQs</a></li>
+          <li id="myProfileTab" style="display: none">
+            <a href="myprofile.html">My Profile</a>
+          </li>
+          <li id="authButton">
+            <a href="login.html" class="login-button">Login</a>
+          </li>
+        </ul>
+      </nav>
 
-        <header>
-            <h1>Privacy Policy</h1>
-        </header>
+      <header>
+        <h1>Privacy Policy</h1>
+      </header>
 
-        <main>
-            <section>
-                <h2>Introduction</h2>
-                <p>Your privacy is important to us. This Privacy Policy outlines our practices regarding the collection,
-                    use, and protection of your information.</p>
-            </section>
-
+      <main>
         <section>
-            <h2>Information We Collect</h2>
-            <p>Our application collects the following personal information from users:</p>
-            <ul>
-                <li><strong>Email Address:</strong> Used for account creation and communication purposes.</li>
-                <li><strong>Password:</strong> Used for account security and access.</li>
-                <li><strong>Profile Information:</strong> Includes name, age, and gender, which are collected when users create
-                    or update their profiles.</li>
-            </ul>
-            <p>We ensure that all information collected is stored securely and used solely for the purpose of providing our
-                services.</p>
+          <h2>Introduction</h2>
+          <p>
+            Your privacy is important to us. This Privacy Policy outlines our
+            practices regarding the collection, use, and protection of your
+            information.
+          </p>
         </section>
 
-            <section>
-                <h2>User Awareness</h2>
-                <p>We respect your privacy and ensure that no information is stored or tracked.</p>
-            </section>
+        <section>
+          <h2>Information We Collect</h2>
+          <p>
+            Our application collects the following personal information from
+            users:
+          </p>
+          <ul>
+            <li>
+              <strong>Email Address:</strong> Used for account creation and
+              communication purposes.
+            </li>
+            <li>
+              <strong>Password:</strong> Used for account security and access.
+            </li>
+            <li>
+              <strong>Profile Information:</strong> Includes name, age, and
+              gender, which are collected when users create or update their
+              profiles.
+            </li>
+          </ul>
+          <p>
+            We ensure that all information collected is stored securely and used
+            solely for the purpose of providing our services.
+          </p>
+        </section>
 
-            <section>
-                <h2>Changes to This Policy</h2>
-                <p>If there are any changes to this policy, we will update this page accordingly.</p>
-            </section>
+        <section>
+          <h2>User Awareness</h2>
+          <p>
+            We respect your privacy and ensure that no information is stored or
+            tracked.
+          </p>
+        </section>
 
-            <section>
-                <h2>Contact Us</h2>
-                <p>If you have any questions about this Privacy Policy, please contact us at:</p>
-                <p>Email: support@hospital.com</p>
-            </section>
-        </main>
+        <section>
+          <h2>Changes to This Policy</h2>
+          <p>
+            If there are any changes to this policy, we will update this page
+            accordingly.
+          </p>
+        </section>
 
-        <div class="footer">
-            <div class="contact-info">
-                <h3>Contact Us</h3>
-                <p>Hospital Name</p>
-                <p>123 Main St, City, State, Zip</p>
-                <p>Phone: (123) 456-7890</p>
-                <p>Email: support@hospital.com</p>
-            </div>
-            <div class="quick-links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="">Home</a></li>
-                    <li><a href="Aboutus.html">About Us</a></li>
-                    <li><a href="">Services</a></li>
-                    <li><a href="Alldoctorsreal.html">Doctors</a></li>
-                    <li><a href="Faqs.html">FAQS</a></li>
-                </ul>
-            </div>
-            <div class="text">
-                <h3>Doctors' Specialties</h3>
-                <p>Cardiology, Dermatology, Pediatrics, Orthopedics, Gynecology, Neurology, Gastroenterology, Oncology,
-                    Radiology, Psychiatry</p>
-            </div>
-            <div class="Legal">
-                <h3>Legal</h3>
-                <ul>
-                    <li><a href="Privacy.html">Privacy Policy</a></li>
-                    <li><a href="TOS.html">Terms of Services</a></li>
-                </ul>
-            </div>
+        <section>
+          <h2>Contact Us</h2>
+          <p>
+            If you have any questions about this Privacy Policy, please contact
+            us at:
+          </p>
+          <p>Email: support@hospital.com</p>
+        </section>
+      </main>
+
+      <div class="footer">
+        <div class="contact-info">
+          <h3>Contact Us</h3>
+          <p>Hospital Name</p>
+          <p>123 Main St, City, State, Zip</p>
+          <p>Phone: (123) 456-7890</p>
+          <p>Email: support@hospital.com</p>
         </div>
+        <div class="quick-links">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="">Home</a></li>
+            <li><a href="Aboutus.html">About Us</a></li>
+            <li><a href="">Services</a></li>
+            <li><a href="Alldoctorsreal.html">Doctors</a></li>
+            <li><a href="Faqs.html">FAQS</a></li>
+          </ul>
+        </div>
+        <div class="text">
+          <h3>Doctors' Specialties</h3>
+          <p>
+            Cardiology, Dermatology, Pediatrics, Orthopedics, Gynecology,
+            Neurology, Gastroenterology, Oncology, Radiology, Psychiatry
+          </p>
+        </div>
+        <div class="Legal">
+          <h3>Legal</h3>
+          <ul>
+            <li><a href="Privacy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <script>
-        const bar = document.getElementById('bar');
-        bar.addEventListener('click', function () {
-            const menu = document.querySelector('nav ul');
-            menu.classList.toggle('active');
-        });
+      const bar = document.getElementById("bar");
+      bar.addEventListener("click", function () {
+        const menu = document.querySelector("nav ul");
+        menu.classList.toggle("active");
+      });
     </script>
-</body>
-
+  </body>
 </html>

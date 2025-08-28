@@ -133,102 +133,164 @@ nextArrow.addEventListener('click', () => {
     myFun();
 });
     
-    if (connectBtn) {
-        connectBtn.addEventListener("click", function () {
-            let email = document.getElementById("email");
-            let pass = document.getElementById("pass");
-            let contact = document.getElementById("contact");
+    // if (connectBtn) {
+    //     connectBtn.addEventListener("click", function () {
+    //         let email = document.getElementById("email");
+    //         let pass = document.getElementById("pass");
+    //         let contact = document.getElementById("contact");
 
-            let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailRegex.test(email.value)) {
-                alert("Invalid email address");
-                return;
-            }
+    //         let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    //         if (!emailRegex.test(email.value)) {
+    //             alert("Invalid email address");
+    //             return;
+    //         }
 
-            let contactRegex = /^((\+92|0)3[0-9]{9}|0[1-9][0-9]{8,9})$/;
-            if (!contactRegex.test(contact.value)) {
-                alert("Invalid contact number");
-                return;
-            }
+    //         let contactRegex = /^((\+92|0)3[0-9]{9}|0[1-9][0-9]{8,9})$/;
+    //         if (!contactRegex.test(contact.value)) {
+    //             alert("Invalid contact number");
+    //             return;
+    //         }
 
-            if (pass.value.length < 6) {
-                alert("Password must be at least 6 characters long");
-                return;
-            }
+    //         if (pass.value.length < 6) {
+    //             alert("Password must be at least 6 characters long");
+    //             return;
+    //         }
 
-            if (email.value === "" || pass.value === "" || contact.value === "") {
-                alert("Please Enter Details");
-            } else {
-                alert("You Logged In");
-                localStorage.setItem('userRole', 'patient');
-                updateNavbar();
-            }
-        });
+    //         if (email.value === "" || pass.value === "" || contact.value === "") {
+    //             alert("Please Enter Details");
+    //         } else {
+    //             alert("You Logged In");
+    //             localStorage.setItem('userRole', 'patient');
+    //             updateNavbar();
+    //         }
+    //     });
+    // }
+
+//     const contactForm = document.getElementById('contactForm');
+//     if (contactForm) {
+//         contactForm.addEventListener('submit', async function (e) {
+//             e.preventDefault();
+
+//             const email = document.getElementById('email').value.trim();
+// const name = document.getElementById('name').value.trim();
+// const phone = document.getElementById('phone').value.trim();
+// const message = document.getElementById('message').value.trim();
+
+// let isValid = true;
+
+// // 📧 Email validation
+// const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// if (!emailRegex.test(email)) {
+//     alert("Please enter a valid email address.");
+//     isValid = false;
+// }
+
+// // 👤 Name validation
+// if (name.length < 2) {
+//     alert("Please enter your full name (at least 2 characters).");
+//     isValid = false;
+// }
+
+// // 📱 Pakistani phone validation (Mobile or PTCL, with optional +92)
+// const pkPhoneRegex = /^((\+92|0)3[0-9]{9}|0[1-9][0-9]{8,9})$/;
+// if (!pkPhoneRegex.test(phone)) {
+//     alert("Please enter a valid Pakistani mobile or PTCL number.");
+//     isValid = false;
+// }
+
+// // 📝 Message validation
+// if (message.length === 0) {
+//     alert("Please enter a message.");
+//     isValid = false;
+// }
+
+// if (!isValid) return;
+
+// // ✅ If all checks pass, proceed with form submission (fetch or whatever)
+// alert("Form is valid, submitting...");
+
+
+//             const data = { email, name, phone, message };
+
+//             try {
+//                 const response = await fetch('http://localhost:3000/contact', {
+//                     method: 'POST',
+//                     headers: {
+//                         'Content-Type': 'application/json'
+//                     },
+//                     body: JSON.stringify(data)
+//                 });
+
+//                 const result = await response.json();
+//                 alert(result.message || 'Form submitted successfully!');
+//             } catch (error) {
+//                 console.error('Error:', error);
+//                 alert('Failed to submit. Try again.');
+//             }
+//         });
+    //     }
+    contactForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const pass = document.getElementById('pass') ? document.getElementById('pass').value.trim() : '';
+    const message = document.getElementById('message').value.trim();
+
+         if (!email || !name || !phone || !message || (document.getElementById('pass') && !pass)) {
+            alert("❌ Please enter all fields.");
+            return;
+        }
+
+    let isValid = true;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address.");
+        isValid = false;
     }
 
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value.trim();
-const name = document.getElementById('name').value.trim();
-const phone = document.getElementById('phone').value.trim();
-const message = document.getElementById('message').value.trim();
-
-let isValid = true;
-
-// 📧 Email validation
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-if (!emailRegex.test(email)) {
-    alert("Please enter a valid email address.");
-    isValid = false;
-}
-
-// 👤 Name validation
-if (name.length < 2) {
-    alert("Please enter your full name (at least 2 characters).");
-    isValid = false;
-}
-
-// 📱 Pakistani phone validation (Mobile or PTCL, with optional +92)
-const pkPhoneRegex = /^((\+92|0)3[0-9]{9}|0[1-9][0-9]{8,9})$/;
-if (!pkPhoneRegex.test(phone)) {
-    alert("Please enter a valid Pakistani mobile or PTCL number.");
-    isValid = false;
-}
-
-// 📝 Message validation
-if (message.length === 0) {
-    alert("Please enter a message.");
-    isValid = false;
-}
-
-if (!isValid) return;
-
-// ✅ If all checks pass, proceed with form submission (fetch or whatever)
-alert("Form is valid, submitting...");
-
-
-            const data = { email, name, phone, message };
-
-            try {
-                const response = await fetch('http://localhost:3000/contact', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-                alert(result.message || 'Form submitted successfully!');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to submit. Try again.');
-            }
-        });
+    if (name.length < 2) {
+        alert("Please enter your full name (at least 2 characters).");
+        isValid = false;
     }
+
+    const pkPhoneRegex = /^((\+92|0)3[0-9]{9}|0[1-9][0-9]{8,9})$/;
+    if (!pkPhoneRegex.test(phone)) {
+        alert("Please enter a valid Pakistani mobile or PTCL number.");
+        isValid = false;
+    }
+
+    if (pass && pass.length < 6) {
+        alert("Password must be at least 6 characters long");
+        isValid = false;
+    }
+
+    if (message.length === 0) {
+        alert("Please enter a message.");
+        isValid = false;
+    }
+
+    if (!isValid) return;
+
+    const data = { email, name, phone, message, ...(pass && { password: pass }) };
+
+    try {
+        const response = await fetch('http://localhost:3000/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        alert(result.message || 'Form submitted successfully!');
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to submit. Try again.');
+    }
+});
+
 
     function animateWords(selector, delay = 300) {
         const el = document.querySelector(selector);
