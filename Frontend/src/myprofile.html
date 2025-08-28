@@ -595,7 +595,7 @@ nav ul li a:hover {
 <p id="displayEmail"></p>
 
 <label for="edit-phone"><i class="fas fa-phone"></i> Phone Number:</label>
-<p id="displayPhone"></p>
+<p  id="displayPhone"></p>
 
 <label for="edit-age"><i class="fas fa-birthday-cake"></i> Age:</label>
 <p id="displayAge"></p>
@@ -732,58 +732,188 @@ nav ul li a:hover {
             });
     };
 
-    function toggleEditForm() {
-        const btn = document.querySelector('.edit-button');
-        const profileInfo = document.querySelector('.profile-info');
-        const passwordContainer = document.getElementById('password-change-container');
-        const passwordFields = document.getElementById('password-fields');
+    // function toggleEditForm() {
+    //     const btn = document.querySelector('.edit-button');
+    //     const profileInfo = document.querySelector('.profile-info');
+    //     const passwordContainer = document.getElementById('password-change-container');
+    //     const passwordFields = document.getElementById('password-fields');
 
-        if (btn.innerText === 'Edit Profile') {
-            btn.innerText = 'Update';
-            passwordContainer.style.display = 'block';
-            passwordFields.style.display = 'none';
+    //     if (btn.innerText === 'Edit Profile') {
+    //         btn.innerText = 'Update';
+    //         passwordContainer.style.display = 'block';
+    //         passwordFields.style.display = 'none';
 
-            profileInfo.querySelectorAll('p').forEach(p => {
-                const label = p.previousElementSibling.innerText.toLowerCase().replace(/[^a-z]/g, '');
-                const key = { cnic: 'cnic', name: 'name', email: 'email', phone: 'phone', phonenumber: 'phone', age: 'age', dob: 'dob', dateofbirth: 'dob', gender: 'gender' }[label] || label;
+    //         profileInfo.querySelectorAll('p').forEach(p => {
+    //             const label = p.previousElementSibling.innerText.toLowerCase().replace(/[^a-z]/g, '');
+    //             const key = { cnic: 'cnic', name: 'name', email: 'email', phone: 'phone', phonenumber: 'phone', age: 'age', dob: 'dob', dateofbirth: 'dob', gender: 'gender' }[label] || label;
 
-                if (key === 'gender') {
-                    const select = document.createElement('select');
-                    select.id = 'edit-' + key;
-                    select.value = p.innerText.toLowerCase();
-                    select.innerHTML = `<option value="male">Male</option><option value="female">Female</option><option value="other">Other</option>`;
-                    p.replaceWith(select);
-                } else if (key === 'dob') {
-                    const input = document.createElement('input');
-                    input.type = 'date';
-                    input.id = 'edit-dob';
-                    input.value = p.innerText;
-                    input.addEventListener('change', () => {
-                        const dob = new Date(input.value);
-                        const today = new Date();
-                        if (dob > today) return alert("Date of Birth cannot be in the future.");
-                        let age = today.getFullYear() - dob.getFullYear();
-                        const monthDiff = today.getMonth() - dob.getMonth();
-                        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
-                        document.getElementById('displayAge').innerText = age;
-                    });
-                    p.replaceWith(input);
-                } else if (key === 'age') return;
-                else {
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.id = 'edit-' + key;
-                    input.value = p.innerText;
-                    p.replaceWith(input);
-                }
+    //             if (key === 'gender') {
+    //                 const select = document.createElement('select');
+    //                 select.id = 'edit-' + key;
+    //                 select.value = p.innerText.toLowerCase();
+    //                 select.innerHTML = `<option value="male">Male</option><option value="female">Female</option><option value="other">Other</option>`;
+    //                 p.replaceWith(select);
+    //             } else if (key === 'dob') {
+    //                 const input = document.createElement('input');
+    //                 input.type = 'date';
+    //                 input.id = 'edit-dob';
+    //                 input.value = p.innerText;
+    //                 input.addEventListener('change', () => {
+    //                     const dob = new Date(input.value);
+    //                     const today = new Date();
+    //                     if (dob > today) return alert("Date of Birth cannot be in the future.");
+    //                     let age = today.getFullYear() - dob.getFullYear();
+    //                     const monthDiff = today.getMonth() - dob.getMonth();
+    //                     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
+    //                     document.getElementById('displayAge').innerText = age;
+    //                 });
+    //                 p.replaceWith(input);
+    //             } else if (key === 'age') return;
+    //             else {
+    //                 const input = document.createElement('input');
+    //                 input.type = 'text';
+    //                 input.id = 'edit-' + key;
+    //                 input.value = p.innerText;
+    //                 p.replaceWith(input);
+    //             }
+    //         });
+    //     } else {
+    //         updateProfile();
+    //     }
+    // }
+function toggleEditForm() {
+    const btn = document.querySelector('.edit-button');
+    const profileInfo = document.querySelector('.profile-info');
+    const passwordContainer = document.getElementById('password-change-container');
+    const passwordFields = document.getElementById('password-fields');
+
+    if (btn.innerText === 'Edit Profile') {
+        btn.innerText = 'Update';
+        passwordContainer.style.display = 'block';
+        passwordFields.style.display = 'none';
+
+        profileInfo.querySelectorAll('p').forEach(p => {
+            const label = p.previousElementSibling.innerText.toLowerCase().replace(/[^a-z]/g, '');
+            const key = { cnic: 'cnic', name: 'name', email: 'email', phone: 'phone', phonenumber: 'phone', age: 'age', dob: 'dob', dateofbirth: 'dob', gender: 'gender' }[label] || label;
+
+            if (key === 'gender') {
+                const select = document.createElement('select');
+                select.id = 'edit-' + key;
+                select.value = p.innerText.toLowerCase();
+                select.innerHTML = `<option value="male">Male</option><option value="female">Female</option><option value="other">Other</option>`;
+                p.replaceWith(select);
+            } else if (key === 'dob') {
+                const input = document.createElement('input');
+                input.type = 'date';
+                input.id = 'edit-dob';
+                input.value = p.innerText;
+                input.addEventListener('change', () => {
+                    const dob = new Date(input.value);
+                    const today = new Date();
+                    if (dob > today) return alert("Date of Birth cannot be in the future.");
+                    let age = today.getFullYear() - dob.getFullYear();
+                    const monthDiff = today.getMonth() - dob.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
+                    document.getElementById('displayAge').innerText = age;
+                });
+                p.replaceWith(input);
+            } else if (key === 'age') return;
+            else {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = 'edit-' + key;
+                input.value = p.innerText;
+                p.replaceWith(input);
+            }
+        });
+
+        /*** LIVE VALIDATION SECTION - ADD AFTER THE FOR-EACH LOOP ***/
+
+        // NAME VALIDATION
+        const nameInput = document.getElementById('edit-name');
+        if (nameInput) {
+            const nameError = document.createElement('div');
+            nameError.style.color = 'red';
+            nameError.style.fontSize = '0.85em';
+            nameError.style.marginTop = '2px';
+            nameInput.after(nameError);
+            nameInput.addEventListener('input', () => {
+                nameError.innerText = nameInput.value.trim() === '' ? "❌ Name cannot be empty" : '';
             });
-        } else {
-            updateProfile();
         }
+
+        // EMAIL VALIDATION
+        const emailInput = document.getElementById('edit-email');
+        if (emailInput) {
+            const emailError = document.createElement('div');
+            emailError.style.color = 'red';
+            emailError.style.fontSize = '0.85em';
+            emailError.style.marginTop = '2px';
+            emailInput.after(emailError);
+            emailInput.addEventListener('input', () => {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                emailError.innerText = !emailRegex.test(emailInput.value.trim()) ? "❌ Invalid email" : '';
+            });
+        }
+
+        // PHONE VALIDATION
+        const phoneInput = document.getElementById('edit-phone');
+        if (phoneInput) {
+            const phoneError = document.createElement('div');
+            phoneError.style.color = 'red';
+            phoneError.style.fontSize = '0.85em';
+            phoneError.style.marginTop = '2px';
+            phoneInput.after(phoneError);
+            phoneInput.addEventListener('input', () => {
+                const phoneRegex = /^(03\d{9}|0\d{2,3}\d{7})$/;
+                phoneError.innerText = !phoneRegex.test(phoneInput.value.trim()) ? "❌ Invalid phone number" : '';
+            });
+        }
+
+        // CNIC VALIDATION
+        const cnicInput = document.getElementById('edit-cnic');
+        if (cnicInput) {
+            const cnicError = document.createElement('div');
+            cnicError.style.color = 'red';
+            cnicError.style.fontSize = '0.85em';
+            cnicError.style.marginTop = '2px';
+            cnicInput.after(cnicError);
+            cnicInput.addEventListener('input', () => {
+                const cnicRegex = /^[0-9]{5}-[0-9]{7}-[0-9]{1}$/;
+                cnicError.innerText = !cnicRegex.test(cnicInput.value.trim()) ? "❌ Invalid CNIC" : '';
+            });
+        }
+
+        // DOB VALIDATION (AGE AUTOMATICALLY UPDATED)
+        const dobInput = document.getElementById('edit-dob');
+        if (dobInput) {
+            const dobError = document.createElement('div');
+            dobError.style.color = 'red';
+            dobError.style.fontSize = '0.85em';
+            dobError.style.marginTop = '2px';
+            dobInput.after(dobError);
+            dobInput.addEventListener('change', () => {
+                const dob = new Date(dobInput.value);
+                const today = new Date();
+                if (dob > today) dobError.innerText = "❌ DOB cannot be in the future";
+                else dobError.innerText = '';
+            });
+        }
+
+    } else {
+        updateProfile();
     }
+}
 
     function updateProfile() {
         const btn = document.querySelector('.edit-button');
+        const errorDivs = document.querySelectorAll('.profile-info div');
+    for (const err of errorDivs) {
+        if (err.innerText.trim() !== '') {
+            alert("Please fix errors before updating your profile.");
+            return; // stop execution
+        }
+    }
         const getInput = id => document.getElementById(id) ? document.getElementById(id).value : '';
 
         const dobValue = getInput('edit-dob');
