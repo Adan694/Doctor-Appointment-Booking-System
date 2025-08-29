@@ -66,14 +66,20 @@ cron.schedule('* * * * *', async () => {
 
       const time = `${appt.date.toDateString()} at ${appt.time}`;
 
-      // ✅ 30-minute Reminder
-      if (timeDiff <= 30 * 60 * 1000 && !appt.reminderSent30min) {
+      //  30-minute Reminder
+if (
+  timeDiff <= 30 * 60 * 1000 &&
+  timeDiff > 25 * 60 * 1000 &&
+  !appt.reminderSent30min
+) {
         const patientMsg = `⏰ 30-Min Reminder: You have an appointment with Dr. ${doctor.name} on ${time}`;
         const doctorMsg = `⏰ 30-Min Reminder: You have an appointment with ${patient.name} on ${time}`;
 
-        await sendEmail(patient.email, 'Appointment Reminder - 30 Mins', patientMsg);
+        // await sendEmail(patient.email, 'Appointment Reminder - 30 Mins', patientMsg);
+const patientEmail = appt.email || patient.email;
+
+await sendEmail(patientEmail, 'Appointment Reminder - 30 Mins', patientMsg);
         await sendEmail(doctor.email, 'Appointment Reminder - 30 Mins', doctorMsg);
-        // ✅ Detailed logs here
   const formattedDate = new Date(appt.date).toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -84,16 +90,13 @@ cron.schedule('* * * * *', async () => {
   const patientConsoleMsg = `📣 Patient Reminder: You have an appointment with Dr. ${doctor.name} on ${formattedDate} at ${appt.time}`;
   const doctorConsoleMsg = `📣 Doctor Reminder: You have an appointment with ${patient.name} on ${formattedDate} at ${appt.time}`;
 
-        console.log(`📩 30-min reminder sent to ${patient.email} and ${doctor.email}`);
+        console.log(`📩 30-min reminder sent to ${patientEmail} and ${doctor.email}`);
         console.log(patientConsoleMsg);
 console.log(doctorConsoleMsg);
 
         appt.reminderSent30min = true;
         await appt.save();
       }
-
-      // ✅ 24-hour Reminder
-      // ✅ 24-hour Reminder
 else if (
   timeDiff > 23 * 60 * 60 * 1000 &&  // more than 23 hours away
   timeDiff <= 24 * 60 * 60 * 1000 && // less than or equal to 24 hours away
@@ -102,7 +105,11 @@ else if (
   const patientMsg = `⏰ 24-Hour Reminder: You have an appointment with Dr. ${doctor.name} on ${time}`;
   const doctorMsg = `⏰ 24-Hour Reminder: You have an appointment with ${patient.name} on ${time}`;
 
-  await sendEmail(patient.email, 'Appointment Reminder - 24 Hours', patientMsg);
+  // await sendEmail(patient.email, 'Appointment Reminder - 24 Hours', patientMsg);
+  const patientEmail = appt.email || patient.email;
+
+await sendEmail(patientEmail, 'Appointment Reminder - 24 Hours', patientMsg);
+
   await sendEmail(doctor.email, 'Appointment Reminder - 24 Hours', doctorMsg);
   
   const formattedDate = new Date(appt.date).toLocaleDateString('en-US', {
@@ -115,7 +122,7 @@ else if (
   const patientConsoleMsg = `📣 Patient Reminder: You have an appointment with Dr. ${doctor.name} on ${formattedDate} at ${appt.time}`;
   const doctorConsoleMsg = `📣 Doctor Reminder: You have an appointment with ${patient.name} on ${formattedDate} at ${appt.time}`;
 
-        console.log(`📩 24-hr reminder sent to ${patient.email} and ${doctor.email}`);
+        console.log(`📩 24-hr reminder sent to ${patientEmail} and ${doctor.email}`);
         console.log(patientConsoleMsg);
 console.log(doctorConsoleMsg);
 

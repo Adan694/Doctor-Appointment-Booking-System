@@ -339,7 +339,12 @@ if ((slotDateTime - now) >= 30 * 60 * 1000) {
       recipient: 'doctor'
     });
 
-    await notifyAll({ patient, message: patientMessage });
+    // await notifyAll({ patient, message: patientMessage });
+    await notifyAll({
+  patient: { ...patient.toObject(), email: booking.email || patient.email },
+  message: patientMessage
+});
+
     await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
     const admin = await User.findOne({ role: 'admin' });
     if (admin) {
@@ -460,7 +465,11 @@ const updatedAppointment = await appointment.save();
       recipient: 'doctor'
     });
 
-    await notifyAll({ patient, message: patientMessage });
+    // await notifyAll({ patient, message: patientMessage });
+await notifyAll({
+  patient: { ...patient.toObject(), email: updatedAppointment.email || patient.email },
+  message: patientMessage
+});
     await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
     const admin = await User.findOne({ role: 'admin' });
     if (admin) {
