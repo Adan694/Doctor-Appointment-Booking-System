@@ -340,6 +340,17 @@
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email) return "Email is required.";
         if (!regex.test(email)) return "Enter a valid email address.";
+        const allowedDomains = [
+          "gmail.com",
+          "yahoo.com",
+          "hotmail.com",
+          "outlook.com",
+        ];
+        const domain = email.split("@")[1].toLowerCase();
+
+        if (!allowedDomains.includes(domain)) {
+          return `Domain "${domain}" is not allowed. Use a valid email provider.`;
+        }
         return "";
       }
 

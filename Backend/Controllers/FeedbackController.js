@@ -160,7 +160,7 @@ const getAllFeedback = async (req, res) => {
     try {
         const feedbacks = await Feedback.find()
             .populate('doctorId', 'name')
-            .populate('patientId', 'name')
+            .populate('patientId', 'name email')
             .sort({ createdAt: -1 });
 
         res.status(200).json(feedbacks);
@@ -170,46 +170,6 @@ const getAllFeedback = async (req, res) => {
     }
 };
 
-const getFeedbackNotificationCount = async (req, res) => {
-    try {
-        const admin = await User.findOne({ role: 'admin' });
-        if (!admin) return res.status(404).json({ message: 'Admin not found' });
-         const allNotifications = await Notification.find({ userId: admin._id });
-        console.log('All notifications for admin:', allNotifications);
-
-        const count = await Notification.countDocuments({
-            userId: admin._id,
-            isRead: false
-        });
-
-        res.status(200).json({ count });
-    } catch (error) {
-        console.error('Error getting feedback notification count:', error);
-        res.status(500).json({ message: 'Error retrieving notification count' });
-    }
-};
-const markFeedbackNotificationAsRead = async (req, res) => {
-    try {
-        await Notification.findByIdAndUpdate(req.params.id, { isRead: true });
-        res.status(200).json({ message: 'Notification marked as read' });
-    } catch (error) {
-        console.error('Error marking notification as read:', error);
-        res.status(500).json({ message: 'Error updating notification' });
-    }
-};
-const markAllFeedbackNotificationsAsRead = async (req, res) => {
-    try {
-        const admin = await User.findOne({ role: 'admin' });
-        if (!admin) return res.status(404).json({ message: 'Admin not found' });
-
-        await Notification.updateMany({ userId: admin._id, isRead: false }, { isRead: true });
-
-        res.status(200).json({ message: 'All notifications marked as read' });
-    } catch (error) {
-        console.error('Error marking all notifications as read:', error);
-        res.status(500).json({ message: 'Server error' });
-    }
-};
 
 module.exports = {
     submitFeedback,
@@ -217,7 +177,4 @@ module.exports = {
     updateFeedback,
     deleteFeedback,
     getAllFeedback,
-    getFeedbackNotificationCount,
-    markFeedbackNotificationAsRead,
-    markAllFeedbackNotificationsAsRead,
 };

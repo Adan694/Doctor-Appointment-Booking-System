@@ -659,7 +659,6 @@ nav ul li a:hover {
     <div class="quick-links">
         <h3>Quick Links</h3>
         <ul>
-            <li><a href="">Home</a></li>
             <li><a href="Aboutus.html">About Us</a></li>
             <li><a href="">Services</a></li>
             <li><a href="Alldoctorsreal.html">Doctors</a></li>
@@ -870,18 +869,34 @@ function toggleEditForm() {
         }
 
         // CNIC VALIDATION
-        const cnicInput = document.getElementById('edit-cnic');
-        if (cnicInput) {
-            const cnicError = document.createElement('div');
-            cnicError.style.color = 'red';
-            cnicError.style.fontSize = '0.85em';
-            cnicError.style.marginTop = '2px';
-            cnicInput.after(cnicError);
-            cnicInput.addEventListener('input', () => {
-                const cnicRegex = /^[0-9]{5}-[0-9]{7}-[0-9]{1}$/;
-                cnicError.innerText = !cnicRegex.test(cnicInput.value.trim()) ? "❌ Invalid CNIC" : '';
-            });
-        }
+        // const cnicInput = document.getElementById('edit-cnic');
+        // if (cnicInput) {
+        //     const cnicError = document.createElement('div');
+        //     cnicError.style.color = 'red';
+        //     cnicError.style.fontSize = '0.85em';
+        //     cnicError.style.marginTop = '2px';
+        //     cnicInput.after(cnicError);
+        //     cnicInput.addEventListener('input', () => {
+        //         const cnicRegex = /^[0-9]{5}-[0-9]{7}-[0-9]{1}$/;
+        //         cnicError.innerText = !cnicRegex.test(cnicInput.value.trim()) ? "❌ Invalid CNIC" : '';
+        //     });
+        // }
+const cnicInput = document.getElementById('edit-cnic');
+if (cnicInput) {
+    const cnicError = document.createElement('div');
+    cnicError.style.color = 'red';
+    cnicError.style.fontSize = '0.85em';
+    cnicError.style.marginTop = '2px';
+    cnicInput.after(cnicError);
+
+    cnicInput.addEventListener('input', () => {
+        // Accept either 13 digits OR 5-7-1 with dashes
+        const cnicRegex = /^([0-9]{13}|[0-9]{5}-[0-9]{7}-[0-9]{1})$/;
+        cnicError.innerText = !cnicRegex.test(cnicInput.value.trim())
+            ? "❌ Invalid CNIC (must be 13 digits or 5-7-1 format with dashes)"
+            : '';
+    });
+}
 
         // DOB VALIDATION (AGE AUTOMATICALLY UPDATED)
         const dobInput = document.getElementById('edit-dob');

@@ -1,346 +1,352 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Patient Details - DocAssist</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-    
-        body {
-            font-family: 'Roboto', Arial, sans-serif;
-            display: flex;
-            min-height: 100vh;
-            background-color: #e6f2ff;
-            color: #333;
-        }
-    
-        /* Sidebar Styles */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Roboto", Arial, sans-serif;
+        display: flex;
+        min-height: 100vh;
+        background-color: #e6f2ff;
+        color: #333;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 250px;
+        min-width: 250px;
+        background-color: rgb(9, 102, 102);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px 0;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100vh;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar h2 {
+        font-size: 30px;
+        color: white;
+        margin: 0 0 40px 20px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        width: 100%;
+      }
+
+      .sidebar ul li {
+        padding: 12px 20px;
+      }
+
+      .sidebar ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 16px;
+        display: block;
+        border-radius: 6px;
+        padding: 10px 15px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .sidebar ul li a:hover,
+      .sidebar ul li a.active {
+        background-color: #0b4e4e;
+        color: white;
+        font-weight: bold;
+      }
+
+      /* Overlay for mobile */
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 250px;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 900;
+        display: none;
+      }
+
+      #overlay.active {
+        display: block;
+      }
+
+      /* Header */
+      header {
+        background-color: #166e6b;
+        color: white;
+        padding: 20px 16px;
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid white;
+      }
+
+      #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: white;
+      }
+
+      #logoutBtn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        font-size: 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      #logoutBtn:hover {
+        background-color: #d32f2f;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 20px;
+        margin-left: 250px;
+        width: calc(100% - 250px);
+      }
+
+      .main-content > header + .section {
+        margin-top: 20px;
+      }
+
+      /* Section container */
+      .section {
+        background: linear-gradient(135deg, #ffffff, #f4f9ff);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease;
+      }
+
+      .section:hover {
+        transform: translateY(-3px);
+      }
+
+      .section h2 {
+        font-size: 22px;
+        color: #166e6b;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #d4e1f5;
+        padding-bottom: 5px;
+      }
+
+      /* Basic Info styling */
+      #patient-info p {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+        color: #444;
+      }
+
+      #patient-info p strong {
+        min-width: 80px;
+        font-size: 15px;
+        color: #166e6b;
+      }
+
+      #patient-info p i {
+        margin-right: 8px;
+        color: #166e6b;
+      }
+
+      /* Table styles */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        text-transform: capitalize;
+      }
+
+      th {
+        background-color: #166e6b;
+        color: white;
+        text-align: left;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      tr:hover {
+        background-color: #eaf4ff;
+      }
+
+      /* Pagination */
+      .pagination {
+        text-align: center;
+        margin-top: 15px;
+      }
+
+      .pagination button {
+        background-color: #166e6b;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        margin: 0 4px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.3s ease;
+      }
+
+      .pagination button:disabled {
+        background-color: #999;
+        cursor: not-allowed;
+      }
+
+      .pagination button:hover:not(:disabled) {
+        background-color: #0f4d4b;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
         .sidebar {
-            width: 250px;
-            min-width: 250px;
-            background-color: rgb(9, 102, 102);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 1000;
-            transition: transform 0.3s ease;
+          transform: translateX(-100%);
         }
-    
-        .sidebar h2 {
-            font-size: 30px;
-            color: white;
-            margin: 0 0 40px 20px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
+
+        .sidebar.active {
+          transform: translateX(0);
         }
-    
-        .sidebar ul {
-            list-style: none;
-            width: 100%;
-        }
-    
-        .sidebar ul li {
-            padding: 12px 20px;
-        }
-    
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 16px;
-            display: block;
-            border-radius: 6px;
-            padding: 10px 15px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-    
-        .sidebar ul li a:hover,
-        .sidebar ul li a.active {
-            background-color: #0b4e4e;
-            color: white;
-            font-weight: bold;
-        }
-    
-        /* Overlay for mobile */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 250px;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 900;
-            display: none;
-        }
-    
-        #overlay.active {
-            display: block;
-        }
-    
-        /* Header */
-        header {
-            background-color: #166e6b;
-            color: white;
-            padding: 20px 16px;
-            font-size: 24px;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid white;
-        }
-    
-        #bar {
-            display: none;
-            font-size: 30px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: white;
-        }
-    
-        #logoutBtn {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            font-size: 14px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-    
-        #logoutBtn:hover {
-            background-color: #d32f2f;
-        }
-    
-        /* Main Content */
+
         .main-content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 250px;
-            width: calc(100% - 250px);
+          margin-left: 0;
+          width: 100%;
         }
-    
-        .main-content>header+.section {
-            margin-top: 20px;
+
+        #bar {
+          display: block;
         }
-    
-        /* Section container */
-        .section {
-            background: linear-gradient(135deg, #ffffff, #f4f9ff);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s ease;
-        }
-    
-        .section:hover {
-            transform: translateY(-3px);
-        }
-    
-        .section h2 {
-            font-size: 22px;
-            color: #166e6b;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #d4e1f5;
-            padding-bottom: 5px;
-        }
-    
-        /* Basic Info styling */
-        #patient-info p {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            font-size: 15px;
-            color: #444;
-        }
-    
-        #patient-info p strong {
-            min-width: 80px;
-            font-size: 15px;
-            color: #166e6b;
-        }
-    
-        #patient-info p i {
-            margin-right: 8px;
-            color: #166e6b;
-        }
-    
-        /* Table styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-    
-        th,
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            text-transform: capitalize;
-        }
-    
-        th {
-            background-color: #166e6b;
-            color: white;
-            text-align: left;
-        }
-    
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-    
-        tr:hover {
-            background-color: #eaf4ff;
-        }
-    
-        /* Pagination */
-        .pagination {
-            text-align: center;
-            margin-top: 15px;
-        }
-    
-        .pagination button {
-            background-color: #166e6b;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            margin: 0 4px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s ease;
-        }
-    
-        .pagination button:disabled {
-            background-color: #999;
-            cursor: not-allowed;
-        }
-    
-        .pagination button:hover:not(:disabled) {
-            background-color: #0f4d4b;
-        }
-    
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-    
-            .sidebar.active {
-                transform: translateX(0);
-            }
-    
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-    
-            #bar {
-                display: block;
-            }
-        }
+      }
     </style>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <div class="sidebar">
-        <h2>DocAssist</h2>
-        <ul>
-            <li><a href="Adminpanel.html">Dashboard</a></li>
-            <li><a href="adminappoint.html">Appointments</a></li>
-            <li><a href="add-doctors.html">Add Doctor</a></li>
-            <li><a href="admindoclist.html">Doctors List</a></li>
-            <li><a href="patients-list.html">Patients List</a></li>
-            <li><a href="settings.html">Profile</a></li>
-        </ul>
+      <h2>DocAssist</h2>
+      <ul>
+        <li><a href="Adminpanel.html">Dashboard</a></li>
+        <li><a href="adminappoint.html">Appointments</a></li>
+        <li><a href="add-doctors.html">Add Doctor</a></li>
+        <li><a href="admindoclist.html">Doctors List</a></li>
+        <li><a href="patients-list.html">Patients List</a></li>
+        <li><a href="AdminFeedback.html">Feedback</a></li>
+      </ul>
     </div>
     <div id="overlay"></div>
 
     <div class="main-content">
-        <header>
-            <i id="bar" class="fa-solid fa-bars"></i>
-            <div>Patient Details</div>
-            <button id="logoutBtn">Logout</button>
-        </header>
+      <header>
+        <i id="bar" class="fa-solid fa-bars"></i>
+        <div>Patient Details</div>
+        <button id="logoutBtn">Logout</button>
+      </header>
 
-        <div style="margin-top: 20px;"></div> <!-- Gap between header and first section -->
+      <div style="margin-top: 20px"></div>
+      <!-- Gap between header and first section -->
 
-        <div id="patient-info" class="section">
-            <h2>Basic Info</h2>
-            <p>Loading...</p>
-        </div>
+      <div id="patient-info" class="section">
+        <h2>Basic Info</h2>
+        <p>Loading...</p>
+      </div>
 
-        <div id="appointments" class="section">
-            <h2>Appointments</h2>
-            <p>Loading...</p>
-        </div>
+      <div id="appointments" class="section">
+        <h2>Appointments</h2>
+        <p>Loading...</p>
+      </div>
     </div>
 
     <script>
-        // Sidebar toggle
-        const bar = document.getElementById('bar');
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('overlay');
+      // Sidebar toggle
+      const bar = document.getElementById("bar");
+      const sidebar = document.querySelector(".sidebar");
+      const overlay = document.getElementById("overlay");
 
-        bar.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        });
+      bar.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+        overlay.classList.toggle("active");
+      });
 
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-        });
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+      });
 
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userRole');
-            window.location.href = 'login.html';
-        });
+      // Logout
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userRole");
+        window.location.href = "login.html";
+      });
 
-        // Patient details fetch
-        const token = localStorage.getItem('authToken');
-        const urlParams = new URLSearchParams(window.location.search);
-        const patientId = urlParams.get('id');
+      // Patient details fetch
+      const token = localStorage.getItem("authToken");
+      const urlParams = new URLSearchParams(window.location.search);
+      const patientId = urlParams.get("id");
 
-        if (!patientId) {
-            alert("No patient ID provided");
-            window.location.href = 'patients-list.html';
+      if (!patientId) {
+        alert("No patient ID provided");
+        window.location.href = "patients-list.html";
+      }
+
+      let appointments = [];
+      let currentPage = 1;
+      const itemsPerPage = 10;
+
+      function renderAppointments() {
+        if (appointments.length === 0) {
+          document.getElementById("appointments").innerHTML =
+            "<h2>Appointments</h2><p>No appointments found.</p>";
+          return;
         }
 
-        let appointments = [];
-        let currentPage = 1;
-        const itemsPerPage = 10;
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedApps = appointments.slice(start, end);
 
-       function renderAppointments() {
-            if (appointments.length === 0) {
-                document.getElementById('appointments').innerHTML = "<h2>Appointments</h2><p>No appointments found.</p>";
-                return;
-            }
-
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const paginatedApps = appointments.slice(start, end);
-
-            let tableHTML = `<h2>Appointments</h2>
+        let tableHTML = `<h2>Appointments</h2>
     <table>
         <thead>
             <tr>
@@ -356,90 +362,106 @@
         </thead>
         <tbody>`;
 
-            paginatedApps.forEach(a => {
-                const dateTimeString = `${a.date.split('T')[0]} ${a.time}`;
-                const appointmentDate = new Date(dateTimeString);
+        paginatedApps.forEach((a) => {
+          const dateTimeString = `${a.date.split("T")[0]} ${a.time}`;
+          const appointmentDate = new Date(dateTimeString);
 
-                tableHTML += `<tr>
+          tableHTML += `<tr>
                     <td>${a.name}</td>
             <td>${appointmentDate.toLocaleDateString()} ${a.time}</td>
-            <td>${a.doctorId?.name || a.doctorId || 'N/A'}</td>
-            <td>${a.patientNumber || 'N/A'}</td>
+            <td>${a.doctorId?.name || a.doctorId || "N/A"}</td>
+            <td>${a.patientNumber || "N/A"}</td>
             <td>${a.token}</td>
-            <td>${a.issue || '-'}</td>
+            <td>${a.issue || "-"}</td>
             <td>${a.status}</td>
-            <td>${a.feedback || '-'}</td>
+            <td>${a.feedback || "-"}</td>
         </tr>`;
-            });
+        });
 
-            tableHTML += "</tbody></table>";
+        tableHTML += "</tbody></table>";
 
-            // Pagination controls
-            tableHTML += `
+        // Pagination controls
+        tableHTML += `
         <div class="pagination">
-            <button onclick="prevPage()" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
-            <span>Page ${currentPage} of ${Math.ceil(appointments.length / itemsPerPage)}</span>
-            <button onclick="nextPage()" ${end >= appointments.length ? 'disabled' : ''}>Next</button>
+            <button onclick="prevPage()" ${
+              currentPage === 1 ? "disabled" : ""
+            }>Previous</button>
+            <span>Page ${currentPage} of ${Math.ceil(
+          appointments.length / itemsPerPage
+        )}</span>
+            <button onclick="nextPage()" ${
+              end >= appointments.length ? "disabled" : ""
+            }>Next</button>
         </div>
     `;
 
-            document.getElementById('appointments').innerHTML = tableHTML;
+        document.getElementById("appointments").innerHTML = tableHTML;
+      }
+
+      function nextPage() {
+        if (currentPage * itemsPerPage < appointments.length) {
+          currentPage++;
+          renderAppointments();
         }
+      }
 
+      function prevPage() {
+        if (currentPage > 1) {
+          currentPage--;
+          renderAppointments();
+        }
+      }
 
-        function nextPage() {
-            if ((currentPage * itemsPerPage) < appointments.length) {
-                currentPage++;
-                renderAppointments();
+      async function fetchPatientDetails() {
+        try {
+          // Fetch patient info
+          const res = await fetch(
+            `http://localhost:3000/api/admin/patients/${patientId}`,
+            {
+              headers: { Authorization: "Bearer " + token },
             }
-        }
+          );
+          const patient = await res.json();
 
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderAppointments();
-            }
-        }
-
-        async function fetchPatientDetails() {
-                try {
-                    // Fetch patient info
-                    const res = await fetch(`http://localhost:3000/api/admin/patients/${patientId}`, {
-                        headers: { Authorization: 'Bearer ' + token }
-                    });
-                    const patient = await res.json();
-
-                    // Show full profile data
-                    document.getElementById('patient-info').innerHTML = `
+          // Show full profile data
+          document.getElementById("patient-info").innerHTML = `
             <h2>Profile Info</h2>
-            <p><strong>Name:</strong> ${patient.name || ''}</p>
-            <p><strong>Email:</strong> ${patient.email || ''}</p>
-            <p><strong>Phone:</strong> ${patient.phone || ''}</p>
-            <p><strong>Age:</strong> ${patient.age || ''}</p>
-            <p><strong>DOB:</strong> ${patient.dob || ''}</p>
-            <p><strong>Gender:</strong> ${patient.gender || ''}</p>
-            <p><strong>Role:</strong> ${patient.role || ''}</p>
-            <p><strong>Missed Appointments:</strong> ${patient.missedAppointments || 0}</p>
-            <p><strong>Blocked:</strong> ${patient.isBlocked ? 'Yes' : 'No'}</p>
-            ${patient.unblockDate ? `<p><strong>Unblock Date:</strong> ${new Date(patient.unblockDate).toLocaleDateString()}</p>` : ''}
+            <p><strong>Name:</strong> ${patient.name || ""}</p>
+            <p><strong>Email:</strong> ${patient.email || ""}</p>
+            <p><strong>Phone:</strong> ${patient.phone || ""}</p>
+            <p><strong>Age:</strong> ${patient.age || ""}</p>
+            <p><strong>DOB:</strong> ${patient.dob || ""}</p>
+            <p><strong>Gender:</strong> ${patient.gender || ""}</p>
+            <p><strong>Role:</strong> ${patient.role || ""}</p>
+            <p><strong>Missed Appointments:</strong> ${
+              patient.missedAppointments || 0
+            }</p>
+            <p><strong>Blocked:</strong> ${patient.isBlocked ? "Yes" : "No"}</p>
+            ${
+              patient.unblockDate
+                ? `<p><strong>Unblock Date:</strong> ${new Date(
+                    patient.unblockDate
+                  ).toLocaleDateString()}</p>`
+                : ""
+            }
         `;
 
-                    // Fetch appointments
-                    const res2 = await fetch(`http://localhost:3000/api/admin/patients/${patientId}/appointments`, {
-                        headers: { Authorization: 'Bearer ' + token }
-                    });
-                    appointments = await res2.json();
-                    renderAppointments();
-
-                } catch (err) {
-                    console.error(err);
-                    alert("Error loading patient data");
-                }
+          // Fetch appointments
+          const res2 = await fetch(
+            `http://localhost:3000/api/admin/patients/${patientId}/appointments`,
+            {
+              headers: { Authorization: "Bearer " + token },
             }
+          );
+          appointments = await res2.json();
+          renderAppointments();
+        } catch (err) {
+          console.error(err);
+          alert("Error loading patient data");
+        }
+      }
 
-
-        fetchPatientDetails();
+      fetchPatientDetails();
     </script>
-</body>
-
+  </body>
 </html>

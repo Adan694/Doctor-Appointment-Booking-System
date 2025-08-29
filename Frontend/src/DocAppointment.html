@@ -1,1035 +1,1082 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Doctor Appointment Management</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
-       /* General Box Sizing & Body */
-* {
-    box-sizing: border-box;
-}
+      /* General Box Sizing & Body */
+      * {
+        box-sizing: border-box;
+      }
 
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background-color: #e6f2ff;
-    display: flex;
-    transition: background-color 0.3s ease;
-}
- nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            padding: 10px 20px;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background-color: rgb(9, 102, 102);
-            color: white;
-            z-index: 1000;
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background-color: #e6f2ff;
+        display: flex;
+        transition: background-color 0.3s ease;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 10px 20px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        z-index: 1000;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        margin: 0;
+      }
+
+      .logo img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+
+      .logo h1 {
+        font-size: 30px;
+        margin: 0;
+      }
+
+      .logo img:hover {
+        transform: scale(1.1) rotate(-5deg);
+      }
+
+      .logo h1 {
+        font-size: 28px;
+        background: linear-gradient(45deg, #ffffff, #cceeff);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      nav ul {
+        display: flex;
+      }
+
+      nav ul li {
+        list-style: none;
+        margin-top: 15px;
+      }
+
+      nav ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 20px;
+        margin-inline: 20px;
+      }
+
+      nav ul li a:hover {
+        color: black;
+        /* border-bottom: 2px solid black; */
+      }
+      #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+      }
+
+      /* Container */
+      .container {
+        padding: 20px;
+        max-width: 1200px;
+        width: 100%;
+        margin-top: 80px;
+      }
+
+      /* Section Blocks - card-like with hover */
+      .section-block {
+        background-color: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        margin-bottom: 30px;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        cursor: default;
+      }
+
+      .section-block:hover {
+        box-shadow: 0 10px 25px rgba(0, 128, 128, 0.2);
+        transform: translateY(-4px);
+      }
+
+      /* Section Titles */
+      .section-block h2 {
+        color: rgb(9, 102, 102);
+        margin-bottom: 20px;
+        letter-spacing: 0.05em;
+        transition: color 0.3s ease;
+      }
+
+      .section-block:hover h2 {
+        color: #007777;
+      }
+
+      /* Appointment Table */
+      .appointment-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 2px 0;
+        font-family: "Roboto", sans-serif;
+      }
+
+      .appointment-table thead th {
+        background-color: rgb(9, 102, 102);
+        color: white;
+        padding: 18px 24px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        border-radius: 6px;
+        user-select: none;
+        text-align: center;
+      }
+
+      .appointment-table tbody tr {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0, 128, 128, 0.07);
+        transition: box-shadow 0.3s ease, transform 0.3s ease,
+          border-color 0.3s ease;
+        border: 2px solid transparent;
+        cursor: pointer;
+      }
+
+      .appointment-table tbody tr:hover {
+        box-shadow: 0 8px 25px rgba(0, 128, 128, 0.2);
+        transform: translateY(-3px);
+        border-color: #009999;
+        background: rgba(240, 255, 255, 0.95);
+      }
+
+      .appointment-table tbody tr:hover td {
+        color: #007777;
+      }
+
+      .appointment-table tbody td {
+        padding: 14px 18px;
+        border-left: 1px solid rgba(0, 128, 128, 0.15);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        position: relative;
+      }
+      .appointment-table tbody td:nth-child(4) {
+        max-width: 250px;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      .appointment-table tbody td:first-child {
+        border-left: none;
+        border-radius: 12px 0 0 12px;
+      }
+
+      .appointment-table tbody td:last-child {
+        border-radius: 0 12px 12px 0;
+      }
+
+      .appointment-table tbody tr:hover td:hover {
+        background: rgba(228, 247, 247, 0.8);
+        color: #055b5b;
+      }
+
+      /* Page Title */
+      h1.page-title {
+        color: rgb(9, 102, 102);
+        margin-bottom: 30px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-align: center;
+        user-select: none;
+        transition: color 0.3s ease;
+      }
+
+      h1.page-title:hover {
+        color: #007777;
+      }
+
+      /* Pagination */
+      .pagination-controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-top: 20px;
+        font-family: Arial, sans-serif;
+      }
+
+      .pagination-controls button {
+        padding: 8px 18px;
+        background-color: #009999;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.25s ease, box-shadow 0.25s ease;
+        box-shadow: 0 3px 8px rgba(0, 153, 153, 0.4);
+      }
+
+      .pagination-controls button:hover:not(:disabled) {
+        background-color: #007777;
+        box-shadow: 0 6px 15px rgba(0, 119, 119, 0.6);
+      }
+
+      .pagination-controls button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+        opacity: 0.5;
+      }
+
+      .pagination-controls span {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+      }
+
+      /* Modal Styling Enhancements */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        transition: background-color 0.3s ease;
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 25px 35px;
+        border: 1px solid #009999;
+        width: 400px;
+        border-radius: 12px;
+        position: relative;
+        box-shadow: 0 10px 28px rgba(0, 153, 153, 0.3);
+        animation: fadeIn 0.35s ease-in-out;
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+
+      .modal-content:hover {
+        box-shadow: 0 14px 40px rgba(0, 153, 153, 0.45);
+        border-color: #007777;
+      }
+
+      .modal-content h3 {
+        margin-top: 0;
+        color: #006666;
+        user-select: none;
+      }
+
+      .modal-content button {
+        margin-top: 15px;
+        background-color: #009999;
+        color: white;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 700;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        width: 100%;
+        user-select: none;
+      }
+
+      .modal-content button:hover {
+        background-color: #007777;
+        box-shadow: 0 6px 16px rgba(0, 119, 119, 0.5);
+      }
+
+      #availableSlots {
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 15px;
+        border: 1.8px solid #009999;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        outline: none;
+        transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+      }
+
+      #availableSlots:focus {
+        border-color: #007777;
+        box-shadow: 0 0 8px #007777aa;
+      }
+
+      /* Close button */
+      .close {
+        color: #aaa;
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        font-size: 26px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        user-select: none;
+      }
+
+      .close:hover {
+        color: #004d4d;
+      }
+
+      /* Responsive Design tweaks kept as-is from your code */
+
+      /* Keyframes */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .appointment-table td:last-child {
+        white-space: nowrap; /* keeps buttons on one line */
+      }
+
+      .appointment-table td:last-child button {
+        margin-right: 6px; /* small space between buttons */
+      }
+
+      @media screen and (max-width: 768px) {
+        nav {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 10px;
         }
 
-         .logo {
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-    margin: 0;
-}
+        .logo h1 {
+          font-size: 22px;
+        }
 
-.logo img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: cover;
-}
-
-.logo h1 {
-    font-size: 30px;
-    margin: 0;
-}
-
-.logo img:hover {
-    transform: scale(1.1) rotate(-5deg);
-}
-
-.logo h1 {
-    font-size: 28px;
-    background: linear-gradient(45deg, #ffffff, #cceeff);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
         nav ul {
-            display: flex;
+          /* display: none;  */
+          flex-direction: column;
+          width: 100%;
+          position: absolute;
+          top: 70px;
+          left: 0;
+          background-color: rgb(9, 102, 102);
+          opacity: 0;
+          transition: max-height 0.4s ease, opacity 0.4s ease;
+          overflow: hidden;
+          max-height: 0;
+        }
+
+        nav ul.active {
+          /* display: flex;  */
+          max-height: 300px;
+          opacity: 1;
         }
 
         nav ul li {
-            list-style: none;
-            margin-top: 15px;
-
+          padding: 5px 0;
+          text-align: center;
         }
 
         nav ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 20px;
-            margin-inline: 20px;
+          font-size: 16px;
+          margin: 5px 0;
+        }
+        #bar {
+          display: block;
+          position: absolute;
+          right: 50px;
+          top: 20px;
+          font-size: 30px;
+          cursor: pointer;
+          z-index: 1001;
         }
 
-          nav ul li a:hover {
-            color: black;
-            /* border-bottom: 2px solid black; */
-        }
-         #bar {
-            display: none;
-            font-size: 30px;
-            cursor: pointer;
+        .container {
+          padding-top: 50px;
         }
 
-/* Container */
-.container {
-    padding: 20px;
-    max-width: 1200px;
-    width: 100%;
-    margin-top: 80px;
-}
-
-/* Section Blocks - card-like with hover */
-.section-block {
-    background-color: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    margin-bottom: 30px;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-    cursor: default;
-}
-
-.section-block:hover {
-    box-shadow: 0 10px 25px rgba(0, 128, 128, 0.2);
-    transform: translateY(-4px);
-}
-
-/* Section Titles */
-.section-block h2 {
-    color: rgb(9, 102, 102);
-    margin-bottom: 20px;
-    letter-spacing: 0.05em;
-    transition: color 0.3s ease;
-    
-}
-
-.section-block:hover h2 {
-    color: #007777;
-}
-
-/* Appointment Table */
-.appointment-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing:  2px 0;
-    font-family: 'Roboto', sans-serif;
-}
-
-.appointment-table thead th {
-    background-color: rgb(9, 102, 102);
-    color: white;
-    padding: 18px 24px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border-radius: 6px;
-    user-select: none;
-    text-align: center;
-    
-}
-
-.appointment-table tbody tr {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0, 128, 128, 0.07);
-    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
-    border: 2px solid transparent;
-    cursor: pointer;
-}
-
-.appointment-table tbody tr:hover {
-    box-shadow: 0 8px 25px rgba(0, 128, 128, 0.2);
-    transform: translateY(-3px);
-    border-color: #009999;
-    background: rgba(240, 255, 255, 0.95);
-}
-
-.appointment-table tbody tr:hover td {
-    color: #007777;
-}
-
-.appointment-table tbody td {
-    padding: 14px 18px;
-    border-left: 1px solid rgba(0, 128, 128, 0.15);
-    transition: background-color 0.3s ease, color 0.3s ease;
-    position: relative;
-}
-.appointment-table tbody td:nth-child(4) {
-    max-width: 250px;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: anywhere;
-}
-
-.appointment-table tbody td:first-child {
-    border-left: none;
-    border-radius: 12px 0 0 12px;
-}
-
-.appointment-table tbody td:last-child {
-    border-radius: 0 12px 12px 0;
-}
-
-.appointment-table tbody tr:hover td:hover {
-    background: rgba(228, 247, 247, 0.8);
-    color: #055b5b;
-}
-
-/* Page Title */
-h1.page-title {
-    color: rgb(9, 102, 102);
-    margin-bottom: 30px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-align: center;
-    user-select: none;
-    transition: color 0.3s ease;
-}
-
-h1.page-title:hover {
-    color: #007777;
-}
-
-/* Pagination */
-.pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-top: 20px;
-    font-family: Arial, sans-serif;
-}
-
-.pagination-controls button {
-    padding: 8px 18px;
-    background-color: #009999;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.25s ease, box-shadow 0.25s ease;
-    box-shadow: 0 3px 8px rgba(0, 153, 153, 0.4);
-}
-
-.pagination-controls button:hover:not(:disabled) {
-    background-color: #007777;
-    box-shadow: 0 6px 15px rgba(0, 119, 119, 0.6);
-}
-
-.pagination-controls button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-    box-shadow: none;
-    opacity: 0.5;
-}
-
-.pagination-controls span {
-    font-size: 14px;
-    font-weight: 500;
-    color: #333;
-}
-
-/* Modal Styling Enhancements */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    transition: background-color 0.3s ease;
-}
-
-.modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 25px 35px;
-    border: 1px solid #009999;
-    width: 400px;
-    border-radius: 12px;
-    position: relative;
-    box-shadow: 0 10px 28px rgba(0, 153, 153, 0.3);
-    animation: fadeIn 0.35s ease-in-out;
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-.modal-content:hover {
-    box-shadow: 0 14px 40px rgba(0, 153, 153, 0.45);
-    border-color: #007777;
-}
-
-.modal-content h3 {
-    margin-top: 0;
-    color: #006666;
-    user-select: none;
-}
-
-.modal-content button {
-    margin-top: 15px;
-    background-color: #009999;
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 700;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    width: 100%;
-    user-select: none;
-}
-
-.modal-content button:hover {
-    background-color: #007777;
-    box-shadow: 0 6px 16px rgba(0, 119, 119, 0.5);
-}
-
-#availableSlots {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 15px;
-    border: 1.8px solid #009999;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    outline: none;
-    transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
-}
-
-#availableSlots:focus {
-    border-color: #007777;
-    box-shadow: 0 0 8px #007777aa;
-}
-
-/* Close button */
-.close {
-    color: #aaa;
-    position: absolute;
-    right: 20px;
-    top: 15px;
-    font-size: 26px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    user-select: none;
-}
-
-.close:hover {
-    color: #004d4d;
-}
-
-/* Responsive Design tweaks kept as-is from your code */
-
-/* Keyframes */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-.appointment-table td:last-child {
-    white-space: nowrap; /* keeps buttons on one line */
-}
-
-.appointment-table td:last-child button {
-    margin-right: 6px; /* small space between buttons */
-}
-
-
-
-        @media screen and (max-width: 768px) {
-   nav {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px;
-    }
-
-
-    .logo h1 {
-        font-size: 22px;
-    }
-     
-
-     nav ul {
-        /* display: none;  */
-        flex-direction: column; 
-        width: 100%; 
-        position: absolute; 
-        top: 70px;
-        left: 0;
-        background-color: rgb(9, 102, 102);
-        opacity: 0;         
-        transition: max-height 0.4s ease, opacity 0.4s ease;      
-        overflow: hidden;
-        max-height: 0;
-    }
-
-    nav ul.active {
-        /* display: flex;  */
-        max-height: 300px; 
-        opacity: 1;
-    }
-
-    nav ul li {
-        padding: 5px 0;
-        text-align: center;   
-    }
-
-    nav ul li a {
-        font-size: 16px;
-        margin: 5px 0;
-    }
-  #bar {
-        display: block;
-        position: absolute;
-        right: 50px;
-        top: 20px;
-        font-size: 30px;
-        cursor: pointer;
-        z-index: 1001;
-    }
-
-
-    .container {
-        padding-top: 50px; 
+        .page-title {
+          font-size: 24px;
+          text-align: center;
+        }
+        .section-block {
+          padding: 15px;
+          overflow-x: auto;
+          max-width: 100%;
+          box-sizing: border-box;
         }
 
-    .page-title {
-        font-size: 24px;
-        text-align: center;
-    }
-    .section-block {
-  padding: 15px;     
-  overflow-x: auto;   
-  max-width: 100%;     
-  box-sizing: border-box;  
-}
+        .section-block h2 {
+          font-size: 20px;
+        }
+        .appointment-table {
+          width: 100%;
+          max-width: 100%;
+          border-collapse: collapse;
+        }
 
-    .section-block h2 {
-        font-size: 20px;
-    }
-    .appointment-table {
-  width: 100%;         
-  max-width: 100%;     
-  border-collapse: collapse;
-}
+        .appointment-table thead {
+          font-size: 14px;
+        }
 
+        .appointment-table td,
+        .appointment-table th {
+          font-size: 14px;
+          padding: 8px;
+        }
+      }
 
-    .appointment-table thead {
-        font-size: 14px;
-    }
+      @media screen and (max-width: 480px) {
+        .logo img {
+          width: 40px;
+          height: 40px;
+        }
 
-    .appointment-table td,
-    .appointment-table th {
-        font-size: 14px;
-        padding: 8px;
-    }
-}
+        .logo h1 {
+          font-size: 18px;
+        }
 
-@media screen and (max-width: 480px) {
-    .logo img {
-        width: 40px;
-        height: 40px;
-    }
+        .page-title {
+          font-size: 20px;
+        }
 
-    .logo h1 {
-        font-size: 18px;
-    }
+        .appointment-table {
+          display: block;
+          width: 100%;
+          overflow-x: auto;
+        }
 
-    .page-title {
-        font-size: 20px;
-    }
+        .appointment-table thead,
+        .appointment-table tbody,
+        .appointment-table th,
+        .appointment-table td,
+        .appointment-table tr {
+          display: block;
+          width: 100%;
+        }
 
-    .appointment-table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-    }
+        .appointment-table td,
+        .appointment-table th {
+          padding: 10px;
+          text-align: left;
+          min-width: 120px;
+          white-space: nowrap;
+        }
 
-    .appointment-table thead,
-    .appointment-table tbody,
-    .appointment-table th,
-    .appointment-table td,
-    .appointment-table tr {
-        display: block;
-        width: 100%;
-    }
-
-    .appointment-table td,
-    .appointment-table th {
-        padding: 10px;
-        text-align: left;
-        min-width: 120px;
-        white-space: nowrap;
-    }
-
-    .section-block {
-        padding: 15px;
-    }
-}
-/* Responsive Design */
-    @media (max-width: 768px) {
+        .section-block {
+          padding: 15px;
+        }
+      }
+      /* Responsive Design */
+      @media (max-width: 768px) {
         .modal-content {
-            padding: 25px 20px;
-            max-width: 90%;
+          padding: 25px 20px;
+          max-width: 90%;
         }
 
         .modal-content h3 {
-            font-size: 18px;
+          font-size: 18px;
         }
 
         .modal-content button {
-            font-size: 14px;
-            padding: 10px 14px;
+          font-size: 14px;
+          padding: 10px 14px;
         }
-    }
+      }
 
-    @media (max-width: 480px) {
+      @media (max-width: 480px) {
         .modal-content {
-            padding: 20px 15px;
+          padding: 20px 15px;
         }
 
         .modal-content h3 {
-            font-size: 16px;
+          font-size: 16px;
         }
 
         .modal-content .close {
-            font-size: 20px;
+          font-size: 20px;
         }
 
         #availableSlots {
-            font-size: 13px;
-            padding: 8px 10px;
+          font-size: 13px;
+          padding: 8px 10px;
         }
 
         .modal-content button {
-            font-size: 13px;
+          font-size: 13px;
         }
-    }
+      }
 
-   .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
 
-.modal-content {
-  background: #fff;
-  padding: 25px 35px;
-  border-radius: 10px;
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-  border: 2px solid #4a90e2; /* soft blue border */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #222;
-}
+      .modal-content {
+        background: #fff;
+        padding: 25px 35px;
+        border-radius: 10px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        border: 2px solid #4a90e2; /* soft blue border */
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: #222;
+      }
 
-.modal-content button {
-  margin: 12px 15px 0 15px;
-  padding: 10px 22px;
-  font-size: 1.05rem;
-  cursor: pointer;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-}
+      .modal-content button {
+        margin: 12px 15px 0 15px;
+        padding: 10px 22px;
+        font-size: 1.05rem;
+        cursor: pointer;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: background-color 0.25s ease, border-color 0.25s ease,
+          box-shadow 0.25s ease;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      }
 
-.modal-content button:hover {
-  border-color: #4a90e2;
-  box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
-}
-.filter-bar {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 15px;
-    margin: 20px 0;
-    padding: 12px 15px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
+      .modal-content button:hover {
+        border-color: #4a90e2;
+        box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
+      }
+      .filter-bar {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 15px;
+        margin: 20px 0;
+        padding: 12px 15px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
 
-.filter-bar input {
-    flex: 1;
-    padding: 10px 14px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: all 0.2s ease;
-}
+      .filter-bar input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
 
-.filter-bar input:focus {
-    border-color: #4a90e2;
-    outline: none;
-    box-shadow: 0 0 4px rgba(74, 144, 226, 0.3);
-}
+      .filter-bar input:focus {
+        border-color: #4a90e2;
+        outline: none;
+        box-shadow: 0 0 4px rgba(74, 144, 226, 0.3);
+      }
 
-.filter-bar select {
-    padding: 10px 14px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-    background: #fff;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+      .filter-bar select {
+        padding: 10px 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
 
-.filter-bar select:hover {
-    border-color: #4a90e2;
-}
+      .filter-bar select:hover {
+        border-color: #4a90e2;
+      }
 
-.filter-bar select:focus {
-    border-color: #4a90e2;
-    outline: none;
-    box-shadow: 0 0 4px rgba(74, 144, 226, 0.3);
-}
-.modal-open {
-    overflow: hidden;
-}
-
-
+      .filter-bar select:focus {
+        border-color: #4a90e2;
+        outline: none;
+        box-shadow: 0 0 4px rgba(74, 144, 226, 0.3);
+      }
+      .modal-open {
+        overflow: hidden;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <nav>
-        <div class="logo">
-            <img src="images/Da.png" alt="DocAssist Logo">
-            <h1>DocAssist</h1>
-        </div>
-        <i id="bar" class="fa-solid fa-bars"></i>
-        <ul>
-            <li><a href="docpanel.html">Dashboard</a></li>
-            <li><a href="DocAppointment.html">Appointments</a></li>
-            <li><a href="docprofile.html">Profile</a></li>
-            <li><a href="docavailability.html">Manage Availability</a></li>
-            <li><a href="Docfeedback.html">Feedback</a></li>
-            <li><a href="login.html">Logout</a></li>
-        </ul>
+      <div class="logo">
+        <img src="images/Da.png" alt="DocAssist Logo" />
+        <h1>DocAssist</h1>
+      </div>
+      <i id="bar" class="fa-solid fa-bars"></i>
+      <ul>
+        <li><a href="docpanel.html">Dashboard</a></li>
+        <li><a href="DocAppointment.html">Appointments</a></li>
+        <li><a href="docprofile.html">Profile</a></li>
+        <li><a href="docavailability.html">Manage Availability</a></li>
+        <li><a href="Docfeedback.html">Feedback</a></li>
+        <li><a href="login.html">Logout</a></li>
+      </ul>
     </nav>
 
     <div class="container">
-        <h1 class="page-title">Appointment Management</h1>
-<div class="filter-bar">
-    <input type="text" id="searchAppointments" placeholder="Search by patient name...">
-    <select id="statusFilter">
-        <option value="all">All</option>
-        <option value="new">New</option>
-        <option value="cancelled">Cancelled</option>
-        <option value="completed">Completed</option>
-        <option value="missed">Missed</option>
-    </select>
-</div>
+      <h1 class="page-title">Appointment Management</h1>
+      <div class="filter-bar">
+        <input
+          type="text"
+          id="searchAppointments"
+          placeholder="Search by patient name..."
+        />
+        <select id="statusFilter">
+          <option value="all">All</option>
+          <option value="new">New</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="completed">Completed</option>
+          <option value="missed">Missed</option>
+        </select>
+      </div>
 
-
-
-        <!-- New Appointments Section -->
-        <div class="section-block">
-            <h2>New Appointments</h2>
-            <table class="table appointment-table">
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Appointment Date & Time</th>
-                        <th>Phone Number</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="newAppointments"></tbody>
-            </table>
-            <div id="newAppointmentsPagination" class="pagination-controls">
-                <button onclick="prevPage('newAppointments')">Prev</button>
-                <span id="newAppointmentsPageInfo"></span>
-                <button onclick="nextPage('newAppointments')">Next</button>
-            </div>
+      <!-- New Appointments Section -->
+      <div class="section-block">
+        <h2>New Appointments</h2>
+        <table class="table appointment-table">
+          <thead>
+            <tr>
+              <th>Patient Name</th>
+              <th>Appointment Date & Time</th>
+              <th>Phone Number</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="newAppointments"></tbody>
+        </table>
+        <div id="newAppointmentsPagination" class="pagination-controls">
+          <button onclick="prevPage('newAppointments')">Prev</button>
+          <span id="newAppointmentsPageInfo"></span>
+          <button onclick="nextPage('newAppointments')">Next</button>
         </div>
-        
+      </div>
 
-
-        <!-- Cancelled Appointments Section -->
-        <div class="section-block">
-            <h2>Cancelled Appointments</h2>
-            <table class="table appointment-table">
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Appointment Date & Time</th>
-                        <th>Phone Number</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="cancelledAppointments"></tbody>
-            </table>
-            <div id="cancelledAppointmentsPagination" class="pagination-controls">
-                <button onclick="prevPage('cancelledAppointments')">Prev</button>
-                <span id="cancelledAppointmentsPageInfo"></span>
-                <button onclick="nextPage('cancelledAppointments')">Next</button>
-            </div>
-
+      <!-- Cancelled Appointments Section -->
+      <div class="section-block">
+        <h2>Cancelled Appointments</h2>
+        <table class="table appointment-table">
+          <thead>
+            <tr>
+              <th>Patient Name</th>
+              <th>Appointment Date & Time</th>
+              <th>Phone Number</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="cancelledAppointments"></tbody>
+        </table>
+        <div id="cancelledAppointmentsPagination" class="pagination-controls">
+          <button onclick="prevPage('cancelledAppointments')">Prev</button>
+          <span id="cancelledAppointmentsPageInfo"></span>
+          <button onclick="nextPage('cancelledAppointments')">Next</button>
         </div>
+      </div>
 
-        <!-- Completed Appointments Section -->
-        <div class="section-block">
-            <h2>Completed Appointments</h2>
-            <table class="table appointment-table">
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Appointment Date & Time</th>
-                        <th>Phone Number</th>
-                        <th>Feedback</th>
-                    </tr>
-                </thead>
-                <tbody id="completedAppointments"></tbody>
-            </table>
+      <!-- Completed Appointments Section -->
+      <div class="section-block">
+        <h2>Completed Appointments</h2>
+        <table class="table appointment-table">
+          <thead>
+            <tr>
+              <th>Patient Name</th>
+              <th>Appointment Date & Time</th>
+              <th>Phone Number</th>
+              <th>Feedback</th>
+            </tr>
+          </thead>
+          <tbody id="completedAppointments"></tbody>
+        </table>
 
-            <div id="completedAppointmentsPagination" class="pagination-controls">
-                <button onclick="prevPage('completedAppointments')">Prev</button>
-                <span id="completedAppointmentsPageInfo"></span>
-                <button onclick="nextPage('completedAppointments')">Next</button>
-            </div>
-
+        <div id="completedAppointmentsPagination" class="pagination-controls">
+          <button onclick="prevPage('completedAppointments')">Prev</button>
+          <span id="completedAppointmentsPageInfo"></span>
+          <button onclick="nextPage('completedAppointments')">Next</button>
         </div>
+      </div>
 
-        <!-- Missed Appointments Section -->
-        <div class="section-block">
-            <h2>Missed Appointments</h2>
-            <table class="table appointment-table">
-                <thead>
-                    <tr>
-                        <th>Patient Name</th>
-                        <th>Appointment Date & Time</th>
-                        <th>Phone Number</th>
-                    </tr>
-                </thead>
-                <tbody id="missedAppointments"></tbody>
-            </table>
-            <div id="missedAppointmentsPagination" class="pagination-controls">
-                <button onclick="prevPage('missedAppointments')">Prev</button>
-                <span id="missedAppointmentsPageInfo"></span>
-                <button onclick="nextPage('missedAppointments')">Next</button>
-            </div>
-
+      <!-- Missed Appointments Section -->
+      <div class="section-block">
+        <h2>Missed Appointments</h2>
+        <table class="table appointment-table">
+          <thead>
+            <tr>
+              <th>Patient Name</th>
+              <th>Appointment Date & Time</th>
+              <th>Phone Number</th>
+            </tr>
+          </thead>
+          <tbody id="missedAppointments"></tbody>
+        </table>
+        <div id="missedAppointmentsPagination" class="pagination-controls">
+          <button onclick="prevPage('missedAppointments')">Prev</button>
+          <span id="missedAppointmentsPageInfo"></span>
+          <button onclick="nextPage('missedAppointments')">Next</button>
         </div>
+      </div>
     </div>
-<!-- MODAL -->
-<div id="rescheduleModal" class="modal">
-    <div class="modal-content">
+    <!-- MODAL -->
+    <div id="rescheduleModal" class="modal">
+      <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <h3>Choose a New Slot</h3>
 
         <select id="availableSlots">
-            <option value="">Select a slot</option>
+          <option value="">Select a slot</option>
         </select>
 
-        <input type="hidden" id="appointmentId">
+        <input type="hidden" id="appointmentId" />
         <button onclick="confirmReschedule()">Confirm Reschedule</button>
-<!-- <button class="btn btn-warning" onclick="rescheduleAppointment('{{appointment._id}}')">Reschedule</button> -->
-
+        <!-- <button class="btn btn-warning" onclick="rescheduleAppointment('{{appointment._id}}')">Reschedule</button> -->
+      </div>
     </div>
-</div>
 
-<!-- Confirmation Modal -->
-<div id="confirmModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content">
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
         <p>Are you sure you want to mark this appointment as Completed?</p>
         <button id="confirmYes">Yes</button>
         <button id="confirmNo">No</button>
+      </div>
     </div>
-</div>
 
-<!-- Success Modal -->
-<div id="successModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content">
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
         <p>Appointment moved to completed successfully.</p>
         <button id="successOk">OK</button>
+      </div>
     </div>
-</div>
-<!-- Adeed -->
-<!-- Missed Confirmation Modal -->
-<div id="missedConfirmModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content">
+    <!-- Adeed -->
+    <!-- Missed Confirmation Modal -->
+    <div id="missedConfirmModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
         <p>Are you sure you want to mark this appointment as Missed?</p>
         <button id="missedConfirmYes">Yes</button>
         <button id="missedConfirmNo">No</button>
+      </div>
     </div>
-</div>
 
-<!-- Missed Success Modal -->
-<div id="missedSuccessModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content">
+    <!-- Missed Success Modal -->
+    <div id="missedSuccessModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
         <p>Appointment marked as Missed successfully.</p>
         <button id="missedSuccessOk">OK</button>
+      </div>
     </div>
-</div>
 
-<!-- Cancelled Confirmation Modal -->
-<div id="cancelConfirmModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content">
+    <!-- Cancelled Confirmation Modal -->
+    <div id="cancelConfirmModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
         <p>Are you sure you want to mark this appointment as Cancelled?</p>
         <button id="cancelConfirmYes">Yes</button>
         <button id="cancelConfirmNo">No</button>
+      </div>
     </div>
-</div>
 
-<div id="cancelSuccessModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content">
+    <div id="cancelSuccessModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
         <p>Appointment cancelled successfully.</p>
         <button id="cancelSuccessOk">OK</button>
+      </div>
     </div>
-</div>
 
-<script>
-        console.log("Script loaded"); 
-         document.addEventListener('DOMContentLoaded', () => {
-                const bar = document.getElementById('bar');
-                const menu = document.querySelector('nav ul');
-                const logoutButton = document.getElementById('logoutBtn');
-             if (logoutButton) {
-                 logoutButton.addEventListener('click', logout);
-             }
+    <script>
+      console.log("Script loaded");
+      document.addEventListener("DOMContentLoaded", () => {
+        const bar = document.getElementById("bar");
+        const menu = document.querySelector("nav ul");
+        const logoutButton = document.getElementById("logoutBtn");
+        if (logoutButton) {
+          logoutButton.addEventListener("click", logout);
+        }
 
-
-                bar.addEventListener('click', function () {
-                    menu.classList.toggle('active');
-                });
-            });
-    function filterAppointments() {
-        const searchValue = document.getElementById("searchAppointments").value.toLowerCase();
+        bar.addEventListener("click", function () {
+          menu.classList.toggle("active");
+        });
+      });
+      function filterAppointments() {
+        const searchValue = document
+          .getElementById("searchAppointments")
+          .value.toLowerCase();
         const statusValue = document.getElementById("statusFilter").value;
 
         // Control which sections are visible
-        document.querySelectorAll(".section-block").forEach(section => {
-            const sectionTitle = section.querySelector("h2").textContent.toLowerCase();
+        document.querySelectorAll(".section-block").forEach((section) => {
+          const sectionTitle = section
+            .querySelector("h2")
+            .textContent.toLowerCase();
 
-            if (statusValue === "all") {
-                section.style.display = "";
-            } else if (sectionTitle.includes(statusValue)) {
-                section.style.display = "";
-            } else {
-                section.style.display = "none";
-            }
+          if (statusValue === "all") {
+            section.style.display = "";
+          } else if (sectionTitle.includes(statusValue)) {
+            section.style.display = "";
+          } else {
+            section.style.display = "none";
+          }
         });
 
         // Apply search filter inside visible sections
-        document.querySelectorAll(".appointment-table tbody tr").forEach(row => {
-            const patientName = row.querySelector("td:nth-child(1)")?.textContent.toLowerCase() || "";
+        document
+          .querySelectorAll(".appointment-table tbody tr")
+          .forEach((row) => {
+            const patientName =
+              row.querySelector("td:nth-child(1)")?.textContent.toLowerCase() ||
+              "";
 
             if (patientName.includes(searchValue)) {
-                row.style.display = "";
+              row.style.display = "";
             } else {
-                row.style.display = "none";
+              row.style.display = "none";
             }
-        });
-    }
+          });
+      }
 
-    // Attach event listeners
-    document.getElementById("searchAppointments").addEventListener("input", filterAppointments);
-    document.getElementById("statusFilter").addEventListener("change", filterAppointments);
+      // Attach event listeners
+      document
+        .getElementById("searchAppointments")
+        .addEventListener("input", filterAppointments);
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", filterAppointments);
 
-        function markAppointmentAsMissed(appointmentId) {
-            const token = localStorage.getItem('authToken');
-            return fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                    },
-                body: JSON.stringify({ status: 'Missed' })
-            })
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to mark appointment as missed');
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(`✅ Marked appointment ${appointmentId} as Missed`);
-                    return data;
-                });
+      function markAppointmentAsMissed(appointmentId) {
+        const token = localStorage.getItem("authToken");
+        return fetch(
+          `http://localhost:3000/api/appointments/${appointmentId}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status: "Missed" }),
+          }
+        )
+          .then((response) => {
+            if (!response.ok)
+              throw new Error("Failed to mark appointment as missed");
+            return response.json();
+          })
+          .then((data) => {
+            console.log(`✅ Marked appointment ${appointmentId} as Missed`);
+            return data;
+          });
+      }
+
+      function loadPatientAppointments() {
+        const token = localStorage.getItem("authToken");
+        const patientId = localStorage.getItem("patientId");
+        const doctorId = localStorage.getItem("doctorId");
+
+        if (!token || !patientId || !doctorId) {
+          console.error("Missing required localStorage data.");
+          return;
         }
-        
-        function loadPatientAppointments() {
-                const token = localStorage.getItem('authToken');
-                const patientId = localStorage.getItem('patientId');
-                const doctorId = localStorage.getItem('doctorId');
 
-                if (!token || !patientId || !doctorId) {
-                    console.error("Missing required localStorage data.");
-                    return;
+        // Fetch both appointments and feedback
+        Promise.all([
+          fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }).then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch appointments");
+            return res.json();
+          }),
+
+          fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }).then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch feedback");
+            return res.json();
+          }),
+        ])
+          .then(([appointments, feedbackList]) => {
+            console.log("Loaded feedbackList:", feedbackList);
+
+            appointments.forEach((appointment) => {
+              console.log("Checking appointment:", appointment);
+
+              const status = appointment.status?.toLowerCase() || "pending";
+              const appointmentDateTime = new Date(
+                `${appointment.date} ${appointment.time}`
+              );
+              const now = new Date();
+
+              // const feedback = feedbackList.find(fb => {
+              //         const apptPatientId = typeof appointment.patientId === "object"
+              //             ? appointment.patientId._id
+              //             : appointment.patientId;
+
+              //         return (
+              //             fb.patientId?.toString() === apptPatientId?.toString() &&
+              //             fb.doctorId?.toString() === doctorId?.toString() &&
+              //             fb.appointmentId?.toString() === appointment._id?.toString()
+              //         );
+              //     });
+              const feedback = feedbackList.find((fb) => {
+                let apptPatientId = null;
+
+                if (appointment.patientId) {
+                  apptPatientId =
+                    typeof appointment.patientId === "object"
+                      ? appointment.patientId._id
+                      : appointment.patientId;
                 }
 
-                // Fetch both appointments and feedback
-                Promise.all([
-                     fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, { 
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    }).then(res => {
-                        if (!res.ok) throw new Error("Failed to fetch appointments");
-                        return res.json();
-                    }),
+                return (
+                  fb.patientId?.toString() === apptPatientId?.toString() &&
+                  fb.doctorId?.toString() === doctorId?.toString() &&
+                  fb.appointmentId?.toString() === appointment._id?.toString()
+                );
+              });
 
-                    
-                    fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    }).then(res => {
-                        if (!res.ok) throw new Error("Failed to fetch feedback");
-                        return res.json();
-                    })
-                ])
-                    .then(([appointments, feedbackList]) => {
-                            console.log("Loaded feedbackList:", feedbackList); 
+              console.log(
+                "Looking for feedback: userId",
+                appointment.patientId?._id,
+                "doctorId",
+                doctorId
+              );
 
-                        appointments.forEach(appointment => {
-                                    console.log("Checking appointment:", appointment); 
-
-                            const status = appointment.status?.toLowerCase() || 'pending';
-                            const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
-                            const now = new Date();
-
-                        const feedback = feedbackList.find(fb => {
-                                const apptPatientId = typeof appointment.patientId === "object"
-                                    ? appointment.patientId._id
-                                    : appointment.patientId;
-
-                                return (
-                                    fb.patientId?.toString() === apptPatientId?.toString() &&
-                                    fb.doctorId?.toString() === doctorId?.toString() &&
-                                    fb.appointmentId?.toString() === appointment._id?.toString()
-                                );
-                            });
-
-                            console.log("Looking for feedback: userId", appointment.patientId?._id, "doctorId", doctorId);
-
-
-                            if (status === 'cancelled') {
-                                addCancelledAppointmentRow({
-                                    id: appointment._id,
-                                    patientName: appointment.name || appointment.patientId.name,
-                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                    phone: appointment.phone || appointment.patientId.phone,
-                                });
-                            } else if (status === 'missed') {
-                                addMissedAppointmentRow({
-                                    patientName: appointment.name || appointment.patientId.name,
-                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                    phone: appointment.phone || appointment.patientId.phone
-                                });
-                            } else if (status === 'completed') {
-                                addCompletedAppointmentRow({
-                                    id: appointment._id,
-                                    patientName: appointment.name || appointment.patientId.name,
-                                    phone: appointment.phone || appointment.patientId.phone,
-                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                    feedback: feedback
-                                        ? `<strong>Rating:</strong> ${feedback.rating}<br><strong>Comment:</strong> ${feedback.comment}`
-                                        : 'No feedback yet'
-                                });
-                            } else {
-                                addNewAppointmentRow({
-                                    id: appointment._id,
-                                    patientName: appointment.name || appointment.patientId.name,
-                                    appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                    phone: appointment.phone || appointment.patientId.phone,
-                                    status: appointment.status || 'Pending'
-                                });
-                            }
-                        });
-                    })
-                    .catch(err => {
-                        console.error("Error fetching patient appointments or feedback:", err);
-                    });
-            }
-
-
-        function loadDoctorAppointments() {
-            const doctorId = localStorage.getItem('doctorId'); 
-            const token = localStorage.getItem('authToken'); 
-
-            fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Failed to fetch appointments');
-                    return response.json();
-                })
-                .then(data => {
-                    data.forEach(appointment => {
-                        if (appointment.status === 'Completed') {
-                            addCompletedAppointmentRow({
-                                id: appointment._id, 
-                                patientName: appointment.patientId.name,
-                                phone: appointment.patientId.phone || 'N/A',
-                                appointmentTime: new Date(appointment.date).toLocaleDateString() + ' ' + appointment.time,
-                                feedback: appointment.feedback || ''  
-
-                            });
-                        }
-                    });
-                })
-                .catch(err => console.error("Error fetching doctor appointments:", err));
-        }
-
-       function loadFromLocalStorage() {
-            const doctorId = localStorage.getItem('doctorId');
-            const cancelledAppointments = JSON.parse(localStorage.getItem('cancelledAppointments')) || [];
-
-            cancelledAppointments
-                .filter(appointment => appointment.doctorId === doctorId)  
-                .forEach(appointment => {
-                    addCancelledAppointmentRow(appointment);
+              if (status === "cancelled") {
+                addCancelledAppointmentRow({
+                  id: appointment._id,
+                  patientName: appointment.name || appointment.patientId.name,
+                  appointmentTime:
+                    new Date(appointment.date).toLocaleDateString() +
+                    " " +
+                    appointment.time,
+                  phone: appointment.phone || appointment.patientId.phone,
                 });
-        }
+              } else if (status === "missed") {
+                addMissedAppointmentRow({
+                  patientName: appointment.name || appointment.patientId.name,
+                  appointmentTime:
+                    new Date(appointment.date).toLocaleDateString() +
+                    " " +
+                    appointment.time,
+                  phone: appointment.phone || appointment.patientId.phone,
+                });
+              } else if (status === "completed") {
+                addCompletedAppointmentRow({
+                  id: appointment._id,
+                  patientName: appointment.name || appointment.patientId.name,
+                  phone: appointment.phone || appointment.patientId.phone,
+                  appointmentTime:
+                    new Date(appointment.date).toLocaleDateString() +
+                    " " +
+                    appointment.time,
+                  feedback: feedback
+                    ? `<strong>Rating:</strong> ${feedback.rating}<br><strong>Comment:</strong> ${feedback.comment}`
+                    : "No feedback yet",
+                });
+              } else {
+                addNewAppointmentRow({
+                  id: appointment._id,
+                  patientName: appointment.name || appointment.patientId.name,
+                  appointmentTime:
+                    new Date(appointment.date).toLocaleDateString() +
+                    " " +
+                    appointment.time,
+                  phone: appointment.phone || appointment.patientId.phone,
+                  status: appointment.status || "Pending",
+                });
+              }
+            });
+          })
+          .catch((err) => {
+            console.error(
+              "Error fetching patient appointments or feedback:",
+              err
+            );
+          });
+      }
 
-        // Call this function on page load
-        window.onload = function () {
-            loadFromLocalStorage();
-            loadPatientAppointments();
-            // loadDoctorAppointments();
-        };
-       function addNewAppointmentRow(appointment) {
-            const rowHTML = `<tr data-appointment-id="${appointment.id}"> 
+      function loadDoctorAppointments() {
+        const doctorId = localStorage.getItem("doctorId");
+        const token = localStorage.getItem("authToken");
+
+        fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`)
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch appointments");
+            return response.json();
+          })
+          .then((data) => {
+            data.forEach((appointment) => {
+              if (appointment.status === "Completed") {
+                addCompletedAppointmentRow({
+                  id: appointment._id,
+                  patientName: appointment.patientId.name,
+                  phone: appointment.patientId.phone || "N/A",
+                  appointmentTime:
+                    new Date(appointment.date).toLocaleDateString() +
+                    " " +
+                    appointment.time,
+                  feedback: appointment.feedback || "",
+                });
+              }
+            });
+          })
+          .catch((err) =>
+            console.error("Error fetching doctor appointments:", err)
+          );
+      }
+
+      function loadFromLocalStorage() {
+        const doctorId = localStorage.getItem("doctorId");
+        const cancelledAppointments =
+          JSON.parse(localStorage.getItem("cancelledAppointments")) || [];
+
+        cancelledAppointments
+          .filter((appointment) => appointment.doctorId === doctorId)
+          .forEach((appointment) => {
+            addCancelledAppointmentRow(appointment);
+          });
+      }
+
+      // Call this function on page load
+      window.onload = function () {
+        loadFromLocalStorage();
+        loadPatientAppointments();
+        // loadDoctorAppointments();
+      };
+      function addNewAppointmentRow(appointment) {
+        const rowHTML = `<tr data-appointment-id="${appointment.id}"> 
         <td>${appointment.patientName}</td>
         <td>${appointment.appointmentTime}</td>
-        <td>${appointment.phone || 'N/A'}</td>
+        <td>${appointment.phone || "N/A"}</td>
         <td>${appointment.status}</td>
         <td>
             <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
@@ -1038,498 +1085,535 @@ h1.page-title:hover {
         </td>
     </tr>`;
 
-            paginationState.newAppointments.rows.push(rowHTML);
-            paginateTable('newAppointments');
-        }
+        paginationState.newAppointments.rows.push(rowHTML);
+        paginateTable("newAppointments");
+      }
 
-        
-       function addCancelledAppointmentRow(appointment) {
-            const formattedTime = new Date(appointment.appointmentTime).toLocaleString();
-            const rowHTML = `<tr data-appointment-id="${appointment.id || ''}">
+      function addCancelledAppointmentRow(appointment) {
+        const formattedTime = new Date(
+          appointment.appointmentTime
+        ).toLocaleString();
+        const rowHTML = `<tr data-appointment-id="${appointment.id || ""}">
         <td>${appointment.patientName}</td>
         <td>${formattedTime}</td>
-        <td>${appointment.phone || 'N/A'}</td>
+        <td>${appointment.phone || "N/A"}</td>
         <td>
             <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
         </td>
     </tr>`;
-            paginationState.cancelledAppointments.rows.push(rowHTML);
-            paginateTable('cancelledAppointments');
-        }
+        paginationState.cancelledAppointments.rows.push(rowHTML);
+        paginateTable("cancelledAppointments");
+      }
 
+      function addCompletedAppointmentRow(appointment) {
+        const feedbackText =
+          appointment.feedback && appointment.feedback.trim() !== ""
+            ? appointment.feedback
+            : "No feedback yet";
 
-
-        function addCompletedAppointmentRow(appointment) {
-                const feedbackText = appointment.feedback && appointment.feedback.trim() !== ''
-                    ? appointment.feedback
-                    : 'No feedback yet';
-
-                const rowHTML = `<tr data-appointment-id="${appointment.id || ''}">
+        const rowHTML = `<tr data-appointment-id="${appointment.id || ""}">
         <td>${appointment.patientName}</td>
         <td>${appointment.appointmentTime}</td>
-        <td>${appointment.phone || 'N/A'}</td>
+        <td>${appointment.phone || "N/A"}</td>
         <td>
             ${feedbackText}
         </td>
     </tr>`;
-                paginationState.completedAppointments.rows.push(rowHTML);
-                paginateTable('completedAppointments');
+        paginationState.completedAppointments.rows.push(rowHTML);
+        paginateTable("completedAppointments");
+      }
+
+      function completeAppointment(button) {
+        const row = button.parentElement.parentElement;
+        const patientName = row.cells[0].innerText;
+        const appointmentTime = row.cells[1].innerText;
+        const appointmentId = row.getAttribute("data-appointment-id");
+        const token = localStorage.getItem("authToken");
+
+        // Show confirmation modal
+        const confirmModal = document.getElementById("confirmModal");
+        const successModal = document.getElementById("successModal");
+        const confirmYesBtn = document.getElementById("confirmYes");
+        const confirmNoBtn = document.getElementById("confirmNo");
+        const successOkBtn = document.getElementById("successOk");
+
+        confirmModal.style.display = "flex";
+
+        // Remove any old listeners first (important to avoid duplicates)
+        confirmYesBtn.onclick = null;
+        confirmNoBtn.onclick = null;
+        successOkBtn.onclick = null;
+
+        confirmYesBtn.onclick = () => {
+          confirmModal.style.display = "none";
+          const originalText = button.innerHTML;
+          button.disabled = true;
+          button.innerHTML = "Completing...";
+
+          fetch(
+            `http://localhost:3000/api/appointments/${appointmentId}/status`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ status: "Completed" }),
             }
-
-
-
-       function completeAppointment(button) {
-            const row = button.parentElement.parentElement;
-            const patientName = row.cells[0].innerText;
-            const appointmentTime = row.cells[1].innerText;
-            const appointmentId = row.getAttribute('data-appointment-id');
-            const token = localStorage.getItem('authToken');
-
-            // Show confirmation modal
-            const confirmModal = document.getElementById('confirmModal');
-            const successModal = document.getElementById('successModal');
-            const confirmYesBtn = document.getElementById('confirmYes');
-            const confirmNoBtn = document.getElementById('confirmNo');
-            const successOkBtn = document.getElementById('successOk');
-
-            confirmModal.style.display = 'flex';
-
-            // Remove any old listeners first (important to avoid duplicates)
-            confirmYesBtn.onclick = null;
-            confirmNoBtn.onclick = null;
-            successOkBtn.onclick = null;
-
-            confirmYesBtn.onclick = () => {
-                confirmModal.style.display = 'none';
-                  const originalText = button.innerHTML;
-                button.disabled = true;
-                button.innerHTML = "Completing...";
-
-                fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ status: 'Completed' })
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Failed to update appointment');
-                        return response.json();
-                    })
-                    .then(data => {
-                        addCompletedAppointmentRow({
-                            patientName,
-                            appointmentTime
-                        });
-                        row.remove();
-                        updateLocalStorage();
-
-                        // Show success modal
-                        successModal.style.display = 'flex';
-                    })
-                    .catch(err => {
-                        console.error('Error updating appointment:', err);
-                        alert('Failed to update appointment. Please try again.');
-                    });
-            };
-
-            confirmNoBtn.onclick = () => {
-                confirmModal.style.display = 'none';
-            };
-
-            successOkBtn.onclick = () => {
-                successModal.style.display = 'none';
-            };
-        }
-
-       async function rescheduleAppointment(buttonElement) {
-            const token = localStorage.getItem("token");
-            const row = buttonElement.closest('tr');
-            const appointmentId = row.dataset.appointmentId;
-            document.getElementById('appointmentId').value = appointmentId;
-
-            // Get doctorId
-            let doctorId = row.getAttribute('data-doctor-id');
-            if (!doctorId) {
-                const doctorData = JSON.parse(localStorage.getItem('user'));
-                doctorId = doctorData?._id || localStorage.getItem('doctorId');
-            }
-
-            if (!appointmentId || !doctorId) {
-                console.error("Missing appointment or doctor ID");
-                return;
-            }
-
-            try {
-                const res = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!res.ok) throw new Error("Failed to fetch availability");
-
-                const data = await res.json();
-                const slotsData = data.availabilitySlots || [];
-
-                const select = document.getElementById("availableSlots");
-                select.innerHTML = "<option value=''>Select a slot</option>";
-
-                let slotCount = 0;
-
-                slotsData.forEach(day => {
-                    const date = day.date;
-                    day.slots.forEach(time => {
-                        const option = document.createElement("option");
-                        option.value = `${date}|${time}`;
-                        option.textContent = `${date} at ${time}`;
-                        select.appendChild(option);
-                        slotCount++;
-                    });
-                });
-
-                if (slotCount === 0) {
-                    alert("No available slots for this doctor.");
-                    return;
-                }
-
-                // Show modal
-                document.getElementById("rescheduleModal").style.display = "block";
-                document.body.classList.add('modal-open');
-
-            } catch (error) {
-                console.error("Reschedule error:", error);
-                alert("Could not load available slots.");
-            }
-        }
-          function confirmReschedule() {
-                const selectedSlot = document.getElementById('availableSlots').value;
-              const confirmBtn = document.querySelector('#rescheduleModal button[onclick="confirmReschedule()"]');
-                  const originalBtnText = confirmBtn.textContent;
-              // Set processing state
-              confirmBtn.disabled = true;
-              confirmBtn.textContent = "Processing...";
-                if (!selectedSlot) {
-                    alert("Please select a time slot.");
-                    return;
-                }
-
-                const [newDate, newTime] = selectedSlot.split('|');
-
-                // ❗️ Correctly get appointment ID
-              const appointmentId = document.getElementById('appointmentId').value;
-              console.log("Using appointmentId in confirmReschedule:", appointmentId);
-
-                if (!appointmentId || !newDate || !newTime) {
-                    alert("Missing data to reschedule.");
-                    return;
-                }
-              console.log("Using appointmentId:", appointmentId);
-
-                fetch(`http://localhost:3000/api/appointments/${appointmentId}/reschedule`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        newDate,
-                        newTime,
-                        rescheduledBy: 'doctor'  
-                    })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                            console.log("Reschedule response:", data); 
-
-                        if (data.success) {
-                            alert("Appointment successfully rescheduled!");
-                            document.getElementById('rescheduleModal').style.display = 'none';
-                                document.body.classList.remove('modal-open');
-
-                                    location.reload();
-
-                        } else {
-                            alert("Failed to reschedule: " + (data.message || 'Unknown error'));
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Error during rescheduling:", err);
-                        alert("Error occurred. Try again.");
-                    });
-            }
-            
-    function rescheduleFromButton(buttonElement) {
-        const appointmentId = buttonElement.getAttribute('data-appointment-id');
-        rescheduleAppointment(appointmentId);
-    }
-    function closeModal() {
-            document.getElementById("rescheduleModal").style.display = "none";
-
-            // Remove scroll lock
-            document.body.classList.remove('modal-open');
-        }
-
-
-
-      function cancelAppointment(button) {
-            const row = button.closest('tr');
-            const appointmentId = row.getAttribute('data-appointment-id');
-            const patientName = row.cells[0].innerText;
-            const appointmentTime = row.cells[1].innerText;
-            const phone = row.cells[2].innerText;
-            const token = localStorage.getItem('authToken');
-
-            // Get modal elements
-            const confirmModal = document.getElementById('cancelConfirmModal');
-            const successModal = document.getElementById('cancelSuccessModal');
-            const yesBtn = document.getElementById('cancelConfirmYes');
-            const noBtn = document.getElementById('cancelConfirmNo');
-            const okBtn = document.getElementById('cancelSuccessOk');
-
-            // Show confirmation modal
-            confirmModal.style.display = 'flex';
-
-            // Clear previous listeners
-            yesBtn.onclick = null;
-            noBtn.onclick = null;
-            okBtn.onclick = null;
-
-            yesBtn.onclick = () => {
-                confirmModal.style.display = 'none';
-
-                button.disabled = true;
-                const originalText = button.textContent;
-                button.textContent = 'Cancelling...';
-
-                fetch(`http://localhost:3000/api/appointments/${appointmentId}/cancel`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        status: 'Cancelled',
-                        canceledBy: 'doctor'
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.json().then(err => {
-                                throw new Error(err.message || 'Failed to cancel appointment');
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        addCancelledAppointmentRow({ id: appointmentId, patientName, appointmentTime, phone });
-                        row.remove();
-                        updateLocalStorage();
-
-                        successModal.style.display = 'flex';
-                    })
-                    .catch(err => {
-                        console.error('Error cancelling appointment:', err);
-                        alert(`Error: ${err.message}`);
-                    })
-                    .finally(() => {
-                        button.disabled = false;
-                        button.textContent = originalText;
-                    });
-            };
-
-            noBtn.onclick = () => {
-                confirmModal.style.display = 'none';
-            };
-
-            okBtn.onclick = () => {
-                successModal.style.display = 'none';
-            };
-        }
-
-       function markAsMissed(button) {
-            const row = button.closest('tr');
-            const appointmentId = row.getAttribute('data-appointment-id');
-            const patientName = row.cells[0].innerText;
-            const appointmentTime = row.cells[1].innerText;
-            const phone = row.cells[2].innerText;
-            const token = localStorage.getItem('authToken');
-
-            // Get modal elements
-            const confirmModal = document.getElementById('missedConfirmModal');
-            const successModal = document.getElementById('missedSuccessModal');
-            const yesBtn = document.getElementById('missedConfirmYes');
-            const noBtn = document.getElementById('missedConfirmNo');
-            const okBtn = document.getElementById('missedSuccessOk');
-
-            confirmModal.style.display = 'flex';
-
-            yesBtn.onclick = null;
-            noBtn.onclick = null;
-            okBtn.onclick = null;
-
-            yesBtn.onclick = () => {
-                confirmModal.style.display = 'none';
-
-                // 🔹 Show processing state on clicked button
-                const originalText = button.innerHTML;
-                button.disabled = true;
-                button.innerHTML = "Marking...";
-
-                fetch(`http://localhost:3000/api/appointments/${appointmentId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ status: 'Missed' })
-                })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Failed to mark as missed');
-                        return response.json();
-                    })
-                    .then(() => {
-                        row.remove();
-                        addMissedAppointmentRow({ patientName, appointmentTime, phone });
-                        updateLocalStorage();
-
-                        // 🔹 Restore button after success
-                        button.disabled = false;
-                        button.innerHTML = originalText;
-
-                        successModal.style.display = 'flex';
-                    })
-                    .catch(err => {
-                        console.error('Error marking as missed:', err);
-                        alert("Failed to mark appointment as missed.");
-
-                        // 🔹 Restore button if error
-                        button.disabled = false;
-                        button.innerHTML = originalText;
-                    });
-            };
-
-            noBtn.onclick = () => {
-                confirmModal.style.display = 'none';
-            };
-
-            okBtn.onclick = () => {
-                successModal.style.display = 'none';
-            };
-        }
-
-        function addMissedAppointmentRow(appointment) {
-                const rowHTML = `<tr data-appointment-id="${appointment.id || ''}">
-        <td>${appointment.patientName}</td>
-        <td>${appointment.appointmentTime}</td>
-        <td>${appointment.phone || 'N/A'}</td>
-    </tr>`;
-
-                // Push the row into pagination data
-                paginationState.missedAppointments.rows.push(rowHTML);
-
-                // Refresh the visible table
-                paginateTable('missedAppointments');
-            }
-
-
-
-        // function deleteAppointment(button) {
-        //     const row = button.parentElement.parentElement;
-        //     const appointmentId = row.getAttribute('data-appointment-id'); 
-        //     const patientName = row.cells[0].innerText;
-
-        //     if (confirm(`Are you sure you want to delete this appointment for ${patientName}?`)) {
-        //         row.remove();
-        //         updateLocalStorage();
-
-        //         if (appointmentId) {
-        //             const token = localStorage.getItem('authToken');
-        //             fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-        //                 method: 'DELETE',
-        //                 headers: {
-        //                     'Authorization': `Bearer ${token}`
-        //                 }
-        //             })
-        //                 .then(res => {
-        //                     if (!res.ok) throw new Error("Failed to delete appointment");
-        //                     console.log("Appointment deleted successfully.");
-        //                 })
-        //                 .catch(err => console.error("Error deleting from backend:", err));
-        //         }
-        //     }
-        // }
-
-       const pageSize = 6; // Number of rows per page
-        const paginationState = {
-            newAppointments: { currentPage: 1, rows: [] },
-            cancelledAppointments: { currentPage: 1, rows: [] },
-            completedAppointments: { currentPage: 1, rows: [] },
-            missedAppointments: { currentPage: 1, rows: [] },
+          )
+            .then((response) => {
+              if (!response.ok) throw new Error("Failed to update appointment");
+              return response.json();
+            })
+            .then((data) => {
+              addCompletedAppointmentRow({
+                patientName,
+                appointmentTime,
+              });
+              row.remove();
+              updateLocalStorage();
+
+              // Show success modal
+              successModal.style.display = "flex";
+            })
+            .catch((err) => {
+              console.error("Error updating appointment:", err);
+              alert("Failed to update appointment. Please try again.");
+            });
         };
 
-        function paginateTable(sectionId) {
-            const state = paginationState[sectionId];
-            const tableBody = document.getElementById(sectionId);
+        confirmNoBtn.onclick = () => {
+          confirmModal.style.display = "none";
+        };
 
-            const start = (state.currentPage - 1) * pageSize;
-            const end = start + pageSize;
-            tableBody.innerHTML = "";
-            state.rows.slice(start, end).forEach(rowHTML => {
-                tableBody.insertAdjacentHTML('beforeend', rowHTML);
+        successOkBtn.onclick = () => {
+          successModal.style.display = "none";
+        };
+      }
+
+      async function rescheduleAppointment(buttonElement) {
+        const token = localStorage.getItem("token");
+        const row = buttonElement.closest("tr");
+        const appointmentId = row.dataset.appointmentId;
+        document.getElementById("appointmentId").value = appointmentId;
+
+        // Get doctorId
+        let doctorId = row.getAttribute("data-doctor-id");
+        if (!doctorId) {
+          const doctorData = JSON.parse(localStorage.getItem("user"));
+          doctorId = doctorData?._id || localStorage.getItem("doctorId");
+        }
+
+        if (!appointmentId || !doctorId) {
+          console.error("Missing appointment or doctor ID");
+          return;
+        }
+
+        try {
+          const res = await fetch(
+            `http://localhost:3000/api/doctors/${doctorId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          if (!res.ok) throw new Error("Failed to fetch availability");
+
+          const data = await res.json();
+          const slotsData = data.availabilitySlots || [];
+
+          const select = document.getElementById("availableSlots");
+          select.innerHTML = "<option value=''>Select a slot</option>";
+
+          let slotCount = 0;
+
+          slotsData.forEach((day) => {
+            const date = day.date;
+            day.slots.forEach((time) => {
+              const option = document.createElement("option");
+              option.value = `${date}|${time}`;
+              option.textContent = `${date} at ${time}`;
+              select.appendChild(option);
+              slotCount++;
             });
+          });
 
-            const totalPages = Math.ceil(state.rows.length / pageSize) || 1;
-            document.getElementById(`${sectionId}PageInfo`).textContent = `Page ${state.currentPage} of ${totalPages}`;
+          if (slotCount === 0) {
+            alert("No available slots for this doctor.");
+            return;
+          }
 
-            // Disable/enable buttons
-            const prevBtn = document.querySelector(`#${sectionId}Pagination button:first-child`);
-            const nextBtn = document.querySelector(`#${sectionId}Pagination button:last-child`);
-
-            prevBtn.disabled = state.currentPage === 1;
-            nextBtn.disabled = state.currentPage === totalPages;
+          // Show modal
+          document.getElementById("rescheduleModal").style.display = "block";
+          document.body.classList.add("modal-open");
+        } catch (error) {
+          console.error("Reschedule error:", error);
+          alert("Could not load available slots.");
+        }
+      }
+      function confirmReschedule() {
+        const selectedSlot = document.getElementById("availableSlots").value;
+        const confirmBtn = document.querySelector(
+          '#rescheduleModal button[onclick="confirmReschedule()"]'
+        );
+        const originalBtnText = confirmBtn.textContent;
+        // Set processing state
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = "Processing...";
+        if (!selectedSlot) {
+          alert("Please select a time slot.");
+          return;
         }
 
-        function nextPage(sectionId) {
-            const state = paginationState[sectionId];
-            const totalPages = Math.ceil(state.rows.length / pageSize);
-            if (state.currentPage < totalPages) {
-                state.currentPage++;
-                paginateTable(sectionId);
+        const [newDate, newTime] = selectedSlot.split("|");
+
+        // ❗️ Correctly get appointment ID
+        const appointmentId = document.getElementById("appointmentId").value;
+        console.log("Using appointmentId in confirmReschedule:", appointmentId);
+
+        if (!appointmentId || !newDate || !newTime) {
+          alert("Missing data to reschedule.");
+          return;
+        }
+        console.log("Using appointmentId:", appointmentId);
+
+        fetch(
+          `http://localhost:3000/api/appointments/${appointmentId}/reschedule`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              newDate,
+              newTime,
+              rescheduledBy: "doctor",
+            }),
+          }
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("Reschedule response:", data);
+
+            if (data.success) {
+              alert("Appointment successfully rescheduled!");
+              document.getElementById("rescheduleModal").style.display = "none";
+              document.body.classList.remove("modal-open");
+
+              location.reload();
+            } else {
+              alert(
+                "Failed to reschedule: " + (data.message || "Unknown error")
+              );
             }
-        }
+          })
+          .catch((err) => {
+            console.error("Error during rescheduling:", err);
+            alert("Error occurred. Try again.");
+          });
+      }
 
-        function prevPage(sectionId) {
-            const state = paginationState[sectionId];
-            if (state.currentPage > 1) {
-                state.currentPage--;
-                paginateTable(sectionId);
+      function rescheduleFromButton(buttonElement) {
+        const appointmentId = buttonElement.getAttribute("data-appointment-id");
+        rescheduleAppointment(appointmentId);
+      }
+      function closeModal() {
+        document.getElementById("rescheduleModal").style.display = "none";
+
+        // Remove scroll lock
+        document.body.classList.remove("modal-open");
+      }
+
+      function cancelAppointment(button) {
+        const row = button.closest("tr");
+        const appointmentId = row.getAttribute("data-appointment-id");
+        const patientName = row.cells[0].innerText;
+        const appointmentTime = row.cells[1].innerText;
+        const phone = row.cells[2].innerText;
+        const token = localStorage.getItem("authToken");
+
+        // Get modal elements
+        const confirmModal = document.getElementById("cancelConfirmModal");
+        const successModal = document.getElementById("cancelSuccessModal");
+        const yesBtn = document.getElementById("cancelConfirmYes");
+        const noBtn = document.getElementById("cancelConfirmNo");
+        const okBtn = document.getElementById("cancelSuccessOk");
+
+        // Show confirmation modal
+        confirmModal.style.display = "flex";
+
+        // Clear previous listeners
+        yesBtn.onclick = null;
+        noBtn.onclick = null;
+        okBtn.onclick = null;
+
+        yesBtn.onclick = () => {
+          confirmModal.style.display = "none";
+
+          button.disabled = true;
+          const originalText = button.textContent;
+          button.textContent = "Cancelling...";
+
+          fetch(
+            `http://localhost:3000/api/appointments/${appointmentId}/cancel`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                status: "Cancelled",
+                canceledBy: "doctor",
+              }),
             }
+          )
+            .then((response) => {
+              if (!response.ok) {
+                return response.json().then((err) => {
+                  throw new Error(
+                    err.message || "Failed to cancel appointment"
+                  );
+                });
+              }
+              return response.json();
+            })
+            .then((data) => {
+              addCancelledAppointmentRow({
+                id: appointmentId,
+                patientName,
+                appointmentTime,
+                phone,
+              });
+              row.remove();
+              updateLocalStorage();
+
+              successModal.style.display = "flex";
+            })
+            .catch((err) => {
+              console.error("Error cancelling appointment:", err);
+              alert(`Error: ${err.message}`);
+            })
+            .finally(() => {
+              button.disabled = false;
+              button.textContent = originalText;
+            });
+        };
+
+        noBtn.onclick = () => {
+          confirmModal.style.display = "none";
+        };
+
+        okBtn.onclick = () => {
+          successModal.style.display = "none";
+        };
+      }
+
+      function markAsMissed(button) {
+        const row = button.closest("tr");
+        const appointmentId = row.getAttribute("data-appointment-id");
+        const patientName = row.cells[0].innerText;
+        const appointmentTime = row.cells[1].innerText;
+        const phone = row.cells[2].innerText;
+        const token = localStorage.getItem("authToken");
+
+        // Get modal elements
+        const confirmModal = document.getElementById("missedConfirmModal");
+        const successModal = document.getElementById("missedSuccessModal");
+        const yesBtn = document.getElementById("missedConfirmYes");
+        const noBtn = document.getElementById("missedConfirmNo");
+        const okBtn = document.getElementById("missedSuccessOk");
+
+        confirmModal.style.display = "flex";
+
+        yesBtn.onclick = null;
+        noBtn.onclick = null;
+        okBtn.onclick = null;
+
+        yesBtn.onclick = () => {
+          confirmModal.style.display = "none";
+
+          // 🔹 Show processing state on clicked button
+          const originalText = button.innerHTML;
+          button.disabled = true;
+          button.innerHTML = "Marking...";
+
+          fetch(
+            `http://localhost:3000/api/appointments/${appointmentId}/status`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ status: "Missed" }),
+            }
+          )
+            .then((response) => {
+              if (!response.ok) throw new Error("Failed to mark as missed");
+              return response.json();
+            })
+            .then(() => {
+              row.remove();
+              addMissedAppointmentRow({ patientName, appointmentTime, phone });
+              updateLocalStorage();
+
+              // 🔹 Restore button after success
+              button.disabled = false;
+              button.innerHTML = originalText;
+
+              successModal.style.display = "flex";
+            })
+            .catch((err) => {
+              console.error("Error marking as missed:", err);
+              alert("Failed to mark appointment as missed.");
+
+              // 🔹 Restore button if error
+              button.disabled = false;
+              button.innerHTML = originalText;
+            });
+        };
+
+        noBtn.onclick = () => {
+          confirmModal.style.display = "none";
+        };
+
+        okBtn.onclick = () => {
+          successModal.style.display = "none";
+        };
+      }
+
+      function addMissedAppointmentRow(appointment) {
+        const rowHTML = `<tr data-appointment-id="${appointment.id || ""}">
+        <td>${appointment.patientName}</td>
+        <td>${appointment.appointmentTime}</td>
+        <td>${appointment.phone || "N/A"}</td>
+    </tr>`;
+
+        // Push the row into pagination data
+        paginationState.missedAppointments.rows.push(rowHTML);
+
+        // Refresh the visible table
+        paginateTable("missedAppointments");
+      }
+
+      // function deleteAppointment(button) {
+      //     const row = button.parentElement.parentElement;
+      //     const appointmentId = row.getAttribute('data-appointment-id');
+      //     const patientName = row.cells[0].innerText;
+
+      //     if (confirm(`Are you sure you want to delete this appointment for ${patientName}?`)) {
+      //         row.remove();
+      //         updateLocalStorage();
+
+      //         if (appointmentId) {
+      //             const token = localStorage.getItem('authToken');
+      //             fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
+      //                 method: 'DELETE',
+      //                 headers: {
+      //                     'Authorization': `Bearer ${token}`
+      //                 }
+      //             })
+      //                 .then(res => {
+      //                     if (!res.ok) throw new Error("Failed to delete appointment");
+      //                     console.log("Appointment deleted successfully.");
+      //                 })
+      //                 .catch(err => console.error("Error deleting from backend:", err));
+      //         }
+      //     }
+      // }
+
+      const pageSize = 6; // Number of rows per page
+      const paginationState = {
+        newAppointments: { currentPage: 1, rows: [] },
+        cancelledAppointments: { currentPage: 1, rows: [] },
+        completedAppointments: { currentPage: 1, rows: [] },
+        missedAppointments: { currentPage: 1, rows: [] },
+      };
+
+      function paginateTable(sectionId) {
+        const state = paginationState[sectionId];
+        const tableBody = document.getElementById(sectionId);
+
+        const start = (state.currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        tableBody.innerHTML = "";
+        state.rows.slice(start, end).forEach((rowHTML) => {
+          tableBody.insertAdjacentHTML("beforeend", rowHTML);
+        });
+
+        const totalPages = Math.ceil(state.rows.length / pageSize) || 1;
+        document.getElementById(
+          `${sectionId}PageInfo`
+        ).textContent = `Page ${state.currentPage} of ${totalPages}`;
+
+        // Disable/enable buttons
+        const prevBtn = document.querySelector(
+          `#${sectionId}Pagination button:first-child`
+        );
+        const nextBtn = document.querySelector(
+          `#${sectionId}Pagination button:last-child`
+        );
+
+        prevBtn.disabled = state.currentPage === 1;
+        nextBtn.disabled = state.currentPage === totalPages;
+      }
+
+      function nextPage(sectionId) {
+        const state = paginationState[sectionId];
+        const totalPages = Math.ceil(state.rows.length / pageSize);
+        if (state.currentPage < totalPages) {
+          state.currentPage++;
+          paginateTable(sectionId);
         }
+      }
 
-        function updateLocalStorage() {
-            const newAppointments = Array.from(document.querySelectorAll('#newAppointments tr')).map(row => ({
-                patientName: row.cells[0].innerText,
-                appointmentTime: row.cells[1].innerText,
-                status: row.cells[2].innerText
-            }));
-
-            const cancelledAppointments = Array.from(document.querySelectorAll('#cancelledAppointments tr')).map(row => ({
-                id: row.getAttribute('data-appointment-id'), 
-                patientName: row.cells[0].innerText,
-                appointmentTime: row.cells[1].innerText,
-                phone: row.cells[2]?.innerText || 'N/A'  
-            }));
-
-            const completedAppointments = Array.from(document.querySelectorAll('#completedAppointments tr')).map(row => ({
-                patientName: row.cells[0].innerText,
-                appointmentTime: row.cells[1].innerText
-            }));
-
-            localStorage.setItem('newAppointments', JSON.stringify(newAppointments));
-            localStorage.setItem('cancelledAppointments', JSON.stringify(cancelledAppointments));
-            localStorage.setItem('completedAppointments', JSON.stringify(completedAppointments));
+      function prevPage(sectionId) {
+        const state = paginationState[sectionId];
+        if (state.currentPage > 1) {
+          state.currentPage--;
+          paginateTable(sectionId);
         }
-        
+      }
+
+      function updateLocalStorage() {
+        const newAppointments = Array.from(
+          document.querySelectorAll("#newAppointments tr")
+        ).map((row) => ({
+          patientName: row.cells[0].innerText,
+          appointmentTime: row.cells[1].innerText,
+          status: row.cells[2].innerText,
+        }));
+
+        const cancelledAppointments = Array.from(
+          document.querySelectorAll("#cancelledAppointments tr")
+        ).map((row) => ({
+          id: row.getAttribute("data-appointment-id"),
+          patientName: row.cells[0].innerText,
+          appointmentTime: row.cells[1].innerText,
+          phone: row.cells[2]?.innerText || "N/A",
+        }));
+
+        const completedAppointments = Array.from(
+          document.querySelectorAll("#completedAppointments tr")
+        ).map((row) => ({
+          patientName: row.cells[0].innerText,
+          appointmentTime: row.cells[1].innerText,
+        }));
+
+        localStorage.setItem(
+          "newAppointments",
+          JSON.stringify(newAppointments)
+        );
+        localStorage.setItem(
+          "cancelledAppointments",
+          JSON.stringify(cancelledAppointments)
+        );
+        localStorage.setItem(
+          "completedAppointments",
+          JSON.stringify(completedAppointments)
+        );
+      }
     </script>
-</body>
-
+  </body>
 </html>

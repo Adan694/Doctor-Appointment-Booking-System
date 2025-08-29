@@ -78,9 +78,18 @@ if (patientAppointmentsToday >= maxDailyAppointments) {
     if (!doctor) return res.status(404).json({ success: false, message: "Doctor not found" });
 
     const slotDay = doctor.availabilitySlots.find(slot => slot.date === formattedDate);
-    if (!slotDay || !slotDay.slots.includes(time)) {
-      return res.status(400).json({ success: false, message: "Slot not available" });
-    }
+    // if (!slotDay || !slotDay.slots.includes(time)) {
+    //   return res.status(400).json({ success: false, message: "Slot not available" });
+    // }
+    const normalizeTime = (t) => t.trim().toUpperCase().replace(/\s+/g, " ");
+
+const normalizedTime = normalizeTime(time);
+const hasSlot = slotDay.slots.some(s => normalizeTime(s) === normalizedTime);
+
+if (!slotDay || !hasSlot) {
+  return res.status(400).json({ success: false, message: "Slot not available" });
+}
+
     // Generate unique 3-digit token for doctor+date
 const generateToken = async (doctorId, date) => {
   let token;
@@ -104,12 +113,15 @@ const generatePatientNumber = async (patientId, name) => {
   if (existingBooking) {
     return existingBooking.patientNumber; 
   }
+
   const lastBooking = await Booking.findOne({ patientId })
     .sort({ createdAt: -1 });
 
-  const lastNumber = lastBooking
-    ? parseInt(lastBooking.patientNumber.split("-").pop(), 10)
-    : 0;
+  let lastNumber = 0;
+  if (lastBooking && lastBooking.patientNumber) {
+    const parts = lastBooking.patientNumber.split("-");
+    lastNumber = parseInt(parts[parts.length - 1], 10) || 0;
+  }
 
   return `${patientId.toString().slice(-4)}-${lastNumber + 1}`;
 };
@@ -132,9 +144,16 @@ const patientNumber = await generatePatientNumber(patientId, name);
     });
     await newBooking.save();
 
-    slotDay.slots = slotDay.slots.filter(t => t !== time);
-    doctor.availabilitySlots = doctor.availabilitySlots.filter(s => s.slots.length > 0);
-    await doctor.save();
+    // slotDay.slots = slotDay.slots.filter(t => t !== time);
+    // doctor.availabilitySlots = doctor.availabilitySlots.filter(s => s.slots.length > 0);
+    // await doctor.save();
+// remove the booked slot safely (normalize to avoid mismatch like "06:00 PM" vs "6:00 PM")
+slotDay.slots = slotDay.slots.filter(s => normalizeTime(s) !== normalizedTime);
+
+// clean up empty days
+doctor.availabilitySlots = doctor.availabilitySlots.filter(s => s.slots.length > 0);
+
+await doctor.save();
 
     const formattedDoctor = {
       _id: doctor._id,
@@ -384,11 +403,15 @@ if (!appointment) {
   return res.status(404).json({ success: false, message: "Appointment not found" });
 }
 const oldDate = appointment.date.toISOString().split('T')[0];
-const newDateFormatted = new Date(newDate).toISOString().split('T')[0];
+    const newDateFormatted = new Date(newDate).toISOString().split('T')[0];
+        const existingPatientNumber = appointment.patientNumber;
+
 appointment.date = newDate;
 appointment.time = newTime;
 appointment.status = 'pending';
-appointment.rescheduledBy = rescheduledBy;
+    appointment.rescheduledBy = rescheduledBy;
+        appointment.patientNumber = existingPatientNumber; // keep old number
+
 if (oldDate !== newDateFormatted) {
   appointment.token = await generateToken(appointment.doctorId, newDateFormatted);
 }
@@ -488,14 +511,25 @@ const getDoctorAppointments = async (req, res) => {
 
 const updateAppointmentStatus = async (req, res) => {
   try {
-    const { status, cancelledBy } = req.body;
-    const id = req.params.id;
+    // const { status, cancelledBy } = req.body;
+    // const id = req.params.id;
 
-    const updatedAppointment = await Booking.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
+    // const updatedAppointment = await Booking.findByIdAndUpdate(
+    //   id,
+    //   { status },
+    //   { new: true }
+    // );
+const { status, cancelledBy, feedback } = req.body; // include feedback if sent
+const id = req.params.id;
+
+const updatedAppointment = await Booking.findByIdAndUpdate(
+  id,
+  { 
+    status, 
+    ...(feedback ? { feedback } : {}) // only update feedback if provided
+  },
+  { new: true }
+);
 
     if (!updatedAppointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found' });

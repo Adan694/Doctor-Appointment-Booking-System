@@ -1,783 +1,834 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Admin Dashboard</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-    
-        * {
-            box-sizing: border-box;
-        }
-    
-        body {
-            margin: 0;
-            font-family: 'Roboto', Arial, sans-serif;
-            display: flex;
-            height: 100vh;
-            background-color: #e6f2ff;
-            color: #333;
-        }
-    
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            min-width: 250px;
-            max-width: 250px;
-            background-color: rgb(9, 102, 102);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-    
-        .sidebar h2 {
-            font-size: 30px;
-            color: white;
-            margin: 0 0 40px 20px;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-        }
-    
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-        }
-    
-        .sidebar ul li {
-            padding: 12px 20px;
-            margin: 10px 0;
-        }
-    
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 16px;
-            display: block;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            border-radius: 6px;
-            padding: 10px 15px;
-        }
-    
-        .sidebar ul li a:hover,
-        .sidebar ul li a.active {
-            background-color: #e8f0fe;
-            color: #007bff;
-            font-weight: bold;
-        }
-        #bar {
-            display: none;
-            font-size: 30px;
-            cursor: pointer;
-        }
-    
-        /* Main content */
-        main {
-            flex-grow: 1;
-            padding: 30px 50px;
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-    
-        /* Header */
-        header {
-            background-color: #166e6b;
-            color: white;
-            padding-bottom: 10px;
-            font-size: 28px;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-            border-bottom: 2px solid white;
-            padding: 20px 30px;
-        }
-    
-        header button {
-            background-color: #28a745;
-            border: none;
-            color: white;
-            padding: 10px 22px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-    
-        header button:hover {
-            background-color: #1e7e34;
-        }
-    
-        /* Dashboard cards */
-        .dashboard-cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            margin-top: 30px;
-            margin-bottom: 40px;
-        }
-    
-        .card {
-            background-color: #fff;
-            padding: 25px 30px;
-            border-radius: 14px;
-            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            flex: 1;
-            min-width: 240px;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-    
-        .card:hover {
-            transform: translateY(-6px) scale(1.03);
-            box-shadow: 0 8px 20px rgba(22, 110, 107, 0.25);
-        }
-    
-        .card {
-            flex: 2;
-            background: linear-gradient(145deg, #e0f7f7, #ffffff);
-            border: 2px solid #166e6b;
-        }
-    
-        .card .icon {
-            font-size: 36px;
-            color: #166e6b;
-            margin-bottom: 15px;
-        }
-    
-        .card h2 {
-            margin: 0;
-            font-size: 36px;
-            font-weight: 900;
-            color: #222;
-        }
-    
-        .card p {
-            margin-top: 8px;
-            font-size: 18px;
-            color: #666;
-            font-weight: 600;
-        }
-    
-        /* Chart section */
-        .charts-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-    
-        .chart-container {
-            background-color: #fff;
-            flex: 1;
-            min-width: 280px;
-            padding: 25px 30px;
-            border-radius: 14px;
-            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-    
-        .chart-container:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 10px 24px rgba(22, 110, 107, 0.25);
-        }
-    
-        .chart-container {
-            border: 2px solid #166e6b;
-            background: linear-gradient(145deg, #e8fafa, #ffffff);
-        }
-    
-        .chart-container h3 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #166e6b;
-            font-weight: 800;
-            font-size: 22px;
-            border-bottom: 2px solid #166e6b;
-            padding-bottom: 8px;
-            letter-spacing: 0.3px;
-        }
-    
-        /* Today's appointments */
-        .todays-appointments {
-            background-color: #fff;
-            padding: 25px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(22, 110, 107, 0.2);
-            margin-left: 0;
-            padding-left: 10px;
-        }
-    
-        .todays-appointments h3 {
-            margin-top: 0;
-            margin-bottom: 25px;
-            color: #166e6b;
-            font-weight: 700;
-            font-size: 22px;
-            border-bottom: 2px solid #166e6b;
-            padding-bottom: 8px;
-        }
-    
-        .appointment-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 18px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #eee;
-        }
-    
-        .appointment-item:last-child {
-            border-bottom: none;
-        }
-        .appointment-info {
-            flex-grow: 1;
-        }
-    
-        .appointment-info .name {
-            font-weight: 700;
-            font-size: 18px;
-            color: #222;
-            margin-left: 20px;
-        }
-    
-        .appointment-info .details {
-            font-size: 14px;
-            color: #666;
-            margin-top: 4px;
-            margin-left: 20px;
-        }
-.appointment-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
+      @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
-.appointment-time,
-.appointment-status {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 90px;          
-    height: 32px;            
-    padding: 0 12px;
-    border-radius: 20px;     
-    font-size: 14px;
-    font-weight: bold;
-    white-space: nowrap;
-}
+      * {
+        box-sizing: border-box;
+      }
 
-.appointment-status {
-    text-transform: capitalize;
-}
-
-.appointment-time {
-    background-color: #e0f7f6;
-    color: #166e6b;
-}
-
-.status-pending   { background-color: orange;  color: white; }
-.status-confirmed { background-color: royalblue; color: white; }
-.status-completed { background-color: mediumseagreen; color: white; }
-.status-cancelled { background-color: crimson; color: white; }
-.status-missed    { background-color: darkgray; color: white; }
-.status-unknown   { background-color: #999;    color: white; }
-
-.appointment-time,
-.appointment-status {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-        #overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 900;
-    display: none;
-}
-
-#overlay.active {
-    display: block;
-}
- #notificationBell {
-    position: relative;
-    cursor: pointer;
-  }
-#notificationBell {
-    position: relative;
-    cursor: pointer;
-    margin-left: auto; /* push it to the right */
-}
-
-  /* Bell icon style */
-  #notificationBell i {
-    font-size: 24px;
-    color: white;
-    margin-left: 0px;
-  }
-
-  /* Notification count badge */
-  #notificationCount {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: red;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
-    display: none; /* Hide by default */
-  }
-
-        @media (max-width: 768px) {
-            .dashboard-cards {
-                flex-direction: column;
-            }
-    
-            .charts-section {
-                flex-direction: column;
-            }
-    
-            .card,
-            .card.large {
-                flex: 1 !important;
-            }
-    
-            .chart-container {
-                flex: 1 1 100%;
-            }
-    
-            main {
-                padding: 20px;
-            }
-            .sidebar {
-                display: none;
-        position: fixed;
-        top: 0;
-        left: -250px;
-        height: 100%;
-        z-index: 1000;
-        transition: left 0.3s ease-in-out;
-    }
-
-    .sidebar.active {
+      body {
+        margin: 0;
+        font-family: "Roboto", Arial, sans-serif;
         display: flex;
-        left: 0;
-    }
+        height: 100vh;
+        background-color: #e6f2ff;
+        color: #333;
+      }
 
-    #bar {
+      /* Sidebar */
+      .sidebar {
+        width: 250px;
+        min-width: 250px;
+        max-width: 250px;
+        background-color: rgb(9, 102, 102);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .sidebar h2 {
+        font-size: 30px;
+        color: white;
+        margin: 0 0 40px 20px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+      }
+
+      .sidebar ul li {
+        padding: 12px 20px;
+        margin: 10px 0;
+      }
+
+      .sidebar ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 16px;
         display: block;
-        background: none;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        border-radius: 6px;
+        padding: 10px 15px;
+      }
+
+      .sidebar ul li a:hover,
+      .sidebar ul li a.active {
+        background-color: #e8f0fe;
+        color: #007bff;
+        font-weight: bold;
+      }
+      #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+      }
+
+      /* Main content */
+      main {
+        flex-grow: 1;
+        padding: 30px 50px;
+        box-sizing: border-box;
+        overflow-y: auto;
+      }
+
+      /* Header */
+      header {
+        background-color: #166e6b;
+        color: white;
+        padding-bottom: 10px;
+        font-size: 28px;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+        border-bottom: 2px solid white;
+        padding: 20px 30px;
+      }
+
+      header button {
+        background-color: #28a745;
         border: none;
         color: white;
-        font-size: 26px;
+        padding: 10px 22px;
+        font-size: 16px;
+        border-radius: 6px;
         cursor: pointer;
-    }
+        transition: background-color 0.3s ease;
+      }
 
-    #bar:focus {
-        outline: none;
-    }
+      header button:hover {
+        background-color: #1e7e34;
+      }
 
+      /* Dashboard cards */
+      .dashboard-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        margin-top: 30px;
+        margin-bottom: 40px;
+      }
+
+      .card {
+        background-color: #fff;
+        padding: 25px 30px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        flex: 1;
+        min-width: 240px;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-6px) scale(1.03);
+        box-shadow: 0 8px 20px rgba(22, 110, 107, 0.25);
+      }
+
+      .card {
+        flex: 2;
+        background: linear-gradient(145deg, #e0f7f7, #ffffff);
+        border: 2px solid #166e6b;
+      }
+
+      .card .icon {
+        font-size: 36px;
+        color: #166e6b;
+        margin-bottom: 15px;
+      }
+
+      .card h2 {
+        margin: 0;
+        font-size: 36px;
+        font-weight: 900;
+        color: #222;
+      }
+
+      .card p {
+        margin-top: 8px;
+        font-size: 18px;
+        color: #666;
+        font-weight: 600;
+      }
+
+      /* Chart section */
+      .charts-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .chart-container {
+        background-color: #fff;
+        flex: 1;
+        min-width: 280px;
+        padding: 25px 30px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .chart-container:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 24px rgba(22, 110, 107, 0.25);
+      }
+
+      .chart-container {
+        border: 2px solid #166e6b;
+        background: linear-gradient(145deg, #e8fafa, #ffffff);
+      }
+
+      .chart-container h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #166e6b;
+        font-weight: 800;
+        font-size: 22px;
+        border-bottom: 2px solid #166e6b;
+        padding-bottom: 8px;
+        letter-spacing: 0.3px;
+      }
+
+      /* Today's appointments */
+      .todays-appointments {
+        background-color: #fff;
+        padding: 25px 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(22, 110, 107, 0.2);
+        margin-left: 0;
+        padding-left: 10px;
+      }
+
+      .todays-appointments h3 {
+        margin-top: 0;
+        margin-bottom: 25px;
+        color: #166e6b;
+        font-weight: 700;
+        font-size: 22px;
+        border-bottom: 2px solid #166e6b;
+        padding-bottom: 8px;
+      }
+
+      .appointment-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .appointment-item:last-child {
+        border-bottom: none;
+      }
+      .appointment-info {
+        flex-grow: 1;
+      }
+
+      .appointment-info .name {
+        font-weight: 700;
+        font-size: 18px;
+        color: #222;
+        margin-left: 20px;
+      }
+
+      .appointment-info .details {
+        font-size: 14px;
+        color: #666;
+        margin-top: 4px;
+        margin-left: 20px;
+      }
+      .appointment-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .appointment-time,
+      .appointment-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 90px;
+        height: 32px;
+        padding: 0 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+      .appointment-status {
+        text-transform: capitalize;
+      }
+
+      .appointment-time {
+        background-color: #e0f7f6;
+        color: #166e6b;
+      }
+
+      .status-pending {
+        background-color: orange;
+        color: white;
+      }
+      .status-confirmed {
+        background-color: royalblue;
+        color: white;
+      }
+      .status-completed {
+        background-color: mediumseagreen;
+        color: white;
+      }
+      .status-cancelled {
+        background-color: crimson;
+        color: white;
+      }
+      .status-missed {
+        background-color: darkgray;
+        color: white;
+      }
+      .status-unknown {
+        background-color: #999;
+        color: white;
+      }
+
+      .appointment-time,
+      .appointment-status {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 900;
+        display: none;
+      }
+
+      #overlay.active {
+        display: block;
+      }
+      #notificationBell {
+        position: relative;
+        cursor: pointer;
+      }
+      #notificationBell {
+        position: relative;
+        cursor: pointer;
+        margin-left: auto; /* push it to the right */
+      }
+
+      /* Bell icon style */
+      #notificationBell i {
+        font-size: 24px;
+        color: white;
+        margin-left: 0px;
+      }
+
+      /* Notification count badge */
+      #notificationCount {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+        display: none; /* Hide by default */
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-cards {
+          flex-direction: column;
         }
-    
-        @media (max-width: 480px) {
-            header {
-                flex-direction: column;
-                gap: 10px;
-                font-size: 22px;
-                align-items: flex-start;
-            }
-    
-            header button {
-                width: 100%;
-            }
-    
-            .appointment-photo {
-                width: 50px;
-                height: 50px;
-            }
-    
-            .appointment-info .name {
-                font-size: 16px;
-            }
-    
-            .appointment-info .details {
-                font-size: 12px;
-            }
-    
-            .appointment-time {
-                font-size: 14px;
-            }
+
+        .charts-section {
+          flex-direction: column;
         }
+
+        .card,
+        .card.large {
+          flex: 1 !important;
+        }
+
+        .chart-container {
+          flex: 1 1 100%;
+        }
+
+        main {
+          padding: 20px;
+        }
+        .sidebar {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: -250px;
+          height: 100%;
+          z-index: 1000;
+          transition: left 0.3s ease-in-out;
+        }
+
+        .sidebar.active {
+          display: flex;
+          left: 0;
+        }
+
+        #bar {
+          display: block;
+          background: none;
+          border: none;
+          color: white;
+          font-size: 26px;
+          cursor: pointer;
+        }
+
+        #bar:focus {
+          outline: none;
+        }
+      }
+
+      @media (max-width: 480px) {
+        header {
+          flex-direction: column;
+          gap: 10px;
+          font-size: 22px;
+          align-items: flex-start;
+        }
+
+        header button {
+          width: 100%;
+        }
+
+        .appointment-photo {
+          width: 50px;
+          height: 50px;
+        }
+
+        .appointment-info .name {
+          font-size: 16px;
+        }
+
+        .appointment-info .details {
+          font-size: 12px;
+        }
+
+        .appointment-time {
+          font-size: 14px;
+        }
+      }
     </style>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <div class="sidebar">
-        <h2>DocAssist</h2>
-        <ul>
-            <li><a href="Adminpanel.html">Dashboard</a></li>
-            <li><a href="adminappoint.html">Appointments</a></li>
-            <li><a href="add-doctors.html">Add Doctor</a></li>
-            <li><a href="admindoclist.html">Doctors List</a></li>
-            <li><a href="patients-list.html">Patients List</a></li>
-            <li><a href="settings.html">Profile</a></li>
-        </ul>
+      <h2>DocAssist</h2>
+      <ul>
+        <li><a href="Adminpanel.html">Dashboard</a></li>
+        <li><a href="adminappoint.html">Appointments</a></li>
+        <li><a href="add-doctors.html">Add Doctor</a></li>
+        <li><a href="admindoclist.html">Doctors List</a></li>
+        <li><a href="patients-list.html">Patients List</a></li>
+        <li><a href="AdminFeedback.html">Feedback</a></li>
+      </ul>
     </div>
     <div id="overlay"></div>
     <main>
-        <header>
+      <header>
         <i id="bar" class="fa-solid fa-bars"></i>
-            <div>Admin Dashboard</div>
-<div id="notificationBell" style="position: relative; cursor: pointer; margin-right: 20px;">
-    <i class="fa-solid fa-bell"></i>
-    <span id="notificationCount"></span>
-</div>
-           
+        <div>Admin Dashboard</div>
+        <!-- <div
+          id="notificationBell"
+          style="position: relative; cursor: pointer; margin-right: 20px"
+        >
+          <i class="fa-solid fa-bell"></i>
+          <span id="notificationCount"></span>
+        </div> -->
 
-            <button id="logoutBtn">Logout</button>
-        </header>
+        <button id="logoutBtn">Logout</button>
+      </header>
 
-        <section class="dashboard-cards">
-            <div class="card">
-                <h2 id="admittedPatientsCount">0</h2>
-                <p>Total Patients</p>
-            </div>
-            <div class="card">
-                <h2 id="appointmentsCount">0</h2>
-                <p>Appointments</p>
-            </div>
-            <div class="card">
-                <h2 id="totalDoctorsCount">0</h2>
-                <p>Total Doctors</p>
-            </div>
-        </section>
+      <section class="dashboard-cards">
+        <div class="card">
+          <h2 id="admittedPatientsCount">0</h2>
+          <p>Total Patients</p>
+        </div>
+        <div class="card">
+          <h2 id="appointmentsCount">0</h2>
+          <p>Appointments</p>
+        </div>
+        <div class="card">
+          <h2 id="totalDoctorsCount">0</h2>
+          <p>Total Doctors</p>
+        </div>
+      </section>
 
-        <section class="charts-section">
-            <div class="chart-container">
-                <h3>Patients</h3>
-                <canvas id="patientsChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Appointments</h3>
-                <canvas id="appointmentsChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Doctors</h3>
-                <canvas id="doctorsChart"></canvas>
-            </div>
-        </section>
+      <section class="charts-section">
+        <div class="chart-container">
+          <h3>Patients</h3>
+          <canvas id="patientsChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3>Appointments</h3>
+          <canvas id="appointmentsChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3>Doctors</h3>
+          <canvas id="doctorsChart"></canvas>
+        </div>
+      </section>
 
-        <section class="todays-appointments">
-            <h3>Today's Appointments</h3>
-            <div id="todaysAppointmentsList">
-                <!-- Appointment items will be inserted here -->
-            </div>
-        </section>
+      <section class="todays-appointments">
+        <h3>Today's Appointments</h3>
+        <div id="todaysAppointmentsList">
+          <!-- Appointment items will be inserted here -->
+        </div>
+      </section>
     </main>
 
     <script>
-        const bar = document.getElementById('bar');
-            const sidebar = document.querySelector('.sidebar');
-            const overlay = document.getElementById('overlay');
+      const bar = document.getElementById("bar");
+      const sidebar = document.querySelector(".sidebar");
+      const overlay = document.getElementById("overlay");
 
-            bar.addEventListener('click', function () {
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('active');
-            });
+      bar.addEventListener("click", function () {
+        sidebar.classList.toggle("active");
+        overlay.classList.toggle("active");
+      });
 
-            overlay.addEventListener('click', function () {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            });
+      overlay.addEventListener("click", function () {
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
+      });
 
-        // Logout functionality
-        document.getElementById('logoutBtn').addEventListener('click', function () {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userRole');
-            window.location.href = 'login.html';
+      // Logout functionality
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", function () {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("userRole");
+          window.location.href = "login.html";
         });
 
-        // Access control and redirect if not admin
-        window.addEventListener('DOMContentLoaded', () => {
-            const role = localStorage.getItem('userRole');
-            if (role !== 'admin') {
-                alert('Access denied. Admins only.');
-                window.location.href = 'login.html';
-                return;
-            }
-            fetchDashboardStats();
-            fetchTodaysAppointments();
-            renderCharts();
-            fetchUnreadNotificationCount(); 
-            setInterval(fetchUnreadNotificationCount, 30000);
-        });
+      // Access control and redirect if not admin
+      window.addEventListener("DOMContentLoaded", () => {
+        const role = localStorage.getItem("userRole");
+        if (role !== "admin") {
+          alert("Access denied. Admins only.");
+          window.location.href = "login.html";
+          return;
+        }
+        fetchDashboardStats();
+        fetchTodaysAppointments();
+        renderCharts();
+        // fetchUnreadNotificationCount();
+        // setInterval(fetchUnreadNotificationCount, 30000);
+      });
 
-    async function markAllNotificationsAsRead() {
-        const token = localStorage.getItem('authToken');
+      // async function markAllNotificationsAsRead() {
+      //   const token = localStorage.getItem("authToken");
+      //   try {
+      //     const res = await fetch(
+      //       "http://localhost:3000/api/notifications/mark-all-read",
+      //       {
+      //         method: "PATCH",
+      //         headers: { Authorization: "Bearer " + token },
+      //       }
+      //     );
+      //     if (!res.ok) throw new Error("Failed to mark notifications as read");
+      //     console.log("Notifications marked as read");
+      //     // After marking read, update UI immediately
+      //     document.getElementById("notificationCount").style.display = "none";
+      //     document.getElementById("notificationCount").textContent = "";
+      //     document.getElementById("notificationCount").textContent = "0";
+      //     document.getElementById("notificationCount").style.backgroundColor =
+      //       "gray";
+      //   } catch (error) {
+      //     console.error("Error marking notifications as read:", error);
+      //   }
+      // }
+
+      // async function fetchUnreadNotificationCount() {
+      //   console.log("GET /admin/notifications/count called");
+
+      //   const token = localStorage.getItem("authToken");
+      //   try {
+      //     const res = await fetch(
+      //       "http://localhost:3000/api/admin/notifications/count",
+      //       {
+      //         headers: { Authorization: "Bearer " + token },
+      //       }
+      //     );
+
+      //     if (!res.ok) throw new Error("Failed to fetch notification count");
+      //     const data = await res.json();
+      //     console.log("Server returned notification count:", data.count);
+      //     const countSpan = document.getElementById("notificationCount");
+      //     if (data.count && data.count > 0) {
+      //       countSpan.textContent = data.count;
+      //       countSpan.style.display = "inline-block";
+      //     } else {
+      //       countSpan.style.display = "none";
+      //     }
+      //   } catch (error) {
+      //     console.error("Error fetching unread notifications count:", error);
+      //   }
+      // }
+
+      // document
+      //   .getElementById("notificationBell")
+      //   .addEventListener("click", async () => {
+      //     await markAllNotificationsAsRead();
+      //     window.location.href = "AdminFeedback.html";
+      //   });
+
+      async function fetchDashboardStats() {
+        const token = localStorage.getItem("authToken");
         try {
-            const res = await fetch('http://localhost:3000/api/notifications/mark-all-read', {
-                method: 'PATCH',
-                headers: { Authorization: 'Bearer ' + token }
-            });
-            if (!res.ok) throw new Error('Failed to mark notifications as read');
-            console.log('Notifications marked as read');
-            // After marking read, update UI immediately
-            document.getElementById('notificationCount').style.display = 'none';
-            document.getElementById('notificationCount').textContent = '';
-            document.getElementById('notificationCount').textContent = '0';
-            document.getElementById('notificationCount').style.backgroundColor = 'gray';
+          // Fetch patients and doctors counts
+          const countsRes = await fetch(
+            "http://localhost:3000/api/admin/dashboard/user-counts",
+            {
+              headers: { Authorization: "Bearer " + token },
+            }
+          );
+          const countsData = await countsRes.json();
+          document.getElementById("admittedPatientsCount").textContent =
+            countsData.patientCount || 0;
+          document.getElementById("totalDoctorsCount").textContent =
+            countsData.doctorCount || 0;
 
+          // Fetch appointments count
+          const appointmentsRes = await fetch(
+            "http://localhost:3000/api/admin/dashboard/todays-appointments",
+            {
+              headers: { Authorization: "Bearer " + token },
+            }
+          );
+          const appointmentsData = await appointmentsRes.json();
+          console.log("Appointments Data:", appointmentsData);
+
+          document.getElementById("appointmentsCount").textContent =
+            appointmentsData.todaysAppointments.length || 0;
         } catch (error) {
-            console.error('Error marking notifications as read:', error);
+          console.error("Error fetching dashboard stats:", error);
         }
-    }
+      }
 
-    // document.getElementById('notificationBell').addEventListener('click', async () => {
-    //         await markAllNotificationsAsRead();
-    //         window.location.href = 'AdminFeedback.html';
-    //     });
-        async function fetchUnreadNotificationCount() {
-                console.log('GET /admin/notifications/count called');
-
-                const token = localStorage.getItem('authToken');
-                try {
-                    const res = await fetch('http://localhost:3000/api/admin/notifications/count', {
-                        
-                        headers: { Authorization: 'Bearer ' + token }
-                    });
-
-                    if (!res.ok) throw new Error('Failed to fetch notification count');
-                    const data = await res.json();
-                            console.log('Server returned notification count:', data.count);
-                    const countSpan = document.getElementById('notificationCount');
-                    if (data.count && data.count > 0) {
-                        countSpan.textContent = data.count;
-                        countSpan.style.display = 'inline-block';
-                    } else {
-                        countSpan.style.display = 'none';
-                    }
-                } catch (error) {
-                    console.error('Error fetching unread notifications count:', error);
-                }
+      async function fetchTodaysAppointments() {
+        const token = localStorage.getItem("authToken");
+        try {
+          const res = await fetch(
+            "http://localhost:3000/api/admin/dashboard/todays-appointments",
+            {
+              headers: { Authorization: "Bearer " + token },
             }
+          );
+          const data = await res.json();
+          console.log("Appointments Data:", data);
 
-          document.getElementById('notificationBell').addEventListener('click', async () => {
-                await markAllNotificationsAsRead();
-                window.location.href = 'AdminFeedback.html';
+          const appointments = Array.isArray(data.todaysAppointments)
+            ? data.todaysAppointments
+            : [];
+          const container = document.getElementById("todaysAppointmentsList");
+          container.innerHTML = "";
+
+          appointments.forEach((app) => {
+            const div = document.createElement("div");
+            div.className = "appointment-item";
+
+            const infoDiv = document.createElement("div");
+            infoDiv.className = "appointment-info";
+            const nameDiv = document.createElement("div");
+            nameDiv.className = "name";
+            nameDiv.textContent = app.patientName;
+            const detailsDiv = document.createElement("div");
+            detailsDiv.className = "details";
+            detailsDiv.textContent = `With Dr. ${app.doctorName}`;
+            infoDiv.appendChild(nameDiv);
+            infoDiv.appendChild(detailsDiv);
+
+            const timeDiv = document.createElement("div");
+            timeDiv.className = "appointment-time";
+            timeDiv.textContent = app.time;
+
+            const statusDiv = document.createElement("div");
+            statusDiv.className = `appointment-status status-${(
+              app.status || "unknown"
+            ).toLowerCase()}`;
+            statusDiv.textContent = app.status || "Unknown";
+
+            // div.appendChild(photoDiv);
+            div.appendChild(infoDiv);
+            div.appendChild(timeDiv);
+            div.appendChild(statusDiv);
+
+            container.appendChild(div);
+          });
+        } catch (error) {
+          console.error("Error fetching today's appointments:", error);
+        }
+      }
+
+      async function renderCharts() {
+        const token = localStorage.getItem("authToken");
+        const patientsCtx = document
+          .getElementById("patientsChart")
+          .getContext("2d");
+        const appointmentsCtx = document
+          .getElementById("appointmentsChart")
+          .getContext("2d");
+        const doctorsCtx = document
+          .getElementById("doctorsChart")
+          .getContext("2d");
+
+        try {
+          // Fetch time series data from backend
+          const [patientsRes, appointmentsRes, doctorsRes] = await Promise.all([
+            fetch(
+              "http://localhost:3000/api/admin/dashboard/patients-time-series",
+              {
+                headers: { Authorization: "Bearer " + token },
+              }
+            ),
+            fetch(
+              "http://localhost:3000/api/admin/dashboard/appointments-time-series",
+              {
+                headers: { Authorization: "Bearer " + token },
+              }
+            ),
+            fetch(
+              "http://localhost:3000/api/admin/dashboard/doctors-time-series",
+              {
+                headers: { Authorization: "Bearer " + token },
+              }
+            ),
+          ]);
+
+          const patientsData = await patientsRes.json();
+          console.log("Patients Data:", patientsData);
+
+          const appointmentsData = await appointmentsRes.json();
+          const doctorsData = await doctorsRes.json();
+          console.log("Doctors Data:", doctorsData);
+
+          // Helper function to process data into labels and counts for last 7 days
+          function processTimeSeriesData(data) {
+            const labels = [];
+            const counts = [];
+            const dateMap = new Map();
+            data.forEach((item) => {
+              dateMap.set(item._id, item.count);
             });
 
-
-
-        async function fetchDashboardStats() {
-            const token = localStorage.getItem('authToken');
-            try {
-                // Fetch patients and doctors counts
-                const countsRes = await fetch('http://localhost:3000/api/admin/dashboard/user-counts', {
-                    headers: { Authorization: 'Bearer ' + token }
-                });
-                const countsData = await countsRes.json();
-                document.getElementById('admittedPatientsCount').textContent = countsData.patientCount || 0;
-                document.getElementById('totalDoctorsCount').textContent = countsData.doctorCount || 0;
-
-                // Fetch appointments count
-                const appointmentsRes = await fetch('http://localhost:3000/api/admin/dashboard/todays-appointments', {
-                    headers: { Authorization: 'Bearer ' + token }
-                });
-                const appointmentsData = await appointmentsRes.json();
-                console.log('Appointments Data:', appointmentsData);
-
-                document.getElementById('appointmentsCount').textContent = appointmentsData.todaysAppointments.length || 0;
-
-            } catch (error) {
-                console.error('Error fetching dashboard stats:', error);
+            // Generate last 7 days labels
+            for (let i = 6; i >= 0; i--) {
+              const date = new Date();
+              date.setDate(date.getDate() - i);
+              const dateStr = date.toISOString().split("T")[0];
+              labels.push(dateStr);
+              counts.push(dateMap.get(dateStr) || 0);
             }
+            return { labels, counts };
+          }
+
+          const patientsProcessed = processTimeSeriesData(patientsData);
+          const appointmentsProcessed = processTimeSeriesData(appointmentsData);
+          const doctorsProcessed = processTimeSeriesData(doctorsData);
+
+          new Chart(patientsCtx, {
+            type: "bar",
+            data: {
+              labels: patientsProcessed.labels,
+              datasets: [
+                {
+                  label: "Patients",
+                  data: patientsProcessed.counts,
+                  backgroundColor: "rgb(9, 102, 102)",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+
+          new Chart(appointmentsCtx, {
+            type: "bar",
+            data: {
+              labels: appointmentsProcessed.labels,
+              datasets: [
+                {
+                  label: "Appointments",
+                  data: appointmentsProcessed.counts,
+                  backgroundColor: "rgb(9, 102, 102)",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+
+          new Chart(doctorsCtx, {
+            type: "bar",
+            data: {
+              labels: doctorsProcessed.labels,
+              datasets: [
+                {
+                  label: "Doctors",
+                  data: doctorsProcessed.counts,
+                  backgroundColor: "rgb(9, 102, 102)",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+        } catch (error) {
+          console.error("Error fetching or rendering charts:", error);
         }
-
-        async function fetchTodaysAppointments() {
-            const token = localStorage.getItem('authToken');
-            try {
-                const res = await fetch('http://localhost:3000/api/admin/dashboard/todays-appointments', {
-                    headers: { Authorization: 'Bearer ' + token }
-                });
-                const data = await res.json();
-                console.log("Appointments Data:", data);
-
-                const appointments = Array.isArray(data.todaysAppointments)
-                    ? data.todaysAppointments
-                    : [];
-                const container = document.getElementById('todaysAppointmentsList');
-                container.innerHTML = '';
-
-                appointments.forEach(app => {
-                    const div = document.createElement('div');
-                    div.className = 'appointment-item';
-
-                    const infoDiv = document.createElement('div');
-                    infoDiv.className = 'appointment-info';
-                    const nameDiv = document.createElement('div');
-                    nameDiv.className = 'name';
-                    nameDiv.textContent = app.patientName;
-                    const detailsDiv = document.createElement('div');
-                    detailsDiv.className = 'details';
-                    detailsDiv.textContent = `With Dr. ${app.doctorName}`;
-                    infoDiv.appendChild(nameDiv);
-                    infoDiv.appendChild(detailsDiv);
-
-                    const timeDiv = document.createElement('div');
-                    timeDiv.className = 'appointment-time';
-                    timeDiv.textContent = app.time;
-
-                     const statusDiv = document.createElement('div');
-                    statusDiv.className = `appointment-status status-${(app.status || 'unknown').toLowerCase()}`;
-                    statusDiv.textContent = app.status || 'Unknown';
-
-                    // div.appendChild(photoDiv);
-                    div.appendChild(infoDiv);
-                    div.appendChild(timeDiv);
-                    div.appendChild(statusDiv);
-
-                    container.appendChild(div);
-                });
-            } catch (error) {
-                console.error('Error fetching today\'s appointments:', error);
-            }
-        }
-
-       
-        async function renderCharts() {
-            const token = localStorage.getItem('authToken');
-            const patientsCtx = document.getElementById('patientsChart').getContext('2d');
-            const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
-            const doctorsCtx = document.getElementById('doctorsChart').getContext('2d');
-
-            try {
-                // Fetch time series data from backend
-                const [patientsRes, appointmentsRes, doctorsRes] = await Promise.all([
-                    fetch('http://localhost:3000/api/admin/dashboard/patients-time-series', {
-                        headers: { Authorization: 'Bearer ' + token }
-                    }),
-                    fetch('http://localhost:3000/api/admin/dashboard/appointments-time-series', {
-                        headers: { Authorization: 'Bearer ' + token }
-                    }),
-                    fetch('http://localhost:3000/api/admin/dashboard/doctors-time-series', {
-                        headers: { Authorization: 'Bearer ' + token }
-                    })
-                ]);
-
-                const patientsData = await patientsRes.json();
-                console.log('Patients Data:', patientsData);
-
-                const appointmentsData = await appointmentsRes.json();
-                const doctorsData = await doctorsRes.json();
-                console.log('Doctors Data:', doctorsData);
-
-
-                // Helper function to process data into labels and counts for last 7 days
-                function processTimeSeriesData(data) {
-                    const labels = [];
-                    const counts = [];
-                    const dateMap = new Map();
-                    data.forEach(item => {
-                        dateMap.set(item._id, item.count);
-                    });
-
-                    // Generate last 7 days labels
-                    for (let i = 6; i >= 0; i--) {
-                        const date = new Date();
-                        date.setDate(date.getDate() - i);
-                        const dateStr = date.toISOString().split('T')[0];
-                        labels.push(dateStr);
-                        counts.push(dateMap.get(dateStr) || 0);
-                    }
-                    return { labels, counts };
-                }
-
-                const patientsProcessed = processTimeSeriesData(patientsData);
-                const appointmentsProcessed = processTimeSeriesData(appointmentsData);
-                const doctorsProcessed = processTimeSeriesData(doctorsData);
-
-                new Chart(patientsCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: patientsProcessed.labels,
-                        datasets: [{
-                            label: 'Patients',
-                            data: patientsProcessed.counts,
-                            backgroundColor: 'rgb(9, 102, 102)'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-
-                new Chart(appointmentsCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: appointmentsProcessed.labels,
-                        datasets: [{
-                            label: 'Appointments',
-                            data: appointmentsProcessed.counts,
-                            backgroundColor: 'rgb(9, 102, 102)'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-
-                new Chart(doctorsCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: doctorsProcessed.labels,
-                        datasets: [{
-                            label: 'Doctors',
-                            data: doctorsProcessed.counts,
-                            backgroundColor: 'rgb(9, 102, 102)'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error fetching or rendering charts:', error);
-            }
-        }
-
+      }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-</body>
-
+  </body>
 </html>

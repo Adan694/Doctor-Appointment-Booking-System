@@ -875,7 +875,6 @@ body {
     <div class="quick-links">
         <h3>Quick Links</h3>
         <ul>
-            <li><a href="">Home</a></li>
             <li><a href="Aboutus.html">About Us</a></li>
             <li><a href="">Services</a></li>
             <li><a href="Alldoctorsreal.html">Doctors</a></li>
@@ -1284,6 +1283,21 @@ body {
                             }
 
                             showLoadingOverlay();
+                            const formattedDate = new Date(selectedDate).toISOString().split("T")[0];
+
+// normalize time to consistent format (e.g., "hh:mm A")
+function normalizeTime(timeStr) {
+  const [time, modifier] = timeStr.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+  if (modifier === "PM" && hours !== 12) hours += 12;
+  if (modifier === "AM" && hours === 12) hours = 0;
+  return new Date(2000, 0, 1, hours, minutes).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+}
+const normalizedTime = normalizeTime(selectedTime);
 
                             fetch(`http://localhost:3000/api/appointments`, {
                                 method: 'POST',
