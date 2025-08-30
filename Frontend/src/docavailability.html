@@ -821,9 +821,11 @@ function addSlot() {
     // Tabs for morning/evening
     const tabContainer = document.createElement("div");
     tabContainer.classList.add("slot-tabs");
+
     const morningTab = document.createElement("div");
     morningTab.classList.add("slot-tab", "active");
     morningTab.textContent = "Morning";
+
     const eveningTab = document.createElement("div");
     eveningTab.classList.add("slot-tab");
     eveningTab.textContent = "Evening";
@@ -834,11 +836,17 @@ function addSlot() {
     // Morning slots container
     const morningContainer = document.createElement("div");
     morningContainer.classList.add("slots-container");
+
     standardSlots
         .filter(slot => {
-            const hour = parseInt(slot.split(":")[0]) % 12;
-            const isPM = slot.includes("PM");
-            return !isPM || (isPM && hour < 1); // before 12 PM
+            const [time, meridian] = slot.split(" ");
+            const hour = parseInt(time.split(":")[0], 10);
+
+            // All AM are morning
+            if (meridian === "AM") return true;
+            // Exclude 12 PM (belongs to evening)
+            if (meridian === "PM" && hour < 12) return false;
+            return false;
         })
         .forEach(slot => {
             const label = document.createElement("label");
@@ -853,10 +861,15 @@ function addSlot() {
     // Evening slots container
     const eveningContainer = document.createElement("div");
     eveningContainer.classList.add("slots-container", "hidden");
+
     standardSlots
         .filter(slot => {
-            const isPM = slot.includes("PM");
-            return isPM; // after 12 PM
+            const [time, meridian] = slot.split(" ");
+            const hour = parseInt(time.split(":")[0], 10);
+
+            // All PM are evening (including 12 PM)
+            if (meridian === "PM") return true;
+            return false;
         })
         .forEach(slot => {
             const label = document.createElement("label");
