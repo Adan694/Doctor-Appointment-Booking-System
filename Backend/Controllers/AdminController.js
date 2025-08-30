@@ -4,6 +4,8 @@ const Feedback = require('../models/feedback');
 const Booking = require('../models/booking');
 const Doctor = require('../models/doctors');
 const mongoose = require('mongoose');
+const notifyAll = require('../Utils/notifyAll');
+const Notification = require('../models/Notification');
 
 // Get admin profile by ID
 const getAdminProfile = async (req, res) => {
@@ -97,20 +99,78 @@ const getAllPatients = async (req, res) => {
   }
 };
 
-// Delete a patient by ID
+// const deletePatient = async (req, res) => {
+//   try {
+//     const patientId = req.params.id;
+//     const patient = await User.findOne({ _id: patientId, role: 'patient' });
+//     if (!patient) {
+//       return res.status(404).json({ message: 'Patient not found' });
+//     }
+//     await User.deleteOne({ _id: patientId });
+//     res.json({ message: 'Patient deleted successfully' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Server error', error });
+//   }
+// };
 const deletePatient = async (req, res) => {
   try {
     const patientId = req.params.id;
     const patient = await User.findOne({ _id: patientId, role: 'patient' });
+
     if (!patient) {
       return res.status(404).json({ message: 'Patient not found' });
     }
+
+    // Find all bookings of this patient
+    const bookings = await Booking.find({ patientId });
+
+    // Cancel all bookings
+    await Booking.updateMany({ patientId }, { status: 'Cancelled' });
+
+    // Notify doctors about cancelled bookings
+    for (const booking of bookings) {
+      const doctor = await Doctor.findById(booking.doctorId);
+      if (doctor) {
+        const message = `Appointment with patient ${patient.name} on ${new Date(booking.date).toLocaleDateString()} at ${booking.time} has been cancelled.`;
+
+        await Notification.create({
+          userId: doctor._id,
+          message
+        });
+
+        await notifyAll({
+          patient: null,
+          doctor,
+          admin: null,
+          message
+        });
+      }
+    }
+
+    // Notify the patient that their account is deleted
+    const patientMessage = `Your account has been removed from the system, and all your appointments have been cancelled.`;
+    await Notification.create({
+      userId: patient._id,
+      message: patientMessage
+    });
+
+    await notifyAll({
+      patient,
+      doctor: null,
+      admin: null,
+      message: patientMessage
+    });
+
+    // Delete the patient
     await User.deleteOne({ _id: patientId });
-    res.json({ message: 'Patient deleted successfully' });
+
+    res.json({ message: 'Patient deleted, appointments cancelled, and notifications sent to doctors and patient.' });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Server error', error });
   }
 };
+
 
 // Get total users count
 const getTotalUsers = async (req, res) => {

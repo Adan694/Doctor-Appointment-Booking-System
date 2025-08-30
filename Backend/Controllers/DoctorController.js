@@ -137,6 +137,46 @@ const updateDoctor = async (req, res) => {
   }
 };
 
+// const deleteDoctor = async (req, res) => {
+//     try {
+//         const doctor = await Doctor.findById(req.params.id);
+//         if (!doctor) {
+//             return res.status(404).json({ message: 'Doctor not found.' });
+//         }
+
+//         const affectedBookings = await Booking.find({ doctorId: req.params.id });
+
+//         await Booking.updateMany(
+//             { doctorId: req.params.id },
+//             { status: 'Cancelled' } 
+//         );
+
+//         for (const booking of affectedBookings) {
+//             const patient = await User.findById(booking.patientId);
+//             if (patient) {
+//                 const message = `Your appointment with Dr. ${doctor.name} on ${new Date(booking.date).toLocaleDateString()} at ${booking.time} has been cancelled.`;
+
+//                 await Notification.create({
+//                     userId: patient._id,
+//                     message
+//                 });
+
+//                 await notifyAll({
+//                     patient,
+//                     doctor: null,
+//                     admin: null,
+//                     message
+//                 });
+//             }
+//         }
+//         await Doctor.findByIdAndDelete(req.params.id);
+
+//         res.status(200).json({ message: 'Doctor deleted and appointments cancelled with patient notifications sent.' });
+//     } catch (error) {
+//         console.error('Error deleting doctor:', error);
+//         res.status(500).json({ message: 'Internal server error.' });
+//     }
+// };
 const deleteDoctor = async (req, res) => {
     try {
         const doctor = await Doctor.findById(req.params.id);
@@ -144,13 +184,13 @@ const deleteDoctor = async (req, res) => {
             return res.status(404).json({ message: 'Doctor not found.' });
         }
 
+        // Find all bookings of this doctor
         const affectedBookings = await Booking.find({ doctorId: req.params.id });
 
-        await Booking.updateMany(
-            { doctorId: req.params.id },
-            { status: 'Cancelled' } 
-        );
+        // Cancel all bookings
+        await Booking.updateMany({ doctorId: req.params.id }, { status: 'Cancelled' });
 
+        // Notify patients about cancelled bookings
         for (const booking of affectedBookings) {
             const patient = await User.findById(booking.patientId);
             if (patient) {
@@ -169,9 +209,27 @@ const deleteDoctor = async (req, res) => {
                 });
             }
         }
+
+        // Notify the doctor that their account has been removed
+        const doctorMessage = `Your account has been removed from the system, and all your appointments have been cancelled.`;
+        await Notification.create({
+            userId: doctor._id,
+            message: doctorMessage
+        });
+
+        await notifyAll({
+            patient: null,
+            doctor,
+            admin: null,
+            message: doctorMessage
+        });
+
+        // Delete the doctor
         await Doctor.findByIdAndDelete(req.params.id);
 
-        res.status(200).json({ message: 'Doctor deleted and appointments cancelled with patient notifications sent.' });
+        res.status(200).json({
+            message: 'Doctor deleted, appointments cancelled, and notifications sent to patients and doctor.'
+        });
     } catch (error) {
         console.error('Error deleting doctor:', error);
         res.status(500).json({ message: 'Internal server error.' });
