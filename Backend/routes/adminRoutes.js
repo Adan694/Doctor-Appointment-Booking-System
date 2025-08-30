@@ -1,5 +1,5 @@
 const express = require('express');
-const { deactivatePatient, activatePatient, getAdminProfile,getPatientById,getAppointmentsByPatientId, updateAdminProfile, changeAdminPassword, getAllPatients, deletePatient, getTotalUsers, getTodaysAppointments, getFeedbackAlerts, getLatestBookings, getCurrentAdminProfile, getUserCounts,getTotalAppointmentsCount, getPatientsTimeSeries, getDoctorsTimeSeries, getAppointmentsTimeSeries  } = require('../Controllers/AdminController');
+const { deactivatePatient, activatePatient, getAdminProfile,getPatientById,getAppointmentsByPatientId, getAllPatients, deletePatient, getTotalUsers, getTodaysAppointments, getFeedbackAlerts, getLatestBookings, getCurrentAdminProfile, getUserCounts,getTotalAppointmentsCount, getPatientsTimeSeries, getDoctorsTimeSeries, getAppointmentsTimeSeries  } = require('../Controllers/AdminController');
 const { authenticateToken, authorizeAdmin } = require('../middlewares/auth');
 const router = express.Router();
 
@@ -15,10 +15,10 @@ router.delete('/patients/:id', authenticateToken, authorizeAdmin, deletePatient)
 router.get('/:id', authenticateToken, authorizeAdmin, getAdminProfile);
 
 // Update admin profile
-router.put('/:id', authenticateToken, authorizeAdmin, updateAdminProfile);
+// router.put('/:id', authenticateToken, authorizeAdmin, updateAdminProfile);
 
-// Change admin password
-router.put('/:id/change-password', authenticateToken, authorizeAdmin, changeAdminPassword);
+// // Change admin password
+// router.put('/:id/change-password', authenticateToken, authorizeAdmin, changeAdminPassword);
 
 // Dashboard stats routes
 router.get('/dashboard/total-users', authenticateToken, authorizeAdmin, getTotalUsers);

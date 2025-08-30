@@ -34,52 +34,52 @@ const getCurrentAdminProfile = async (req, res) => {
 };
 
 // Update admin profile by ID
-const updateAdminProfile = async (req, res) => {
-  try {
-    const adminId = req.params.id;
-    const { name, email, phone } = req.body;
+// const updateAdminProfile = async (req, res) => {
+//   try {
+//     const adminId = req.params.id;
+//     const { name, email, phone } = req.body;
 
-    const admin = await User.findOne({ _id: adminId, role: 'admin' });
-    if (!admin) {
-      return res.status(404).json({ message: 'Admin not found' });
-    }
+//     const admin = await User.findOne({ _id: adminId, role: 'admin' });
+//     if (!admin) {
+//       return res.status(404).json({ message: 'Admin not found' });
+//     }
 
-    admin.name = name || admin.name;
-    admin.email = email || admin.email;
-    admin.phone = phone || admin.phone;
+//     admin.name = name || admin.name;
+//     admin.email = email || admin.email;
+//     admin.phone = phone || admin.phone;
 
-    await admin.save();
-    res.json({ message: 'Admin profile updated successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
-  }
-};
+//     await admin.save();
+//     res.json({ message: 'Admin profile updated successfully' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Server error', error });
+//   }
+// };
 
 // Change admin password
-const changeAdminPassword = async (req, res) => {
-  try {
-    const adminId = req.params.id;
-    const { oldPassword, newPassword } = req.body;
+// const changeAdminPassword = async (req, res) => {
+//   try {
+//     const adminId = req.params.id;
+//     const { oldPassword, newPassword } = req.body;
 
-    const admin = await User.findOne({ _id: adminId, role: 'admin' });
-    if (!admin) {
-      return res.status(404).json({ message: 'Admin not found' });
-    }
+//     const admin = await User.findOne({ _id: adminId, role: 'admin' });
+//     if (!admin) {
+//       return res.status(404).json({ message: 'Admin not found' });
+//     }
 
-    const isMatch = await bcrypt.compare(oldPassword, admin.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Old password is incorrect' });
-    }
+//     const isMatch = await bcrypt.compare(oldPassword, admin.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: 'Old password is incorrect' });
+//     }
 
-    const salt = await bcrypt.genSalt(10);
-    admin.password = await bcrypt.hash(newPassword, salt);
+//     const salt = await bcrypt.genSalt(10);
+//     admin.password = await bcrypt.hash(newPassword, salt);
 
-    await admin.save();
-    res.json({ message: 'Password changed successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
-  }
-};
+//     await admin.save();
+//     res.json({ message: 'Password changed successfully' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Server error', error });
+//   }
+// };
 
 // Get all patients
 const getAllPatients = async (req, res) => {
@@ -358,8 +358,6 @@ const activatePatient = async (req, res) => {
 module.exports = {
   getAdminProfile,
   getCurrentAdminProfile,
-  updateAdminProfile,
-  changeAdminPassword,
   getAllPatients,
   getPatientById,
   getAppointmentsByPatientId,
