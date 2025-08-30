@@ -315,7 +315,45 @@ const getAppointmentsByPatientId = async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 };
+// Deactivate patient
+const deactivatePatient = async (req, res) => {
+  try {
+    const patientId = req.params.id;
+    const patient = await User.findOneAndUpdate(
+      { _id: patientId, role: 'patient' },
+      { isActive: false },
+      { new: true }
+    ).select('-password');
 
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    res.json({ message: 'Patient account deactivated successfully', patient });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+// Activate patient
+const activatePatient = async (req, res) => {
+  try {
+    const patientId = req.params.id;
+    const patient = await User.findOneAndUpdate(
+      { _id: patientId, role: 'patient' },
+      { isActive: true },
+      { new: true }
+    ).select('-password');
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    res.json({ message: 'Patient account activated successfully', patient });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
 
 module.exports = {
   getAdminProfile,
@@ -334,7 +372,9 @@ module.exports = {
   getTotalAppointmentsCount,
   getPatientsTimeSeries,
   getDoctorsTimeSeries,
-  getAppointmentsTimeSeries
+  getAppointmentsTimeSeries,
+  deactivatePatient,
+  activatePatient
 };
 
 

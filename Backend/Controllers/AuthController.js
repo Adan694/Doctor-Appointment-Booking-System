@@ -22,6 +22,9 @@ async function authenticateUser(email, password, role) {
     }
 
     if (!user) return null;
+    if (!user.isActive) {
+        throw new Error("Account is deactivated. Please contact admin.");
+    }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     return isPasswordValid ? user : null;
@@ -166,7 +169,9 @@ async function login(req, res) {
         });
     } catch (error) {
         console.error("Error logging in:", error.message);
-        res.status(500).json({ message: "Error logging in" });
+        // res.status(500).json({ message: "Error logging in" });
+            return res.status(401).json({ message: error.message });  // ✅ send real message
+
     }
 }
 

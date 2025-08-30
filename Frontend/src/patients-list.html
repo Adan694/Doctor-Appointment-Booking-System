@@ -224,6 +224,54 @@
       #overlay.active {
         display: block;
       }
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: bold;
+      }
+      .status-badge.active {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .status-badge.inactive {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      .activate-btn,
+      .deactivate-btn {
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Activate button: green, matches your theme */
+      .activate-btn {
+        background-color: #28a745;
+        color: #fff;
+      }
+      .activate-btn:hover {
+        background-color: #1e7e34;
+        transform: translateY(-2px);
+      }
+
+      /* Deactivate button: teal/red combo */
+      .deactivate-btn {
+        background-color: #dc3545;
+        color: #fff;
+      }
+      .deactivate-btn:hover {
+        background-color: #b52a38;
+        transform: translateY(-2px);
+      }
 
       @media (max-width: 992px) {
         table {
@@ -318,6 +366,7 @@
         <thead>
           <tr>
             <th>Email</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -387,11 +436,25 @@
             tr.innerHTML = `
         <td>${patient.email || ""}</td>
         <td>
+    <span class="status-badge ${patient.isActive ? "active" : "inactive"}">
+      ${patient.isActive ? "Active" : "Inactive"}
+    </span>
+  </td>
+        <td>
             <button class="details-btn" data-id="${
               patient._id
             }" style="margin-right:10px;">
                 <i class="fas fa-info-circle"></i> Show Details
             </button>
+            ${
+              patient.isActive
+                ? `<button class="deactivate-btn" data-id="${patient._id}">
+             <i class="fas fa-user-slash"></i> Deactivate
+           </button>`
+                : `<button class="activate-btn" data-id="${patient._id}">
+             <i class="fas fa-user-check"></i> Activate
+           </button>`
+            }
             <button class="delete-btn" data-id="${patient._id}">
                 <i class="fas fa-trash-alt"></i>
             </button>
@@ -399,6 +462,19 @@
     `;
 
             tbody.appendChild(tr);
+          });
+          tbody.querySelectorAll(".deactivate-btn").forEach((button) => {
+            button.addEventListener("click", (e) => {
+              const id = e.currentTarget.dataset.id;
+              if (confirm("Deactivate this account?")) deactivatePatient(id);
+            });
+          });
+
+          tbody.querySelectorAll(".activate-btn").forEach((button) => {
+            button.addEventListener("click", (e) => {
+              const id = e.currentTarget.dataset.id;
+              if (confirm("Activate this account?")) activatePatient(id);
+            });
           });
           const urlParams = new URLSearchParams(window.location.search);
           const highlightId = urlParams.get("highlight");
@@ -469,6 +545,49 @@
         } catch (error) {
           console.error("Error deleting patient:", error);
           alert("Error deleting patient profile.");
+        }
+      }
+      async function deactivatePatient(patientId) {
+        const token = localStorage.getItem("authToken");
+        try {
+          const res = await fetch(
+            `http://localhost:3000/api/admin/patients/${patientId}/deactivate`,
+            {
+              method: "PATCH",
+              headers: { Authorization: "Bearer " + token },
+            }
+          );
+          if (res.ok) {
+            alert("Patient account deactivated.");
+            fetchPatients();
+          } else {
+            const data = await res.json();
+            alert("Failed: " + data.message);
+          }
+        } catch (err) {
+          console.error("Error:", err);
+        }
+      }
+
+      async function activatePatient(patientId) {
+        const token = localStorage.getItem("authToken");
+        try {
+          const res = await fetch(
+            `http://localhost:3000/api/admin/patients/${patientId}/activate`,
+            {
+              method: "PATCH",
+              headers: { Authorization: "Bearer " + token },
+            }
+          );
+          if (res.ok) {
+            alert("Patient account activated.");
+            fetchPatients();
+          } else {
+            const data = await res.json();
+            alert("Failed: " + data.message);
+          }
+        } catch (err) {
+          console.error("Error:", err);
         }
       }
 

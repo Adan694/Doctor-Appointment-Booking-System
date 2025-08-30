@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAdminProfile,getPatientById,getAppointmentsByPatientId, updateAdminProfile, changeAdminPassword, getAllPatients, deletePatient, getTotalUsers, getTodaysAppointments, getFeedbackAlerts, getLatestBookings, getCurrentAdminProfile, getUserCounts,getTotalAppointmentsCount, getPatientsTimeSeries, getDoctorsTimeSeries, getAppointmentsTimeSeries  } = require('../Controllers/AdminController');
+const { deactivatePatient, activatePatient, getAdminProfile,getPatientById,getAppointmentsByPatientId, updateAdminProfile, changeAdminPassword, getAllPatients, deletePatient, getTotalUsers, getTodaysAppointments, getFeedbackAlerts, getLatestBookings, getCurrentAdminProfile, getUserCounts,getTotalAppointmentsCount, getPatientsTimeSeries, getDoctorsTimeSeries, getAppointmentsTimeSeries  } = require('../Controllers/AdminController');
 const { authenticateToken, authorizeAdmin } = require('../middlewares/auth');
 const router = express.Router();
 
@@ -33,5 +33,8 @@ router.get('/dashboard/doctors-time-series', authenticateToken, authorizeAdmin, 
 router.get('/dashboard/appointments-time-series', authenticateToken, authorizeAdmin, getAppointmentsTimeSeries);
 router.get('/patients/:id', getPatientById);
 router.get('/patients/:id/appointments', getAppointmentsByPatientId);
+router.patch("/patients/:id/deactivate", authenticateToken, authorizeAdmin, deactivatePatient);
+router.patch("/patients/:id/activate", authenticateToken, authorizeAdmin, activatePatient);
+
 
 module.exports = router;

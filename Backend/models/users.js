@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    match: /^([0-9]{5}-[0-9]{7}-[0-9]{1}|[0-9]{13})$/, // validates 13 digits or with dashes
+    match: /^([0-9]{5}-[0-9]{7}-[0-9]{1}|[0-9]{13})$/, 
   },
   name: String,
   phone: String,
@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
   missedAppointments: { type: Number, default: 0 },
   isBlocked: { type: Boolean, default: false },
   blockedUntil: { type: Date, default: null },
+  isActive: { type: Boolean, default: true },
   otp: { type: Number },
   otpExpiration: { type: Date },
 }, { timestamps: true });
