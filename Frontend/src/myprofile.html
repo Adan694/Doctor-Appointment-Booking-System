@@ -889,13 +889,20 @@ if (cnicInput) {
     cnicInput.after(cnicError);
 
     cnicInput.addEventListener('input', () => {
-        // Accept either 13 digits OR 5-7-1 with dashes
-        const cnicRegex = /^([0-9]{13}|[0-9]{5}-[0-9]{7}-[0-9]{1})$/;
-        cnicError.innerText = !cnicRegex.test(cnicInput.value.trim())
-            ? "❌ Invalid CNIC (must be 13 digits or 5-7-1 format with dashes)"
-            : '';
+        // clean value
+        const value = cnicInput.value.trim();
+
+        // allow either pure 13 digits OR 5-7-1 with dashes
+        const cnicRegex = /^(\d{13}|\d{5}-\d{7}-\d{1})$/;
+
+        if (cnicRegex.test(value)) {
+            cnicError.innerText = ''; // valid
+        } else {
+            cnicError.innerText = "❌ Invalid CNIC (must be 13 digits or 5-7-1 format with dashes)";
+        }
     });
 }
+
 
         // DOB VALIDATION (AGE AUTOMATICALLY UPDATED)
         const dobInput = document.getElementById('edit-dob');
@@ -939,10 +946,11 @@ if (cnicInput) {
             return age;
         })() : '';
         const cnicValue = getInput('edit-cnic');
-const cnicRegex = /^[0-9]{5}-[0-9]{7}-[0-9]{1}$/;  // e.g. 12345-1234567-1
+const cnicRegex = /^(\d{13}|\d{5}-\d{7}-\d{1})$/;  
 if (cnicValue && !cnicRegex.test(cnicValue)) {
-    return alert("Please enter a valid CNIC (e.g. 12345-1234567-1).");
+    return alert("Please enter a valid CNIC (either 13 digits or 12345-1234567-1 format).");
 }
+
 
 
         const updatedData = {
