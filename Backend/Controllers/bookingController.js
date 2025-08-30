@@ -618,7 +618,12 @@ if (status === 'completed' || status === 'Completed') {
       recipient: 'doctor'
     });
 
-    await notifyAll({ patient, message: patientMessage });
+    // await notifyAll({ patient, message: patientMessage });
+    await notifyAll({
+  patient: { ...patient.toObject(), email: updatedAppointment.email || patient.email },
+  message: patientMessage
+});
+
     await notifyAll({ doctor: formattedDoctor, message: doctorMessage });
   }
 }
