@@ -22,10 +22,9 @@ async function authenticateUser(email, password, role) {
     }
 
     if (!user) return null;
-    if (!user.isActive) {
+    if (role !== 'doctor' && !user.isActive) {
         throw new Error("Account is deactivated. Please contact admin.");
     }
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
     return isPasswordValid ? user : null;
 }
