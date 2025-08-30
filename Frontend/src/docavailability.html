@@ -504,6 +504,33 @@ textarea:focus {
   from { transform: translateY(-25px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+.slot-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.slot-tab {
+    flex: 1;
+    padding: 8px 12px;
+    text-align: center;
+    background: #cde7f0;
+    color: rgb(9, 102, 102);
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    user-select: none;
+}
+
+.slot-tab.active {
+    background: rgb(9, 102, 102);
+    color: white;
+}
+
+.slots-container.hidden {
+    display: none;
+}
 
 </style>
 
@@ -742,41 +769,132 @@ textarea:focus {
         function getTodayDate() {
             return new Date().toISOString().split("T")[0];
         }
-        function addSlot() {
-            const tbody = document.querySelector("#availabilityTable tbody");
-            const tr = document.createElement("tr");
-            const dateCell = document.createElement("td");
-            const dateInput = document.createElement("input");
-            dateInput.type = "date";
-            dateInput.min = getTodayDate(); 
-            dateCell.appendChild(dateInput);
+        // function addSlot() {
+        //     const tbody = document.querySelector("#availabilityTable tbody");
+        //     const tr = document.createElement("tr");
+        //     const dateCell = document.createElement("td");
+        //     const dateInput = document.createElement("input");
+        //     dateInput.type = "date";
+        //     dateInput.min = getTodayDate(); 
+        //     dateCell.appendChild(dateInput);
 
-            const slotsCell = document.createElement("td");
-            const slotsContainer = document.createElement("div");
-            slotsContainer.classList.add("slots-container");
+        //     const slotsCell = document.createElement("td");
+        //     const slotsContainer = document.createElement("div");
+        //     slotsContainer.classList.add("slots-container");
 
-            standardSlots.forEach(slot => {
-                const label = document.createElement("label");
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.value = slot;
+        //     standardSlots.forEach(slot => {
+        //         const label = document.createElement("label");
+        //         const checkbox = document.createElement("input");
+        //         checkbox.type = "checkbox";
+        //         checkbox.value = slot;
 
-                label.appendChild(checkbox);
-                label.append(` ${slot}`);
-                slotsContainer.appendChild(label);
-            });
+        //         label.appendChild(checkbox);
+        //         label.append(` ${slot}`);
+        //         slotsContainer.appendChild(label);
+        //     });
 
-            slotsCell.appendChild(slotsContainer);
+        //     slotsCell.appendChild(slotsContainer);
 
-            const removeCell = document.createElement("td");
-            removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
+        //     const removeCell = document.createElement("td");
+        //     removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
 
-            tr.appendChild(dateCell);
-            tr.appendChild(slotsCell);
-            tr.appendChild(removeCell);
+        //     tr.appendChild(dateCell);
+        //     tr.appendChild(slotsCell);
+        //     tr.appendChild(removeCell);
 
-            tbody.appendChild(tr);
-        }
+        //     tbody.appendChild(tr);
+        // }
+function addSlot() {
+    const tbody = document.querySelector("#availabilityTable tbody");
+    const tr = document.createElement("tr");
+
+    // Date input
+    const dateCell = document.createElement("td");
+    const dateInput = document.createElement("input");
+    dateInput.type = "date";
+    dateInput.min = getTodayDate();
+    dateCell.appendChild(dateInput);
+
+    // Slots cell with toggle
+    const slotsCell = document.createElement("td");
+
+    // Tabs for morning/evening
+    const tabContainer = document.createElement("div");
+    tabContainer.classList.add("slot-tabs");
+    const morningTab = document.createElement("div");
+    morningTab.classList.add("slot-tab", "active");
+    morningTab.textContent = "Morning";
+    const eveningTab = document.createElement("div");
+    eveningTab.classList.add("slot-tab");
+    eveningTab.textContent = "Evening";
+
+    tabContainer.appendChild(morningTab);
+    tabContainer.appendChild(eveningTab);
+
+    // Morning slots container
+    const morningContainer = document.createElement("div");
+    morningContainer.classList.add("slots-container");
+    standardSlots
+        .filter(slot => {
+            const hour = parseInt(slot.split(":")[0]) % 12;
+            const isPM = slot.includes("PM");
+            return !isPM || (isPM && hour < 1); // before 12 PM
+        })
+        .forEach(slot => {
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = slot;
+            label.appendChild(checkbox);
+            label.append(` ${slot}`);
+            morningContainer.appendChild(label);
+        });
+
+    // Evening slots container
+    const eveningContainer = document.createElement("div");
+    eveningContainer.classList.add("slots-container", "hidden");
+    standardSlots
+        .filter(slot => {
+            const isPM = slot.includes("PM");
+            return isPM; // after 12 PM
+        })
+        .forEach(slot => {
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = slot;
+            label.appendChild(checkbox);
+            label.append(` ${slot}`);
+            eveningContainer.appendChild(label);
+        });
+
+    // Toggle behavior
+    morningTab.onclick = () => {
+        morningTab.classList.add("active");
+        eveningTab.classList.remove("active");
+        morningContainer.classList.remove("hidden");
+        eveningContainer.classList.add("hidden");
+    };
+    eveningTab.onclick = () => {
+        eveningTab.classList.add("active");
+        morningTab.classList.remove("active");
+        eveningContainer.classList.remove("hidden");
+        morningContainer.classList.add("hidden");
+    };
+
+    slotsCell.appendChild(tabContainer);
+    slotsCell.appendChild(morningContainer);
+    slotsCell.appendChild(eveningContainer);
+
+    // Remove button
+    const removeCell = document.createElement("td");
+    removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
+
+    tr.appendChild(dateCell);
+    tr.appendChild(slotsCell);
+    tr.appendChild(removeCell);
+    tbody.appendChild(tr);
+}
 
         function applyQuickAvailability() {
             const days = Array.from(document.querySelectorAll('.dayCheckbox:checked')).map(cb => cb.value);
