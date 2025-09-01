@@ -1,672 +1,747 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Doctor Profile Editor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f7fa;
-            color: #004d4d;
+      body {
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f4f7fa;
+        color: #004d4d;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        z-index: 1000;
+        padding: 10px 20px;
+      }
+
+      ul {
+        display: flex;
+      }
+
+      ul li {
+        list-style: none;
+      }
+
+      ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 20px;
+        margin-inline: 20px;
+      }
+
+      ul li a:hover {
+        color: black;
+        border-bottom: 2px solid black;
+      }
+
+      #bar {
+        display: none;
+        font-size: 28px;
+        cursor: pointer;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+      }
+
+      .logo img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+
+      .logo h1 {
+        font-size: 28px;
+        background: linear-gradient(45deg, #ffffff, #cceeff);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 100px auto 50px;
+        padding: 20px;
+      }
+
+      .card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+      }
+
+      .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .avatar-wrapper {
+        position: relative;
+      }
+
+      .avatar-wrapper img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 2px solid #096666;
+        object-fit: cover;
+        transition: 0.3s;
+      }
+
+      .avatar-wrapper img:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 12px rgba(9, 102, 102, 0.6);
+      }
+
+      .edit-avatar {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: #096666;
+        color: #fff;
+        border-radius: 50%;
+        padding: 6px;
+        cursor: pointer;
+      }
+
+      .avatar-wrapper input[type="file"] {
+        display: none;
+      }
+
+      .profile-info h2 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .profile-info p {
+        margin: 4px 0 0;
+        color: #096666;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        border-bottom: 2px solid #e0e0e0;
+        margin-bottom: 20px;
+      }
+
+      .tab-btn {
+        background: none;
+        border: none;
+        font-weight: 600;
+        padding: 8px 15px;
+        cursor: pointer;
+        color: #096666;
+        transition: 0.3s;
+        border-bottom: 3px solid transparent;
+      }
+
+      .tab-btn.active {
+        border-bottom: 3px solid #096666;
+        color: #004d4d;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .input-group {
+        position: relative;
+        margin-top: 18px;
+      }
+
+      .input-group input,
+      .input-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1.5px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+        outline: none;
+        transition: border 0.3s;
+        background: transparent;
+      }
+
+      .input-group textarea {
+        min-height: 60px;
+        resize: vertical;
+      }
+
+      .input-group label {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        color: #999;
+        font-size: 14px;
+        pointer-events: none;
+        transition: 0.3s ease all;
+        background: #fff;
+        padding: 0 4px;
+      }
+
+      .input-group input:focus + label,
+      .input-group input:not(:placeholder-shown) + label,
+      .input-group textarea:focus + label,
+      .input-group textarea:not(:placeholder-shown) + label {
+        top: -10px;
+        left: 10px;
+        font-size: 12px;
+        color: #096666;
+      }
+
+      #password-fields {
+        display: none;
+        margin-top: 10px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #change-password-btn {
+        background: #096666;
+        color: #fff;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      #change-password-btn:hover {
+        background: #007b7b;
+      }
+
+      #password-fields input {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+
+      .action-buttons {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .action-buttons .btn {
+        padding: 12px 25px;
+        background: #096666;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .action-buttons .btn:hover {
+        background: #007b7b;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 5px solid #d0f0f0;
+        border-top: 5px solid #009999;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
 
-        nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgb(9, 102, 102);
-            color: white;
-            z-index: 1000;
-            padding: 10px 20px;
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      #loadingOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 2000;
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      #toast {
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #009999;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 5px;
+        z-index: 3000;
+        font-size: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      @media (max-width: 768px) {
+        .profile-header {
+          flex-direction: column;
+          align-items: center;
         }
 
-        ul {
-            display: flex;
+        nav ul {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          background-color: #096666;
         }
 
-        ul li {
-            list-style: none;
-        }
-
-        ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 20px;
-            margin-inline: 20px;
-        }
-
-        ul li a:hover {
-            color: black;
-            border-bottom: 2px solid black;
+        nav ul.active {
+          display: flex;
         }
 
         #bar {
-            display: none;
-            font-size: 28px;
-            cursor: pointer;
+          display: block;
         }
+      }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 20px;
-        }
+      #doctorName {
+        font-size: 28px;
+        font-weight: 700;
+        color: #004d4d;
+        border: none;
+        background: transparent;
+        width: 100%;
+        outline: none;
+        padding: 2px 0;
+        transition: border-bottom 0.3s;
+        border-bottom: 2px solid transparent;
+      }
 
-        .logo img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
+      #doctorName:focus {
+        border-bottom: 2px solid #096666;
+      }
 
-        .logo h1 {
-            font-size: 28px;
-            background: linear-gradient(45deg, #ffffff, #cceeff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+      #specialization {
+        font-size: 18px;
+        font-weight: 500;
+        color: #096666;
+        border: none;
+        background: transparent;
+        width: 100%;
+        outline: none;
+        padding: 2px 0;
+        margin-top: 4px;
+        transition: border-bottom 0.3s;
+        border-bottom: 1.5px solid transparent;
+      }
 
-        .container {
-            max-width: 900px;
-            margin: 100px auto 50px;
-            padding: 20px;
-        }
+      #specialization:focus {
+        border-bottom: 1.5px solid #096666;
+      }
 
-        .card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .avatar-wrapper {
-            position: relative;
-        }
-
-        .avatar-wrapper img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 2px solid #096666;
-            object-fit: cover;
-            transition: 0.3s;
-        }
-
-        .avatar-wrapper img:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 12px rgba(9, 102, 102, 0.6);
-        }
-
-        .edit-avatar {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: #096666;
-            color: #fff;
-            border-radius: 50%;
-            padding: 6px;
-            cursor: pointer;
-        }
-
-        .avatar-wrapper input[type="file"] {
-            display: none;
-        }
-
-        .profile-info h2 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .profile-info p {
-            margin: 4px 0 0;
-            color: #096666;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            border-bottom: 2px solid #e0e0e0;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            font-weight: 600;
-            padding: 8px 15px;
-            cursor: pointer;
-            color: #096666;
-            transition: 0.3s;
-            border-bottom: 3px solid transparent;
-        }
-
-        .tab-btn.active {
-            border-bottom: 3px solid #096666;
-            color: #004d4d;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .input-group {
-            position: relative;
-            margin-top: 18px;
-        }
-
-        .input-group input,
-        .input-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1.5px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-            transition: border 0.3s;
-            background: transparent;
-        }
-
-        .input-group textarea {
-            min-height: 60px;
-            resize: vertical;
-        }
-
-        .input-group label {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            color: #999;
-            font-size: 14px;
-            pointer-events: none;
-            transition: 0.3s ease all;
-            background: #fff;
-            padding: 0 4px;
-        }
-
-        .input-group input:focus+label,
-        .input-group input:not(:placeholder-shown)+label,
-        .input-group textarea:focus+label,
-        .input-group textarea:not(:placeholder-shown)+label {
-            top: -10px;
-            left: 10px;
-            font-size: 12px;
-            color: #096666;
-        }
-
-        #password-fields {
-            display: none;
-            margin-top: 10px;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        #change-password-btn {
-            background: #096666;
-            color: #fff;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        #change-password-btn:hover {
-            background: #007b7b;
-        }
-
-        #password-fields input {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-
-        .action-buttons {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .action-buttons .btn {
-            padding: 12px 25px;
-            background: #096666;
-            color: #fff;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .action-buttons .btn:hover {
-            background: #007b7b;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #d0f0f0;
-            border-top: 5px solid #009999;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: auto;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        #loadingOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.7);
-            z-index: 2000;
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        #toast {
-            display: none;
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #009999;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 5px;
-            z-index: 3000;
-            font-size: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        @media(max-width:768px) {
-            .profile-header {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            nav ul {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                background-color: #096666;
-            }
-
-            nav ul.active {
-                display: flex;
-            }
-
-            #bar {
-                display: block;
-            }
-        }
-       
-#doctorName {
-    font-size: 28px;
-    font-weight: 700;
-    color: #004d4d;
-    border: none;
-    background: transparent;
-    width: 100%;
-    outline: none;
-    padding: 2px 0;
-    transition: border-bottom 0.3s;
-    border-bottom: 2px solid transparent;
-}
-
-#doctorName:focus {
-    border-bottom: 2px solid #096666;
-}
-
-#specialization {
-    font-size: 18px;
-    font-weight: 500;
-    color: #096666;
-    border: none;
-    background: transparent;
-    width: 100%;
-    outline: none;
-    padding: 2px 0;
-    margin-top: 4px;
-    transition: border-bottom 0.3s;
-    border-bottom: 1.5px solid transparent;
-}
-
-#specialization:focus {
-    border-bottom: 1.5px solid #096666;
-}
-
-#doctorName:hover, #specialization:hover {
-    border-bottom-color: #009999;
-}
-
+      #doctorName:hover,
+      #specialization:hover {
+        border-bottom-color: #009999;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <nav>
-        <div class="logo">
-            <img src="images/Da.png" alt="DocAssist Logo">
-            <h1>DocAssist</h1>
-        </div>
-        <i id="bar" class="fa-solid fa-bars"></i>
-        <ul>
-            <li><a href="docpanel.html">Dashboard</a></li>
-            <li><a href="DocAppointment.html">Appointments</a></li>
-            <li><a href="docprofile.html">Profile</a></li>
-            <li><a href="docavailability.html">Manage Availability</a></li>
-            <li><a href="Docfeedback.html">Feedback</a></li>
-            <li><a href="login.html">Logout</a></li>
-        </ul>
+      <div class="logo">
+        <img src="images/Da.png" alt="DocAssist Logo" />
+        <h1>DocAssist</h1>
+      </div>
+      <i id="bar" class="fa-solid fa-bars"></i>
+      <ul>
+        <li><a href="docpanel.html">Dashboard</a></li>
+        <li><a href="DocAppointment.html">Appointments</a></li>
+        <li><a href="docprofile.html">Profile</a></li>
+        <li><a href="docavailability.html">Manage Availability</a></li>
+        <li><a href="Docfeedback.html">Feedback</a></li>
+        <li><a href="login.html">Logout</a></li>
+      </ul>
     </nav>
 
     <div class="container">
-        <div class="card">
-            <div class="profile-header">
-                <div class="avatar-wrapper">
-                    <img src="https://via.placeholder.com/120" id="profilePic" alt="Doctor">
-                    <label for="fileUpload" class="edit-avatar"><i class="fas fa-camera"></i></label>
-                    <input type="file" id="fileUpload" accept="image/*" onchange="previewImage()">
-                </div>
-            <div class="profile-info">
-                <input type="text" id="doctorName" placeholder="Doctor Name">
-                <input type="text" id="specialization" placeholder="Specialization">
-            </div>
+      <div class="card">
+        <div class="profile-header">
+          <div class="avatar-wrapper">
+            <img
+              src="https://via.placeholder.com/120"
+              id="profilePic"
+              alt="Doctor"
+            />
+            <label for="fileUpload" class="edit-avatar"
+              ><i class="fas fa-camera"></i
+            ></label>
+            <input
+              type="file"
+              id="fileUpload"
+              accept="image/*"
+              onchange="previewImage()"
+            />
+          </div>
+          <div class="profile-info">
+            <input type="text" id="doctorName" placeholder="Doctor Name" />
+            <input
+              type="text"
+              id="specialization"
+              placeholder="Specialization"
+            />
+          </div>
+        </div>
 
-            </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="professional">
+            Professional Info
+          </button>
+          <button class="tab-btn" data-tab="personal">Personal Info</button>
+          <button class="tab-btn" data-tab="security">Security</button>
+        </div>
 
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="professional">Professional Info</button>
-                <button class="tab-btn" data-tab="personal">Personal Info</button>
-                <button class="tab-btn" data-tab="security">Security</button>
-            </div>
+        <div class="tab-content active" id="professional">
+          <div class="input-group">
+            <input type="text" id="qualifications" placeholder=" " />
+            <label>Qualifications</label>
+          </div>
+          <div class="input-group">
+            <input type="text" id="services" placeholder=" " />
+            <label>Services</label>
+          </div>
+          <div class="input-group">
+            <input type="text" id="conditions" placeholder=" " />
+            <label>Conditions Treated</label>
+          </div>
+          <div class="input-group">
+            <input type="text" id="experience" placeholder=" " />
+            <label>Experience</label>
+          </div>
+          <div class="input-group">
+            <input type="text" id="memberships" placeholder=" " />
+            <label>Memberships</label>
+          </div>
+          <div class="input-group">
+            <input type="number" id="fees" placeholder=" " />
+            <label>Fees (Rs.)</label>
+          </div>
+          <div class="input-group">
+            <input type="text" id="locations" placeholder=" " />
+            <label>Practice Locations</label>
+          </div>
+        </div>
 
-            <div class="tab-content active" id="professional">
-                <div class="input-group">
-                    <input type="text" id="qualifications" placeholder=" ">
-                    <label>Qualifications</label>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="services" placeholder=" ">
-                    <label>Services</label>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="conditions" placeholder=" ">
-                    <label>Conditions Treated</label>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="experience" placeholder=" ">
-                    <label>Experience</label>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="memberships" placeholder=" ">
-                    <label>Memberships</label>
-                </div>
-                <div class="input-group">
-                    <input type="number" id="fees" placeholder=" ">
-                    <label>Fees (Rs.)</label>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="locations" placeholder=" ">
-                    <label>Practice Locations</label>
-                </div>
-            </div>
-
-            <div class="tab-content" id="personal">
-                <div class="input-group">
-                    <input type="text" id="degree" placeholder=" ">
-                    <label>Degree</label>
-                </div>
-                <div class="input-group">
+        <div class="tab-content" id="personal">
+          <div class="input-group">
+            <input type="text" id="degree" placeholder=" " />
+            <label>Degree</label>
+          </div>
+          <!-- <div class="input-group">
                     <textarea id="address" placeholder=" "></textarea>
                     <label>Address</label>
-                </div>
-                <div class="input-group">
-                    <textarea id="about" placeholder=" "></textarea>
-                    <label>About</label>
-                </div>
-            </div>
-
-            <div class="tab-content" id="security">
-                <button type="button" id="change-password-btn" onclick="togglePasswordFields()" disabled>Change
-                    Password</button>
-                <div id="password-fields">
-                    <input type="password" id="current-password" placeholder="Current Password">
-                    <input type="password" id="new-password" placeholder="New Password">
-                    <input type="password" id="confirm-password" placeholder="Confirm Password">
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="btn" onclick="enableEditing()">Edit Profile</button>
-            </div>
+                </div> -->
+          <div class="input-group">
+            <textarea id="about" placeholder=" "></textarea>
+            <label>About</label>
+          </div>
         </div>
+
+        <div class="tab-content" id="security">
+          <button
+            type="button"
+            id="change-password-btn"
+            onclick="togglePasswordFields()"
+            disabled
+          >
+            Change Password
+          </button>
+          <div id="password-fields">
+            <input
+              type="password"
+              id="current-password"
+              placeholder="Current Password"
+            />
+            <input
+              type="password"
+              id="new-password"
+              placeholder="New Password"
+            />
+            <input
+              type="password"
+              id="confirm-password"
+              placeholder="Confirm Password"
+            />
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn" onclick="enableEditing()">Edit Profile</button>
+        </div>
+      </div>
     </div>
 
     <div id="loadingOverlay">
-        <div>
-            <div class="spinner"></div>
-            <div>Saving, please wait...</div>
-        </div>
+      <div>
+        <div class="spinner"></div>
+        <div>Saving, please wait...</div>
+      </div>
     </div>
 
     <div id="toast"></div>
 
     <script>
-        const doctorId = localStorage.getItem("doctorId");
-        let isEditing = false;
+      const doctorId = localStorage.getItem("doctorId");
+      let isEditing = false;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDoctorProfile();
+      document.addEventListener("DOMContentLoaded", () => {
+        loadDoctorProfile();
 
-            const bar = document.getElementById('bar');
-            const menu = document.querySelector('nav ul');
-            bar.addEventListener('click', () => menu.classList.toggle('active'));
+        const bar = document.getElementById("bar");
+        const menu = document.querySelector("nav ul");
+        bar.addEventListener("click", () => menu.classList.toggle("active"));
 
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    tabButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    const target = btn.getAttribute('data-tab');
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    document.getElementById(target).classList.add('active');
-                });
-            });
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
+        tabButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            tabButtons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            const target = btn.getAttribute("data-tab");
+            tabContents.forEach((c) => c.classList.remove("active"));
+            document.getElementById(target).classList.add("active");
+          });
         });
+      });
 
-        function togglePasswordFields() {
-            const fields = document.getElementById('password-fields');
-            fields.style.display = fields.style.display === 'block' ? 'none' : 'block';
+      function togglePasswordFields() {
+        const fields = document.getElementById("password-fields");
+        fields.style.display =
+          fields.style.display === "block" ? "none" : "block";
+      }
+
+      function previewImage() {
+        const input = document.getElementById("fileUpload");
+        const img = document.getElementById("profilePic");
+        if (input.files && input.files[0]) {
+          img.src = URL.createObjectURL(input.files[0]);
+        }
+      }
+
+      function enableEditing() {
+        isEditing = true;
+        toggleEditFields(true);
+        const btn = document.querySelector(".action-buttons .btn");
+        btn.textContent = "Save Profile";
+        btn.onclick = saveProfile;
+      }
+
+      function toggleEditFields(enabled) {
+        const fields = [
+          "doctorName",
+          "specialization",
+          "qualifications",
+          "services",
+          "conditions",
+          "experience",
+          "memberships",
+          "fees",
+          "locations",
+          "fileUpload",
+          "degree",
+          "about",
+        ];
+        fields.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.readOnly = !enabled;
+            el.disabled = !enabled;
+          }
+        });
+        document.getElementById("change-password-btn").disabled = !enabled;
+      }
+
+      function loadDoctorProfile() {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          alert("You are not logged in.");
+          window.location.href = "login.html";
+          return;
+        }
+        fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            document.getElementById("doctorName").value = data.name || "";
+            document.getElementById("specialization").value =
+              data.speciality || "";
+            document.getElementById("qualifications").value =
+              data.qualifications || "";
+            document.getElementById("services").value = data.services || "";
+            document.getElementById("conditions").value = data.conditions || "";
+            document.getElementById("experience").value = data.experience || "";
+            document.getElementById("memberships").value =
+              data.memberships || "";
+            document.getElementById("fees").value = data.fees || "";
+            document.getElementById("locations").value = data.locations || "";
+            document.getElementById("degree").value = data.degree || "";
+            document.getElementById("profilePic").src = data.photo
+              ? `http://localhost:3000/uploads/${data.photo}`
+              : "images/placeholder.png";
+
+            // document.getElementById("address").value = data.address || '';
+            document.getElementById("about").value = data.about || "";
+            document.getElementById("change-password-btn").disabled = false;
+            toggleEditFields(false);
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("Failed to load profile.");
+          });
+      }
+
+      function saveProfile() {
+        const token = localStorage.getItem("authToken");
+        if (!token) return alert("You are not logged in.");
+
+        const fileInput = document.getElementById("fileUpload");
+        const file = fileInput.files[0];
+
+        const profile = new FormData();
+        profile.append("name", document.getElementById("doctorName").value);
+        profile.append(
+          "speciality",
+          document.getElementById("specialization").value
+        );
+        profile.append(
+          "qualifications",
+          document.getElementById("qualifications").value
+        );
+        profile.append("services", document.getElementById("services").value);
+        profile.append(
+          "conditions",
+          document.getElementById("conditions").value
+        );
+        profile.append(
+          "experience",
+          document.getElementById("experience").value
+        );
+        profile.append(
+          "memberships",
+          document.getElementById("memberships").value
+        );
+        profile.append("fees", document.getElementById("fees").value);
+        profile.append("locations", document.getElementById("locations").value);
+        profile.append("degree", document.getElementById("degree").value);
+        // profile.append("address", document.getElementById("address").value);
+        profile.append("about", document.getElementById("about").value);
+        if (file) profile.append("photo", file);
+
+        const passwordFields = document.getElementById("password-fields");
+        if (passwordFields.style.display === "block") {
+          const currentPassword = document
+            .getElementById("current-password")
+            .value.trim();
+          const newPassword = document
+            .getElementById("new-password")
+            .value.trim();
+          const confirmPassword = document
+            .getElementById("confirm-password")
+            .value.trim();
+          if (currentPassword || newPassword || confirmPassword) {
+            if (!currentPassword || !newPassword || !confirmPassword)
+              return alert("Fill all password fields.");
+            if (newPassword !== confirmPassword)
+              return alert("Passwords do not match.");
+            const passwordRegex =
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/;
+            if (!passwordRegex.test(newPassword))
+              return alert(
+                "Password must include uppercase, lowercase, number, special char."
+              );
+            profile.append("currentPassword", currentPassword);
+            profile.append("newPassword", newPassword);
+          }
         }
 
-        function previewImage() {
-                const input = document.getElementById('fileUpload');
-                const img = document.getElementById('profilePic');
-                if (input.files && input.files[0]) {
-                    img.src = URL.createObjectURL(input.files[0]);
-                }
+        showLoading(true);
+        fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
+          method: "PUT",
+          body: profile,
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            showLoading(false);
+            if (data.success) {
+              showToast("Profile saved successfully!");
+              toggleEditFields(false);
+              isEditing = false;
+              const btn = document.querySelector(".action-buttons .btn");
+              btn.textContent = "Edit Profile";
+              btn.onclick = enableEditing;
+            } else {
+              showToast(data.message || "Failed to save profile.");
             }
+          })
+          .catch((err) => {
+            console.error(err);
+            showLoading(false);
+            showToast("An error occurred while saving profile.");
+          });
+      }
 
-        function enableEditing() {
-            isEditing = true;
-            toggleEditFields(true);
-            const btn = document.querySelector('.action-buttons .btn');
-            btn.textContent = 'Save Profile';
-            btn.onclick = saveProfile;
-        }
+      function showLoading(show) {
+        const overlay = document.getElementById("loadingOverlay");
+        overlay.style.display = show ? "flex" : "none";
+      }
 
-        function toggleEditFields(enabled) {
-            const fields = [
-                "doctorName", "specialization", "qualifications", "services",
-                "conditions", "experience", "memberships", "fees", "locations", "fileUpload",
-                "degree", "address", "about"
-            ];
-            fields.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.readOnly = !enabled;
-                    el.disabled = !enabled;
-                }
-            });
-            document.getElementById("change-password-btn").disabled = !enabled;
-        }
-
-        function loadDoctorProfile() {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                alert("You are not logged in.");
-                window.location.href = 'login.html';
-                return;
-            }
-            fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("doctorName").value = data.name || '';
-                    document.getElementById("specialization").value = data.speciality || '';
-                    document.getElementById("qualifications").value = data.qualifications || '';
-                    document.getElementById("services").value = data.services || '';
-                    document.getElementById("conditions").value = data.conditions || '';
-                    document.getElementById("experience").value = data.experience || '';
-                    document.getElementById("memberships").value = data.memberships || '';
-                    document.getElementById("fees").value = data.fees || '';
-                    document.getElementById("locations").value = data.locations || '';
-                    document.getElementById("degree").value = data.degree || '';
-                    document.getElementById("profilePic").src = data.photo
-                        ? `http://localhost:3000/uploads/${data.photo}`
-                        : 'images/placeholder.png';
-
-                    document.getElementById("address").value = data.address || '';
-                    document.getElementById("about").value = data.about || '';
-                    document.getElementById("change-password-btn").disabled = false;
-                    toggleEditFields(false);
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert("Failed to load profile.");
-                });
-        }
-
-        function saveProfile() {
-            const token = localStorage.getItem('authToken');
-            if (!token) return alert("You are not logged in.");
-
-            const fileInput = document.getElementById("fileUpload");
-            const file = fileInput.files[0];
-
-            const profile = new FormData();
-            profile.append("name", document.getElementById("doctorName").value);
-            profile.append("speciality", document.getElementById("specialization").value);
-            profile.append("qualifications", document.getElementById("qualifications").value);
-            profile.append("services", document.getElementById("services").value);
-            profile.append("conditions", document.getElementById("conditions").value);
-            profile.append("experience", document.getElementById("experience").value);
-            profile.append("memberships", document.getElementById("memberships").value);
-            profile.append("fees", document.getElementById("fees").value);
-            profile.append("locations", document.getElementById("locations").value);
-            profile.append("degree", document.getElementById("degree").value);
-            profile.append("address", document.getElementById("address").value);
-            profile.append("about", document.getElementById("about").value);
-            if (file) profile.append("photo", file);
-
-            const passwordFields = document.getElementById("password-fields");
-            if (passwordFields.style.display === "block") {
-                const currentPassword = document.getElementById("current-password").value.trim();
-                const newPassword = document.getElementById("new-password").value.trim();
-                const confirmPassword = document.getElementById("confirm-password").value.trim();
-                if (currentPassword || newPassword || confirmPassword) {
-                    if (!currentPassword || !newPassword || !confirmPassword) return alert("Fill all password fields.");
-                    if (newPassword !== confirmPassword) return alert("Passwords do not match.");
-                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/;
-                    if (!passwordRegex.test(newPassword)) return alert("Password must include uppercase, lowercase, number, special char.");
-                    profile.append("currentPassword", currentPassword);
-                    profile.append("newPassword", newPassword);
-                }
-            }
-
-            showLoading(true);
-            fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                method: 'PUT',
-                body: profile,
-                headers: { "Authorization": `Bearer ${token}` }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    showLoading(false);
-                    if (data.success) {
-                        showToast("Profile saved successfully!");
-                        toggleEditFields(false);
-                        isEditing = false;
-                        const btn = document.querySelector('.action-buttons .btn');
-                        btn.textContent = 'Edit Profile';
-                        btn.onclick = enableEditing;
-                    } else {
-                        showToast(data.message || "Failed to save profile.");
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    showLoading(false);
-                    showToast("An error occurred while saving profile.");
-                });
-        }
-
-        function showLoading(show) {
-            const overlay = document.getElementById("loadingOverlay");
-            overlay.style.display = show ? "flex" : "none";
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById("toast");
-            toast.textContent = msg;
-            toast.style.display = "block";
-            setTimeout(() => toast.style.display = "none", 3000);
-        }
+      function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.textContent = msg;
+        toast.style.display = "block";
+        setTimeout(() => (toast.style.display = "none"), 3000);
+      }
     </script>
-</body>
-
+  </body>
 </html>

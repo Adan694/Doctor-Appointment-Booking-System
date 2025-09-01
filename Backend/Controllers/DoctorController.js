@@ -14,8 +14,8 @@ const addDoctor = async (req, res) => {
     console.log('Request body:', req.body);
     console.log('Uploaded file:', req.file);
 
-    const { name, email, password, speciality, degree, address1, address2, experience, fees, about } = req.body;
-    if (!name || !email || !password || !speciality || !degree || !address1 || !experience || !fees || !about) {
+    const { name, email, password, speciality, degree, experience, fees, about } = req.body;
+    if (!name || !email || !password || !speciality || !degree || !experience || !fees || !about) {
       return res.status(400).json({ success: false, message: 'All required fields must be filled.' });
     }
 
@@ -26,8 +26,6 @@ const addDoctor = async (req, res) => {
       password: hashedPassword,
       speciality,
       degree,
-      address1,
-      address2,
       experience,
       fees,
       about,

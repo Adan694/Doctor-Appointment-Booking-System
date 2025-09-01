@@ -729,6 +729,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userRole");
+        window.location.href = "login.html";
+      });
       const bar = document.getElementById("bar");
       const sidebar = document.querySelector(".sidebar");
       const overlay = document.getElementById("overlay");
@@ -949,12 +954,26 @@
 
           slotsData.forEach((day) => {
             const dateStr = day.date.trim();
+            console.log("Raw date string:", dateStr);
+
             day.slots.forEach((timeStr) => {
               const timeTrimmed = timeStr.trim();
+              console.log("Raw time string:", timeTrimmed);
+
               if (bookedSlots.includes(`${dateStr}|${timeTrimmed}`)) return;
 
-              const [hour, minute] = timeTrimmed.split(":").map(Number);
               const [year, month, dayNum] = dateStr.split("-").map(Number);
+
+              // split "hh:mm AM/PM"
+              let [timePart, ampm] = timeTrimmed.split(" ");
+              let [hour, minute] = timePart.split(":").map(Number);
+
+              if (ampm) {
+                ampm = ampm.toUpperCase();
+                if (ampm === "PM" && hour < 12) hour += 12;
+                if (ampm === "AM" && hour === 12) hour = 0;
+              }
+
               const slotDateTime = new Date(
                 year,
                 month - 1,
@@ -962,7 +981,10 @@
                 hour,
                 minute
               );
-              if (slotDateTime <= new Date()) return;
+
+              console.log("Parsed slotDateTime:", slotDateTime.toString());
+
+              if (slotDateTime <= new Date()) return; // skip past slots
 
               const option = document.createElement("option");
               option.value = `${dateStr}|${timeTrimmed}`;

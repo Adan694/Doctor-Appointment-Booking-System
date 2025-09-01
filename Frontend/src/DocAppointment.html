@@ -1227,12 +1227,52 @@
 
           let slotCount = 0;
 
+          // slotsData.forEach((day) => {
+          //   const date = day.date;
+          //   day.slots.forEach((time) => {
+          //     const option = document.createElement("option");
+          //     option.value = `${date}|${time}`;
+          //     option.textContent = `${date} at ${time}`;
+          //     select.appendChild(option);
+          //     slotCount++;
+          //   });
+          // });
+          const now = new Date();
+
           slotsData.forEach((day) => {
-            const date = day.date;
-            day.slots.forEach((time) => {
+            const dateStr = day.date.trim();
+
+            day.slots.forEach((timeStr) => {
+              const timeTrimmed = timeStr.trim();
+
+              // Parse time with AM/PM
+              let [timePart, ampm] = timeTrimmed.split(" ");
+              let [hour, minute] = timePart.split(":").map(Number);
+
+              if (ampm) {
+                ampm = ampm.toUpperCase();
+                if (ampm === "PM" && hour < 12) hour += 12;
+                if (ampm === "AM" && hour === 12) hour = 0;
+              }
+
+              const [year, month, dayNum] = dateStr.split("-").map(Number);
+              const slotDateTime = new Date(
+                year,
+                month - 1,
+                dayNum,
+                hour,
+                minute
+              );
+
+              console.log("Parsed slotDateTime:", slotDateTime.toString());
+
+              // ❌ Skip past slots
+              if (slotDateTime <= now) return;
+
+              // ✅ Add only valid slots
               const option = document.createElement("option");
-              option.value = `${date}|${time}`;
-              option.textContent = `${date} at ${time}`;
+              option.value = `${dateStr}|${timeTrimmed}`;
+              option.textContent = `${dateStr} at ${timeTrimmed}`;
               select.appendChild(option);
               slotCount++;
             });

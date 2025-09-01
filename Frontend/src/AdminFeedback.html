@@ -376,6 +376,12 @@
     </main>
 
     <script>
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userRole");
+        window.location.href = "login.html";
+      });
+
       const bar = document.getElementById("bar");
       const sidebar = document.querySelector(".sidebar");
       const overlay = document.getElementById("overlay");

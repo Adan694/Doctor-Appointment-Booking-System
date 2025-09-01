@@ -845,22 +845,11 @@
                 isAvailable = true;
               }
             }
-
-            // If no future slots today, check tomorrow
-            // if (!isAvailable) {
-            //   const tomorrowSlot = doctor.availabilitySlots?.find(
-            //     (slot) => slot.date === tomorrowStr
-            //   );
-            //   if (tomorrowSlot && tomorrowSlot.slots.length > 0) {
-            //     isAvailable = true;
-            //   }
-            // }
-
             profileDiv.innerHTML = `
                             <img src="http://localhost:3000/uploads/${
                               doctor.photo
                             }" alt="${doctor.name}">
-                            <h2>${doctor.name}</h2>
+                            <h2>Dr. ${doctor.name}</h2>
                             <p class="availability ${
                               isAvailable ? "available" : "unavailable"
                             }">
@@ -1004,7 +993,7 @@
     `;
               }
 
-              feedbackHTML += `</div>`; // Close .feedback-content
+              feedbackHTML += `</div>`;
 
               feedbackElem.innerHTML = feedbackHTML;
 
@@ -1120,12 +1109,6 @@
         <p><strong>Fees:</strong> Rs. <input type="number" id="edit-fees" value="${
           doctor.fees
         }" /></p>
-        <p><strong>Address:</strong> 
-            <input type="text" id="edit-address1" value="${doctor.address1}" />
-            <input type="text" id="edit-address2" value="${
-              doctor.address2 || ""
-            }" />
-        </p>
         <p><strong>About:</strong> <textarea id="edit-about">${
           doctor.about || ""
         }</textarea></p>

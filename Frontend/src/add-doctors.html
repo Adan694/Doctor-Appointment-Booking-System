@@ -428,35 +428,22 @@
             <label for="speciality">Speciality</label>
             <select id="speciality" name="speciality" required>
               <optgroup label="Primary Care">
-                <option value="family-medicine">Family Medicine</option>
                 <option value="general">General Physician</option>
-                <option value="geriatrics">Geriatric Medicine</option>
                 <option value="pediatrician">Pediatrician</option>
               </optgroup>
 
               <optgroup label="Internal Medicine Subspecialties">
                 <option value="cardiologist">Cardiologist</option>
-                <option value="endocrinologist">Endocrinologist</option>
                 <option value="gastroenterologist">Gastroenterologist</option>
-                <option value="hematologist">Hematologist</option>
-                <option value="infectious-disease">
-                  Infectious Disease Specialist
-                </option>
                 <option value="nephrologist">Nephrologist</option>
                 <option value="oncologist">Oncologist</option>
                 <option value="pulmonologist">Pulmonologist</option>
-                <option value="rheumatologist">Rheumatologist</option>
               </optgroup>
 
               <optgroup label="Surgical Specialties">
-                <option value="maxillofacial-surgeon">
-                  Oral & Maxillofacial Surgeon
-                </option>
                 <option value="orthopedist">Orthopedist</option>
                 <option value="plastic-surgeon">Plastic Surgeon</option>
                 <option value="surgeon">General Surgeon</option>
-                <option value="thoracic-surgeon">Thoracic Surgeon</option>
-                <option value="transplant-surgeon">Transplant Surgeon</option>
                 <option value="vascular-surgeon">Vascular Surgeon</option>
               </optgroup>
 
@@ -472,9 +459,7 @@
 
               <optgroup label="Diagnostic & Technical">
                 <option value="anesthesiologist">Anesthesiologist</option>
-                <option value="critical-care">Critical Care Specialist</option>
                 <option value="emergency-medicine">Emergency Medicine</option>
-                <option value="pathologist">Pathologist</option>
                 <option value="radiologist">Radiologist</option>
                 <option value="sleep-medicine">
                   Sleep Medicine Specialist
@@ -511,7 +496,7 @@
             />
           </div>
 
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="address1">Address 1</label>
             <input
               type="text"
@@ -530,7 +515,7 @@
               name="address2"
               placeholder="Address 2 (optional)"
             />
-          </div>
+          </div> -->
 
           <div class="form-group">
             <label for="experience">Experience</label>
@@ -580,6 +565,12 @@
     </div>
 
     <script>
+      document.querySelector(".logout-btn").addEventListener("click", () => {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userRole");
+        window.location.href = "login.html";
+      });
+
       const bar = document.getElementById("bar");
       const sidebar = document.querySelector(".sidebar");
       const overlay = document.getElementById("overlay");
@@ -605,6 +596,28 @@
 
           // Append the role to the formData
           formData.append("role", document.getElementById("doctor-role").value);
+          // ✅ Email validation
+          const email = formData.get("email").trim();
+          const allowedDomains = [
+            "gmail.com",
+            "yahoo.com",
+            "hotmail.com",
+            "outlook.com",
+          ];
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+          if (!emailRegex.test(email)) {
+            alert("❌ Invalid email format.");
+            return;
+          }
+
+          const domain = email.split("@")[1];
+          if (!allowedDomains.includes(domain)) {
+            alert(
+              "❌ Only Gmail, Yahoo, Hotmail, or Outlook emails are allowed."
+            );
+            return;
+          }
 
           submitBtn.disabled = true;
           submitBtn.textContent = "Submitting...";

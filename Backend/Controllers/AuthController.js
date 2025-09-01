@@ -28,14 +28,28 @@ async function authenticateUser(email, password, role) {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     return isPasswordValid ? user : null;
 }
+// function generateToken(user) {
+//     return jwt.sign({ email: user.email, role: user.role }, 'secret-123', { expiresIn: '1h' });
+//     console.log('\n================ JWT Token ================\n');
+//     console.log(token);
+//     console.log('\n===========================================\n');
+
+//     return token;
+// }
 function generateToken(user) {
-    return jwt.sign({ email: user.email, role: user.role }, 'secret-123', { expiresIn: '1h' });
+    const token = jwt.sign(
+        { email: user.email, role: user.role },
+        'secret-123',
+        { expiresIn: '1h' } 
+    );
+
     console.log('\n================ JWT Token ================\n');
     console.log(token);
     console.log('\n===========================================\n');
 
     return token;
 }
+
 
 async function sendOtpToEmail(email) {
     const otp = Math.floor(100000 + Math.random() * 900000);
