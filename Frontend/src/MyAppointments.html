@@ -831,6 +831,32 @@
         });
       });
 
+      // function fetchPatientAppointments(token) {
+      //   const patientId = localStorage.getItem("patientId");
+      //   console.log("Retrieved patientId from localStorage:", patientId);
+      //   showLoader();
+
+      //   fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
+      //     method: "GET",
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   })
+      //     .then((response) => {
+      //       console.log("Raw response:", response);
+      //       if (!response.ok) throw new Error("Failed to fetch appointments");
+      //       return response.json();
+      //     })
+      //     .then((data) => {
+      //       allAppointments = data;
+      //       renderAppointments(allAppointments, "upcoming");
+      //       hideLoader();
+      //     })
+      //     .catch((err) => {
+      //       console.error("Error fetching patient appointments:", err);
+      //       hideLoader();
+      //     });
+      // }
       function fetchPatientAppointments(token) {
         const patientId = localStorage.getItem("patientId");
         console.log("Retrieved patientId from localStorage:", patientId);
@@ -843,14 +869,40 @@
           },
         })
           .then((response) => {
-            console.log("Raw response:", response);
             if (!response.ok) throw new Error("Failed to fetch appointments");
             return response.json();
           })
           .then((data) => {
             allAppointments = data;
-            renderAppointments(allAppointments, "upcoming");
-            hideLoader();
+
+            // ✅ EXTRA: also fetch feedbacks for this patient and repopulate localStorage
+            fetch(`http://localhost:3000/api/patient/${patientId}`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+              .then((res) => {
+                if (!res.ok) throw new Error("Failed to fetch feedbacks");
+                return res.json();
+              })
+              .then((feedbacks) => {
+                const submitted = feedbacks.map((f) => String(f.appointmentId));
+                localStorage.setItem(
+                  "feedbackGiven",
+                  JSON.stringify(submitted)
+                );
+
+                // now your original render works as-is
+                renderAppointments(allAppointments, "upcoming");
+                hideLoader();
+              })
+              .catch((err) => {
+                console.error("Error fetching feedbacks:", err);
+                // fallback: still render appointments
+                renderAppointments(allAppointments, "upcoming");
+                hideLoader();
+              });
           })
           .catch((err) => {
             console.error("Error fetching patient appointments:", err);
@@ -862,6 +914,7 @@
         const submittedFeedbacks = JSON.parse(
           localStorage.getItem("feedbackGiven") || "[]"
         );
+
         const appointmentsBody = document.getElementById("appointments-body");
         appointmentsBody.innerHTML = "";
 
@@ -936,7 +989,9 @@
 
         paginatedAppointments.forEach((appointment) => {
           const appointmentElement = document.createElement("tr");
-          const feedbackGiven = submittedFeedbacks.includes(appointment._id);
+          const feedbackGiven = submittedFeedbacks.includes(
+            String(appointment._id)
+          );
 
           let appointmentDate = new Date(appointment.date);
           let timeStr = appointment.time?.toString().trim().toLowerCase() || "";

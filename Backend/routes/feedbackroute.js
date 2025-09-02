@@ -4,7 +4,8 @@ const {
     getFeedbackByDoctor,
     updateFeedback,
     deleteFeedback,
-    getAllFeedback
+    getAllFeedback,
+    getFeedbackByPatient,
 } = require('../Controllers/FeedbackController');
 const { authenticateToken } = require('../middlewares/auth'); 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.put('/feedback/:id', authenticateToken, updateFeedback);
 router.delete('/feedback/:id', authenticateToken, deleteFeedback);
 router.post('/feedback', authenticateToken, submitFeedback);
 router.get('/admin/all', authenticateToken, getAllFeedback);
+router.get("/patient/:patientId", authenticateToken, getFeedbackByPatient);
 
 module.exports = router;

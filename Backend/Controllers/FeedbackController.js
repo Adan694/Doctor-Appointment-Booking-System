@@ -169,6 +169,17 @@ const getAllFeedback = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving feedback' });
     }
 };
+const getFeedbackByPatient = async (req, res) => {
+  const { patientId } = req.params;
+
+  try {
+    const feedbacks = await Feedback.find({ patientId });
+    res.status(200).json(feedbacks);
+  } catch (error) {
+    console.error("Error retrieving feedbacks for patient:", error);
+    res.status(500).json({ message: "Error retrieving patient feedbacks" });
+  }
+};
 
 
 module.exports = {
@@ -177,4 +188,5 @@ module.exports = {
     updateFeedback,
     deleteFeedback,
     getAllFeedback,
+    getFeedbackByPatient,
 };

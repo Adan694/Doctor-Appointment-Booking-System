@@ -865,9 +865,6 @@
                             } years</p>
                             <p><strong>Degree:</strong> ${doctor.degree}</p>
                             <p><strong>Fees:</strong> Rs. ${doctor.fees}</p>
-                            <p><strong>Address:</strong> ${doctor.address1}${
-              doctor.address2 ? ", " + doctor.address2 : ""
-            }</p>
                             <p><strong>About:</strong> ${doctor.about}</p>
                             ${
                               doctor.qualifications
@@ -1128,8 +1125,6 @@
           ),
           degree: document.getElementById("edit-degree").value,
           fees: parseInt(document.getElementById("edit-fees").value),
-          address1: document.getElementById("edit-address1").value,
-          address2: document.getElementById("edit-address2").value,
           about: document.getElementById("edit-about").value,
         };
 
