@@ -116,7 +116,6 @@ nav ul li a:hover {
     -webkit-text-fill-color: transparent;
 }
 
-/* Dropdown */
 .dropdown {
     position: relative;
     display: inline-flex;
@@ -346,7 +345,6 @@ nav ul li a:hover {
     box-shadow: none;
 }
 
-         /* Spinner Overlay */
     #loadingOverlay {
         display: none;
         position: fixed;
@@ -377,7 +375,6 @@ nav ul li a:hover {
         100% { transform: rotate(360deg); }
     }
 
-    /* Toast Notification */
     #toast {
         display: none;
         position: fixed;
@@ -406,8 +403,6 @@ nav ul li a:hover {
     100% { transform: rotate(360deg); }
 }
 
-/* Modal Styling */
-/* Overlay */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -423,17 +418,15 @@ nav ul li a:hover {
     backdrop-filter: blur(4px);
 }
 
-/* Show overlay */
 .modal-overlay.show {
     display: flex;
 }
 
-/* Modal content */
 .modal-content {
     background: #ffffff;
     padding: 30px 30px;
     border-radius: 12px;
-    border: 2px solid rgba(0, 179, 179, 0.3); /* outer border */
+    border: 2px solid rgba(0, 179, 179, 0.3); 
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     width: 450px;
     max-width: 90%;
@@ -443,15 +436,12 @@ nav ul li a:hover {
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* Hover effect */
 .modal-content:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-    border-color: rgba(0, 179, 179, 0.6); /* slightly stronger on hover */
+    border-color: rgba(0, 179, 179, 0.6); 
 }
 
-
-/* Form styling */
 .form-group {
     margin-bottom: 15px;
 }
@@ -475,7 +465,6 @@ nav ul li a:hover {
     outline: none;
 }
 
-/* Actions (buttons) */
 .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -492,7 +481,6 @@ nav ul li a:hover {
     transition: all 0.3s ease;
 }
 
-/* Cancel button */
 .cancel-btn {
     background-color: #eee;
     color: #555;
@@ -502,7 +490,6 @@ nav ul li a:hover {
     background-color: #ddd;
 }
 
-/* Book button */
 .book-btn {
     background-color: #00b3b3;
     color: #fff;
@@ -512,7 +499,6 @@ nav ul li a:hover {
     background-color: #009999;
 }
 
-/* Scrollbar */
 .modal-content::-webkit-scrollbar {
     width: 6px;
 }
@@ -531,7 +517,6 @@ nav ul li a:hover {
     border-bottom: 2px solid #009999;
 }
 
-/* Each date box */
 .dates-container .time-slot {
     background: #ffffff;
     color: #009999;
@@ -547,14 +532,12 @@ nav ul li a:hover {
     letter-spacing: 0.5px;
 }
 
-/* Hover effect */
 .dates-container .time-slot:hover {
     background: #f0fefe;
     transform: translateY(-3px);
     box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
-/* Active/selected date */
 .dates-container .time-slot.selected {
     background: linear-gradient(135deg, #009999, #007d7d);
     color: #fff;
@@ -563,7 +546,6 @@ nav ul li a:hover {
     transform: translateY(-2px) scale(1.02);
 }
 
-/* Container for all time slots */
 #slots-container {
     margin-top: 15px;
     padding: 15px;
@@ -578,20 +560,17 @@ nav ul li a:hover {
     transition: all 0.3s ease;
 }
 
-/* Optional: Hover effect on container */
 #slots-container:hover {
     box-shadow: 0 6px 18px rgba(0,0,0,0.1);
 }
 
-/* Ensure slots inside container still use your time-slot style */
 #slots-container .time-slot {
-    margin: 6px; /* keep spacing consistent */
+    margin: 6px; 
 }
-/* Optional: smooth scrolling effect while disabling */
+
 body.modal-open {
     overflow: hidden;
 }
-
 
 /* Responsive */
 @media screen and (max-width: 500px) {
@@ -813,7 +792,7 @@ body {
     </nav>
     <h1 class="heading">Book an Appointment</h1>
     <div id="booking-info"></div>
-    <button onclick="loadAvailability()" class="book-btn">🔁 Refresh Slots</button>
+    <button onclick="loadAvailability()" class="book-btn"> Refresh Slots</button>
     <div id="loadingOverlay">
         <div>
             <div class="spinner"></div>
@@ -858,8 +837,8 @@ body {
                     <input type="text" id="modalTime" readonly />
                 </div>
                 <div class="modal-actions">
-                    <button onclick="confirmAppointment()" class="book-btn">✅ Confirm</button>
-                    <button onclick="closeModal()" class="cancel-btn">❌ Cancel</button>
+                    <button onclick="confirmAppointment()" class="book-btn">Confirm</button>
+                    <button onclick="closeModal()" class="cancel-btn">Cancel</button>
                 </div>
             </div>
         </div>
@@ -900,18 +879,16 @@ body {
                 const bar = document.getElementById("bar");
                 const menu = document.querySelector("nav ul");
 
-                /* ------------------ Navbar Logic ------------------ */
                 function updateNavbar() {
-                    const profileMenu = document.getElementById("profileMenu");  // <-- re-select here
+                    const profileMenu = document.getElementById("profileMenu");  
                     const dropdown = profileMenu ? profileMenu.querySelector(".dropdown-menu") : null;
                     const authButton = document.getElementById("authButton");
                     const userRole = localStorage.getItem("userRole");
 
                     if (userRole === "patient") {
                         if (profileMenu) profileMenu.style.display = "inline-block";
-                        if (authButton) authButton.style.display = "none"; // hide standalone login/logout button
+                        if (authButton) authButton.style.display = "none";
 
-                        // ✅ Add Logout inside dropdown if not already present
                         if (dropdown && !document.getElementById("logoutLink")) {
                             const logoutLi = document.createElement("li");
                             logoutLi.innerHTML = `
@@ -920,8 +897,6 @@ body {
                 </a>
             `;
                             dropdown.appendChild(logoutLi);
-
-                            // Attach event
                             document.getElementById("logoutLink").addEventListener("click", logout);
                         }
                     } else {
@@ -938,7 +913,6 @@ body {
                 }
 
                 window.logout = function () {
-
                  localStorage.clear();
                     localStorage.removeItem("userRole");
                     updateNavbar();
@@ -947,7 +921,6 @@ body {
 
                 updateNavbar();
 
-                /* ------------------ Profile Dropdown ------------------ */
                 profileIcon.addEventListener("click", (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -1011,7 +984,7 @@ body {
                     return;
                 }
 
-                // Now create buttons only for future dates
+                // create buttons only for future dates
                 futureDates.forEach((slot, index) => {
                     const dateBtn = document.createElement('button');
                     dateBtn.textContent = slot.date;
@@ -1058,7 +1031,7 @@ body {
                         const slotDateTime = new Date(dateTimeString);
                         const now = new Date();
 
-                        // ❌ Skip past slots
+                        // Skip past slots
                         if (slotDateTime < now) {
                             return;
                         }
@@ -1255,11 +1228,11 @@ body {
                            const ageError = document.getElementById("ageError");
 
                             if (!/^\d+$/.test(age)) {
-                            ageError.textContent = "❌ Age must be a number.";
+                            ageError.textContent = " Age must be a number.";
                             ageError.style.display = "block";
                             return;
                             } else if (parseInt(age) > 150) {
-                            ageError.textContent = "❌ Age cannot be greater than 150.";
+                            ageError.textContent = " Age cannot be greater than 150.";
                             ageError.style.display = "block";
                             return;
                             } else {
@@ -1276,7 +1249,7 @@ body {
                             }
 
                             if (!pkPhoneRegex.test(phone)) {
-                                phoneError.textContent = "❌ Please enter a valid Pakistani phone number.";
+                                phoneError.textContent = " Please enter a valid Pakistani phone number.";
                                 phoneError.style.display = "block";
                                 return;
                             }
@@ -1311,20 +1284,20 @@ const normalizedTime = normalizeTime(selectedTime);
                                         localStorage.setItem('patientName', name);
                                         localStorage.setItem('patientPhone', phone);
                                         localStorage.setItem('patientEmail', email);
-                                        showToast(`✅ Appointment booked for ${selectedDate} at ${selectedTime}`);
+                                        showToast(`Appointment booked for ${selectedDate} at ${selectedTime}`);
                                     }
                                     else {
                                         if (data.message && data.message.includes("blocked")) {
-                                            showToast(`🚫 ${data.message}`, 5000);
+                                            showToast(` ${data.message}`, 5000);
                                         } else {
-                                            showToast(`❌ Error: ${data.message || "Booking failed"}`);
+                                            showToast(` Error: ${data.message || "Booking failed"}`);
                                         }
                                     }
                                 })
                                 .catch(err => {
                                     hideLoadingOverlay();
                                     closeModal();
-                                    showToast('❌ Network error: ' + err.message);
+                                    showToast('Network error: ' + err.message);
                                 });
                         }
 
@@ -1346,7 +1319,7 @@ const normalizedTime = normalizeTime(selectedTime);
                                     if (phone === "") {
                                         phoneError.style.display = "none"; 
                                     } else if (!pkPhoneRegex.test(phone)) {
-                                        phoneError.textContent = "❌ Invalid Pakistani phone number (e.g., 03001234567 or 0421234567)";
+                                        phoneError.textContent = "Invalid Pakistani phone number (e.g., 03001234567 or 0421234567)";
                                         phoneError.style.display = "block";
                                     } else {
                                         phoneError.style.display = "none"; 
@@ -1361,10 +1334,10 @@ const normalizedTime = normalizeTime(selectedTime);
                                 if (ageValue === "") {
                                     ageError.style.display = "none"; 
                                     } else if (!/^\d+$/.test(ageValue)) {
-                                        ageError.textContent = "❌ Age must be a number.";
+                                        ageError.textContent = "Age must be a number.";
                                         ageError.style.display = "block";
                                     } else if (parseInt(ageValue) > 150) {
-                                        ageError.textContent = "❌ Age cannot be greater than 150.";
+                                        ageError.textContent = "Age cannot be greater than 150.";
                                         ageError.style.display = "block";
                                     } else {
                                         ageError.style.display = "none"; 

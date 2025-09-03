@@ -331,35 +331,6 @@
       #overlay.active {
         display: block;
       }
-      #notificationBell {
-        position: relative;
-        cursor: pointer;
-      }
-      #notificationBell {
-        position: relative;
-        cursor: pointer;
-        margin-left: auto; /* push it to the right */
-      }
-
-      /* Bell icon style */
-      #notificationBell i {
-        font-size: 24px;
-        color: white;
-        margin-left: 0px;
-      }
-
-      /* Notification count badge */
-      #notificationCount {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background: red;
-        color: white;
-        border-radius: 50%;
-        padding: 2px 6px;
-        font-size: 12px;
-        display: none; /* Hide by default */
-      }
 
       @media (max-width: 768px) {
         .dashboard-cards {
@@ -460,13 +431,6 @@
       <header>
         <i id="bar" class="fa-solid fa-bars"></i>
         <div>Admin Dashboard</div>
-        <!-- <div
-          id="notificationBell"
-          style="position: relative; cursor: pointer; margin-right: 20px"
-        >
-          <i class="fa-solid fa-bell"></i>
-          <span id="notificationCount"></span>
-        </div> -->
 
         <button id="logoutBtn">Logout</button>
       </header>
@@ -524,7 +488,6 @@
         overlay.classList.remove("active");
       });
 
-      // Logout functionality
       document
         .getElementById("logoutBtn")
         .addEventListener("click", function () {
@@ -533,7 +496,6 @@
           window.location.href = "login.html";
         });
 
-      // Access control and redirect if not admin
       window.addEventListener("DOMContentLoaded", () => {
         const role = localStorage.getItem("userRole");
         if (role !== "admin") {
@@ -544,66 +506,7 @@
         fetchDashboardStats();
         fetchTodaysAppointments();
         renderCharts();
-        // fetchUnreadNotificationCount();
-        // setInterval(fetchUnreadNotificationCount, 30000);
       });
-
-      // async function markAllNotificationsAsRead() {
-      //   const token = localStorage.getItem("authToken");
-      //   try {
-      //     const res = await fetch(
-      //       "http://localhost:3000/api/notifications/mark-all-read",
-      //       {
-      //         method: "PATCH",
-      //         headers: { Authorization: "Bearer " + token },
-      //       }
-      //     );
-      //     if (!res.ok) throw new Error("Failed to mark notifications as read");
-      //     console.log("Notifications marked as read");
-      //     // After marking read, update UI immediately
-      //     document.getElementById("notificationCount").style.display = "none";
-      //     document.getElementById("notificationCount").textContent = "";
-      //     document.getElementById("notificationCount").textContent = "0";
-      //     document.getElementById("notificationCount").style.backgroundColor =
-      //       "gray";
-      //   } catch (error) {
-      //     console.error("Error marking notifications as read:", error);
-      //   }
-      // }
-
-      // async function fetchUnreadNotificationCount() {
-      //   console.log("GET /admin/notifications/count called");
-
-      //   const token = localStorage.getItem("authToken");
-      //   try {
-      //     const res = await fetch(
-      //       "http://localhost:3000/api/admin/notifications/count",
-      //       {
-      //         headers: { Authorization: "Bearer " + token },
-      //       }
-      //     );
-
-      //     if (!res.ok) throw new Error("Failed to fetch notification count");
-      //     const data = await res.json();
-      //     console.log("Server returned notification count:", data.count);
-      //     const countSpan = document.getElementById("notificationCount");
-      //     if (data.count && data.count > 0) {
-      //       countSpan.textContent = data.count;
-      //       countSpan.style.display = "inline-block";
-      //     } else {
-      //       countSpan.style.display = "none";
-      //     }
-      //   } catch (error) {
-      //     console.error("Error fetching unread notifications count:", error);
-      //   }
-      // }
-
-      // document
-      //   .getElementById("notificationBell")
-      //   .addEventListener("click", async () => {
-      //     await markAllNotificationsAsRead();
-      //     window.location.href = "AdminFeedback.html";
-      //   });
 
       async function fetchDashboardStats() {
         const token = localStorage.getItem("authToken");
@@ -621,7 +524,6 @@
           document.getElementById("totalDoctorsCount").textContent =
             countsData.doctorCount || 0;
 
-          // Fetch appointments count
           const appointmentsRes = await fetch(
             "http://localhost:3000/api/admin/dashboard/todays-appointments",
             {
@@ -681,7 +583,6 @@
             ).toLowerCase()}`;
             statusDiv.textContent = app.status || "Unknown";
 
-            // div.appendChild(photoDiv);
             div.appendChild(infoDiv);
             div.appendChild(timeDiv);
             div.appendChild(statusDiv);
@@ -706,7 +607,6 @@
           .getContext("2d");
 
         try {
-          // Fetch time series data from backend
           const [patientsRes, appointmentsRes, doctorsRes] = await Promise.all([
             fetch(
               "http://localhost:3000/api/admin/dashboard/patients-time-series",

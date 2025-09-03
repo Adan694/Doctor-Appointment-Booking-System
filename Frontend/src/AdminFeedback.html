@@ -159,7 +159,7 @@
       }
       .table-container {
         width: 100%;
-        overflow-x: auto; /* ✅ allows horizontal scroll only for table */
+        overflow-x: auto;
       }
 
       table td {
@@ -465,8 +465,6 @@
             }
             return stars;
           }
-
-          // Removed notification-related calls here
         } catch (error) {
           console.error("Error fetching feedback:", error);
         }
@@ -487,16 +485,13 @@
           if (!res.ok) throw new Error("Failed to delete feedback");
 
           alert("Feedback deleted successfully.");
-          fetchAllFeedback(); // Refresh the list after delete
+          fetchAllFeedback();
         } catch (error) {
           console.error("Error deleting feedback:", error);
           alert("Error deleting feedback. Please try again.");
         }
       }
 
-      // Removed fetchUnreadNotificationCount and markAllNotificationsAsRead functions
-
-      // Call fetchAllFeedback on page load
       fetchAllFeedback();
     </script>
   </body>

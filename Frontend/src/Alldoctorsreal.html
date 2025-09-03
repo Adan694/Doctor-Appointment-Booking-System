@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-    background-color: #e6f2ff;
+            background-color: #e6f2ff;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -34,7 +34,7 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     margin: 0;
-    padding: 10px 0 15px; /* Increase bottom padding */
+    padding: 10px 0 15px;
     border-bottom: 3px solid var(--primary-color);
     box-sizing: border-box;
     width: 100%;
@@ -42,7 +42,7 @@
     cursor: pointer;
 }
 .head h1:hover {
-    padding-bottom: 18px; /* More space below text */
+    padding-bottom: 18px; 
     color: #004c4c;
     border-color: #004c4c;
     transform: scale(1.05);
@@ -274,7 +274,7 @@
 .button-container { 
     display: flex;
     gap: 10px;
-    flex-wrap: nowrap; /* Change to nowrap to keep buttons in a single line */
+    flex-wrap: nowrap; 
     overflow-x: auto;
 }
 
@@ -289,7 +289,7 @@
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(15, 128, 128, 0.2);
     text-align: center;
-    flex: none; /* Let buttons keep natural width */
+    flex: none; 
 }
 
 .button-container a:hover {
@@ -763,8 +763,7 @@ nav ul li a:hover {
                         const card = document.createElement("div");
                         card.className = "card";
 
-                        // const todayStr = new Date().toISOString().split("T")[0];
-                        // const hasSlotsToday = doctor.availabilitySlots?.some(slot => slot.date === todayStr && slot.slots.length > 0);
+                       
 const now = new Date();
 const todayStr = now.toISOString().split("T")[0];
 const tomorrow = new Date();
@@ -772,7 +771,7 @@ tomorrow.setDate(now.getDate() + 1);
 const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
 function parseTime12h(dateStr, timeStr) {
-    const [time, modifier] = timeStr.split(" "); // e.g. "6:00", "PM"
+    const [time, modifier] = timeStr.split(" "); 
     let [hours, minutes] = time.split(":").map(Number);
 
     if (modifier === "PM" && hours < 12) hours += 12;
@@ -784,27 +783,18 @@ function parseTime12h(dateStr, timeStr) {
 }
 let isAvailable = false;
 
-// Check today's slots
+// Checking today's slots
 const todaySlot = doctor.availabilitySlots?.find(slot => slot.date === todayStr);
 if (todaySlot) {
     const hasFutureSlotToday = todaySlot.slots.some(time => {
         const slotDateTime = parseTime12h(todaySlot.date, time);
-        console.log("Checking slot:", time, "→", slotDateTime.toLocaleString()); // debug
-        return slotDateTime > now; // only future times
+        console.log("Checking slot:", time, "→", slotDateTime.toLocaleString()); 
+        return slotDateTime > now; 
     });
     if (hasFutureSlotToday) {
         isAvailable = true;
     }
 }
-
-
-// If not available today, check tomorrow
-// if (!isAvailable) {
-//     const tomorrowSlot = doctor.availabilitySlots?.find(slot => slot.date === tomorrowStr);
-//     if (tomorrowSlot && tomorrowSlot.slots.length > 0) {
-//         isAvailable = true;
-//     }
-// }
 
                         card.innerHTML = `
         <div class="card-content">
