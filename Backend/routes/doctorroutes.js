@@ -6,7 +6,6 @@ const auth = require('../middlewares/auth');
 
 const router = express.Router();
 
-// Multer config
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');

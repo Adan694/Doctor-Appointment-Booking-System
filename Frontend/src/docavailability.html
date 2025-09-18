@@ -663,12 +663,7 @@ textarea:focus {
         let saveTimeout = null;
         let isEditing = false;
         let draggedRow = null;
-        function togglePasswordFields() {
-        const fields = document.getElementById("password-fields");
-        fields.style.display = fields.style.display === "none" ? "block" : "none";
-    }
 
-        
         function toggleAvailability(newStatus) {
                 const token = localStorage.getItem('authToken');
                 fetch(`http://localhost:3000/api/doctors/${doctorId}/status`, {
@@ -703,7 +698,7 @@ textarea:focus {
                     const tbody = document.querySelector("#availabilityTable tbody");
                     tbody.innerHTML = "";
                     if (!data.availabilitySlots || !data.availabilitySlots.length) return;
-                    // ✅ Group slots by date before rendering
+                    // Group slots by date before rendering
                     const grouped = {};
                     data.availabilitySlots.forEach(slot => {
                         const slotDateKey = new Date(slot.date).toISOString().split("T")[0];
@@ -711,7 +706,7 @@ textarea:focus {
                         grouped[slotDateKey].push(...slot.slots);
                     });
 
-                    // ✅ Now render each grouped date only once
+                    //  Now render each grouped date only once
                     // Sort dates in ascending order
                     const sortedDates = Object.keys(grouped).sort((a, b) => new Date(a) - new Date(b));
                     sortedDates.forEach(date => {
@@ -769,41 +764,7 @@ textarea:focus {
         function getTodayDate() {
             return new Date().toISOString().split("T")[0];
         }
-        // function addSlot() {
-        //     const tbody = document.querySelector("#availabilityTable tbody");
-        //     const tr = document.createElement("tr");
-        //     const dateCell = document.createElement("td");
-        //     const dateInput = document.createElement("input");
-        //     dateInput.type = "date";
-        //     dateInput.min = getTodayDate(); 
-        //     dateCell.appendChild(dateInput);
-
-        //     const slotsCell = document.createElement("td");
-        //     const slotsContainer = document.createElement("div");
-        //     slotsContainer.classList.add("slots-container");
-
-        //     standardSlots.forEach(slot => {
-        //         const label = document.createElement("label");
-        //         const checkbox = document.createElement("input");
-        //         checkbox.type = "checkbox";
-        //         checkbox.value = slot;
-
-        //         label.appendChild(checkbox);
-        //         label.append(` ${slot}`);
-        //         slotsContainer.appendChild(label);
-        //     });
-
-        //     slotsCell.appendChild(slotsContainer);
-
-        //     const removeCell = document.createElement("td");
-        //     removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
-
-        //     tr.appendChild(dateCell);
-        //     tr.appendChild(slotsCell);
-        //     tr.appendChild(removeCell);
-
-        //     tbody.appendChild(tr);
-        // }
+      
 function addSlot() {
     const tbody = document.querySelector("#availabilityTable tbody");
     const tr = document.createElement("tr");

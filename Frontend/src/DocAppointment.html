@@ -887,7 +887,7 @@
             return response.json();
           })
           .then((data) => {
-            console.log(`✅ Marked appointment ${appointmentId} as Missed`);
+            console.log(`Marked appointment ${appointmentId} as Missed`);
             return data;
           });
       }
@@ -929,18 +929,6 @@
                 `${appointment.date} ${appointment.time}`
               );
               const now = new Date();
-
-              // const feedback = feedbackList.find(fb => {
-              //         const apptPatientId = typeof appointment.patientId === "object"
-              //             ? appointment.patientId._id
-              //             : appointment.patientId;
-
-              //         return (
-              //             fb.patientId?.toString() === apptPatientId?.toString() &&
-              //             fb.doctorId?.toString() === doctorId?.toString() &&
-              //             fb.appointmentId?.toString() === appointment._id?.toString()
-              //         );
-              //     });
               const feedback = feedbackList.find((fb) => {
                 let apptPatientId = null;
 
@@ -1087,7 +1075,14 @@
       function addCancelledAppointmentRow(appointment) {
         const formattedTime = new Date(
           appointment.appointmentTime
-        ).toLocaleString();
+        ).toLocaleString([], {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
         const rowHTML = `<tr data-appointment-id="${appointment.id || ""}">
         <td>${appointment.patientName}</td>
         <td>${formattedTime}</td>
@@ -1125,7 +1120,6 @@
         const appointmentId = row.getAttribute("data-appointment-id");
         const token = localStorage.getItem("authToken");
 
-        // Show confirmation modal
         const confirmModal = document.getElementById("confirmModal");
         const successModal = document.getElementById("successModal");
         const confirmYesBtn = document.getElementById("confirmYes");
@@ -1134,7 +1128,7 @@
 
         confirmModal.style.display = "flex";
 
-        // Remove any old listeners first (important to avoid duplicates)
+        // Removing any old listeners first
         confirmYesBtn.onclick = null;
         confirmNoBtn.onclick = null;
         successOkBtn.onclick = null;
@@ -1221,17 +1215,6 @@
           select.innerHTML = "<option value=''>Select a slot</option>";
 
           let slotCount = 0;
-
-          // slotsData.forEach((day) => {
-          //   const date = day.date;
-          //   day.slots.forEach((time) => {
-          //     const option = document.createElement("option");
-          //     option.value = `${date}|${time}`;
-          //     option.textContent = `${date} at ${time}`;
-          //     select.appendChild(option);
-          //     slotCount++;
-          //   });
-          // });
           const now = new Date();
 
           slotsData.forEach((day) => {
@@ -1239,8 +1222,6 @@
 
             day.slots.forEach((timeStr) => {
               const timeTrimmed = timeStr.trim();
-
-              // Parse time with AM/PM
               let [timePart, ampm] = timeTrimmed.split(" ");
               let [hour, minute] = timePart.split(":").map(Number);
 
@@ -1261,10 +1242,10 @@
 
               console.log("Parsed slotDateTime:", slotDateTime.toString());
 
-              // ❌ Skip past slots
+              // Skiping past slots
               if (slotDateTime <= now) return;
 
-              // ✅ Add only valid slots
+              // Adding only valid slots
               const option = document.createElement("option");
               option.value = `${dateStr}|${timeTrimmed}`;
               option.textContent = `${dateStr} at ${timeTrimmed}`;
@@ -1277,8 +1258,6 @@
             alert("No available slots for this doctor.");
             return;
           }
-
-          // Show modal
           document.getElementById("rescheduleModal").style.display = "block";
           document.body.classList.add("modal-open");
         } catch (error) {
@@ -1292,7 +1271,6 @@
           '#rescheduleModal button[onclick="confirmReschedule()"]'
         );
         const originalBtnText = confirmBtn.textContent;
-        // Set processing state
         confirmBtn.disabled = true;
         confirmBtn.textContent = "Processing...";
         if (!selectedSlot) {
@@ -1302,7 +1280,7 @@
 
         const [newDate, newTime] = selectedSlot.split("|");
 
-        // ❗️ Correctly get appointment ID
+        // Correctly geting appointment ID
         const appointmentId = document.getElementById("appointmentId").value;
         console.log("Using appointmentId in confirmReschedule:", appointmentId);
 
@@ -1367,14 +1345,12 @@
         const phone = row.cells[2].innerText;
         const token = localStorage.getItem("authToken");
 
-        // Get modal elements
         const confirmModal = document.getElementById("cancelConfirmModal");
         const successModal = document.getElementById("cancelSuccessModal");
         const yesBtn = document.getElementById("cancelConfirmYes");
         const noBtn = document.getElementById("cancelConfirmNo");
         const okBtn = document.getElementById("cancelSuccessOk");
 
-        // Show confirmation modal
         confirmModal.style.display = "flex";
 
         // Clear previous listeners
@@ -1468,7 +1444,6 @@
         yesBtn.onclick = () => {
           confirmModal.style.display = "none";
 
-          // 🔹 Show processing state on clicked button
           const originalText = button.innerHTML;
           button.disabled = true;
           button.innerHTML = "Marking...";
@@ -1493,7 +1468,7 @@
               addMissedAppointmentRow({ patientName, appointmentTime, phone });
               updateLocalStorage();
 
-              // 🔹 Restore button after success
+              // Restore button after success
               button.disabled = false;
               button.innerHTML = originalText;
 
@@ -1503,7 +1478,7 @@
               console.error("Error marking as missed:", err);
               alert("Failed to mark appointment as missed.");
 
-              // 🔹 Restore button if error
+              //  Restore button if error
               button.disabled = false;
               button.innerHTML = originalText;
             });
@@ -1525,40 +1500,12 @@
         <td>${appointment.phone || "N/A"}</td>
     </tr>`;
 
-        // Push the row into pagination data
         paginationState.missedAppointments.rows.push(rowHTML);
 
-        // Refresh the visible table
         paginateTable("missedAppointments");
       }
 
-      // function deleteAppointment(button) {
-      //     const row = button.parentElement.parentElement;
-      //     const appointmentId = row.getAttribute('data-appointment-id');
-      //     const patientName = row.cells[0].innerText;
-
-      //     if (confirm(`Are you sure you want to delete this appointment for ${patientName}?`)) {
-      //         row.remove();
-      //         updateLocalStorage();
-
-      //         if (appointmentId) {
-      //             const token = localStorage.getItem('authToken');
-      //             fetch(`http://localhost:3000/api/appointments/${appointmentId}`, {
-      //                 method: 'DELETE',
-      //                 headers: {
-      //                     'Authorization': `Bearer ${token}`
-      //                 }
-      //             })
-      //                 .then(res => {
-      //                     if (!res.ok) throw new Error("Failed to delete appointment");
-      //                     console.log("Appointment deleted successfully.");
-      //                 })
-      //                 .catch(err => console.error("Error deleting from backend:", err));
-      //         }
-      //     }
-      // }
-
-      const pageSize = 6; // Number of rows per page
+      const pageSize = 6;
       const paginationState = {
         newAppointments: { currentPage: 1, rows: [] },
         cancelledAppointments: { currentPage: 1, rows: [] },
@@ -1582,7 +1529,6 @@
           `${sectionId}PageInfo`
         ).textContent = `Page ${state.currentPage} of ${totalPages}`;
 
-        // Disable/enable buttons
         const prevBtn = document.querySelector(
           `#${sectionId}Pagination button:first-child`
         );

@@ -729,55 +729,6 @@ nav ul li a:hover {
             });
     };
 
-    // function toggleEditForm() {
-    //     const btn = document.querySelector('.edit-button');
-    //     const profileInfo = document.querySelector('.profile-info');
-    //     const passwordContainer = document.getElementById('password-change-container');
-    //     const passwordFields = document.getElementById('password-fields');
-
-    //     if (btn.innerText === 'Edit Profile') {
-    //         btn.innerText = 'Update';
-    //         passwordContainer.style.display = 'block';
-    //         passwordFields.style.display = 'none';
-
-    //         profileInfo.querySelectorAll('p').forEach(p => {
-    //             const label = p.previousElementSibling.innerText.toLowerCase().replace(/[^a-z]/g, '');
-    //             const key = { cnic: 'cnic', name: 'name', email: 'email', phone: 'phone', phonenumber: 'phone', age: 'age', dob: 'dob', dateofbirth: 'dob', gender: 'gender' }[label] || label;
-
-    //             if (key === 'gender') {
-    //                 const select = document.createElement('select');
-    //                 select.id = 'edit-' + key;
-    //                 select.value = p.innerText.toLowerCase();
-    //                 select.innerHTML = `<option value="male">Male</option><option value="female">Female</option><option value="other">Other</option>`;
-    //                 p.replaceWith(select);
-    //             } else if (key === 'dob') {
-    //                 const input = document.createElement('input');
-    //                 input.type = 'date';
-    //                 input.id = 'edit-dob';
-    //                 input.value = p.innerText;
-    //                 input.addEventListener('change', () => {
-    //                     const dob = new Date(input.value);
-    //                     const today = new Date();
-    //                     if (dob > today) return alert("Date of Birth cannot be in the future.");
-    //                     let age = today.getFullYear() - dob.getFullYear();
-    //                     const monthDiff = today.getMonth() - dob.getMonth();
-    //                     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
-    //                     document.getElementById('displayAge').innerText = age;
-    //                 });
-    //                 p.replaceWith(input);
-    //             } else if (key === 'age') return;
-    //             else {
-    //                 const input = document.createElement('input');
-    //                 input.type = 'text';
-    //                 input.id = 'edit-' + key;
-    //                 input.value = p.innerText;
-    //                 p.replaceWith(input);
-    //             }
-    //         });
-    //     } else {
-    //         updateProfile();
-    //     }
-    // }
 function toggleEditForm() {
     const btn = document.querySelector('.edit-button');
     const profileInfo = document.querySelector('.profile-info');
@@ -824,7 +775,6 @@ function toggleEditForm() {
             }
         });
 
-        /*** LIVE VALIDATION SECTION - ADD AFTER THE FOR-EACH LOOP ***/
 
         // NAME VALIDATION
         const nameInput = document.getElementById('edit-name');
@@ -835,7 +785,7 @@ function toggleEditForm() {
             nameError.style.marginTop = '2px';
             nameInput.after(nameError);
             nameInput.addEventListener('input', () => {
-                nameError.innerText = nameInput.value.trim() === '' ? "❌ Name cannot be empty" : '';
+                nameError.innerText = nameInput.value.trim() === '' ? " Name cannot be empty" : '';
             });
         }
 
@@ -849,7 +799,7 @@ function toggleEditForm() {
             emailInput.after(emailError);
             emailInput.addEventListener('input', () => {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                emailError.innerText = !emailRegex.test(emailInput.value.trim()) ? "❌ Invalid email" : '';
+                emailError.innerText = !emailRegex.test(emailInput.value.trim()) ? " Invalid email" : '';
             });
         }
 
@@ -862,24 +812,11 @@ function toggleEditForm() {
             phoneError.style.marginTop = '2px';
             phoneInput.after(phoneError);
             phoneInput.addEventListener('input', () => {
-                const phoneRegex = /^(03\d{9}|0\d{2,3}\d{7})$/;
-                phoneError.innerText = !phoneRegex.test(phoneInput.value.trim()) ? "❌ Invalid phone number" : '';
+const phoneRegex = /^(03\d{9}|02[1-9]\d{7}|0[3-7]\d{2}\d{7})$/;
+                phoneError.innerText = !phoneRegex.test(phoneInput.value.trim()) ? " Invalid phone number" : '';
             });
         }
 
-        // CNIC VALIDATION
-        // const cnicInput = document.getElementById('edit-cnic');
-        // if (cnicInput) {
-        //     const cnicError = document.createElement('div');
-        //     cnicError.style.color = 'red';
-        //     cnicError.style.fontSize = '0.85em';
-        //     cnicError.style.marginTop = '2px';
-        //     cnicInput.after(cnicError);
-        //     cnicInput.addEventListener('input', () => {
-        //         const cnicRegex = /^[0-9]{5}-[0-9]{7}-[0-9]{1}$/;
-        //         cnicError.innerText = !cnicRegex.test(cnicInput.value.trim()) ? "❌ Invalid CNIC" : '';
-        //     });
-        // }
 const cnicInput = document.getElementById('edit-cnic');
 if (cnicInput) {
     const cnicError = document.createElement('div');
@@ -898,13 +835,13 @@ if (cnicInput) {
         if (cnicRegex.test(value)) {
             cnicError.innerText = ''; // valid
         } else {
-            cnicError.innerText = "❌ Invalid CNIC (must be 13 digits or 5-7-1 format with dashes)";
+            cnicError.innerText = " Invalid CNIC (must be 13 digits or 5-7-1 format with dashes)";
         }
     });
 }
 
 
-        // DOB VALIDATION (AGE AUTOMATICALLY UPDATED)
+        // DOB VALIDATION
         const dobInput = document.getElementById('edit-dob');
         if (dobInput) {
             const dobError = document.createElement('div');
@@ -915,7 +852,7 @@ if (cnicInput) {
             dobInput.addEventListener('change', () => {
                 const dob = new Date(dobInput.value);
                 const today = new Date();
-                if (dob > today) dobError.innerText = "❌ DOB cannot be in the future";
+                if (dob > today) dobError.innerText = " DOB cannot be in the future";
                 else dobError.innerText = '';
             });
         }

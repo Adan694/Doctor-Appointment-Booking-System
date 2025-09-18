@@ -260,6 +260,86 @@
           display: block;
         }
       }
+      /* 📱 Responsive Appointments Table (no HTML changes) */
+      @media (max-width: 768px) {
+        #appointments table,
+        #appointments thead,
+        #appointments tbody,
+        #appointments th,
+        #appointments td,
+        #appointments tr {
+          display: block;
+          width: 100%;
+        }
+
+        #appointments thead {
+          display: none; /* hide table headers */
+        }
+
+        #appointments tr {
+          margin-bottom: 15px;
+          background: #fff;
+          border-radius: 10px;
+          padding: 15px 12px;
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        #appointments td {
+          display: block;
+          padding: 8px 6px;
+          border: none;
+          border-bottom: 1px solid #eee;
+          font-size: 14px;
+          color: #333;
+          word-break: break-word;
+        }
+
+        #appointments td:last-child {
+          border-bottom: none;
+        }
+
+        /* Labels via nth-of-type */
+        #appointments td:nth-of-type(1)::before {
+          content: "Name: ";
+          font-weight: 700;
+          color: #166e6b;
+        }
+        #appointments td:nth-of-type(2)::before {
+          content: "Date & Time: ";
+          font-weight: 700;
+          color: #166e6b;
+        }
+        #appointments td:nth-of-type(3)::before {
+          content: "Doctor: ";
+          font-weight: 700;
+          color: #166e6b;
+        }
+        #appointments td:nth-of-type(4)::before {
+          content: "Patient Number: ";
+          font-weight: 700;
+          color: #166e6b;
+        }
+        #appointments td:nth-of-type(5)::before {
+          content: "Token: ";
+          font-weight: 700;
+          color: #166e6b;
+        }
+        #appointments td:nth-of-type(6)::before {
+          content: "Issue: ";
+          font-weight: 700;
+          color: #166e6b;
+        }
+        #appointments td:nth-of-type(7)::before {
+          content: "Status: ";
+          font-weight: 700;
+          color: #166e6b;
+        }
+        #appointments td:nth-of-type(8)::before {
+          content: "Feedback: ";
+          font-weight: 700;
+          color: #166e6b;
+        }
+      }
     </style>
   </head>
 

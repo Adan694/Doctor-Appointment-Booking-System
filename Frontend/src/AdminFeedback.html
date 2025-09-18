@@ -244,6 +244,14 @@
         tr {
           display: block;
         }
+        table {
+          min-width: unset; /* remove the forced width */
+          width: 100%; /* fit the screen */
+        }
+
+        .table-container {
+          overflow-x: hidden; /* stop horizontal scroll */
+        }
 
         thead tr {
           display: none;
@@ -264,23 +272,29 @@
           cursor: pointer;
         }
 
-        td {
-          display: flex;
-          justify-content: space-between;
-          padding: 12px 10px;
-          border: none;
-          border-bottom: 1px solid #eee;
-          font-weight: 600;
-          color: #096666;
-        }
+        @media (max-width: 768px) {
+          td {
+            display: block; /* stack label + value */
+            text-align: left;
+            padding: 12px 10px;
+            border: none;
+            border-bottom: 1px solid #eee;
+            font-weight: normal;
+            color: #333;
+            word-break: break-word; /* allow long text to wrap */
+            white-space: normal;
+          }
 
-        td:last-child {
-          border-bottom: none;
-        }
+          td::before {
+            display: block; /* label above */
+            font-weight: 700;
+            color: #096666;
+            margin-bottom: 4px;
+          }
 
-        td::before {
-          font-weight: 700;
-          color: #096666;
+          td:last-child {
+            border-bottom: none;
+          }
         }
 
         td:nth-of-type(1)::before {
@@ -328,6 +342,30 @@
 
         #bar:focus {
           outline: none;
+        }
+      }
+      @media (max-width: 768px) {
+        td:last-child {
+          display: block !important;
+          text-align: center;
+          padding-top: 12px;
+        }
+
+        td:last-child::before {
+          content: "Actions";
+          display: block;
+          font-weight: 700;
+          color: #096666;
+          margin-bottom: 6px;
+        }
+
+        #feedbackList button {
+          width: 100%;
+          max-width: 200px;
+          margin: 0 auto;
+          display: block;
+          font-size: 15px;
+          padding: 12px;
         }
       }
     </style>

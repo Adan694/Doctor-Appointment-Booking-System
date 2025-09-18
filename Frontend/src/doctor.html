@@ -757,7 +757,6 @@
 
         updateNavbar();
 
-        // Toggle dropdown
         if (profileIcon) {
           profileIcon.addEventListener("click", (e) => {
             e.preventDefault();
@@ -805,7 +804,7 @@
             const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
             function parseTime12h(dateStr, timeStr) {
-              const [time, modifier] = timeStr.split(" "); // e.g. "10:30" "AM"
+              const [time, modifier] = timeStr.split(" ");
               let [hours, minutes] = time.split(":").map(Number);
 
               if (modifier === "PM" && hours < 12) hours += 12;
@@ -1034,7 +1033,6 @@
           `edit-comment-${feedbackId}`
         ).value;
 
-        // const updatedFeedback = { rating, comment };
         const updatedFeedback = {
           rating: parseInt(rating, 10),
           comment: comment.trim(),
@@ -1054,7 +1052,7 @@
           })
           .then((data) => {
             console.log("Feedback updated:", data);
-            fetchFeedbackForDoctor(doctorId); // Reload updated feedback
+            fetchFeedbackForDoctor(doctorId);
           })
           .catch((err) => {
             console.error("Error updating feedback:", err);

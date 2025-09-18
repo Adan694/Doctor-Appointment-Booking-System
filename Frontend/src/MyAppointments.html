@@ -678,6 +678,52 @@
           z-index: 1001;
         }
       }
+      @media (max-width: 768px) {
+        .appointments table thead {
+          display: none; /* hide table header */
+        }
+
+        .appointments table tr {
+          display: block;
+          background: #fff;
+          margin: 12px 0;
+          padding: 15px;
+          border-radius: 10px;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .appointments table td {
+          display: block;
+          text-align: left;
+          padding: 8px 0;
+          border: none;
+        }
+
+        .appointments table td::before {
+          content: attr(data-label);
+          font-weight: bold;
+          display: block;
+          margin-bottom: 5px;
+          color: #333;
+        }
+
+        .appointments table td:last-child {
+          text-align: center; /* center action buttons */
+        }
+
+        .appointments table .table-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 10px;
+        }
+
+        .appointments table .table-buttons button {
+          flex: 1 1 45%;
+          min-width: 120px;
+          padding: 10px;
+        }
+      }
     </style>
   </head>
 
@@ -727,9 +773,6 @@
             <button onclick="showAppointments('all')" class="tab-button">
               <i class="fas fa-list"></i> All
             </button>
-            <button onclick="showAppointments('missed')" class="tab-button">
-              <i class="fas fa-times-circle"></i> Missed
-            </button>
           </div>
           <h2>My Appointments</h2>
           <table>
@@ -755,10 +798,10 @@
       <div class="footer">
         <div class="contact-info">
           <h3>Contact Us</h3>
-          <p>Hospital Name</p>
+          <p>DocAssist hospital</p>
           <p>123 main Street Rawalpindi</p>
-          <p>Phone: (123) 456-7890</p>
-          <p>Email: DocAssist@hospital.com</p>
+          <p>Phone: 051- 456-7890</p>
+          <p>Email: assistdoc4@gmail.com</p>
         </div>
         <div class="quick-links">
           <h3>Quick Links</h3>
@@ -831,32 +874,6 @@
         });
       });
 
-      // function fetchPatientAppointments(token) {
-      //   const patientId = localStorage.getItem("patientId");
-      //   console.log("Retrieved patientId from localStorage:", patientId);
-      //   showLoader();
-
-      //   fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
-      //     method: "GET",
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   })
-      //     .then((response) => {
-      //       console.log("Raw response:", response);
-      //       if (!response.ok) throw new Error("Failed to fetch appointments");
-      //       return response.json();
-      //     })
-      //     .then((data) => {
-      //       allAppointments = data;
-      //       renderAppointments(allAppointments, "upcoming");
-      //       hideLoader();
-      //     })
-      //     .catch((err) => {
-      //       console.error("Error fetching patient appointments:", err);
-      //       hideLoader();
-      //     });
-      // }
       function fetchPatientAppointments(token) {
         const patientId = localStorage.getItem("patientId");
         console.log("Retrieved patientId from localStorage:", patientId);
@@ -875,7 +892,7 @@
           .then((data) => {
             allAppointments = data;
 
-            // ✅ EXTRA: also fetch feedbacks for this patient and repopulate localStorage
+            //  EXTRA: also fetch feedbacks for this patient and repopulate localStorage
             fetch(`http://localhost:3000/api/patient/${patientId}`, {
               method: "GET",
               headers: {
@@ -953,25 +970,51 @@
           const appointmentDateTime = new Date(`${plainDate}T${formattedTime}`);
           if (isNaN(appointmentDateTime)) return false;
 
-          const status = (appointment.status || "").toLowerCase();
-          if (type === "upcoming")
+          // Normalize status once
+          let effectiveStatus = (appointment.status || "")
+            .toString()
+            .trim()
+            .toLowerCase();
+
+          if (
+            appointmentDateTime < now &&
+            effectiveStatus !== "completed" &&
+            effectiveStatus !== "cancelled"
+          ) {
+            effectiveStatus = "missed";
+          }
+
+          // Attach normalized status
+          appointment.effectiveStatus = effectiveStatus;
+
+          if (type === "upcoming") {
             return (
               appointmentDateTime >= now &&
-              status !== "cancelled" &&
-              status !== "completed"
+              effectiveStatus !== "cancelled" &&
+              effectiveStatus !== "completed" &&
+              effectiveStatus !== "missed"
             );
-          if (type === "past")
+          }
+
+          if (type === "past") {
             return (
               appointmentDateTime < now &&
-              (status === "completed" || status === "cancelled")
+              (effectiveStatus === "completed" ||
+                effectiveStatus === "cancelled")
             );
-          if (type === "missed")
-            return (
-              appointmentDateTime < now &&
-              status !== "completed" &&
-              status !== "cancelled"
-            );
+          }
+
           return true;
+        });
+
+        // Ensure effectiveStatus is always available
+        filtered.forEach((a) => {
+          if (!a.effectiveStatus) {
+            a.effectiveStatus = (a.status || "")
+              .toString()
+              .trim()
+              .toLowerCase();
+          }
         });
 
         filtered.sort((a, b) => {
@@ -1011,39 +1054,32 @@
 
           appointmentDate.setHours(hours, minutes, 0, 0);
 
-          let effectiveStatus = appointment.status?.toLowerCase() || "";
-          if (
-            appointmentDate < now &&
-            effectiveStatus !== "completed" &&
-            effectiveStatus !== "cancelled"
-          ) {
-            effectiveStatus = "missed";
-          }
+          let effectiveStatus = appointment.effectiveStatus;
 
           appointmentElement.innerHTML = `
-                    <td>Dr. ${
-                      appointment.doctorId?.name || "Unknown Doctor"
-                    }</td>
-                    <td>${new Date(appointment.date).toLocaleDateString()}</td>
-                    <td>${appointment.time || "N/A"}</td>
-                    <td>${effectiveStatus}</td>
-                    <td>
-                        <span class="btn-view" onclick="viewAppointment('${
-                          appointment._id
-                        }')">View</span>
-                        ${
-                          type === "upcoming"
-                            ? `<span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>`
-                            : effectiveStatus === "completed" &&
-                              !submittedFeedbacks.includes(appointment._id)
-                            ? `<button class="btn-feedback" onclick="giveFeedback('${appointment._id}', '${appointment.doctorId?._id}', '${appointment.doctorId?.name}')">Give Feedback</button>`
-                            : effectiveStatus === "completed" &&
-                              submittedFeedbacks.includes(appointment._id)
-                            ? `<div style="margin-top: 4px; color: green; font-size: 0.9em;">Feedback Submitted</div>`
-                            : ""
-                        }
-                    </td>
-                `;
+      <td>Dr. ${appointment.doctorId?.name || "Unknown Doctor"}</td>
+      <td>${new Date(appointment.date).toLocaleDateString()}</td>
+      <td>${appointment.time || "N/A"}</td>
+      <td>${
+        effectiveStatus.charAt(0).toUpperCase() + effectiveStatus.slice(1)
+      }</td>
+      <td>
+        <span class="btn-view" onclick="viewAppointment('${
+          appointment._id
+        }')">View</span>
+        ${
+          type === "upcoming"
+            ? `<span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>`
+            : effectiveStatus === "completed" &&
+              !submittedFeedbacks.includes(appointment._id)
+            ? `<button class="btn-feedback" onclick="giveFeedback('${appointment._id}', '${appointment.doctorId?._id}', '${appointment.doctorId?.name}')">Give Feedback</button>`
+            : effectiveStatus === "completed" &&
+              submittedFeedbacks.includes(appointment._id)
+            ? `<div style="margin-top: 4px; color: green; font-size: 0.9em;">Feedback Submitted</div>`
+            : ""
+        }
+      </td>
+    `;
 
           appointmentsBody.appendChild(appointmentElement);
         });

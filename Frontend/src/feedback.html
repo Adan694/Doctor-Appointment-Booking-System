@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Feedback - DocAssist</title>
     <style>
-      /* GENERAL STYLING */
       body {
         font-family: "Segoe UI", sans-serif;
         background: linear-gradient(135deg, #e6f2ff, #ffffff);
@@ -203,7 +202,6 @@
         background-color: #004d4d;
       }
 
-      /* Button Loading State */
       .loading {
         position: relative;
         pointer-events: none;
@@ -239,7 +237,9 @@
   <body>
     <header>
       <div class="header-container">
-        <a href="profile.html" class="back-profile-btn">← Profile</a>
+        <a href="MyAppointments.html" class="back-profile-btn"
+          >Go to Appointments</a
+        >
         <div class="header-title">
           <h1>Feedback</h1>
           <p>We'd love to hear from you!</p>
@@ -275,7 +275,7 @@
       </form>
 
       <div id="feedbackContainer" class="feedback-list"></div>
-      <a href="index.html" class="back-link">← Back to Home</a>
+      <a href="index.html" class="back-link">Back to Home</a>
     </div>
 
     <div id="popup" class="popup">
@@ -365,11 +365,6 @@
             if (!res.ok)
               throw new Error(data.message || "Error submitting feedback");
 
-            // let submitted = JSON.parse(localStorage.getItem('feedbackGiven') || '[]');
-            // if (!submitted.includes(payload.appointmentId)) {
-            //     submitted.push(payload.appointmentId);
-            //     localStorage.setItem('feedbackGiven', JSON.stringify(submitted));
-            // }
             let submitted = JSON.parse(
               localStorage.getItem("feedbackGiven") || "[]"
             );

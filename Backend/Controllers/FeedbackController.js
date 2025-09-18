@@ -38,7 +38,7 @@ await Doctor.findByIdAndUpdate(doctorId, {
         const doctor = await Doctor.findById(doctorId);
         const admin = await User.findOne({ role: 'admin' });
 
-        const message = `📝 New feedback from ${user.name} for Dr. ${doctor.name}`;
+        const message = ` New feedback from ${user.name} for Dr. ${doctor.name}`;
 
         if (admin) {
 

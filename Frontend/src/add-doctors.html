@@ -393,6 +393,7 @@
               placeholder="Name"
               required
             />
+            <small id="name-error" class="error-text"></small>
           </div>
 
           <div class="form-group">
@@ -404,6 +405,7 @@
               placeholder="Email"
               required
             />
+            <small id="email-error" class="error-text"></small>
           </div>
 
           <div class="form-group">
@@ -415,6 +417,7 @@
               placeholder="Password"
               required
             />
+            <small id="password-error" class="error-text"></small>
           </div>
 
           <div class="form-group">
@@ -494,6 +497,7 @@
               placeholder="e.g., 1 Year"
               required
             />
+            <small id="experience-error" class="error-text"></small>
           </div>
 
           <div class="form-group">
@@ -505,6 +509,7 @@
               placeholder="Doctor Fees"
               required
             />
+            <small id="fees-error" class="error-text"></small>
           </div>
 
           <div class="form-group">
@@ -553,6 +558,69 @@
         overlay.classList.remove("active");
       });
 
+      //  Validation rules
+      const validators = {
+        name: (value) =>
+          value.trim().length >= 3 || "Name must be at least 3 characters.",
+
+        email: (value) => {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value)) return "Invalid email format.";
+          const allowedDomains = [
+            "gmail.com",
+            "yahoo.com",
+            "hotmail.com",
+            "outlook.com",
+          ];
+          const domain = value.split("@")[1];
+          if (!allowedDomains.includes(domain))
+            return "Only Gmail, Yahoo, Hotmail, or Outlook allowed.";
+          return true;
+        },
+
+        password: (value) => {
+          const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
+          return (
+            passwordRegex.test(value) ||
+            "Password must be at least 6 characters, include 1 letter, 1 number, and 1 special character."
+          );
+        },
+
+        experience: (value) => {
+          const expRegex = /^\d+\s?(year|years)?$/i;
+          return (
+            expRegex.test(value) ||
+            "Experience must be a number (e.g., 5 years)."
+          );
+        },
+
+        fees: (value) => value > 0 || "Doctor fees must be greater than 0.",
+      };
+
+      //  Attach live validation
+      Object.keys(validators).forEach((field) => {
+        const input = document.getElementById(field);
+        if (input) {
+          let errorSpan = document.createElement("small");
+          errorSpan.className = "error-text";
+          errorSpan.style.color = "red";
+          errorSpan.style.fontSize = "12px";
+          errorSpan.style.display = "block";
+          input.insertAdjacentElement("afterend", errorSpan);
+
+          input.addEventListener("input", () => {
+            const result = validators[field](input.value);
+            if (result !== true) {
+              errorSpan.textContent = result;
+              input.style.borderColor = "red";
+            } else {
+              errorSpan.textContent = "";
+              input.style.borderColor = "";
+            }
+          });
+        }
+      });
+
       document
         .getElementById("doctor-form")
         .addEventListener("submit", async function (event) {
@@ -564,7 +632,8 @@
 
           // Append the role to the formData
           formData.append("role", document.getElementById("doctor-role").value);
-          // Email validation
+
+          // Email validation (kept your logic as-is)
           const email = formData.get("email").trim();
           const allowedDomains = [
             "gmail.com",
@@ -575,14 +644,14 @@
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
           if (!emailRegex.test(email)) {
-            alert("❌ Invalid email format.");
+            alert("Invalid email format.");
             return;
           }
 
           const domain = email.split("@")[1];
           if (!allowedDomains.includes(domain)) {
             alert(
-              "❌ Only Gmail, Yahoo, Hotmail, or Outlook emails are allowed."
+              " Only Gmail, Yahoo, Hotmail, or Outlook emails are allowed."
             );
             return;
           }
@@ -613,7 +682,7 @@
             form.reset();
           } catch (err) {
             console.error("Error:", err);
-            showError(null, err.message);
+            showError(err.message);
           } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = "Add Doctor";
@@ -637,6 +706,26 @@
         setTimeout(() => {
           successElement.remove();
           window.location.href = "admindoclist.html";
+        }, 3000);
+      }
+
+      function showError(message) {
+        const errorElement = document.createElement("div");
+        errorElement.className = "error-message";
+        errorElement.textContent = message;
+        errorElement.style.color = "red";
+        errorElement.style.marginTop = "10px";
+        errorElement.style.textAlign = "center";
+
+        const formContainer = document.querySelector(".form-container");
+
+        const existingError = formContainer.querySelector(".error-message");
+        if (existingError) existingError.remove();
+
+        formContainer.appendChild(errorElement);
+
+        setTimeout(() => {
+          errorElement.remove();
         }, 3000);
       }
     </script>

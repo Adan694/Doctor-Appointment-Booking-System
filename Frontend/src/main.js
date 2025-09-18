@@ -8,42 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let card = document.querySelectorAll(".card");
     let count = 0;
     const doctorContainer = document.getElementById("doctorContainer");
-
-    // Load doctors from API
-    // if (doctorContainer) {
-    //     const loadingMessage = document.createElement("p");
-    //     loadingMessage.textContent = "Loading doctors...";
-    //     doctorContainer.appendChild(loadingMessage);
-
-    //     fetch("http://localhost:3000/api/doctors/alldoctors")
-    //         .then((res) => {
-    //             if (!res.ok) throw new Error("Failed to fetch doctors");
-    //             return res.json();
-    //         })
-    //         .then((doctors) => {
-    //             doctorContainer.innerHTML = "";
-
-    //             const displayedDoctors = doctors.slice(0, 3);
-    //             displayedDoctors.forEach((doctor) => {
-    //                 const card = document.createElement("div");
-    //                 card.className = "card";
-    //                 card.innerHTML = `
-    //                     <img src="${doctor.image}" alt="${doctor.name}" />
-    //                     <p><strong>${doctor.name}</strong></p>
-    //                     <p class="speciality">${doctor.speciality}</p>
-    //                 `;
-    //                 card.addEventListener("click", () => {
-    //                     window.location.href = `doctor.html?id=${encodeURIComponent(doctor._id)}`;
-    //                 });
-
-    //                 doctorContainer.appendChild(card);
-    //             });
-    //         })
-    //         .catch((err) => {
-    //             doctorContainer.innerHTML = "<p style='color:red;'>Failed to load doctors.</p>";
-    //             console.error("Error:", err);
-    //         });
-    // }
 // Update navigation bar based on user role
 function updateNavbar() {
     const profileMenu = document.getElementById('profileMenu');
@@ -94,7 +58,7 @@ if (profileMenu) {
 
 updateNavbar();
 window.logout = function () {
-    console.log("🚪 Logging out...");
+    console.log(" Logging out...");
     localStorage.clear();
     updateNavbar();
     location.reload();
@@ -133,102 +97,6 @@ nextArrow.addEventListener('click', () => {
     myFun();
 });
     
-    // if (connectBtn) {
-    //     connectBtn.addEventListener("click", function () {
-    //         let email = document.getElementById("email");
-    //         let pass = document.getElementById("pass");
-    //         let contact = document.getElementById("contact");
-
-    //         let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    //         if (!emailRegex.test(email.value)) {
-    //             alert("Invalid email address");
-    //             return;
-    //         }
-
-    //         let contactRegex = /^((\+92|0)3[0-9]{9}|0[1-9][0-9]{8,9})$/;
-    //         if (!contactRegex.test(contact.value)) {
-    //             alert("Invalid contact number");
-    //             return;
-    //         }
-
-    //         if (pass.value.length < 6) {
-    //             alert("Password must be at least 6 characters long");
-    //             return;
-    //         }
-
-    //         if (email.value === "" || pass.value === "" || contact.value === "") {
-    //             alert("Please Enter Details");
-    //         } else {
-    //             alert("You Logged In");
-    //             localStorage.setItem('userRole', 'patient');
-    //             updateNavbar();
-    //         }
-    //     });
-    // }
-
-//     const contactForm = document.getElementById('contactForm');
-//     if (contactForm) {
-//         contactForm.addEventListener('submit', async function (e) {
-//             e.preventDefault();
-
-//             const email = document.getElementById('email').value.trim();
-// const name = document.getElementById('name').value.trim();
-// const phone = document.getElementById('phone').value.trim();
-// const message = document.getElementById('message').value.trim();
-
-// let isValid = true;
-
-// // 📧 Email validation
-// const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// if (!emailRegex.test(email)) {
-//     alert("Please enter a valid email address.");
-//     isValid = false;
-// }
-
-// // 👤 Name validation
-// if (name.length < 2) {
-//     alert("Please enter your full name (at least 2 characters).");
-//     isValid = false;
-// }
-
-// // 📱 Pakistani phone validation (Mobile or PTCL, with optional +92)
-// const pkPhoneRegex = /^((\+92|0)3[0-9]{9}|0[1-9][0-9]{8,9})$/;
-// if (!pkPhoneRegex.test(phone)) {
-//     alert("Please enter a valid Pakistani mobile or PTCL number.");
-//     isValid = false;
-// }
-
-// // 📝 Message validation
-// if (message.length === 0) {
-//     alert("Please enter a message.");
-//     isValid = false;
-// }
-
-// if (!isValid) return;
-
-// // ✅ If all checks pass, proceed with form submission (fetch or whatever)
-// alert("Form is valid, submitting...");
-
-
-//             const data = { email, name, phone, message };
-
-//             try {
-//                 const response = await fetch('http://localhost:3000/contact', {
-//                     method: 'POST',
-//                     headers: {
-//                         'Content-Type': 'application/json'
-//                     },
-//                     body: JSON.stringify(data)
-//                 });
-
-//                 const result = await response.json();
-//                 alert(result.message || 'Form submitted successfully!');
-//             } catch (error) {
-//                 console.error('Error:', error);
-//                 alert('Failed to submit. Try again.');
-//             }
-//         });
-    //     }
     contactForm.addEventListener('submit', async function (e) {
     e.preventDefault();
 
@@ -239,7 +107,7 @@ nextArrow.addEventListener('click', () => {
     const message = document.getElementById('message').value.trim();
 
          if (!email || !name || !phone || !message || (document.getElementById('pass') && !pass)) {
-            alert("❌ Please enter all fields.");
+            alert(" Please enter all fields.");
             return;
         }
 

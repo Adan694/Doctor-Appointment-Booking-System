@@ -476,10 +476,6 @@
             <input type="text" id="degree" placeholder=" " />
             <label>Degree</label>
           </div>
-          <!-- <div class="input-group">
-                    <textarea id="address" placeholder=" "></textarea>
-                    <label>Address</label>
-                </div> -->
           <div class="input-group">
             <textarea id="about" placeholder=" "></textarea>
             <label>About</label>
@@ -628,8 +624,6 @@
             document.getElementById("profilePic").src = data.photo
               ? `http://localhost:3000/uploads/${data.photo}`
               : "images/placeholder.png";
-
-            // document.getElementById("address").value = data.address || '';
             document.getElementById("about").value = data.about || "";
             document.getElementById("change-password-btn").disabled = false;
             toggleEditFields(false);

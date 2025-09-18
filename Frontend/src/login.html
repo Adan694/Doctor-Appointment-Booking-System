@@ -296,6 +296,15 @@
             required
           />
           <small id="signup-password-error" class="error"></small>
+          <div
+            id="password-hint"
+            style="font-size: 13px; color: #555; margin-top: 6px"
+          >
+            <p id="length">❌ At least 6 characters</p>
+            <p id="letter">❌ At least one letter</p>
+            <p id="number">❌ At least one number</p>
+            <p id="special">❌ At least one special character (@$!%*?&)</p>
+          </div>
 
           <input
             type="password"
@@ -329,7 +338,7 @@
       function validatePhone(phone) {
         if (!phone) return "Phone number is required.";
         const cleaned = phone.replace(/[\s-]/g, "");
-        const pkRegex = /^(?:\+92|92|0)?(3\d{9}|[2-9]\d{7,9})$/;
+        const pkRegex = /^(03\d{9}|02[1-9]\d{7}|0[3-7]\d{2}\d{7})$/;
         if (!pkRegex.test(cleaned)) {
           return "Enter a valid Pakistani phone number (e.g., 03XXXXXXXXX or PTCL).";
         }
@@ -455,7 +464,7 @@
           passwordError;
 
         if (emailError || passwordError) {
-          console.log("❌ Login blocked due to errors:", {
+          console.log("Login blocked due to errors:", {
             emailError,
             passwordError,
           });
@@ -559,7 +568,7 @@
           errors.password ||
           errors.confirm
         ) {
-          console.log("❌ Signup blocked due to errors:", errors);
+          console.log(" Signup blocked due to errors:", errors);
           alert("Please fix the highlighted errors before signing up.");
           return;
         }
@@ -638,6 +647,27 @@
           alert(error.message);
         }
       }
+      // Live password strength hints for signup
+      document
+        .getElementById("signup-password")
+        .addEventListener("input", function () {
+          const password = this.value;
+
+          const hasLength = password.length >= 6;
+          const hasLetter = /[A-Za-z]/.test(password);
+          const hasNumber = /\d/.test(password);
+          const hasSpecial = /[@$!%*?&]/.test(password);
+
+          document.getElementById("length").textContent =
+            (hasLength ? "✅" : "❌") + " At least 6 characters";
+          document.getElementById("letter").textContent =
+            (hasLetter ? "✅" : "❌") + " At least one letter";
+          document.getElementById("number").textContent =
+            (hasNumber ? "✅" : "❌") + " At least one number";
+          document.getElementById("special").textContent =
+            (hasSpecial ? "✅" : "❌") +
+            " At least one special character (@$!%*?&)";
+        });
     </script>
   </body>
 </html>

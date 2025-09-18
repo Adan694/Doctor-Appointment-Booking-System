@@ -338,6 +338,87 @@
           font-size: 13px;
         }
       }
+      @media (max-width: 768px) {
+        #patientsTable,
+        #patientsTable thead,
+        #patientsTable tbody,
+        #patientsTable th,
+        #patientsTable td,
+        #patientsTable tr {
+          display: block;
+          width: 100%;
+        }
+
+        #patientsTable thead {
+          display: none; /* hide header row */
+        }
+
+        #patientsTable tr {
+          margin-bottom: 15px;
+          background: #fff;
+          border-radius: 10px;
+          padding: 15px;
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        #patientsTable td {
+          display: block;
+          padding: 10px 8px;
+          border: none;
+          border-bottom: 1px solid #eee;
+          font-size: 14px;
+          word-break: break-word;
+        }
+
+        #patientsTable td:last-child {
+          border-bottom: none;
+        }
+
+        /* Labels using nth-of-type */
+        #patientsTable td:nth-of-type(1)::before {
+          content: "Email: ";
+          font-weight: 700;
+          color: #166e6b;
+          display: block;
+          margin-bottom: 4px;
+        }
+        #patientsTable td:nth-of-type(2)::before {
+          content: "Status: ";
+          font-weight: 700;
+          color: #166e6b;
+          display: block;
+          margin-bottom: 4px;
+        }
+        #patientsTable td:nth-of-type(3)::before {
+          content: "Actions: ";
+          font-weight: 700;
+          color: #166e6b;
+          display: block;
+          margin-bottom: 6px;
+        }
+
+        /* Make actions buttons stack nicely */
+        .table-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 8px;
+        }
+
+        .table-buttons button {
+          flex: 1 1 45%;
+          min-width: 120px;
+          font-size: 14px;
+          padding: 10px;
+        }
+
+        .delete-btn {
+          flex: unset;
+          min-width: 40px;
+          padding: 8px;
+        }
+      }
     </style>
   </head>
 

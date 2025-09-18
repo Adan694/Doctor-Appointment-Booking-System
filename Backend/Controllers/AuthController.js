@@ -18,7 +18,7 @@ async function authenticateUser(email, password, role) {
     if (role === 'doctor') {
         user = await Doctor.findOne({ email });
     } else {
-        user = await User.findOne({ email, role }); // patient or admin
+        user = await User.findOne({ email, role }); 
     }
 
     if (!user) return null;
@@ -28,14 +28,7 @@ async function authenticateUser(email, password, role) {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     return isPasswordValid ? user : null;
 }
-// function generateToken(user) {
-//     return jwt.sign({ email: user.email, role: user.role }, 'secret-123', { expiresIn: '1h' });
-//     console.log('\n================ JWT Token ================\n');
-//     console.log(token);
-//     console.log('\n===========================================\n');
 
-//     return token;
-// }
 function generateToken(user) {
     const token = jwt.sign(
         { email: user.email, role: user.role },
@@ -182,8 +175,7 @@ async function login(req, res) {
         });
     } catch (error) {
         console.error("Error logging in:", error.message);
-        // res.status(500).json({ message: "Error logging in" });
-            return res.status(401).json({ message: error.message });  // ✅ send real message
+            return res.status(401).json({ message: error.message });  
 
     }
 }

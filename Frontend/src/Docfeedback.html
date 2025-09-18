@@ -513,7 +513,7 @@
             noFeedback.style.display = "none";
 
             feedbacks.forEach((feedback, index) => {
-              // ✅ Added index here
+              // Added index here
               const row = document.createElement("tr");
 
               // Patient name
@@ -554,7 +554,7 @@
               // Animate later
               setTimeout(() => {
                 row.classList.add("appear");
-              }, index * 150); // ✅ Stagger each row by 150ms
+              }, index * 150); //  Stagger each row by 150ms
             });
           })
           .catch((err) => {

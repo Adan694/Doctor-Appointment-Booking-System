@@ -11,9 +11,9 @@ cron.schedule("* * * * *", async () => {
     );
 
     if (result.modifiedCount > 0) {
-      console.log(`✅ Unblocked ${result.modifiedCount} patients`);
+      console.log(`Unblocked ${result.modifiedCount} patients`);
     }
   } catch (err) {
-    console.error("❌ Error in unblock cron:", err.message);
+    console.error("Error in unblock cron:", err.message);
   }
 });

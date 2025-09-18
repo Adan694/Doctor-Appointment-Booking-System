@@ -8,8 +8,7 @@ const notifyAll = async ({ patient, doctor, admin, message, type }) => {
     if (!user || !user._id || !user.email || !user.role) continue;
 
     try {
-      // Determine if this notification should be unread by default
-      const isUnread = type === 'feedback' ? false : undefined; // only feedback notifications are unread
+      const isUnread = type === 'feedback' ? false : undefined; 
 
       // Save to MongoDB
       const saved = await Notification.create({

@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <title>Doctor Appointments</title>
     <style>
-      /* ==== GLOBAL LAYOUT ==== */
  * {
             margin: 0;
             padding: 0;
@@ -395,7 +394,6 @@
             if (!response.ok) throw new Error("Failed to fetch doctor details");
 
             const doctor = await response.json();
-            // doctor.name or doctor.fullName depending on your backend
             document.getElementById("doctorNameHeading").textContent = `Dr. ${doctor.name}'s Appointments`;
 
         } catch (err) {

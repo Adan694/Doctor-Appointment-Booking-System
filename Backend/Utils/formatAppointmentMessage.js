@@ -1,7 +1,6 @@
 const formatMessage = ({ action, appointment, doctor, patient, recipient }) => {
   let message = '';
 
-  // Safe fallbacks
   const patientName = patient?.name || 'the patient';
   const doctorName = doctor?.name || 'the doctor';
 const issueText = appointment?.issue || 'N/A';
@@ -16,7 +15,7 @@ const issueText = appointment?.issue || 'N/A';
     // ---------------- BOOK ----------------
     case 'book':
       if (recipient === 'patient') {
-        message = `📅 Appointment Confirmation
+        message = ` Appointment Confirmation
 
 Dear ${patientName},
 
@@ -34,7 +33,7 @@ Please arrive at least 10 minutes before your scheduled time and bring any neces
 Thank you,  
 DocAssist`;
       } else if (recipient === 'doctor') {
-        message = `📅 New Appointment Booked
+        message = ` New Appointment Booked
 
 Dear Dr. ${doctorName},
 
@@ -53,16 +52,16 @@ Please prepare accordingly.
 Thank you,  
 DocAssist`;
       } else if (recipient === 'admin') {
-        message = `📢 New Appointment Created
+        message = ` New Appointment Created
 
 Admin,
 
 A new appointment has been booked.
 
-👤 Patient: ${patientName}  
-👨‍⚕️ Doctor: ${doctorName}  
-📅 Date: ${appointmentDate}  
-⏰ Time: ${appointmentTime}
+Patient: ${patientName}  
+Doctor: ${doctorName}  
+Date: ${appointmentDate}  
+Time: ${appointmentTime}
 
 
 DocAssist System`;
@@ -72,7 +71,7 @@ DocAssist System`;
     // ---------------- CANCELLED BY PATIENT ----------------
    case 'cancel-patient':
   if (recipient === 'doctor') {
-    message = `❌ Patient-Initiated Cancellation
+    message = ` Patient-Initiated Cancellation
 
 Dr. ${doctorName},
 
@@ -86,7 +85,7 @@ This slot is now available for other bookings.
 
 DocAssist Team`;
   } else if (recipient === 'patient') {
-    message = `🗓️ Appointment Cancellation Confirmed
+    message = ` Appointment Cancellation Confirmed
 
 ${patientName},
 
@@ -100,16 +99,16 @@ To book a new appointment, please visit our portal.
 
 DocAssist Support`;
   } else if (recipient === 'admin') {
-    message = `📋 Patient Cancelled Appointment
+    message = ` Patient Cancelled Appointment
 
 Admin,
 
 The following appointment was cancelled by the patient:
 
-👤 Patient: ${patientName}  
-👨‍⚕️ Doctor: ${doctorName}  
-📅 Date: ${appointmentDate}  
-⏰ Time: ${appointmentTime}  
+ Patient: ${patientName}  
+ Doctor: ${doctorName}  
+ Date: ${appointmentDate}  
+  Time: ${appointmentTime}  
 
 Please update records accordingly.
 
@@ -119,7 +118,7 @@ DocAssist System`;
 
 case 'cancel-doctor':
   if (recipient === 'patient') {
-    message = `⚠️ Doctor-Initiated Cancellation
+    message = ` Doctor-Initiated Cancellation
 
 ${patientName},
 
@@ -133,7 +132,7 @@ Please contact our support team to reschedule. We apologize for any inconvenienc
 
 DocAssist Support`;
   } else if (recipient === 'doctor') {
-    message = `⚕️ Cancellation Record
+    message = ` Cancellation Record
 
 Dr. ${doctorName},
 
@@ -147,16 +146,16 @@ The patient has been automatically notified.
 
 DocAssist System`;
   } else if (recipient === 'admin') {
-    message = `📋 Doctor Cancelled Appointment
+    message = ` Doctor Cancelled Appointment
 
 Admin,
 
 The following appointment was cancelled by the doctor:
 
-👨‍⚕️ Doctor: ${doctorName}  
-👤 Patient: ${patientName}  
-📅 Date: ${appointmentDate}  
-⏰ Time: ${appointmentTime}  
+Doctor: ${doctorName}  
+Patient: ${patientName}  
+Date: ${appointmentDate}  
+Time: ${appointmentTime}  
 
 Patient has been notified automatically.
 
@@ -167,7 +166,7 @@ DocAssist System`;
     // ---------------- RESCHEDULED BY DOCTOR ----------------
    case 'reschedule-doctor':
   if (recipient === 'patient') {
-    message = `🔄 Appointment Rescheduling Notice
+    message = `Appointment Rescheduling Notice
 
 Dear ${patientName},
 
@@ -202,15 +201,15 @@ Token Number: ${appointment.token || 'N/A'}
 Kind regards,  
 DocAssist`;
   } else if (recipient === 'admin') {
-    message = `📋 Doctor Rescheduled Appointment
+    message = `Doctor Rescheduled Appointment
 
 Admin,
 
 Dr. ${doctorName} has rescheduled an appointment.
 
-👤 Patient: ${patientName}  
-📅 Date: ${appointmentDate}  
-⏰ Time: ${appointmentTime}  
+ Patient: ${patientName}  
+ Date: ${appointmentDate}  
+ Time: ${appointmentTime}  
 
 Please ensure both parties are aligned.
 
@@ -220,13 +219,13 @@ DocAssist System`;
 
 case 'reschedule-admin':
   if (recipient === 'patient') {
-    message = `🔄 Appointment Rescheduling Notice
+    message = ` Appointment Rescheduling Notice
 
 Dear ${patientName},
 
 Your appointment with Dr. ${doctorName} has been rescheduled by our clinic administrator.
 
-📅 New Appointment Details:  
+ New Appointment Details:  
 Date: ${appointmentDate}  
 Time: ${appointmentTime} 
 Issue: ${issueText}
@@ -243,9 +242,9 @@ Dear Dr. ${doctorName},
 
 The following appointment has been rescheduled by the administrator:
 
-👤 Patient: ${patientName}  
-📅 Date: ${appointmentDate}  
-⏰ Time: ${appointmentTime}  
+ Patient: ${patientName}  
+ Date: ${appointmentDate}  
+ Time: ${appointmentTime}  
 Issue: ${issueText}
 Token Number: ${appointment.token || 'N/A'}
 
@@ -254,16 +253,16 @@ Please review your updated schedule.
 Kind regards,  
 DocAssist`;
   } else if (recipient === 'admin') {
-    message = `✅ Admin Confirmation: Appointment Rescheduled
+    message = ` Admin Confirmation: Appointment Rescheduled
 
 Dear Admin,
 
 You have successfully rescheduled the following appointment:
 
-👤 Patient: ${patientName}  
-👨‍⚕️ Doctor: ${doctorName}  
-📅 Date: ${appointmentDate}  
-⏰ Time: ${appointmentTime}  
+ Patient: ${patientName}  
+ Doctor: ${doctorName}  
+ Date: ${appointmentDate}  
+ Time: ${appointmentTime}  
 
 This update has been communicated to both doctor and patient.
 
@@ -275,7 +274,7 @@ DocAssist System`;
     // ---------------- COMPLETED ----------------
     case 'complete':
       if (recipient === 'patient') {
-        message = `✅ Appointment Completed
+        message = ` Appointment Completed
 
 Dear ${patientName},
 
@@ -286,7 +285,7 @@ Thank you for choosing our service.
 Kind regards,  
 DocAssist`;
       } else if (recipient === 'doctor') {
-        message = `✅ Appointment Completed
+        message = ` Appointment Completed
 
 Dear Dr. ${doctorName},
 
@@ -299,14 +298,14 @@ on ${appointmentDate} at ${appointmentTime} has been marked as completed.
 Kind regards,  
 DocAssist`;
       } else if (recipient === 'admin') {
-        message = `✅ Appointment Marked Completed
+        message = `Appointment Marked Completed
 
 Admin,
 
 The appointment between Dr. ${doctorName} and patient ${patientName} was marked as completed.
 
-📅 Date: ${appointmentDate}  
-⏰ Time: ${appointmentTime}  
+ Date: ${appointmentDate}  
+ Time: ${appointmentTime}  
 
 DocAssist System`;
       }
@@ -315,10 +314,9 @@ DocAssist System`;
     // ---------------- BLOCKED ACCOUNT ----------------
    case 'block':
   if (recipient === 'patient') {
-    // Calculate 3 days from now
     const unblockDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
 
-    message = `🚫 Account Blocked Notice
+    message = `Account Blocked Notice
 
 Dear ${patientName},
 
@@ -333,39 +331,39 @@ Kind regards,
 DocAssist Support`;
   }
  else if (recipient === 'admin') {
-        message = `🚫 Patient Blocked
+        message = ` Patient Blocked
 
 Admin,
 
 Patient ${patientName} has been blocked for 3 days due to repeated missed appointments.
 
-📅 Unblock Date: ${patient?.blockedUntil ? new Date(patient.blockedUntil).toLocaleDateString() : 'N/A'}
+Unblock Date: ${patient?.blockedUntil ? new Date(patient.blockedUntil).toLocaleDateString() : 'N/A'}
 
 DocAssist System`;
       }
       break;
     case 'warning':
   if (recipient === 'patient') {
-    message = `⚠️ Warning: Attendance Alert
+    message = ` Warning: Attendance Alert
 
 Dear ${patientName},
 
 Our records show that you have missed **4 appointments**.  
-Please note: **If you miss one more appointment, your account will be blocked for 7 days** and you will not be able to book new appointments during that period.
+Please note: **If you miss one more appointment, your account will be blocked for 3 days** and you will not be able to book new appointments during that period.
 
 We strongly encourage you to attend your upcoming appointments on time to avoid any inconvenience.
 
 Kind regards,  
 DocAssist Support`;
   } else if (recipient === 'admin') {
-    message = `⚠️ Warning Issued
+    message = ` Warning Issued
 
 Admin,
 
 Patient ${patientName} has now missed 4 appointments.  
 A warning email has been sent to the patient.  
 
-If they miss another appointment, their account will be blocked for 7 days automatically.
+If they miss another appointment, their account will be blocked for 3 days automatically.
 
 DocAssist System`;
   }

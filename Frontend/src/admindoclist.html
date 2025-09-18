@@ -361,6 +361,40 @@
           font-size: 13px;
         }
       }
+      #overlay {
+        display: none; /* hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #overlay.active {
+        display: flex; /* only show when active */
+      }
+
+      .loader {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #006d6d;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
 
@@ -376,7 +410,9 @@
         <li><a href="AdminFeedback.html">Feedback</a></li>
       </ul>
     </div>
-    <div id="overlay"></div>
+    <div id="overlay">
+      <div class="loader"></div>
+    </div>
     <div class="content">
       <div class="header">
         <i id="bar" class="fa-solid fa-bars"></i>
@@ -388,7 +424,6 @@
         <!-- Doctor cards will be dynamically inserted here -->
       </div>
     </div>
-
     <script>
       const bar = document.getElementById("bar");
       const sidebar = document.querySelector(".sidebar");
@@ -488,11 +523,14 @@
         if (!doctorId) return alert("Invalid doctor ID");
         window.location.href = `doctor.html?id=${doctorId}`;
       }
-
       async function deleteDoctor(doctorId) {
         if (!confirm("Are you sure you want to delete this doctor?")) return;
 
+        const overlay = document.getElementById("overlay");
+
         try {
+          overlay.classList.add("active"); // show loader
+
           const token = localStorage.getItem("authToken");
           if (!token) {
             alert("Authentication token missing. Please login again.");
@@ -521,17 +559,12 @@
           fetchDoctors();
         } catch (error) {
           alert(error.message);
+        } finally {
+          overlay.classList.remove("active");
         }
       }
 
       fetchDoctors();
-
-      // const searchInput = document.getElementById("search-input");
-      // if (searchInput) {
-      //   searchInput.addEventListener("input", () => {
-      //     fetchDoctors();
-      //   });
-      // }
     </script>
   </body>
 </html>
