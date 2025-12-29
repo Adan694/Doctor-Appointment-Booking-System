@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Chat</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, sans-serif;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .container {
+        display: flex;
+        height: calc(100vh - 20px);
+        width: calc(100vw - 20px);
+        margin: 10px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 300px;
+        background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .sidebar-header {
+        padding: 24px 20px;
+        background: rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .sidebar h2 {
+        margin: 0 0 10px 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sidebar h2::before {
+        content: "💬";
+        font-size: 24px;
+      }
+
+      .online-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #bdc3c7;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #2ecc71;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .user-type-switcher {
+        display: flex;
+        gap: 8px;
+        margin: 15px 0;
+      }
+
+      .user-type-btn {
+        flex: 1;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ecf0f1;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .user-type-btn.active {
+        background: #3498db;
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+      }
+
+      .user-type-btn:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .chat-list-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 20px;
+      }
+
+      .chat-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .chat-item {
+        padding: 14px 16px;
+        cursor: pointer;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+      }
+
+      .chat-item:hover {
+        background: rgba(52, 152, 219, 0.1);
+        border-color: rgba(52, 152, 219, 0.3);
+      }
+
+      .chat-item.active {
+        background: rgba(52, 152, 219, 0.15);
+        border-color: #3498db;
+      }
+
+      .chat-item-info {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        overflow: hidden;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        position: relative;
+      }
+
+      .user-avatar.patient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .user-avatar.doctor {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+
+      .user-details {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: #ecf0f1;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .last-message {
+        font-size: 12px;
+        color: #bdc3c7;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .chat-meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+      }
+
+      .timestamp {
+        font-size: 11px;
+        color: #7f8c8d;
+      }
+
+      .unread-badge {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        min-width: 20px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(238, 90, 82, 0.3);
+      }
+
+      /* Chat window */
+      .chat-window {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #f8fafc;
+      }
+
+      .chat-header {
+        padding: 20px 24px;
+        background: white;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .chat-header-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .chat-header-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        font-size: 20px;
+      }
+
+      .chat-user-name {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 18px;
+      }
+
+      .chat-user-status {
+        font-size: 13px;
+        color: #718096;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 24px;
+        overflow-y: auto;
+        background: #f8fafc;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      /* Chat messages */
+      .message {
+        max-width: 65%;
+        padding: 14px 18px;
+        border-radius: 18px;
+        word-wrap: break-word;
+        position: relative;
+        animation: slideUp 0.3s ease;
+        line-height: 1.4;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .message.sent {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+        margin-left: auto;
+      }
+
+      .message.received {
+        background: white;
+        color: #2d3748;
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .message-time {
+        font-size: 11px;
+        opacity: 0.8;
+        margin-top: 6px;
+        text-align: right;
+      }
+
+      .message.received .message-time {
+        color: #718096;
+      }
+
+      .message.sent .message-time {
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(10px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Chat input */
+      .chat-input-area {
+        padding: 20px 24px;
+        background: white;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .chat-input {
+        flex: 1;
+        padding: 14px 18px;
+        border-radius: 25px;
+        border: 2px solid #e2e8f0;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+      }
+
+      .chat-input:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      }
+
+      .chat-input::placeholder {
+        color: #a0aec0;
+      }
+
+      .send-button {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        border: none;
+        padding: 14px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+      }
+
+      .send-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+      }
+
+      .send-button:active {
+        transform: translateY(0);
+      }
+
+      .send-button::after {
+        content: "📤";
+      }
+
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #a0aec0;
+        text-align: center;
+        padding: 40px;
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+      }
+
+      .empty-state h3 {
+        margin: 0 0 10px 0;
+        color: #718096;
+      }
+
+      .empty-state p {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .back-btn {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+      }
+
+      .back-btn::before {
+        content: "←";
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <button
+            class="back-btn"
+            onclick="window.location.href='Adminpanel.html'"
+          >
+            Back to Dashboard
+          </button>
+
+          <h2>Admin Chat</h2>
+          <div class="online-status">
+            <span class="status-dot"></span>
+            <span id="adminStatus">Connected</span>
+          </div>
+        </div>
+
+        <div class="user-type-switcher" style="padding: 0 20px">
+          <button id="patientsBtn" class="user-type-btn active">
+            <span>👥</span> Patients
+          </button>
+          <button id="doctorsBtn" class="user-type-btn">
+            <span>👨‍⚕️</span> Doctors
+          </button>
+        </div>
+
+        <div class="chat-list-container">
+          <ul id="chatList" class="chat-list"></ul>
+
+          <div id="emptyChatList" class="empty-state" style="display: none">
+            <div class="empty-state-icon">💬</div>
+            <h3>No conversations yet</h3>
+            <p>Select a user type to start chatting</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-window">
+        <div class="chat-header" id="chatHeader">
+          <div class="chat-header-info">
+            <div
+              class="chat-header-avatar"
+              id="currentChatAvatar"
+              style="
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              "
+            >
+              👤
+            </div>
+            <div>
+              <div class="chat-user-name" id="currentChatName">
+                Select a user
+              </div>
+              <div class="chat-user-status" id="currentChatStatus">
+                Click on a user to start chatting
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="empty-state">
+            <div class="empty-state-icon">💭</div>
+            <h3>No messages yet</h3>
+            <p>Select a conversation to start chatting</p>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input
+            id="msgInput"
+            class="chat-input"
+            placeholder="Type your message here..."
+            disabled
+          />
+          <button class="send-button" onclick="sendMessage()" disabled>
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let chatType = "patients";
+      let chats = [];
+      let currentChat = null;
+      let socket = null;
+
+      const backendURL = "http://localhost:3000";
+      const token = localStorage.getItem("authToken");
+      const currentAdminId = localStorage.getItem("adminId");
+
+      const chatListEl = document.getElementById("chatList");
+      const chatMessagesEl = document.getElementById("chatMessages");
+      const currentChatNameEl = document.getElementById("currentChatName");
+      const currentChatStatusEl = document.getElementById("currentChatStatus");
+      const currentChatAvatarEl = document.getElementById("currentChatAvatar");
+      const msgInputEl = document.getElementById("msgInput");
+      const sendButtonEl = document.querySelector(".send-button");
+      const emptyChatListEl = document.getElementById("emptyChatList");
+
+      // Initialize everything
+      function initializeApp() {
+        console.log("🔍 ADMIN INITIALIZATION DEBUG:");
+        console.log("📱 Admin ID from localStorage:", currentAdminId);
+        console.log("🔑 Token exists:", !!token);
+
+        if (!currentAdminId) {
+          console.error("Admin not logged in");
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Initialize Socket.io
+        initSocket();
+
+        // Set up button listeners
+        document.getElementById("patientsBtn").onclick = () =>
+          switchType("patients");
+        document.getElementById("doctorsBtn").onclick = () =>
+          switchType("doctors");
+
+        // Load initial chats
+        loadChats();
+      }
+
+      // Socket.io initialization
+      function initSocket() {
+        console.log("🔌 ADMIN SOCKET INITIALIZING...");
+        const adminEmail =
+          localStorage.getItem("adminEmail") ||
+          localStorage.getItem("userEmail");
+
+        // Disconnect any existing socket
+        if (socket) {
+          socket.disconnect();
+          socket = null;
+        }
+
+        socket = io(backendURL, {
+          auth: {
+            token: token,
+            role: "admin",
+            email: adminEmail,
+            userId: currentAdminId,
+            name: "Admin Official",
+          },
+          transports: ["websocket", "polling"],
+        });
+
+        socket.on("connect", () => {
+          console.log("✅✅✅ ADMIN SOCKET CONNECTED:", socket.id);
+          document.getElementById("adminStatus").textContent = "Connected";
+          document.querySelector(".status-dot").style.background = "#2ecc71";
+        });
+
+        // 🔥 CRITICAL: Listen for incoming messages
+        socket.on("receive_message", (messageData) => {
+          // Update chat list first
+          updateChatListWithNewMessage(messageData);
+
+          // If the current chat matches, append the message
+          if (
+            currentChat &&
+            (messageData.senderId === currentChat._id ||
+              messageData.receiverId === currentChat._id)
+          ) {
+            appendNewMessage(messageData);
+            markRead(currentChat._id); // Mark messages as read immediately
+          }
+        });
+
+        socket.on("disconnect", () => {
+          console.log("🔌 Socket disconnected");
+          document.getElementById("adminStatus").textContent = "Disconnected";
+          document.querySelector(".status-dot").style.background = "#95a5a6";
+        });
+
+        socket.on("connect_error", (error) => {
+          console.error("❌ Socket connection error:", error);
+          document.getElementById("adminStatus").textContent =
+            "Connection Error";
+          document.querySelector(".status-dot").style.background = "#e74c3c";
+        });
+
+        socket.on("error", (data) => {
+          console.error("❌ Socket error:", data);
+        });
+      }
+
+      // Update chat list when new message arrives
+      function updateChatListWithNewMessage(messageData) {
+        const senderId = messageData.senderId;
+        const receiverId = messageData.receiverId;
+        const otherUserId = senderId === currentAdminId ? receiverId : senderId;
+
+        const chatIndex = chats.findIndex((chat) => chat._id === otherUserId);
+
+        if (chatIndex !== -1) {
+          chats[chatIndex].lastMessage = messageData.message;
+
+          if (senderId !== currentAdminId && currentChat?._id !== otherUserId) {
+            chats[chatIndex].unreadCount =
+              (chats[chatIndex].unreadCount || 0) + 1;
+          }
+
+          renderChatList();
+        }
+      }
+
+      // Load chats from backend
+      async function loadChats() {
+        try {
+          chats = await getAllChats(chatType);
+          renderChatList();
+        } catch (err) {
+          console.error("Error loading chats:", err);
+        }
+      }
+
+      // Fetch all chats based on type
+      async function getAllChats(type) {
+        const url =
+          type === "patients"
+            ? `${backendURL}/api/chats/all`
+            : `${backendURL}/api/doctor-chats/alldoctors`;
+
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+        const data = await res.json();
+        console.log(`📋 Loaded ${data.length} ${type} chats`);
+        return data;
+      }
+
+      // Render chat list
+      function renderChatList() {
+        chatListEl.innerHTML = "";
+
+        if (chats.length === 0) {
+          emptyChatListEl.style.display = "flex";
+          return;
+        }
+
+        emptyChatListEl.style.display = "none";
+
+        chats.forEach((chat) => {
+          const chatIdStr = chat._id.toString();
+
+          const li = document.createElement("li");
+          li.className = "chat-item";
+          li.dataset.userId = chatIdStr;
+
+          const avatarClass = chatType === "patients" ? "patient" : "doctor";
+          const avatarText = chat.name.charAt(0).toUpperCase();
+
+          li.innerHTML = `
+      <div class="chat-item-info">
+        <div class="user-avatar ${avatarClass}">
+          ${avatarText}
+        </div>
+        <div class="user-details">
+          <div class="user-name">${chat.name}</div>
+          <div class="last-message">${
+            chat.lastMessage || "No messages yet"
+          }</div>
+        </div>
+      </div>
+      <div class="chat-meta">
+        ${
+          chat.unreadCount > 0
+            ? `<span class="unread-badge">${chat.unreadCount}</span>`
+            : ""
+        }
+      </div>
+    `;
+
+          li.onclick = () => openChat(chat);
+          chatListEl.appendChild(li);
+        });
+      }
+
+      // Open a chat
+      async function openChat(chat) {
+        currentChat = chat;
+
+        currentChatNameEl.textContent = chat.name;
+        currentChatAvatarEl.textContent = chat.name.charAt(0).toUpperCase();
+        currentChatAvatarEl.style.background =
+          chatType === "patients"
+            ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+            : "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)";
+
+        currentChatStatusEl.textContent = "Ready to chat";
+
+        msgInputEl.disabled = false;
+        sendButtonEl.disabled = false;
+        msgInputEl.placeholder = `Message ${chat.name}...`;
+        msgInputEl.focus();
+
+        await markRead(chat._id);
+        await loadMessagesService(chat._id);
+
+        document.querySelectorAll(".chat-item").forEach((item) => {
+          item.classList.remove("active");
+          if (item.dataset.userId === chat._id) item.classList.add("active");
+        });
+      }
+
+      // Load messages
+      async function loadMessagesService(contactId) {
+        try {
+          const url =
+            chatType === "patients"
+              ? `${backendURL}/api/chats/${currentAdminId}/${contactId}`
+              : `${backendURL}/api/doctor-chats/${currentAdminId}/${contactId}`;
+
+          const res = await fetch(url, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error(`Error ${res.status}`);
+
+          const messages = await res.json();
+          renderMessages(messages);
+        } catch (err) {
+          console.error("Error loading messages:", err);
+        }
+      }
+
+      // Render messages
+      function renderMessages(messages) {
+        chatMessagesEl.innerHTML = "";
+        if (messages.length === 0) {
+          chatMessagesEl.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">💬</div>
+      <h3>No messages yet</h3>
+      <p>Start the conversation with ${currentChat.name}</p>
+    </div>`;
+          return;
+        }
+
+        messages.forEach((message) => appendNewMessage(message));
+        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+      }
+
+      // Append single message
+      function appendNewMessage(message) {
+        const emptyState = chatMessagesEl.querySelector(".empty-state");
+        if (emptyState) emptyState.remove();
+
+        const isSent = message.senderId === currentAdminId;
+        const messageTime = new Date(
+          message.timestamp || new Date()
+        ).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        const div = document.createElement("div");
+        div.className = `message ${isSent ? "sent" : "received"}`;
+        div.innerHTML = `<div>${message.message}</div><div class="message-time">${messageTime}</div>`;
+
+        chatMessagesEl.appendChild(div);
+        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+      }
+
+      // Send message
+      async function sendMessageService() {
+        if (!currentChat || !socket) return;
+
+        const text = msgInputEl.value.trim();
+        if (!text) return;
+
+        const messageData = {
+          senderId: currentAdminId,
+          receiverId: currentChat._id,
+          message: text,
+          senderRole: "admin",
+          timestamp: new Date(),
+          chatType,
+        };
+
+        console.log("📤 Sending message:", messageData);
+
+        // Emit via socket
+        socket.emit("send_message", messageData);
+
+        // Save to DB
+        try {
+          const url =
+            chatType === "patients"
+              ? `${backendURL}/api/chats/send`
+              : `${backendURL}/api/doctor-chats/send`;
+
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(messageData),
+          });
+
+          if (!response.ok)
+            throw new Error(`Failed to save message: ${response.status}`);
+          console.log("✅ Message saved to database");
+        } catch (err) {
+          console.error("Error saving message to DB:", err);
+        }
+
+        // Clear input and show message immediately
+        msgInputEl.value = "";
+        appendNewMessage(messageData);
+        await loadChats();
+      }
+
+      // Mark as read
+      async function markRead(chatId) {
+        try {
+          const url =
+            chatType === "patients"
+              ? `${backendURL}/api/chats/mark-read/${chatId}`
+              : `${backendURL}/api/doctor-chats/mark-read/${chatId}`;
+
+          await fetch(url, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const chatIndex = chats.findIndex((chat) => chat._id === chatId);
+          if (chatIndex !== -1) chats[chatIndex].unreadCount = 0;
+
+          await loadChats();
+        } catch (err) {
+          console.error("Error marking read:", err);
+        }
+      }
+
+      // Send message button
+      function sendMessage() {
+        sendMessageService();
+      }
+
+      // Send on Enter key
+      msgInputEl.addEventListener("keypress", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // Switch chat type
+      function switchType(type) {
+        chatType = type;
+        document
+          .getElementById("patientsBtn")
+          .classList.toggle("active", type === "patients");
+        document
+          .getElementById("doctorsBtn")
+          .classList.toggle("active", type === "doctors");
+
+        currentChat = null;
+        resetChatWindow();
+        loadChats();
+      }
+
+      // Reset chat window
+      function resetChatWindow() {
+        currentChatNameEl.textContent = "Select a user";
+        currentChatStatusEl.textContent = "Click on a user to start chatting";
+        currentChatAvatarEl.textContent = "👤";
+        currentChatAvatarEl.style.background =
+          "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+
+        chatMessagesEl.innerHTML = `<div class="empty-state">
+    <div class="empty-state-icon">💭</div>
+    <h3>No messages yet</h3>
+    <p>Select a conversation to start chatting</p>
+  </div>`;
+
+        msgInputEl.disabled = true;
+        sendButtonEl.disabled = true;
+        msgInputEl.placeholder = "Select a user to start chatting";
+      }
+
+      // Initialize app
+      document.addEventListener("DOMContentLoaded", initializeApp);
+    </script>
+  </body>
+</html>

@@ -35,14 +35,8 @@ function generateToken(user) {
         'secret-123',
         { expiresIn: '1h' } 
     );
-
-    console.log('\n================ JWT Token ================\n');
-    console.log(token);
-    console.log('\n===========================================\n');
-
     return token;
 }
-
 
 async function sendOtpToEmail(email) {
     const otp = Math.floor(100000 + Math.random() * 900000);
@@ -73,12 +67,9 @@ async function sendOtpToEmail(email) {
     };
 
     await transporter.sendMail(mailOptions);
-    console.log('OTP sent and saved to user:', otp);
 }
 
 async function verifyOtp(email, otp) {
-    console.log('Verifying OTP:', { email, otp });
-
     if (!email || !otp) {
         throw new Error('Email and OTP are required.');
     }
@@ -120,17 +111,16 @@ async function signup(req, res) {
     } catch (error) {
         console.error("Error inserting user:", error.message);
         if (error.code === 11000) {
-    if (error.keyPattern?.email) {
-        return res.status(409).json({ message: "User already exists with this email." });
-    }
-    if (error.keyPattern?.phone) {
-        return res.status(409).json({ message: "User already exists with this phone number." });
-    }
-     if (error.keyPattern?.cnic) {
-        return res.status(409).json({ message: "User already exists with this CNIC." });
-    }
-}
-
+            if (error.keyPattern?.email) {
+                return res.status(409).json({ message: "User already exists with this email." });
+            }
+            if (error.keyPattern?.phone) {
+                return res.status(409).json({ message: "User already exists with this phone number." });
+            }
+            if (error.keyPattern?.cnic) {
+                return res.status(409).json({ message: "User already exists with this CNIC." });
+            }
+        }
         res.status(500).json({ message: "Error registering user" });
     }
 }
@@ -143,26 +133,46 @@ async function login(req, res) {
     }
 
     try {
-        const user = await authenticateUser(email, password, role);
-        if (!user) {
-            return res.status(401).json({ message: "Invalid credentials." });
+        let user;
+
+        if (role === 'doctor') {
+            user = await Doctor.findOne({ email });
+            if (!user) {
+                return res.status(404).json({ message: "Doctor email not found." });
+            }
+        } else if (role === 'admin' || role === 'patient') {
+            user = await User.findOne({ email, role });
+            if (!user) {
+                const emailExists = await User.findOne({ email });
+                if (emailExists) {
+                    return res.status(401).json({ message: `Incorrect role selected for ${email}.` });
+                }
+                return res.status(404).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} email not found.` });
+            }
+
+            if (!user.isActive) {
+                return res.status(403).json({ message: "Account is deactivated. Please contact admin." });
+            }
+        } else {
+            return res.status(400).json({ message: "Invalid role selected." });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: "Incorrect password." });
         }
 
         const token = generateToken(user);
 
         if (role === 'doctor') {
-            const doctor = await Doctor.findOne({ email: user.email });
-            if (!doctor) {
-                return res.status(404).json({ message: "Doctor not found." });
-            }
             return res.status(200).json({
                 message: 'Login successful',
                 token,
-                role: doctor.role,
+                role: user.role,
                 doctor: {
-                    _id: doctor._id,
-                    name: doctor.name,
-                    email: doctor.email
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email
                 }
             });
         }
@@ -173,25 +183,21 @@ async function login(req, res) {
             role: user.role,
             patientId: user._id
         });
+
     } catch (error) {
         console.error("Error logging in:", error.message);
-            return res.status(401).json({ message: error.message });  
-
+        return res.status(500).json({ message: "Server error." });
     }
 }
 
 async function requestOtp(req, res) {
     const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).json({ message: "Email is required." });
-    }
+    if (!email) return res.status(400).json({ message: "Email is required." });
 
     try {
         await sendOtpToEmail(email);
         res.status(200).json({ message: 'OTP sent successfully' });
     } catch (error) {
-        console.error("Error sending OTP:", error.message);
         res.status(500).json({ message: "Error sending OTP" });
     }
 }
@@ -202,16 +208,13 @@ async function verifyOtpController(req, res) {
         const result = await verifyOtp(email, otp);
         res.status(200).json(result);
     } catch (error) {
-        console.error("Error verifying OTP:", error.message);
         res.status(400).json({ message: error.message });
     }
 }
+
 async function forgotPassword(req, res) {
     const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).json({ message: "Email is required." });
-    }
+    if (!email) return res.status(400).json({ message: "Email is required." });
 
     try {
         const existingUser = await User.findOne({ email });
@@ -222,13 +225,12 @@ async function forgotPassword(req, res) {
         await sendOtpToEmail(email);
         res.status(200).json({ message: "OTP sent for password reset." });
     } catch (error) {
-        console.error("Error in forgotPassword:", error.message);
         res.status(500).json({ message: "Failed to send OTP." });
     }
 }
+
 async function resetPassword(req, res) {
     const { email, newPassword } = req.body;
-
     if (!email || !newPassword) {
         return res.status(400).json({ message: "Email and new password are required." });
     }
@@ -243,7 +245,6 @@ async function resetPassword(req, res) {
 
         res.status(200).json({ message: "Password reset successful." });
     } catch (error) {
-        console.error("Error in resetPassword:", error.message);
         res.status(400).json({ message: error.message });
     }
 }

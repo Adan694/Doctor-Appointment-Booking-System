@@ -88,8 +88,8 @@
       .logo h1 {
         font-size: 28px;
         background: linear-gradient(45deg, #ffffff, #cceeff);
-        background-clip: text;
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
       }
       .profile-card {
@@ -513,6 +513,11 @@
       .text p {
         margin-top: 12px;
       }
+      #edit-form-container {
+        display: none;
+        max-width: 800px;
+        margin: 40px auto;
+      }
 
       @media (max-width: 900px) {
         nav ul {
@@ -670,10 +675,7 @@
 
     <h3 class="Heading">Profile:</h3>
     <div class="profile-card" id="profile"></div>
-    <div
-      id="edit-form-container"
-      style="display: none; max-width: 800px; margin: 40px auto"
-    ></div>
+    <div id="edit-form-container"></div>
 
     <h3 class="Heading">Feedback:</h3>
     <div id="feedback-list"></div>
@@ -924,7 +926,7 @@
       })();
 
       function fetchFeedbackForDoctor(doctorId) {
-        fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`)
+        fetch(`http://localhost:3000/api/feedback/doctors/${doctorId}/feedback`)
           .then((response) => {
             if (!response.ok) throw new Error("Failed to fetch feedback");
             return response.json();

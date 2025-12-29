@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin profile</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background-color: #e6f2ff;
+        display: flex;
+        flex-direction: row;
+        min-height: 100vh;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 250px;
+        background-color: rgb(9, 102, 102);
+        padding: 20px 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: fixed; /* Make it fixed */
+        top: 0;
+        left: 0;
+        height: 100vh; /* Full viewport height */
+        overflow-y: auto; /* Allow scrolling only for sidebar if needed */
+        z-index: 1000; /* Ensure it's above other content */
+      }
+
+      .sidebar h2 {
+        font-size: 30px;
+        color: white;
+        margin: 0 0 40px 20px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+      }
+
+      .sidebar ul li {
+        padding: 12px 20px;
+        margin: 10px 0;
+      }
+
+      .sidebar ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 16px;
+        display: block;
+        border-radius: 6px;
+        padding: 10px 15px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .sidebar ul li a:hover,
+      .sidebar ul li a.active {
+        background-color: #e8f0fe;
+        color: #007bff;
+        font-weight: bold;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        margin-top: 50px;
+        margin-left: 400px;
+        margin-bottom: 30px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 8px 8px 0 0;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .logout-btn {
+        padding: 10px 15px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .logout-btn:hover {
+        background-color: #c82333;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      h2 {
+        margin-top: 0;
+      }
+
+      label {
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 5px;
+      }
+
+      input {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      button {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background-color: #007bff;
+      }
+
+      .message {
+        margin-top: 10px;
+        font-weight: bold;
+      }
+
+      .error {
+        color: red;
+      }
+
+      .success {
+        color: green;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          align-items: center;
+        }
+
+        .sidebar h2 {
+          margin-left: 0;
+        }
+
+        .main-content {
+          margin: 10px;
+          max-width: 100%;
+        }
+
+        .header {
+          flex-direction: column;
+          gap: 10px;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="sidebar">
+      <h2>DocAssist</h2>
+      <ul>
+        <li><a href="Adminpanel.html">Dashboard</a></li>
+        <li><a href="adminappoint.html">Appointments</a></li>
+        <li><a href="add-doctors.html">Add Doctor</a></li>
+        <li><a href="admindoclist.html">Doctors List</a></li>
+        <li><a href="patients-list.html">Patients List</a></li>
+        <li><a href="AdminFeedback.html">Feedback</a></li>
+        <li><a href="adminprofile.html">Profile</a></li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <div class="header">
+        <h1>Admin Profile Settings</h1>
+        <button class="logout-btn" id="logout-btn">Logout</button>
+      </div>
+
+      <form id="profile-form">
+        <h2>Profile Information</h2>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required />
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" name="phone" />
+        <button type="submit">Update Profile</button>
+        <div id="profile-message" class="message"></div>
+      </form>
+
+      <form id="password-form">
+        <h2>Change Password</h2>
+        <label for="oldPassword">Old Password</label>
+        <input type="password" id="oldPassword" name="oldPassword" required />
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" name="newPassword" required />
+        <button type="submit">Change Password</button>
+        <div id="password-message" class="message"></div>
+      </form>
+    </div>
+
+    <script>
+      const adminId = localStorage.getItem("adminId");
+      const token = localStorage.getItem("authToken");
+
+      // Validation functions
+      function validateName(name) {
+        if (!name) return "Name is required.";
+        if (name.length < 3) return "Name must be at least 3 characters long.";
+        return "";
+      }
+
+      function validateEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) return "Email is required.";
+        if (!regex.test(email)) return "Enter a valid email address.";
+        const allowedDomains = [
+          "gmail.com",
+          "yahoo.com",
+          "hotmail.com",
+          "outlook.com",
+        ];
+        const domain = email.split("@")[1].toLowerCase();
+        if (!allowedDomains.includes(domain)) {
+          return `Domain "${domain}" is not allowed. Use a valid email provider.`;
+        }
+        return "";
+      }
+
+      function validatePhone(phone) {
+        if (!phone) return "Phone is required.";
+        const cleaned = phone.replace(/[\s-]/g, "");
+        const pkRegex = /^(03\d{9}|02[1-9]\d{7}|0[3-7]\d{2}\d{7})$/;
+        if (!pkRegex.test(cleaned))
+          return "Enter a valid Pakistani phone number.";
+        return "";
+      }
+
+      function validatePassword(password) {
+        const strongPassword = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
+        if (!password) return "Password is required.";
+        if (!strongPassword.test(password))
+          return "Must be 6+ chars, include a letter, number & special char.";
+        return "";
+      }
+
+      // Fetch profile
+      async function fetchProfile() {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/admin/${adminId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          if (!response.ok) throw new Error("Failed to fetch profile");
+          const data = await response.json();
+          document.getElementById("name").value = data.name || "";
+          document.getElementById("email").value = data.email || "";
+          document.getElementById("phone").value = data.phone || "";
+        } catch (error) {
+          const msg = document.getElementById("profile-message");
+          msg.textContent = error.message;
+          msg.className = "message error";
+        }
+      }
+
+      // Live validation
+      document.getElementById("name").addEventListener("input", (e) => {
+        const msg = document.getElementById("profile-message");
+        const error = validateName(e.target.value);
+        msg.textContent = error;
+        msg.className = error ? "message error" : "";
+      });
+
+      document.getElementById("email").addEventListener("input", (e) => {
+        const msg = document.getElementById("profile-message");
+        const error = validateEmail(e.target.value);
+        msg.textContent = error;
+        msg.className = error ? "message error" : "";
+      });
+
+      document.getElementById("phone").addEventListener("input", (e) => {
+        const msg = document.getElementById("profile-message");
+        const error = validatePhone(e.target.value);
+        msg.textContent = error;
+        msg.className = error ? "message error" : "";
+      });
+
+      document
+        .getElementById("profile-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("name").value;
+          const email = document.getElementById("email").value;
+          const phone = document.getElementById("phone").value;
+
+          const nameError = validateName(name);
+          const emailError = validateEmail(email);
+          const phoneError = validatePhone(phone);
+
+          if (nameError || emailError || phoneError) {
+            const msg = document.getElementById("profile-message");
+            msg.textContent = nameError || emailError || phoneError;
+            msg.className = "message error";
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              `http://localhost:3000/api/admin/profile`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ name, email, phone }),
+              }
+            );
+            const data = await response.json();
+            if (!response.ok)
+              throw new Error(data.message || "Failed to update profile");
+            const msg = document.getElementById("profile-message");
+            msg.textContent = data.message;
+            msg.className = "message success";
+          } catch (error) {
+            const msg = document.getElementById("profile-message");
+            msg.textContent = error.message;
+            msg.className = "message error";
+          }
+        });
+
+      // Password live validation
+      document.getElementById("newPassword").addEventListener("input", (e) => {
+        const msg = document.getElementById("password-message");
+        const error = validatePassword(e.target.value);
+        msg.textContent = error;
+        msg.className = error ? "message error" : "";
+      });
+
+      document
+        .getElementById("password-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const oldPassword = document.getElementById("oldPassword").value;
+          const newPassword = document.getElementById("newPassword").value;
+
+          const passwordError = validatePassword(newPassword);
+          if (passwordError) {
+            const msg = document.getElementById("password-message");
+            msg.textContent = passwordError;
+            msg.className = "message error";
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              `http://localhost:3000/api/admin/profile/change-password`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ oldPassword, newPassword }),
+              }
+            );
+            const data = await response.json();
+            if (!response.ok)
+              throw new Error(data.message || "Failed to change password");
+            const msg = document.getElementById("password-message");
+            msg.textContent = data.message;
+            msg.className = "message success";
+            document.getElementById("password-form").reset();
+          } catch (error) {
+            const msg = document.getElementById("password-message");
+            msg.textContent = error.message;
+            msg.className = "message error";
+          }
+        });
+
+      fetchProfile();
+
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        localStorage.removeItem("adminId");
+        localStorage.removeItem("authToken");
+        window.location.href = "login.html";
+      });
+    </script>
+  </body>
+</html>

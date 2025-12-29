@@ -382,6 +382,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.6);
+        -webkit-backdrop-filter: blur(3);
         backdrop-filter: blur(3px);
         justify-content: center;
         align-items: center;
@@ -597,6 +598,41 @@
           transform: scale(1);
         }
       }
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin: 20px 0;
+        justify-content: center;
+      }
+
+      .tab-btn {
+        padding: 10px 20px;
+        background: #166e6b;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      .tab-btn:hover {
+        background: #145956;
+      }
+
+      .tab-btn.active {
+        background: white;
+        color: #166e6b;
+        border: 2px solid #166e6b;
+      }
+
+      .tab-section {
+        display: none;
+      }
+
+      .tab-section.active {
+        display: block;
+      }
     </style>
   </head>
 
@@ -610,6 +646,7 @@
         <li><a href="admindoclist.html">Doctors List</a></li>
         <li><a href="patients-list.html">Patients List</a></li>
         <li><a href="AdminFeedback.html">Feedback</a></li>
+        <li><a href="adminprofile.html">Profile</a></li>
       </ul>
     </div>
 
@@ -621,66 +658,86 @@
         <div>All Appointments</div>
         <button id="logoutBtn">Logout</button>
       </header>
-
-      <h2>Upcoming Appointments</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Patient</th>
-            <th>Age</th>
-            <th>Date & Time</th>
-            <th>Doctor</th>
-          </tr>
-        </thead>
-        <tbody id="upcoming-appointments-table"></tbody>
-      </table>
-      <div class="pagination-controls" data-table="upcoming-appointments-table">
-        <button onclick="prevPage('upcoming')">Previous</button>
-        <span id="page-info-upcoming">Page 1</span>
-        <button onclick="nextPage('upcoming')">Next</button>
+      <div class="tabs">
+        <button class="tab-btn active" data-target="upcoming-section">
+          Upcoming
+        </button>
+        <button class="tab-btn" data-target="completed-section">
+          Completed
+        </button>
+        <button class="tab-btn" data-target="missed-section">
+          Missed / Cancelled
+        </button>
       </div>
 
-      <h2>Completed Appointments</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Patient</th>
-            <th>Age</th>
-            <th>Date & Time</th>
-            <th>Doctor</th>
-          </tr>
-        </thead>
-        <tbody id="completed-appointments-table"></tbody>
-      </table>
-      <div
-        class="pagination-controls"
-        data-table="completed-appointments-table"
-      >
-        <button onclick="prevPage('completed')">Previous</button>
-        <span id="page-info-completed">Page 1</span>
-        <button onclick="nextPage('completed')">Next</button>
+      <div id="upcoming-section" class="tab-section active">
+        <h2>Upcoming Appointments</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Patient</th>
+              <th>Age</th>
+              <th>Date & Time</th>
+              <th>Doctor</th>
+            </tr>
+          </thead>
+          <tbody id="upcoming-appointments-table"></tbody>
+        </table>
+        <div
+          class="pagination-controls"
+          data-table="upcoming-appointments-table"
+        >
+          <button onclick="prevPage('upcoming')">Previous</button>
+          <span id="page-info-upcoming">Page 1</span>
+          <button onclick="nextPage('upcoming')">Next</button>
+        </div>
       </div>
 
-      <h2>Missed/Cancelled Appointments</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Patient</th>
-            <th>Age</th>
-            <th>Date & Time</th>
-            <th>Doctor</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="missed-cancelled-appointments-table"></tbody>
-      </table>
-      <div class="pagination" id="pagination-missed">
-        <button onclick="prevPage('missed')">Previous</button>
-        <span id="page-info-missed">Page 1</span>
-        <button onclick="nextPage('missed')">Next</button>
+      <div id="completed-section" class="tab-section">
+        <h2>Completed Appointments</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Patient</th>
+              <th>Age</th>
+              <th>Date & Time</th>
+              <th>Doctor</th>
+            </tr>
+          </thead>
+          <tbody id="completed-appointments-table"></tbody>
+        </table>
+        <div
+          class="pagination-controls"
+          data-table="completed-appointments-table"
+        >
+          <button onclick="prevPage('completed')">Previous</button>
+          <span id="page-info-completed">Page 1</span>
+          <button onclick="nextPage('completed')">Next</button>
+        </div>
+      </div>
+
+      <div id="missed-section" class="tab-section">
+        <h2>Missed / Cancelled Appointments</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Patient</th>
+              <th>Age</th>
+              <th>Date & Time</th>
+              <th>Doctor</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="missed-cancelled-appointments-table"></tbody>
+        </table>
+        <div class="pagination" id="pagination-missed">
+          <button onclick="prevPage('missed')">Previous</button>
+          <span id="page-info-missed">Page 1</span>
+          <button onclick="nextPage('missed')">Next</button>
+        </div>
       </div>
 
       <div id="rescheduleModal" class="modal">
@@ -1085,6 +1142,26 @@
         });
 
         confirmBtn.addEventListener("click", confirmReschedule);
+      });
+
+      // TAB SWITCHING
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          // remove active from all buttons
+          document
+            .querySelectorAll(".tab-btn")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          // hide all sections
+          document
+            .querySelectorAll(".tab-section")
+            .forEach((sec) => sec.classList.remove("active"));
+
+          // show the selected section
+          const target = btn.getAttribute("data-target");
+          document.getElementById(target).classList.add("active");
+        });
       });
     </script>
   </body>

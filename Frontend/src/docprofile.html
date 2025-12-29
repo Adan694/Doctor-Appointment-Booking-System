@@ -383,6 +383,11 @@
       #specialization:hover {
         border-bottom-color: #009999;
       }
+      .error-message {
+        color: red;
+        font-size: 12px;
+        display: none;
+      }
     </style>
   </head>
 
@@ -424,11 +429,62 @@
           </div>
           <div class="profile-info">
             <input type="text" id="doctorName" placeholder="Doctor Name" />
-            <input
-              type="text"
-              id="specialization"
-              placeholder="Specialization"
-            />
+
+            <select id="specialization">
+              <option value="" disabled selected>Select Specialization</option>
+
+              <optgroup label="Primary Care">
+                <option value="general">General Physician</option>
+                <option value="pediatrician">Pediatrician</option>
+              </optgroup>
+
+              <optgroup label="Internal Medicine Subspecialties">
+                <option value="cardiologist">Cardiologist</option>
+                <option value="gastroenterologist">Gastroenterologist</option>
+                <option value="nephrologist">Nephrologist</option>
+                <option value="oncologist">Oncologist</option>
+                <option value="pulmonologist">Pulmonologist</option>
+              </optgroup>
+
+              <optgroup label="Surgical Specialties">
+                <option value="orthopedist">Orthopedist</option>
+                <option value="plastic-surgeon">Plastic Surgeon</option>
+                <option value="surgeon">General Surgeon</option>
+                <option value="vascular-surgeon">Vascular Surgeon</option>
+              </optgroup>
+
+              <optgroup label="Specialty Care">
+                <option value="allergist">Allergist / Immunologist</option>
+                <option value="dermatologist">Dermatologist</option>
+                <option value="neurologist">Neurologist</option>
+                <option value="ophthalmologist">Ophthalmologist</option>
+                <option value="rheumatologist">Rheumatologist</option>
+                <option value="psychiatrist">Psychiatrist</option>
+                <option value="urologist">Urologist</option>
+              </optgroup>
+
+              <optgroup label="Diagnostic & Technical">
+                <option value="ent Specialist">ENT Specialist</option>
+                <option value="emergency-medicine">Emergency Medicine</option>
+                <option value="radiologist">Radiologist</option>
+                <option value="infectious">
+                  Infectious Disease Specialist
+                </option>
+                <option value="sports-medicine">
+                  Sports Medicine Specialist
+                </option>
+              </optgroup>
+
+              <optgroup label="Women’s Health">
+                <option value="gynecologist">Gynecologist</option>
+                <option value="obstetrician">Obstetrician</option>
+              </optgroup>
+
+              <optgroup label="Other Specialties">
+                <option value="hematologist">Hematologist</option>
+                <option value="dentist">Dentist</option>
+              </optgroup>
+            </select>
           </div>
         </div>
 
@@ -456,6 +512,7 @@
           <div class="input-group">
             <input type="text" id="experience" placeholder=" " />
             <label>Experience</label>
+            <span id="experienceError" class="error-message"></span>
           </div>
           <div class="input-group">
             <input type="text" id="memberships" placeholder=" " />
@@ -464,6 +521,7 @@
           <div class="input-group">
             <input type="number" id="fees" placeholder=" " />
             <label>Fees (Rs.)</label>
+            <span id="feesError" class="error-message"></span>
           </div>
           <div class="input-group">
             <input type="text" id="locations" placeholder=" " />
@@ -535,6 +593,10 @@
         const bar = document.getElementById("bar");
         const menu = document.querySelector("nav ul");
         bar.addEventListener("click", () => menu.classList.toggle("active"));
+        document
+          .getElementById("experience")
+          .addEventListener("input", validateExperience);
+        document.getElementById("fees").addEventListener("input", validateFees);
 
         const tabButtons = document.querySelectorAll(".tab-btn");
         const tabContents = document.querySelectorAll(".tab-content");
@@ -548,6 +610,30 @@
           });
         });
       });
+
+      function validateExperience() {
+        const value = parseInt(document.getElementById("experience").value, 10);
+        const error = document.getElementById("experienceError");
+        if (isNaN(value) || value <= 0) {
+          error.textContent = "Experience must be greater than 0.";
+          error.style.display = "block";
+          return false;
+        }
+        error.style.display = "none";
+        return true;
+      }
+
+      function validateFees() {
+        const value = parseInt(document.getElementById("fees").value, 10);
+        const error = document.getElementById("feesError");
+        if (isNaN(value) || value <= 0) {
+          error.textContent = "Fees must be greater than 0.";
+          error.style.display = "block";
+          return false;
+        }
+        error.style.display = "none";
+        return true;
+      }
 
       function togglePasswordFields() {
         const fields = document.getElementById("password-fields");
@@ -640,6 +726,12 @@
 
         const fileInput = document.getElementById("fileUpload");
         const file = fileInput.files[0];
+        const validExperience = validateExperience();
+        const validFees = validateFees();
+        if (!validExperience || !validFees) {
+          alert("Please fix errors before saving.");
+          return;
+        }
 
         const profile = new FormData();
         profile.append("name", document.getElementById("doctorName").value);
@@ -667,7 +759,6 @@
         profile.append("fees", document.getElementById("fees").value);
         profile.append("locations", document.getElementById("locations").value);
         profile.append("degree", document.getElementById("degree").value);
-        // profile.append("address", document.getElementById("address").value);
         profile.append("about", document.getElementById("about").value);
         if (file) profile.append("photo", file);
 
@@ -707,7 +798,9 @@
           .then((res) => res.json())
           .then((data) => {
             showLoading(false);
-            if (data.success) {
+            console.log("Save response:", data);
+
+            if (data.success || data._id || data.doctor) {
               showToast("Profile saved successfully!");
               toggleEditFields(false);
               isEditing = false;

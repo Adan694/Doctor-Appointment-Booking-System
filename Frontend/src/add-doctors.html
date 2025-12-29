@@ -25,6 +25,7 @@
       }
 
       /* Sidebar */
+      /* Sidebar */
       .sidebar {
         width: 250px;
         background-color: rgb(9, 102, 102);
@@ -33,6 +34,25 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        position: fixed; /* Make it fixed */
+        top: 0;
+        left: 0;
+        height: 100vh; /* Full viewport height */
+        overflow-y: auto; /* Allow scrolling only for sidebar if needed */
+        z-index: 1000; /* Ensure it's above other content */
+      }
+
+      /* Main layout */
+      .main-content {
+        flex: 1;
+        padding: 20px;
+        background-color: #e6f2ff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        border-radius: 12px;
+        transition: background-color 0.3s ease;
+        margin-left: 250px; /* Add margin to account for fixed sidebar */
+        min-height: 100vh;
       }
 
       .sidebar h2 {
@@ -286,11 +306,6 @@
           padding: 20px;
         }
 
-        .form-container {
-          max-width: 95%;
-          padding: 20px;
-        }
-
         .sidebar {
           display: none;
           position: fixed;
@@ -367,10 +382,11 @@
       <ul>
         <li><a href="Adminpanel.html">Dashboard</a></li>
         <li><a href="adminappoint.html">Appointments</a></li>
-        <li><a href="add-doctors.html">Add Doctor</a></li>
+        <li><a href="add-doctors.html" class="active">Add Doctor</a></li>
         <li><a href="admindoclist.html">Doctors List</a></li>
         <li><a href="patients-list.html">Patients List</a></li>
         <li><a href="AdminFeedback.html">Feedback</a></li>
+        <li><a href="adminprofile.html">Profile</a></li>
       </ul>
     </div>
     <div id="overlay"></div>
@@ -465,7 +481,7 @@
                 </option>
               </optgroup>
 
-              <optgroup label="Women’s Health">
+              <optgroup label="Women's Health">
                 <option value="gynecologist">Gynecologist</option>
                 <option value="obstetrician">Obstetrician</option>
               </optgroup>
@@ -479,13 +495,9 @@
 
           <div class="form-group">
             <label for="degree">Degree</label>
-            <input
-              type="text"
-              id="degree"
-              name="degree"
-              placeholder="Degree"
-              required
-            />
+            <select id="degree" name="degree" required>
+              <option value="">Select Degree</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -498,18 +510,6 @@
               required
             />
             <small id="experience-error" class="error-text"></small>
-          </div>
-
-          <div class="form-group">
-            <label for="fees">Doctor Fees</label>
-            <input
-              type="number"
-              id="fees"
-              name="fees"
-              placeholder="Doctor Fees"
-              required
-            />
-            <small id="fees-error" class="error-text"></small>
           </div>
 
           <div class="form-group">
@@ -538,196 +538,450 @@
     </div>
 
     <script>
-      document.querySelector(".logout-btn").addEventListener("click", () => {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userRole");
-        window.location.href = "login.html";
-      });
+      // DOM Content Loaded to ensure all elements are ready
+      document.addEventListener("DOMContentLoaded", function () {
+        // Sidebar functionality
+        const bar = document.getElementById("bar");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("overlay");
 
-      const bar = document.getElementById("bar");
-      const sidebar = document.querySelector(".sidebar");
-      const overlay = document.getElementById("overlay");
-
-      bar.addEventListener("click", function () {
-        sidebar.classList.toggle("active");
-        overlay.classList.toggle("active");
-      });
-
-      overlay.addEventListener("click", function () {
-        sidebar.classList.remove("active");
-        overlay.classList.remove("active");
-      });
-
-      //  Validation rules
-      const validators = {
-        name: (value) =>
-          value.trim().length >= 3 || "Name must be at least 3 characters.",
-
-        email: (value) => {
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(value)) return "Invalid email format.";
-          const allowedDomains = [
-            "gmail.com",
-            "yahoo.com",
-            "hotmail.com",
-            "outlook.com",
-          ];
-          const domain = value.split("@")[1];
-          if (!allowedDomains.includes(domain))
-            return "Only Gmail, Yahoo, Hotmail, or Outlook allowed.";
-          return true;
-        },
-
-        password: (value) => {
-          const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
-          return (
-            passwordRegex.test(value) ||
-            "Password must be at least 6 characters, include 1 letter, 1 number, and 1 special character."
-          );
-        },
-
-        experience: (value) => {
-          const expRegex = /^\d+\s?(year|years)?$/i;
-          return (
-            expRegex.test(value) ||
-            "Experience must be a number (e.g., 5 years)."
-          );
-        },
-
-        fees: (value) => value > 0 || "Doctor fees must be greater than 0.",
-      };
-
-      //  Attach live validation
-      Object.keys(validators).forEach((field) => {
-        const input = document.getElementById(field);
-        if (input) {
-          let errorSpan = document.createElement("small");
-          errorSpan.className = "error-text";
-          errorSpan.style.color = "red";
-          errorSpan.style.fontSize = "12px";
-          errorSpan.style.display = "block";
-          input.insertAdjacentElement("afterend", errorSpan);
-
-          input.addEventListener("input", () => {
-            const result = validators[field](input.value);
-            if (result !== true) {
-              errorSpan.textContent = result;
-              input.style.borderColor = "red";
-            } else {
-              errorSpan.textContent = "";
-              input.style.borderColor = "";
-            }
+        if (bar) {
+          bar.addEventListener("click", function () {
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
           });
         }
-      });
 
-      document
-        .getElementById("doctor-form")
-        .addEventListener("submit", async function (event) {
-          event.preventDefault();
+        if (overlay) {
+          overlay.addEventListener("click", function () {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+          });
+        }
 
-          const form = document.getElementById("doctor-form");
-          const formData = new FormData(form);
-          const submitBtn = form.querySelector('button[type="submit"]');
+        // Logout functionality
+        document.querySelector(".logout-btn")?.addEventListener("click", () => {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("userRole");
+          window.location.href = "login.html";
+        });
 
-          // Append the role to the formData
-          formData.append("role", document.getElementById("doctor-role").value);
+        // Get form elements
+        const specialityDropdown = document.getElementById("speciality");
+        const degreeDropdown = document.getElementById("degree");
 
-          // Email validation (kept your logic as-is)
-          const email = formData.get("email").trim();
-          const allowedDomains = [
-            "gmail.com",
-            "yahoo.com",
-            "hotmail.com",
-            "outlook.com",
-          ];
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // Enhanced degrees by specialty with more options
+        const degreesBySpeciality = {
+          general: ["MBBS", "MD", "DNB", "MS", "MSc", "BAMS", "BHMS"],
+          pediatrician: [
+            "MBBS",
+            "MD Pediatrics",
+            "DCH",
+            "DNB Pediatrics",
+            "MRCPCH",
+          ],
+          cardiologist: [
+            "MBBS",
+            "MD",
+            "DM Cardiology",
+            "DNB Cardiology",
+            "MRCP",
+            "FACC",
+          ],
+          gastroenterologist: [
+            "MBBS",
+            "MD",
+            "DM Gastroenterology",
+            "DNB Gastroenterology",
+            "MRCP",
+          ],
+          nephrologist: [
+            "MBBS",
+            "MD",
+            "DM Nephrology",
+            "DNB Nephrology",
+            "FRCP",
+          ],
+          oncologist: [
+            "MBBS",
+            "MD",
+            "DM Oncology",
+            "DNB Oncology",
+            "MRCP",
+            "FRCR",
+          ],
+          pulmonologist: [
+            "MBBS",
+            "MD",
+            "DM Pulmonology",
+            "DNB Pulmonology",
+            "MRCP",
+          ],
+          orthopedist: [
+            "MBBS",
+            "MS Orthopedics",
+            "DNB Orthopedics",
+            "MCh Ortho",
+            "FRCS",
+          ],
+          "plastic-surgeon": [
+            "MBBS",
+            "MS",
+            "MCh Plastic Surgery",
+            "DNB Plastic Surgery",
+            "FRCS",
+          ],
+          surgeon: ["MBBS", "MS General Surgery", "DNB Surgery", "FRCS", "MCh"],
+          "vascular-surgeon": [
+            "MBBS",
+            "MS",
+            "MCh Vascular Surgery",
+            "DNB Vascular Surgery",
+            "FRCS",
+          ],
+          allergist: ["MBBS", "MD Immunology", "DNB Allergy", "MRCP"],
+          dermatologist: [
+            "MBBS",
+            "MD Dermatology",
+            "DNB Dermatology",
+            "DDVL",
+            "MRCP",
+          ],
+          neurologist: [
+            "MBBS",
+            "MD / DM Neurology",
+            "DNB Neurology",
+            "MRCP",
+            "FRCP",
+          ],
+          ophthalmologist: [
+            "MBBS",
+            "MD Ophthalmology",
+            "MS Ophthalmology",
+            "DNB Ophthalmology",
+            "FRCS",
+          ],
+          rheumatologist: [
+            "MBBS",
+            "MD",
+            "DM Rheumatology",
+            "DNB Rheumatology",
+            "MRCP",
+          ],
+          psychiatrist: [
+            "MBBS",
+            "MD Psychiatry",
+            "DNB Psychiatry",
+            "MRCPsych",
+            "DPM",
+          ],
+          urologist: ["MBBS", "MS", "MCh Urology", "DNB Urology", "FRCS"],
+          "ent Specialist": ["MBBS", "MS ENT", "DNB ENT", "DLO", "FRCS"],
+          "emergency-medicine": [
+            "MBBS",
+            "MD Emergency Medicine",
+            "DNB Emergency Medicine",
+            "MRCP",
+            "FRCEM",
+          ],
+          radiologist: [
+            "MBBS",
+            "MD Radiology",
+            "DNB Radiology",
+            "DMRD",
+            "FRCR",
+          ],
+          infectious: [
+            "MBBS",
+            "MD Infectious Diseases",
+            "DNB Infectious Diseases",
+            "MRCP",
+            "FRCP",
+          ],
+          "sports-medicine": [
+            "MBBS",
+            "MD Sports Medicine",
+            "DNB Sports Medicine",
+            "MSc Sports Medicine",
+            "FRCP",
+          ],
+          gynecologist: [
+            "MBBS",
+            "MD Gynecology",
+            "MS Gynecology",
+            "DNB Gynecology",
+            "MRCOG",
+          ],
+          obstetrician: [
+            "MBBS",
+            "MD Obstetrics",
+            "MS Obstetrics",
+            "DNB Obstetrics",
+            "MRCOG",
+          ],
+          hematologist: [
+            "MBBS",
+            "MD Hematology",
+            "DM Hematology",
+            "DNB Hematology",
+            "FRCPath",
+          ],
+          dentist: ["BDS", "MDS", "FDS", "MFDS", "MOS", "PhD"],
+        };
 
-          if (!emailRegex.test(email)) {
-            alert("Invalid email format.");
-            return;
-          }
+        // Function to update degree dropdown
+        function updateDegreeDropdown() {
+          if (!specialityDropdown || !degreeDropdown) return;
 
-          const domain = email.split("@")[1];
-          if (!allowedDomains.includes(domain)) {
-            alert(
-              " Only Gmail, Yahoo, Hotmail, or Outlook emails are allowed."
+          const speciality = specialityDropdown.value;
+          const degrees = degreesBySpeciality[speciality] || ["MBBS", "MD"];
+
+          // Clear current options
+          degreeDropdown.innerHTML = '<option value="">Select Degree</option>';
+
+          // Add new options
+          degrees.forEach((degree) => {
+            const option = document.createElement("option");
+            option.value = degree;
+            option.textContent = degree;
+            degreeDropdown.appendChild(option);
+          });
+
+          console.log(
+            `Updated degree dropdown for ${speciality} with ${degrees.length} options`
+          );
+        }
+
+        // Attach event listener for specialty change
+        if (specialityDropdown) {
+          specialityDropdown.addEventListener("change", updateDegreeDropdown);
+
+          // Initialize degree dropdown on page load
+          setTimeout(updateDegreeDropdown, 100);
+        }
+
+        // Validation rules
+        const validators = {
+          name: (value) =>
+            value.trim().length >= 3 || "Name must be at least 3 characters.",
+
+          email: (value) => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) return "Invalid email format.";
+            const allowedDomains = [
+              "gmail.com",
+              "yahoo.com",
+              "hotmail.com",
+              "outlook.com",
+            ];
+            const domain = value.split("@")[1];
+            if (!allowedDomains.includes(domain))
+              return "Only Gmail, Yahoo, Hotmail, or Outlook allowed.";
+            return true;
+          },
+
+          password: (value) => {
+            const passwordRegex =
+              /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
+            return (
+              passwordRegex.test(value) ||
+              "Password must be at least 6 characters, include 1 letter, 1 number, and 1 special character."
             );
-            return;
-          }
+          },
 
-          submitBtn.disabled = true;
-          submitBtn.textContent = "Submitting...";
+          speciality: (value) =>
+            value.trim() !== "" || "Speciality selection is required.",
 
-          try {
-            const ping = await fetch("http://localhost:3000");
-            if (!ping.ok) throw new Error("Backend not responding");
+          degree: (value) => value.trim() !== "" || "Please select a degree.",
 
-            // Submit form data
-            const response = await fetch(
-              "http://localhost:3000/api/doctors/add",
-              {
-                method: "POST",
-                body: formData,
-              }
+          experience: (value) => {
+            const expRegex = /^\d+(\s?(year|years))?$/i;
+            return (
+              expRegex.test(value) || "Experience must be a number (e.g., 5)."
             );
+          },
 
-            const data = await response.json();
+          about: (value) =>
+            value.trim().length >= 10 ||
+            "About section must be at least 10 characters long.",
 
-            if (!response.ok) {
-              throw new Error(data.message || "Server error");
+          available: (value) =>
+            ["true", "false"].includes(value) ||
+            "Availability must be selected.",
+        };
+
+        // Attach live validation
+        Object.keys(validators).forEach((field) => {
+          const input = document.getElementById(field);
+          if (input) {
+            // Create error span if it doesn't exist
+            let errorSpan = input.nextElementSibling;
+            if (!errorSpan || !errorSpan.classList.contains("error-text")) {
+              errorSpan = document.createElement("small");
+              errorSpan.className = "error-text";
+              errorSpan.style.color = "red";
+              errorSpan.style.fontSize = "12px";
+              errorSpan.style.display = "block";
+              input.insertAdjacentElement("afterend", errorSpan);
             }
 
-            showSuccess("Doctor added successfully!");
-            form.reset();
-          } catch (err) {
-            console.error("Error:", err);
-            showError(err.message);
-          } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Add Doctor";
+            const validateField = () => {
+              const result = validators[field](input.value);
+              if (result !== true) {
+                errorSpan.textContent = result;
+                input.style.borderColor = "red";
+              } else {
+                errorSpan.textContent = "";
+                input.style.borderColor = "";
+              }
+            };
+
+            input.addEventListener(
+              input.tagName === "SELECT" ? "change" : "input",
+              validateField
+            );
           }
         });
 
-      function showSuccess(message) {
-        const successElement = document.createElement("div");
-        successElement.className = "success-message";
-        successElement.textContent = message;
-        successElement.style.color = "green";
-        successElement.style.marginTop = "10px";
-        successElement.style.textAlign = "center";
+        // Form submission
+        document
+          .getElementById("doctor-form")
+          .addEventListener("submit", async function (event) {
+            event.preventDefault();
 
-        const formContainer = document.querySelector(".form-container");
-        const existingSuccess = formContainer.querySelector(".success-message");
-        if (existingSuccess) existingSuccess.remove();
+            const form = document.getElementById("doctor-form");
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
 
-        formContainer.appendChild(successElement);
+            // Validate all fields before submission
+            let isValid = true;
+            Object.keys(validators).forEach((field) => {
+              const input = document.getElementById(field);
+              if (input) {
+                const result = validators[field](input.value);
+                if (result !== true) {
+                  isValid = false;
+                  input.style.borderColor = "red";
+                  const errorSpan = input.nextElementSibling;
+                  if (errorSpan && errorSpan.classList.contains("error-text")) {
+                    errorSpan.textContent = result;
+                  }
+                }
+              }
+            });
 
-        setTimeout(() => {
-          successElement.remove();
-          window.location.href = "admindoclist.html";
-        }, 3000);
-      }
+            if (!isValid) {
+              alert("Please fix the errors before submitting.");
+              return;
+            }
 
-      function showError(message) {
-        const errorElement = document.createElement("div");
-        errorElement.className = "error-message";
-        errorElement.textContent = message;
-        errorElement.style.color = "red";
-        errorElement.style.marginTop = "10px";
-        errorElement.style.textAlign = "center";
+            // Email domain validation
+            const email = formData.get("email").trim();
+            const allowedDomains = [
+              "gmail.com",
+              "yahoo.com",
+              "hotmail.com",
+              "outlook.com",
+            ];
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        const formContainer = document.querySelector(".form-container");
+            if (!emailRegex.test(email)) {
+              alert("Invalid email format.");
+              return;
+            }
 
-        const existingError = formContainer.querySelector(".error-message");
-        if (existingError) existingError.remove();
+            const domain = email.split("@")[1];
+            if (!allowedDomains.includes(domain)) {
+              alert(
+                "Only Gmail, Yahoo, Hotmail, or Outlook emails are allowed."
+              );
+              return;
+            }
 
-        formContainer.appendChild(errorElement);
+            // Append the role to the formData
+            formData.append(
+              "role",
+              document.getElementById("doctor-role").value
+            );
 
-        setTimeout(() => {
-          errorElement.remove();
-        }, 3000);
-      }
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting...";
+
+            try {
+              // Check if backend is responding
+              const ping = await fetch("http://localhost:3000");
+              if (!ping.ok) throw new Error("Backend not responding");
+
+              // Submit form data
+              const response = await fetch(
+                "http://localhost:3000/api/doctors/add",
+                {
+                  method: "POST",
+                  body: formData,
+                }
+              );
+
+              const data = await response.json();
+
+              if (!response.ok) {
+                throw new Error(data.message || "Server error");
+              }
+
+              showSuccess("Doctor added successfully!");
+              form.reset();
+              updateDegreeDropdown(); // Reset degree dropdown
+            } catch (err) {
+              console.error("Error:", err);
+              showError(
+                err.message || "Failed to add doctor. Please try again."
+              );
+            } finally {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Add Doctor";
+            }
+          });
+
+        function showSuccess(message) {
+          const successElement = document.createElement("div");
+          successElement.className = "success-message";
+          successElement.textContent = message;
+          successElement.style.color = "green";
+          successElement.style.marginTop = "10px";
+          successElement.style.textAlign = "center";
+
+          const formContainer = document.querySelector(".form-container");
+          const existingSuccess =
+            formContainer.querySelector(".success-message");
+          if (existingSuccess) existingSuccess.remove();
+
+          formContainer.appendChild(successElement);
+
+          setTimeout(() => {
+            successElement.remove();
+            window.location.href = "admindoclist.html";
+          }, 3000);
+        }
+
+        function showError(message) {
+          const errorElement = document.createElement("div");
+          errorElement.className = "error-message";
+          errorElement.textContent = message;
+          errorElement.style.color = "red";
+          errorElement.style.marginTop = "10px";
+          errorElement.style.textAlign = "center";
+
+          const formContainer = document.querySelector(".form-container");
+
+          const existingError = formContainer.querySelector(".error-message");
+          if (existingError) existingError.remove();
+
+          formContainer.appendChild(errorElement);
+
+          setTimeout(() => {
+            errorElement.remove();
+          }, 3000);
+        }
+      });
     </script>
   </body>
 </html>

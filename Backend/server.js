@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');             
+const { Server } = require('socket.io');
 const { User } = require('./models/users'); 
 const Doctor = require('./models/doctors');
 const cors = require('cors');
@@ -8,13 +10,16 @@ const mongoose = require('mongoose');
 const path = require('path'); 
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer'); 
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userroutes');
+const authRoutes = require('./routes/authroutes');
+const userRoutes = require('./routes/userRoutes');
 const doctorroutes = require('./routes/doctorroutes');
-const adminRoutes = require('./routes/adminRoutes');
+const adminRoutes = require('./routes/adminroutes');
 const feedbackroute = require('./routes/feedbackroute');
 const bookingRoutes = require('./routes/bookingroutes'); 
 const contactRoutes = require('./routes/contact');
+const { initSocket } = require('./Controllers/socketcontroller');
+const doctorChatRoutes = require('./routes/doctorchat'); 
+const chatRoutes = require('./routes/chatroutes');
 
 const session = require('express-session');
 
@@ -22,26 +27,61 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 require('dotenv').config();  
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: ['http://localhost:4200', 'http://localhost:5500', 'http://127.0.0.1:5500'],
+//     methods: ['GET', 'POST'],
+//  credentials: true
+//   },
+//   transports: ['websocket', 'polling'] // allow fallback
+// });
+// module.exports.io = io; // ✅ Export io for use in controllers
+
+// const { verifySocketToken } = require('./middlewares/auth');
+
+// io.use(verifySocketToken);
+
+// initSocket(io);
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: [
+      "http://localhost:4200",
+      "http://localhost:5500",
+      "http://127.0.0.1:5500"
+    ],
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+  }
+});
+
+const { initializeSocket } = require("./Controllers/socketcontroller");
+initializeSocket(io);  // <-- VERY IMPORTANT FIX
+
+console.log("✅ Socket.io initialized with server");
 
 app.use(cors({
-  origin: ['http://localhost:5500', 'http://127.0.0.1:5500'],
+  origin: ['http://localhost:4200', 'http://localhost:5500', 'http://127.0.0.1:5500'],
   methods: ['GET','POST','PUT','DELETE','PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
-app.options('*', cors()); 
 app.use(express.json());
 app.use('/api/appointments', bookingRoutes);
 app.use('/auth', authRoutes); 
 app.use(express.static('src')); 
 app.use('/user', userRoutes);
 app.use('/api/doctors', doctorroutes);
-app.use('/doctor', doctorroutes); 
+// app.use('/doctor', doctorroutes); 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use('/api', feedbackroute);
+app.use('/api/feedback', feedbackroute);
 app.use('/', contactRoutes);
+app.use('/api/chats', require('./routes/chatroutes'));
+app.use("/api/doctor-chats", require("./routes/doctorchat"));
 app.use('/api/admin', adminRoutes);
 app.use(express.static(path.join(__dirname, 'Frontend')));
 app.use(session({
@@ -86,8 +126,12 @@ app.post('/contact', async (req, res) => {
 });
 
 // Start the server
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+// app.listen(port, () => {
+//     console.log(`Server running at http://localhost:${port}`);
+// });
+// Start the server (must use server, not app)
+server.listen(port, () => {
+  console.log(`🚀 Server running with Socket.IO at http://localhost:${port}`);
 });
 
 

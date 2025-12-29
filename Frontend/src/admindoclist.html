@@ -408,6 +408,7 @@
         <li><a href="admindoclist.html">Doctors List</a></li>
         <li><a href="patients-list.html">Patients List</a></li>
         <li><a href="AdminFeedback.html">Feedback</a></li>
+        <li><a href="adminprofile.html">Profile</a></li>
       </ul>
     </div>
     <div id="overlay">
@@ -482,7 +483,6 @@
           if (userRole === "admin") {
             buttonsHtml = `
                             <div class="btn-group">
-                            <button class="btn btn-edit" onclick="goToDoctorProfile('${doctor._id}')">Edit</button>
                             <button class="btn btn-delete" onclick="deleteDoctor('${doctor._id}')">Delete</button>
                             <button class="btn btn-appointments" onclick="seeAppointments('${doctor._id}')">See Appointments</button>
 

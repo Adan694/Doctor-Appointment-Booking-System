@@ -14,8 +14,8 @@ const addDoctor = async (req, res) => {
     console.log('Request body:', req.body);
     console.log('Uploaded file:', req.file);
 
-    const { name, email, password, speciality, degree, experience, fees, about } = req.body;
-    if (!name || !email || !password || !speciality || !degree || !experience || !fees || !about) {
+    const { name, email, password, speciality, degree, experience, about } = req.body;
+    if (!name || !email || !password || !speciality || !degree || !experience || !about) {
       return res.status(400).json({ success: false, message: 'All required fields must be filled.' });
     }
     const existingDoctor = await Doctor.findOne({ email });
@@ -31,7 +31,6 @@ const addDoctor = async (req, res) => {
       speciality,
       degree,
       experience,
-      fees,
       about,
       photo: req.file?.filename || null,
       available: req.body.available === 'true',

@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin - New Feedback</title>
     <link
       rel="stylesheet"
@@ -192,6 +193,7 @@
       table th {
         font-weight: 700;
         letter-spacing: 0.03em;
+        -webkit-user-select: none;
         user-select: none;
       }
 
@@ -381,6 +383,7 @@
         <li><a href="admindoclist.html">Doctors List</a></li>
         <li><a href="patients-list.html">Patients List</a></li>
         <li><a href="AdminFeedback.html">Feedback</a></li>
+        <li><a href="adminprofile.html">Profile</a></li>
       </ul>
     </div>
 
@@ -414,6 +417,10 @@
     </main>
 
     <script>
+      const feedbackPerPage = 10; // number of feedbacks per page
+      let currentPage = 1;
+      let allFeedbacks = [];
+
       document.getElementById("logoutBtn").addEventListener("click", () => {
         localStorage.removeItem("authToken");
         localStorage.removeItem("userRole");
@@ -437,75 +444,137 @@
       async function fetchAllFeedback() {
         const token = localStorage.getItem("authToken");
         try {
-          const res = await fetch("http://localhost:3000/api/admin/all", {
-            headers: { Authorization: "Bearer " + token },
-          });
+          const res = await fetch(
+            "http://localhost:3000/api/feedback/admin/all",
+            {
+              headers: { Authorization: "Bearer " + token },
+            }
+          );
           if (!res.ok) throw new Error("Failed to fetch feedback");
-          const data = await res.json();
-          data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-          const tableBody = document.getElementById("feedbackList");
-          tableBody.innerHTML = "";
+          allFeedbacks = await res.json();
 
-          data.forEach((fb) => {
-            const row = `<tr>
+          // Sort newest first
+          allFeedbacks.sort(
+            (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+          );
+
+          renderPage(currentPage);
+        } catch (error) {
+          console.error("Error fetching feedback:", error);
+        }
+      }
+
+      function renderPage(page) {
+        const tableBody = document.getElementById("feedbackList");
+        tableBody.innerHTML = "";
+
+        const start = (page - 1) * feedbackPerPage;
+        const end = start + feedbackPerPage;
+        const pageFeedbacks = allFeedbacks.slice(start, end);
+
+        if (pageFeedbacks.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="6">No feedbacks found.</td></tr>`;
+          document.getElementById("pagination").remove();
+          return;
+        }
+
+        pageFeedbacks.forEach((fb) => {
+          const row = `<tr>
 <td>
   ${fb.patientId?.name || "N/A"}<br>
-  <br>
   <span 
   onclick="window.location.href='patients-list.html?highlight=${
     fb.patientId?._id
   }'" 
   style="color: inherit; text-decoration: none; cursor: pointer;">
   ${fb.patientId?.email || ""}
-</span>
-
-
+  </span>
 </td>
+<td>${fb.doctorId?.name || "N/A"}</td>
+<td>${fb.comment}</td>
+<td>${getStars(fb.rating)}</td>
+<td>${formatDateTime(fb.timestamp)}</td>
+<td><button onclick="deleteFeedback('${fb._id}')">Delete</button></td>
+</tr>`;
+          tableBody.innerHTML += row;
+        });
 
-                    <td>${fb.doctorId?.name || "N/A"}</td>
-                    <td>${fb.comment}</td>
-                    <td>${getStars(fb.rating)}</td>
-                    <td>${formatDateTime(fb.timestamp)}</td>
-                    <td><button onclick="deleteFeedback('${
-                      fb._id
-                    }')">Delete</button></td>
-                </tr>`;
-            tableBody.innerHTML += row;
-          });
-          function formatTime(ts) {
-            const d = new Date(ts);
-            let hours = d.getHours();
-            const minutes = String(d.getMinutes()).padStart(2, "0");
-            const ampm = hours >= 12 ? "PM" : "AM";
-            hours = hours % 12;
-            hours = hours ? hours : 12; // convert hour '0' to '12'
-            return `${hours}:${minutes} ${ampm}`;
-          }
+        renderPaginationControls();
+      }
 
-          function formatDateTime(ts) {
-            const d = new Date(ts);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, "0");
-            const day = String(d.getDate()).padStart(2, "0");
-            return `${year}-${month}-${day} ${formatTime(ts)}`;
-          }
-
-          function getStars(rating) {
-            let stars = "";
-            for (let i = 1; i <= 5; i++) {
-              if (i <= rating) {
-                stars +=
-                  '<i class="fa-solid fa-star" style="color:#ff9800"></i>';
-              } else {
-                stars +=
-                  '<i class="fa-regular fa-star" style="color:#ccc"></i>';
-              }
-            }
-            return stars;
-          }
-        } catch (error) {
-          console.error("Error fetching feedback:", error);
+      function renderPaginationControls() {
+        let paginationDiv = document.getElementById("pagination");
+        if (!paginationDiv) {
+          paginationDiv = document.createElement("div");
+          paginationDiv.id = "pagination";
+          paginationDiv.style.textAlign = "center";
+          paginationDiv.style.margin = "20px 0";
+          document.querySelector("main").appendChild(paginationDiv);
         }
+
+        const totalPages = Math.ceil(allFeedbacks.length / feedbackPerPage);
+        paginationDiv.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "Previous";
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.style.margin = "0 10px";
+        prevBtn.onclick = () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderPage(currentPage);
+          }
+        };
+
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "Next";
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.style.margin = "0 10px";
+        nextBtn.onclick = () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderPage(currentPage);
+          }
+        };
+
+        const info = document.createElement("span");
+        info.textContent = `Page ${currentPage} of ${totalPages}`;
+
+        paginationDiv.appendChild(prevBtn);
+        paginationDiv.appendChild(info);
+        paginationDiv.appendChild(nextBtn);
+      }
+
+      function formatTime(ts) {
+        const d = new Date(ts);
+        let hours = d.getHours();
+        const minutes = String(d.getMinutes()).padStart(2, "0");
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        hours = hours ? hours : 12; // convert 0 to 12
+        return `${hours}:${minutes} ${ampm}`;
+      }
+
+      function formatDateTime(ts) {
+        const d = new Date(ts);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day} ${formatTime(ts)}`;
+      }
+
+      function getStars(rating) {
+        let stars = "";
+        for (let i = 1; i <= 5; i++) {
+          if (i <= rating) {
+            stars += '<i class="fa-solid fa-star" style="color:#ff9800"></i>';
+          } else {
+            stars += '<i class="fa-regular fa-star" style="color:#ccc"></i>';
+          }
+        }
+        return stars;
       }
 
       async function deleteFeedback(feedbackId) {
@@ -523,13 +592,20 @@
           if (!res.ok) throw new Error("Failed to delete feedback");
 
           alert("Feedback deleted successfully.");
-          fetchAllFeedback();
+          allFeedbacks = allFeedbacks.filter((fb) => fb._id !== feedbackId);
+
+          // adjust current page if necessary
+          const totalPages = Math.ceil(allFeedbacks.length / feedbackPerPage);
+          if (currentPage > totalPages) currentPage = totalPages || 1;
+
+          renderPage(currentPage);
         } catch (error) {
           console.error("Error deleting feedback:", error);
           alert("Error deleting feedback. Please try again.");
         }
       }
 
+      // Fetch data on load
       fetchAllFeedback();
     </script>
   </body>

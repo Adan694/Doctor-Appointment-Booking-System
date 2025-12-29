@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doctor Chat with Admin</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: #e6f2ff;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 10px 20px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        z-index: 1000;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        margin: 0;
+      }
+
+      .logo img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .logo img:hover {
+        transform: scale(1.1) rotate(-5deg);
+      }
+
+      .logo h1 {
+        font-size: 28px;
+        background: linear-gradient(45deg, #ffffff, #cceeff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0;
+      }
+
+      nav ul {
+        display: flex;
+      }
+
+      nav ul li {
+        list-style: none;
+        margin-top: 15px;
+      }
+
+      nav ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 20px;
+        margin-inline: 20px;
+        transition: color 0.3s ease;
+      }
+
+      nav ul li a:hover {
+        color: black;
+      }
+
+      #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+      }
+
+      /* Main container */
+      .chat-container {
+        max-width: 900px;
+        margin: 100px auto 40px auto;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #166e6b;
+        color: white;
+        padding: 15px 20px;
+        font-weight: bold;
+      }
+      .chat-header .back-btn {
+        background: #28a745;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        color: white;
+        font-weight: bold;
+        transition: background 0.3s;
+      }
+      .chat-header .back-btn:hover {
+        background: #1e7a33;
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: #f6fbfb;
+        min-height: 400px;
+        max-height: 500px;
+      }
+
+      .message {
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        word-wrap: break-word;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.3s ease;
+      }
+      .message.sent {
+        background: #166e6b;
+        color: white;
+        align-self: flex-end;
+      }
+      .message.received {
+        background: #e8e8e8;
+        color: #333;
+        align-self: flex-start;
+      }
+      .sender-label {
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 4px;
+        opacity: 0.8;
+      }
+      .message.sent .sender-label {
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .message.received .sender-label {
+        color: #555;
+      }
+      .timestamp {
+        font-size: 10px;
+        text-align: right;
+        margin-top: 4px;
+        opacity: 0.7;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(10px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .chat-input {
+        display: flex;
+        padding: 12px;
+        border-top: 1px solid #ddd;
+        background: #f9f9f9;
+      }
+      .chat-input input {
+        flex: 1;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+      }
+      .chat-input button {
+        margin-left: 10px;
+        background: #166e6b;
+        color: white;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+      }
+      .chat-input button:hover {
+        background: #0f5654;
+      }
+
+      .status-indicator {
+        font-size: 12px;
+        margin-left: 10px;
+        color: #2ecc71;
+      }
+      .status-indicator.offline {
+        color: #95a5a6;
+      }
+
+      @media (max-width: 768px) {
+        #bar {
+          display: block;
+          color: white;
+        }
+        nav ul {
+          flex-direction: column;
+          position: absolute;
+          top: 60px;
+          left: 0;
+          background: rgb(9, 102, 102);
+          width: 100%;
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.4s ease;
+        }
+        nav ul.show {
+          max-height: 400px;
+        }
+        nav ul li {
+          margin: 10px 0;
+          text-align: center;
+        }
+        .chat-container {
+          margin: 140px 10px 20px 10px;
+        }
+        .chat-messages {
+          max-height: 400px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="images/Da.png" alt="DocAssist Logo" />
+        <h1>DocAssist</h1>
+      </div>
+      <i id="bar" class="fa-solid fa-bars"></i>
+      <ul>
+        <li><a href="docpanel.html">Dashboard</a></li>
+        <li><a href="DocAppointment.html">Appointments</a></li>
+        <li><a href="docprofile.html">Profile</a></li>
+        <li><a href="docavailability.html">Manage Availability</a></li>
+        <li><a href="Docfeedback.html">Feedback</a></li>
+        <li><a href="login.html">Logout</a></li>
+      </ul>
+    </nav>
+
+    <div class="chat-container">
+      <div class="chat-header">
+        <button class="back-btn" id="backBtn">← Back</button>
+        <div>
+          Chat with Admin
+          <span id="connectionStatus" class="status-indicator"
+            >● Connecting...</span
+          >
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div style="text-align: center; padding: 20px; color: #666">
+          Loading messages...
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="msgInput" placeholder="Type your message..." />
+        <button id="sendBtn">Send</button>
+      </div>
+    </div>
+
+    <script>
+      const backendURL = "http://localhost:3000";
+      const doctorId = localStorage.getItem("doctorId");
+      const adminId = "689f5be6e5432f608d4b3a54";
+      const token = localStorage.getItem("authToken");
+
+      const chatMessagesEl = document.getElementById("chatMessages");
+      const msgInput = document.getElementById("msgInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const backBtn = document.getElementById("backBtn");
+      const connectionStatus = document.getElementById("connectionStatus");
+
+      let messages = [];
+      let socket = null;
+
+      if (!doctorId || !token) {
+        alert("You must be logged in as a doctor to chat.");
+        window.location.href = "login.html";
+      }
+
+      // Initialize Socket.io
+      function initSocket() {
+        console.log("🩺 DOCTOR SOCKET INITIALIZING...", doctorId);
+
+        if (socket) {
+          socket.disconnect();
+          socket = null;
+        }
+
+        socket = io(backendURL, {
+          auth: {
+            token,
+            role: "doctor",
+            userId: doctorId,
+            email: localStorage.getItem("doctorEmail") || "doctor@example.com",
+            name: localStorage.getItem("doctorName") || "Doctor",
+          },
+          transports: ["websocket", "polling"],
+        });
+
+        socket.on("connect", () => {
+          console.log("✅ DOCTOR SOCKET CONNECTED:", socket.id);
+          connectionStatus.textContent = "● Connected";
+          connectionStatus.style.color = "#2ecc71";
+        });
+
+        // Real-time message
+        socket.on("receive_message", (messageData) => {
+          if (
+            messageData.receiverId === doctorId ||
+            messageData.senderId === doctorId
+          ) {
+            const exists = messages.some((m) => m._id === messageData._id);
+            if (!exists) {
+              messages.push(messageData);
+              renderMessages();
+              markAsRead();
+
+              if (document.hidden) {
+                showNotification(
+                  `New message from ${
+                    messageData.senderRole === "admin" ? "Admin" : "You"
+                  }`,
+                  messageData.message
+                );
+              }
+            }
+          }
+        });
+
+        socket.on("disconnect", () => {
+          console.log("🔌 Socket disconnected");
+          connectionStatus.textContent = "● Disconnected";
+          connectionStatus.style.color = "#e74c3c";
+        });
+
+        socket.on("connect_error", (err) => {
+          console.error("❌ Socket connection error:", err);
+          connectionStatus.textContent = "● Connection Error";
+          connectionStatus.style.color = "#e74c3c";
+        });
+
+        socket.on("error", (data) => console.error("❌ Socket error:", data));
+      }
+
+      // Load messages from backend
+      async function loadMessages() {
+        try {
+          console.log("📨 Loading messages...");
+          const res = await fetch(
+            `${backendURL}/api/doctor-chats/${doctorId}/${adminId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          if (!res.ok) throw new Error(`Error ${res.status}`);
+
+          messages = await res.json();
+          renderMessages();
+          await markAsRead();
+        } catch (err) {
+          console.error("Error loading messages:", err);
+          chatMessagesEl.innerHTML = `<div style="text-align:center; padding:20px; color:#e74c3c;">Error loading messages: ${err.message}</div>`;
+        }
+      }
+
+      // Render messages
+      function renderMessages() {
+        chatMessagesEl.innerHTML = "";
+        if (messages.length === 0) {
+          chatMessagesEl.innerHTML = `<div style="text-align:center; padding:40px; color:#666;">
+      <i class="fas fa-comments" style="font-size:48px; margin-bottom:20px; opacity:0.5;"></i>
+      <h3>No messages yet</h3>
+      <p>Start a conversation with Admin</p>
+    </div>`;
+          return;
+        }
+
+        messages.sort(
+          (a, b) =>
+            new Date(a.timestamp || a.createdAt) -
+            new Date(b.timestamp || b.createdAt)
+        );
+
+        messages.forEach((msg) => {
+          const div = document.createElement("div");
+          div.className =
+            "message " + (msg.senderId === doctorId ? "sent" : "received");
+
+          const senderLabel = document.createElement("div");
+          senderLabel.className = "sender-label";
+          senderLabel.textContent = msg.senderId === doctorId ? "You" : "Admin";
+
+          const messageText = document.createElement("div");
+          messageText.textContent = msg.message;
+
+          const timestamp = document.createElement("div");
+          timestamp.className = "timestamp";
+          timestamp.textContent = new Date(
+            msg.timestamp || msg.createdAt
+          ).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          div.appendChild(senderLabel);
+          div.appendChild(messageText);
+          div.appendChild(timestamp);
+
+          chatMessagesEl.appendChild(div);
+        });
+
+        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+      }
+
+      // Send message
+      async function sendMessage() {
+        const text = msgInput.value.trim();
+        if (!text || !socket || !socket.connected) return;
+
+        const messageData = {
+          senderId: doctorId,
+          receiverId: adminId,
+          message: text,
+          senderRole: "doctor",
+          timestamp: new Date(),
+        };
+
+        // Show immediately
+        messages.push({
+          ...messageData,
+          _id: "temp_" + Date.now(),
+          isTemp: true,
+        });
+        renderMessages();
+        msgInput.value = "";
+
+        try {
+          socket.emit("send_message", messageData);
+
+          const res = await fetch(`${backendURL}/api/doctor-chats/send`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(messageData),
+          });
+
+          if (!res.ok) throw new Error(`Error ${res.status}`);
+
+          const saved = await res.json();
+          // Replace temp message with real message
+          const tempIndex = messages.findIndex(
+            (m) => m.isTemp && m.message === text
+          );
+          if (tempIndex !== -1) messages.splice(tempIndex, 1);
+
+          messages.push(
+            saved.chat || { ...messageData, _id: Date.now().toString() }
+          );
+          renderMessages();
+        } catch (err) {
+          console.error("Send message failed:", err);
+          alert("Failed to send message");
+
+          const tempIndex = messages.findIndex(
+            (m) => m.isTemp && m.message === text
+          );
+          if (tempIndex !== -1) messages.splice(tempIndex, 1);
+          renderMessages();
+        }
+      }
+
+      // Mark messages as read
+      async function markAsRead() {
+        try {
+          await fetch(`${backendURL}/api/doctor-chats/mark-read/${adminId}`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          console.log("✅ Messages marked as read");
+        } catch (err) {
+          console.error("Error marking messages as read:", err);
+        }
+      }
+
+      // Desktop notifications
+      function showNotification(title, body) {
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification(title, { body, icon: "/images/Da.png" });
+        }
+      }
+      function requestNotificationPermission() {
+        if ("Notification" in window && Notification.permission === "default")
+          Notification.requestPermission();
+      }
+
+      // Event listeners
+      sendBtn.addEventListener("click", sendMessage);
+      msgInput.addEventListener("keyup", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+      backBtn.addEventListener(
+        "click",
+        () => (window.location.href = "docpanel.html")
+      );
+
+      // Initialize
+      async function initializeChat() {
+        console.log("🩺 Initializing doctor chat...", doctorId);
+        requestNotificationPermission();
+        initSocket();
+        await loadMessages();
+        msgInput.focus();
+      }
+
+      document.addEventListener("DOMContentLoaded", initializeChat);
+    </script>
+  </body>
+</html>

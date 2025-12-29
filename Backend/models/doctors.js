@@ -8,7 +8,7 @@ user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
   speciality: { type: String, required: true },
   degree: { type: String, required: true, default: "Not specified" },
   experience: { type: String, required: true },
-  fees: { type: Number, required: true },
+  fees: { type: Number, required: false },
   about: { type: String, required: true },
   photo: { type: String,}, 
   qualifications: String,
@@ -24,8 +24,9 @@ user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
     {
       date: String,
       slots: [String]
-    }
-  ]
+    },
+  ],
+
 }, { timestamps: true }); 
 
 doctorSchema.pre('save', function (next) {

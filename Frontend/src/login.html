@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Login & Registration Form</title>
+    <!-- ❌ REMOVE Socket.io script -->
+    <!-- <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script> -->
+
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
       * {
@@ -206,6 +209,11 @@
         max-height: 90vh;
         overflow-y: auto;
       }
+      #password-hint {
+        font-size: 13px;
+        color: #555;
+        margin-top: 6px;
+      }
     </style>
   </head>
 
@@ -218,7 +226,7 @@
           id="login-form"
           onsubmit="event.preventDefault(); redirectUser();"
         >
-          <select id="login-role" required>
+          <select id="login-role" title="jh" required>
             <option value="" disabled selected>Select your role</option>
             <option value="admin">Admin</option>
             <option value="doctor">Doctor</option>
@@ -296,10 +304,7 @@
             required
           />
           <small id="signup-password-error" class="error"></small>
-          <div
-            id="password-hint"
-            style="font-size: 13px; color: #555; margin-top: 6px"
-          >
+          <div id="password-hint">
             <p id="length">❌ At least 6 characters</p>
             <p id="letter">❌ At least one letter</p>
             <p id="number">❌ At least one number</p>
@@ -464,7 +469,7 @@
           passwordError;
 
         if (emailError || passwordError) {
-          console.log("Login blocked due to errors:", {
+          console.log("🚫 Login blocked due to errors:", {
             emailError,
             passwordError,
           });
@@ -476,6 +481,9 @@
           alert("Please select your role.");
           return;
         }
+
+        console.log("🔑 Starting login process:", { email, role });
+
         fetch("http://localhost:3000/auth/login", {
           method: "POST",
           headers: {
@@ -484,52 +492,111 @@
           body: JSON.stringify({ email, password, role }),
         })
           .then((res) => {
+            console.log("📡 Login API Response Status:", res.status);
             if (!res.ok) {
               return res.json().then((err) => {
+                console.error("❌ Login API Error:", err);
                 throw new Error(err.message);
               });
             }
             return res.json();
           })
           .then((data) => {
-            const { token, role, patientId } = data;
-            localStorage.setItem("authToken", token);
-            console.log("Saved token:", localStorage.getItem("authToken"));
-            localStorage.setItem("userRole", role);
-            sessionStorage.setItem("userRole", role);
-            localStorage.setItem("patientId", patientId);
-            console.log(
-              "Stored Patient ID:",
-              localStorage.getItem("patientId")
-            );
+            console.log("✅ Login Successful! Response data:", data);
 
+            const { token, role, patientId } = data;
+
+            // Store authentication data
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("userRole", role);
+            localStorage.setItem("userEmail", email);
+
+            console.log("💾 Local Storage Updated:", {
+              authToken: token ? "✓" : "✗",
+              userRole: role,
+              userEmail: email,
+            });
+
+            // Doctor login
             if (role === "doctor") {
               if (data.doctor && data.doctor._id) {
-                localStorage.setItem("doctorId", data.doctor._id);
-                console.log("Doctor ID saved:", data.doctor._id);
+                const doctorId = data.doctor._id;
+                localStorage.setItem("doctorId", doctorId);
+                localStorage.setItem("userId", doctorId);
+
+                console.log("👨‍⚕️ Doctor Login Successful");
+                console.log("🔄 Redirecting to docpanel.html");
                 window.location.href = "docpanel.html";
                 return;
               } else {
+                console.error("❌ Doctor ID not found in response:", data);
                 alert("Doctor ID not found in login response.");
                 return;
               }
             }
 
+            // Admin login
             if (role === "admin") {
+              localStorage.setItem("adminId", patientId);
+              localStorage.setItem("userId", patientId);
+
+              console.log("👑 Admin Login:", {
+                id: patientId,
+                email: email,
+              });
+
+              console.log("🔄 Redirecting to Adminpanel.html");
               window.location.href = "Adminpanel.html";
-            } else if (role === "patient") {
+            }
+            // Patient login
+            else if (role === "patient") {
+              localStorage.setItem("patientId", patientId);
+              localStorage.setItem("userId", patientId);
+
+              console.log("👤 Patient Login:", {
+                id: patientId,
+                email: email,
+              });
+
+              // ❌ REMOVED socket connection
+              console.log("🔄 Redirecting to index.html");
               window.location.href = "index.html";
             } else {
+              console.error("🚫 Unrecognized role:", role);
               alert("Unrecognized role.");
             }
           })
           .catch((err) => {
+            console.error("💥 Login Error:", err);
             alert(`Login failed: ${err.message}`);
             if (role === "patient") {
               document.getElementById("check").checked = true;
             }
           });
       }
+
+      // ❌ REMOVED connectUserSocket function entirely
+
+      // Auto-reconnect on page load - SIMPLIFIED VERSION
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("🌐 Page loaded - Checking for existing login");
+
+        const token = localStorage.getItem("authToken");
+        const userId = localStorage.getItem("userId");
+        const role = localStorage.getItem("userRole");
+        const email = localStorage.getItem("userEmail");
+
+        // Just check if user is logged in, no socket connection
+        if (token && userId && role && email) {
+          console.log("✅ User is logged in:", {
+            userId: userId,
+            role: role,
+            email: email,
+          });
+        } else {
+          console.log("🚫 No existing login found - Starting fresh");
+        }
+      });
 
       async function handleSignup() {
         const role = document.getElementById("signup-role").value;
@@ -600,6 +667,7 @@
           alert(errorMessage);
         }
       }
+
       async function requestOtp(email) {
         const response = await fetch("http://localhost:3000/auth/request-otp", {
           method: "POST",
@@ -612,6 +680,7 @@
           throw new Error(errorText || "Error sending OTP");
         }
       }
+
       async function verifyOtp() {
         const email = sessionStorage.getItem("pendingOtpEmail");
         const otp = document.getElementById("otp").value;
@@ -647,6 +716,7 @@
           alert(error.message);
         }
       }
+
       // Live password strength hints for signup
       document
         .getElementById("signup-password")

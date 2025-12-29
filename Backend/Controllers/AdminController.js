@@ -354,6 +354,67 @@ const activatePatient = async (req, res) => {
   }
 };
 
+const updateAdminProfile = async (req, res) => {
+  try {
+    const { email: tokenEmail } = req.user; // get email from token
+    const { name, email, phone } = req.body;
+
+    // Validation
+    if (!name || !email) {
+      return res.status(400).json({ message: 'Name and email are required' });
+    }
+
+    // Find the admin in DB using the email from token
+    const admin = await User.findOne({ email: tokenEmail, role: 'admin' });
+    if (!admin) return res.status(404).json({ message: 'Admin not found' });
+
+    // Check if email is used by another user
+    const existingUser = await User.findOne({ email, _id: { $ne: admin._id } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+
+    // Update admin
+    admin.name = name;
+    admin.email = email;
+    admin.phone = phone;
+    await admin.save();
+
+    res.json({ message: 'Profile updated successfully', admin });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+// Update admin password
+const updateAdminPassword = async (req, res) => {
+  try {
+    console.log('Inside updateAdminPassword, req.user:', req.user);
+    const adminId = req.user.id; 
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword)
+      return res.status(400).json({ message: 'Old and new passwords are required' });
+
+const admin = await User.findOne({ email: req.user.email, role: 'admin' });
+    if (!admin) return res.status(404).json({ message: 'Admin not found' });
+
+    const isMatch = await bcrypt.compare(oldPassword, admin.password);
+    if (!isMatch) return res.status(400).json({ message: 'Old password is incorrect' });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    admin.password = hashedPassword;
+    await admin.save();
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+
 module.exports = {
   getAdminProfile,
   getCurrentAdminProfile,
@@ -371,7 +432,9 @@ module.exports = {
   getDoctorsTimeSeries,
   getAppointmentsTimeSeries,
   deactivatePatient,
-  activatePatient
+  activatePatient,
+    updateAdminProfile,
+  updateAdminPassword
 };
 
 

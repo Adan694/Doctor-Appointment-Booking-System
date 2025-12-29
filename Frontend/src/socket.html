@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.io Quick Test</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  </head>
+  <body>
+    <h1>Socket.io Connection Test</h1>
+    <button onclick="connect()">Connect</button>
+    <button onclick="test()">Test</button>
+    <div id="output"></div>
+
+    <script>
+      let socket = null;
+      const output = document.getElementById("output");
+
+      function log(msg) {
+        output.innerHTML += `<p>${msg}</p>`;
+        console.log(msg);
+      }
+
+      function connect() {
+        log("🔄 Connecting...");
+        socket = io("http://localhost:3000", {
+          auth: {
+            userId: "test-user",
+            role: "admin",
+            name: "Test Admin",
+          },
+        });
+
+        socket.on("connect", () => {
+          log(`✅ Connected! ID: ${socket.id}`);
+        });
+
+        socket.onAny((eventName, ...args) => {
+          log(`📥 Event: "${eventName}" - ${JSON.stringify(args[0])}`);
+        });
+
+        socket.on("error", (err) => {
+          log(`❌ Error: ${JSON.stringify(err)}`);
+        });
+      }
+
+      function test() {
+        if (!socket) {
+          log("❌ Not connected!");
+          return;
+        }
+        log("📤 Sending test...");
+        socket.emit("requestOnlineUsers");
+        socket.emit("test_message", { message: "Hello" });
+      }
+    </script>
+  </body>
+</html>

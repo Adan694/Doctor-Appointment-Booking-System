@@ -419,6 +419,72 @@
           padding: 8px;
         }
       }
+      .search-container {
+        margin: 20px 0;
+        display: flex;
+        justify-content: flex-end;
+        margin-right: 800px;
+      }
+      .search-container input {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        width: 250px;
+      }
+      .pagination {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+        gap: 10px;
+      }
+      .pagination button {
+        padding: 8px 14px;
+        border: none;
+        border-radius: 6px;
+        background-color: #166e6b;
+        color: #fff;
+        cursor: pointer;
+      }
+      .pagination button.active {
+        background-color: #28a745;
+      }
+      #loaderOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+
+      .loader {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #166e6b; /* matches theme */
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .activate-btn,
+      .deactivate-btn {
+        flex: 1;
+        min-width: 140px;
+        text-align: center;
+        justify-content: center;
+      }
     </style>
   </head>
 
@@ -432,6 +498,7 @@
         <li><a href="admindoclist.html">Doctors List</a></li>
         <li><a href="patients-list.html">Patients List</a></li>
         <li><a href="AdminFeedback.html">Feedback</a></li>
+        <li><a href="settings.html">Profile</a></li>
       </ul>
     </div>
     <div id="overlay"></div>
@@ -444,8 +511,13 @@
       </header>
 
       <table id="patientsTable">
+        <div class="search-container">
+          <input type="text" id="searchInput" placeholder="Search by name..." />
+        </div>
+
         <thead>
           <tr>
+            <th>Name</th>
             <th>Email</th>
             <th>Status</th>
             <th>Actions</th>
@@ -455,6 +527,10 @@
           <!-- Patient rows will be inserted here -->
         </tbody>
       </table>
+      <div class="pagination" id="pagination"></div>
+    </div>
+    <div id="loaderOverlay">
+      <div class="loader"></div>
     </div>
 
     <script>
@@ -462,6 +538,10 @@
       const bar = document.getElementById("bar");
       const sidebar = document.querySelector(".sidebar");
       const overlay = document.getElementById("overlay");
+      let allPatients = [];
+      let filteredPatients = [];
+      let currentPage = 1;
+      const rowsPerPage = 5;
 
       bar.addEventListener("click", function () {
         sidebar.classList.toggle("active");
@@ -510,40 +590,13 @@
             console.error("Unexpected response:", patients);
             return;
           }
-          patients.forEach((patient) => {
-            const tr = document.createElement("tr");
-            tr.setAttribute("data-id", patient._id); // <-- add this
+          // Save patients globally for search + pagination
+          allPatients = patients;
+          filteredPatients = [...allPatients];
 
-            tr.innerHTML = `
-        <td>${patient.email || ""}</td>
-        <td>
-    <span class="status-badge ${patient.isActive ? "active" : "inactive"}">
-      ${patient.isActive ? "Active" : "Inactive"}
-    </span>
-  </td>
-        <td>
-            <button class="details-btn" data-id="${
-              patient._id
-            }" style="margin-right:10px;">
-                <i class="fas fa-info-circle"></i> Show Details
-            </button>
-            ${
-              patient.isActive
-                ? `<button class="deactivate-btn" data-id="${patient._id}">
-             <i class="fas fa-user-slash"></i> Deactivate
-           </button>`
-                : `<button class="activate-btn" data-id="${patient._id}">
-             <i class="fas fa-user-check"></i> Activate
-           </button>`
-            }
-            <button class="delete-btn" data-id="${patient._id}">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-        </td>
-    `;
+          // Render with pagination
+          displayPatients();
 
-            tbody.appendChild(tr);
-          });
           tbody.querySelectorAll(".deactivate-btn").forEach((button) => {
             button.addEventListener("click", (e) => {
               const id = e.currentTarget.dataset.id;
@@ -606,6 +659,8 @@
       async function deletePatient(patientId) {
         const token = localStorage.getItem("authToken");
         try {
+          showLoader();
+
           const res = await fetch(
             `http://localhost:3000/api/admin/patients/${patientId}`,
             {
@@ -613,6 +668,8 @@
               headers: { Authorization: "Bearer " + token },
             }
           );
+          hideLoader();
+
           if (res.ok) {
             alert("Patient profile deleted successfully.");
             fetchPatients();
@@ -624,6 +681,8 @@
             );
           }
         } catch (error) {
+          hideLoader();
+
           console.error("Error deleting patient:", error);
           alert("Error deleting patient profile.");
         }
@@ -631,6 +690,8 @@
       async function deactivatePatient(patientId) {
         const token = localStorage.getItem("authToken");
         try {
+          showLoader();
+
           const res = await fetch(
             `http://localhost:3000/api/admin/patients/${patientId}/deactivate`,
             {
@@ -638,6 +699,8 @@
               headers: { Authorization: "Bearer " + token },
             }
           );
+          hideLoader();
+
           if (res.ok) {
             alert("Patient account deactivated.");
             fetchPatients();
@@ -646,6 +709,8 @@
             alert("Failed: " + data.message);
           }
         } catch (err) {
+          hideLoader();
+
           console.error("Error:", err);
         }
       }
@@ -653,6 +718,8 @@
       async function activatePatient(patientId) {
         const token = localStorage.getItem("authToken");
         try {
+          showLoader();
+
           const res = await fetch(
             `http://localhost:3000/api/admin/patients/${patientId}/activate`,
             {
@@ -661,6 +728,8 @@
             }
           );
           if (res.ok) {
+            hideLoader();
+
             alert("Patient account activated.");
             fetchPatients();
           } else {
@@ -668,8 +737,86 @@
             alert("Failed: " + data.message);
           }
         } catch (err) {
+          hideLoader();
+
           console.error("Error:", err);
         }
+      }
+      function displayPatients() {
+        const tbody = document.querySelector("#patientsTable tbody");
+        tbody.innerHTML = "";
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const patientsToShow = filteredPatients.slice(start, end);
+
+        patientsToShow.forEach((patient) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+      <td>${patient.name || ""}</td>
+      <td>${patient.email || ""}</td>
+      <td><span class="status-badge ${
+        patient.isActive ? "active" : "inactive"
+      }">
+        ${patient.isActive ? "Active" : "Inactive"}
+      </span></td>
+<td>
+  <button class="details-btn" data-id="${
+    patient._id
+  }" style="margin-right:10px;">
+      <i class="fas fa-info-circle"></i> Show Details
+  </button>
+  ${
+    patient.isActive
+      ? `<button class="deactivate-btn" data-id="${patient._id}">
+           <i class="fas fa-user-slash"></i> Deactivate
+         </button>`
+      : `<button class="activate-btn" data-id="${patient._id}">
+           <i class="fas fa-user-check"></i> Activate
+         </button>`
+  }
+  <button class="delete-btn" data-id="${patient._id}">
+      <i class="fas fa-trash-alt"></i>
+  </button>
+</td>
+    `;
+          tbody.appendChild(tr);
+        });
+
+        renderPagination();
+      }
+
+      function renderPagination() {
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+        const pageCount = Math.ceil(filteredPatients.length / rowsPerPage);
+
+        for (let i = 1; i <= pageCount; i++) {
+          const btn = document.createElement("button");
+          btn.textContent = i;
+          if (i === currentPage) btn.classList.add("active");
+          btn.addEventListener("click", () => {
+            currentPage = i;
+            displayPatients();
+          });
+          pagination.appendChild(btn);
+        }
+      }
+
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
+        filteredPatients = allPatients.filter((p) =>
+          (p.name || "").toLowerCase().includes(query)
+        );
+        currentPage = 1;
+        displayPatients();
+      });
+      function showLoader() {
+        document.getElementById("loaderOverlay").style.display = "flex";
+      }
+
+      function hideLoader() {
+        document.getElementById("loaderOverlay").style.display = "none";
       }
 
       // Scroll to top on page load
