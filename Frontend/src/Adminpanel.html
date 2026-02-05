@@ -547,6 +547,7 @@
 
       <!-- FontAwesome for chat icon -->
     </main>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
     <script>
       const bar = document.getElementById("bar");
@@ -805,54 +806,59 @@
         }
       }
 
+      const socket = io("http://localhost:3000");
       const chatBtn = document.getElementById("chatBtn");
       const chatNotification = document.getElementById("chatNotification");
 
       async function fetchUnreadCount() {
         const token = localStorage.getItem("authToken");
+
+        if (!token) {
+          chatNotification.style.display = "none";
+          return;
+        }
+
         try {
           const res = await fetch(
-            "http://localhost:3000/api/doctor-chats/alldoctors",
+            "http://localhost:3000/api/admin/total-unread",
             {
               headers: {
                 Authorization: "Bearer " + token,
               },
             }
           );
-          const doctors = await res.json();
 
-          // Sum all unread counts
-          let unreadCount = doctors.reduce(
-            (sum, doc) => sum + (doc.unreadCount || 0),
-            0
-          );
+          if (res.ok) {
+            const data = await res.json();
+            const unreadCount = data.totalUnread || 0;
 
-          updateBadge(unreadCount);
+            if (unreadCount > 0) {
+              chatNotification.style.display = "block";
+              chatNotification.textContent =
+                unreadCount > 99 ? "99+" : unreadCount;
+            } else {
+              chatNotification.style.display = "none";
+            }
+          }
         } catch (err) {
-          console.error("Error fetching unread count:", err);
+          console.log("Error fetching unread");
         }
       }
 
-      function updateBadge(count) {
-        if (count > 0) {
-          chatNotification.style.display = "block";
-          chatNotification.textContent = count > 9 ? "9+" : count;
-        } else {
-          chatNotification.style.display = "none";
-        }
-      }
+      // 🔔 Update badge instantly when admin reads messages in chat page
+      socket.on("messages_read", fetchUnreadCount);
 
-      // Clear unread on open
+      // 🔔 Update badge instantly when user sends new message
+      socket.on("new_message", fetchUnreadCount);
+
+      // Redirect to chat
       chatBtn.addEventListener("click", () => {
-        // You might also want to call your mark-read API here per doctor
-        unreadCount = 0;
-        updateBadge(0);
-        window.location.href = "Adminchat.html"; // redirect to chat page
+        window.location.href = "Adminchat.html";
       });
 
-      // Fetch unread counts initially and then every X seconds
+      // Initial load + periodic refresh
       fetchUnreadCount();
-      setInterval(fetchUnreadCount, 5000); // refresh every 5s
+      setInterval(fetchUnreadCount, 10000);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>

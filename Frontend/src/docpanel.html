@@ -567,77 +567,35 @@
     <button id="chatBtn">💬<span id="chatNotification">0</span></button>
 
     <script>
-      console.log("===========================================");
       console.log("🩺 DOCTOR PANEL INITIALIZING");
-      console.log("===========================================");
 
       const backendURL = "http://localhost:3000";
       const doctorId = localStorage.getItem("doctorId");
-      const token = localStorage.getItem("authToken");
       const chatNotificationEl = document.getElementById("chatNotification");
       const chatBtn = document.getElementById("chatBtn");
       const statusIndicator = document.getElementById("doctorStatusIndicator");
 
       let unreadCount = 0;
-      let appointmentsCount = 0;
-      let patientsCount = 0;
-      let chart;
       let socket = null;
+      let chart;
 
-      // ------------------- SOCKET CONNECTION MANAGER -------------------
+      // ------------------- SOCKET CONNECTION -------------------
       function initializeSocketConnection() {
-        console.log("🔌 Initializing socket connection...");
-
-        if (!doctorId || !token) {
-          console.error("❌ Missing doctor credentials for socket connection");
+        if (!doctorId) {
+          console.error("❌ Missing doctor ID");
           updateStatusIndicator(false);
           return;
         }
 
-        // Close existing socket if any
-        if (socket && socket.connected) {
-          console.log("🔄 Disconnecting existing socket...");
-          socket.disconnect();
-        }
+        // Connect
+        socket = io(backendURL, { transports: ["websocket", "polling"] });
 
-        // Create new socket connection
-        socket = io("http://localhost:3000", {
-          auth: {
-            token: token,
-            role: "doctor",
-            userId: doctorId,
-            email: localStorage.getItem("userEmail"),
-            name: "Doctor",
-          },
-          transports: ["websocket", "polling"],
-          reconnection: true,
-          reconnectionAttempts: 3,
-          reconnectionDelay: 1000,
-        });
-
-        // Socket Event Handlers
         socket.on("connect", () => {
-          console.log("✅✅✅ SOCKET CONNECTED!");
-          console.log("📊 Connection Details:", {
-            socketId: socket.id,
-            doctorId: doctorId,
-            connected: true,
-          });
+          console.log("✅ Socket connected:", socket.id);
 
-          localStorage.setItem("socketId", socket.id);
+          // Join doctor room
+          socket.emit("join_user", { userId: doctorId, role: "doctor" });
           updateStatusIndicator(true);
-
-          // Join doctor's room
-          socket.emit("join", doctorId);
-          console.log("📢 Joined room:", doctorId);
-
-          // Emit doctor online status
-          socket.emit("doctor_online", {
-            doctorId: doctorId,
-            timestamp: Date.now(),
-            name: "Doctor",
-          });
-          console.log("📢 Emitted doctor_online event");
         });
 
         socket.on("disconnect", (reason) => {
@@ -645,47 +603,32 @@
           updateStatusIndicator(false);
         });
 
-        socket.on("connect_error", (error) => {
-          console.error("❌ Socket connection error:", error);
-          updateStatusIndicator(false);
-        });
-
-        socket.on("receive_message", (msg) => {
-          console.log("📩 New message received via socket:", msg);
-          if (
-            msg.receiverId.toString() === doctorId &&
-            msg.senderId.toString() !== doctorId
-          ) {
+        // Receive messages
+        socket.on("new_message", (msg) => {
+          // Only count messages where doctor is receiver
+          if (msg.receiverId === doctorId) {
             unreadCount++;
             updateChatNotification();
-            console.log("📈 Unread count increased to:", unreadCount);
+            console.log("📩 New message received:", msg);
           }
         });
 
-        socket.on("userStatusUpdate", (data) => {
-          console.log("📢 User status update:", data);
+        // Track online users (optional)
+        socket.on("online_users", (users) => {
+          console.log("🟢 Online users:", users);
         });
-
-        socket.on("reconnect", (attemptNumber) => {
-          console.log(`🔄 Reconnected after ${attemptNumber} attempts`);
-          updateStatusIndicator(true);
-        });
-
-        // Store socket globally
-        window.userSocket = socket;
       }
 
+      // ------------------- UI UPDATES -------------------
       function updateStatusIndicator(isOnline) {
         if (isOnline) {
           statusIndicator.className = "doctor-status online";
           statusIndicator.innerHTML =
-            '<span class="doctor-status-indicator" style="background: white;"></span><span>Online</span>';
-          console.log("🟢 Doctor status: Online");
+            '<span class="doctor-status-indicator"></span><span>Online</span>';
         } else {
           statusIndicator.className = "doctor-status offline";
           statusIndicator.innerHTML =
-            '<span class="doctor-status-indicator" style="background: white;"></span><span>Offline</span>';
-          console.log("🔴 Doctor status: Offline");
+            '<span class="doctor-status-indicator"></span><span>Offline</span>';
         }
       }
 
@@ -698,49 +641,15 @@
         }
       }
 
-      // ------------------- CHAT FUNCTIONS -------------------
-      async function fetchUnreadMessages() {
-        console.log("📥 Fetching unread messages...");
-        try {
-          const res = await fetch(
-            `${backendURL}/api/doctor-chats/unread?doctorId=${doctorId}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
+      // ------------------- CHAT BUTTON -------------------
+      chatBtn.addEventListener("click", () => {
+        unreadCount = 0;
+        updateChatNotification();
+        window.location.href = "doctorchat.html";
+      });
 
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
-
-          unreadCount = Array.isArray(data) ? data.length : 0;
-          updateChatNotification();
-          console.log("📊 Unread count:", unreadCount);
-        } catch (err) {
-          console.error("❌ Failed to fetch unread messages:", err);
-        }
-      }
-
-      async function markMessagesAsRead() {
-        console.log("📝 Marking messages as read...");
-        try {
-          const res = await fetch(
-            `${backendURL}/api/doctor-chats/mark-read?doctorId=${doctorId}`,
-            {
-              method: "POST",
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-
-          if (!res.ok)
-            throw new Error(`Error marking messages read: ${res.status}`);
-
-          unreadCount = 0;
-          updateChatNotification();
-          console.log("✅ Messages marked as read");
-        } catch (err) {
-          console.error("❌ Error marking messages:", err);
-        }
-      }
+      // ------------------- INITIALIZE -------------------
+      initializeSocketConnection();
 
       // ------------------- CHAT BUTTON -------------------
       chatBtn.addEventListener("click", async () => {
@@ -934,6 +843,8 @@
       // ------------------- INITIALIZATION -------------------
       document.addEventListener("DOMContentLoaded", async function () {
         console.log("🌐 DOM fully loaded");
+        const token = localStorage.getItem("authToken") || "";
+
         console.log("📋 Session Data:", {
           doctorId: doctorId,
           hasToken: !!token,
@@ -956,6 +867,50 @@
 
         console.log("✅ Doctor panel initialization complete");
       });
+
+      async function fetchUnreadMessages() {
+        if (!doctorId) return;
+        try {
+          const res = await fetch(
+            `${backendURL}/api/doctor-chats/unread-count/${doctorId}`
+          );
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          unreadCount = data.count || 0;
+          updateChatNotification();
+          console.log("📊 Unread messages:", unreadCount);
+        } catch (err) {
+          console.error("❌ Error fetching unread messages:", err);
+        }
+      }
+      async function markMessagesAsRead() {
+        if (!doctorId) return;
+        try {
+          const res = await fetch(
+            `${backendURL}/mark-read?doctorId=${doctorId}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                // Include token if your backend requires authentication
+                Authorization: `Bearer ${
+                  localStorage.getItem("authToken") || ""
+                }`,
+              },
+            }
+          );
+
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          console.log(`✅ Messages marked as read: ${data.markedCount}`);
+
+          // Reset unread count on frontend
+          unreadCount = 0;
+          updateChatNotification();
+        } catch (err) {
+          console.error("❌ Error marking messages as read:", err);
+        }
+      }
 
       // Cleanup on page unload
       window.addEventListener("beforeunload", function () {

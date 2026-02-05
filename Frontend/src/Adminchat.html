@@ -467,6 +467,54 @@
       ::-webkit-scrollbar-thumb:hover {
         background: rgba(0, 0, 0, 0.3);
       }
+
+      .chat-header-avatar.patient {
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 100%
+        ) !important;
+      }
+
+      .chat-header-avatar.doctor {
+        background: linear-gradient(
+          135deg,
+          #f093fb 0%,
+          #f5576c 100%
+        ) !important;
+      } /* Unread badge (red dot + count) */
+      .chat-item .unread-badge {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        color: white;
+        border-radius: 50%;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(238, 90, 82, 0.3);
+        z-index: 2;
+      }
+
+      /* Make sure chat-item has relative positioning for badge */
+      .chat-item {
+        position: relative;
+      }
+      .user-online-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        background: #bdc3c7;
+        margin-left: 8px;
+      }
     </style>
   </head>
   <body>
@@ -479,7 +527,6 @@
           >
             Back to Dashboard
           </button>
-
           <h2>Admin Chat</h2>
           <div class="online-status">
             <span class="status-dot"></span>
@@ -489,16 +536,13 @@
 
         <div class="user-type-switcher" style="padding: 0 20px">
           <button id="patientsBtn" class="user-type-btn active">
-            <span>👥</span> Patients
+            👥 Patients
           </button>
-          <button id="doctorsBtn" class="user-type-btn">
-            <span>👨‍⚕️</span> Doctors
-          </button>
+          <button id="doctorsBtn" class="user-type-btn">👨‍⚕️ Doctors</button>
         </div>
 
         <div class="chat-list-container">
           <ul id="chatList" class="chat-list"></ul>
-
           <div id="emptyChatList" class="empty-state" style="display: none">
             <div class="empty-state-icon">💬</div>
             <h3>No conversations yet</h3>
@@ -510,15 +554,7 @@
       <div class="chat-window">
         <div class="chat-header" id="chatHeader">
           <div class="chat-header-info">
-            <div
-              class="chat-header-avatar"
-              id="currentChatAvatar"
-              style="
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-              "
-            >
-              👤
-            </div>
+            <div class="chat-header-avatar" id="currentChatAvatar">👤</div>
             <div>
               <div class="chat-user-name" id="currentChatName">
                 Select a user
@@ -552,412 +588,788 @@
       </div>
     </div>
 
-    <script>
-      let chatType = "patients";
-      let chats = [];
-      let currentChat = null;
-      let socket = null;
+    <!-- <script>
+      const socket = io("http://localhost:3000");
 
-      const backendURL = "http://localhost:3000";
-      const token = localStorage.getItem("authToken");
-      const currentAdminId = localStorage.getItem("adminId");
+      const patientsBtn = document.getElementById("patientsBtn");
+      const doctorsBtn = document.getElementById("doctorsBtn");
+      const chatList = document.getElementById("chatList");
+      const emptyChatList = document.getElementById("emptyChatList");
+      const chatBox = document.getElementById("chatMessages");
+      const msgInput = document.getElementById("msgInput");
+      const sendBtn = document.querySelector(".send-button");
 
-      const chatListEl = document.getElementById("chatList");
-      const chatMessagesEl = document.getElementById("chatMessages");
-      const currentChatNameEl = document.getElementById("currentChatName");
-      const currentChatStatusEl = document.getElementById("currentChatStatus");
-      const currentChatAvatarEl = document.getElementById("currentChatAvatar");
-      const msgInputEl = document.getElementById("msgInput");
-      const sendButtonEl = document.querySelector(".send-button");
-      const emptyChatListEl = document.getElementById("emptyChatList");
+      let activeUser = null;
 
-      // Initialize everything
-      function initializeApp() {
-        console.log("🔍 ADMIN INITIALIZATION DEBUG:");
-        console.log("📱 Admin ID from localStorage:", currentAdminId);
-        console.log("🔑 Token exists:", !!token);
-
-        if (!currentAdminId) {
-          console.error("Admin not logged in");
-          window.location.href = "login.html";
-          return;
-        }
-
-        // Initialize Socket.io
-        initSocket();
-
-        // Set up button listeners
-        document.getElementById("patientsBtn").onclick = () =>
-          switchType("patients");
-        document.getElementById("doctorsBtn").onclick = () =>
-          switchType("doctors");
-
-        // Load initial chats
-        loadChats();
-      }
-
-      // Socket.io initialization
-      function initSocket() {
-        console.log("🔌 ADMIN SOCKET INITIALIZING...");
-        const adminEmail =
-          localStorage.getItem("adminEmail") ||
-          localStorage.getItem("userEmail");
-
-        // Disconnect any existing socket
-        if (socket) {
-          socket.disconnect();
-          socket = null;
-        }
-
-        socket = io(backendURL, {
-          auth: {
-            token: token,
-            role: "admin",
-            email: adminEmail,
-            userId: currentAdminId,
-            name: "Admin Official",
-          },
-          transports: ["websocket", "polling"],
-        });
-
-        socket.on("connect", () => {
-          console.log("✅✅✅ ADMIN SOCKET CONNECTED:", socket.id);
-          document.getElementById("adminStatus").textContent = "Connected";
-          document.querySelector(".status-dot").style.background = "#2ecc71";
-        });
-
-        // 🔥 CRITICAL: Listen for incoming messages
-        socket.on("receive_message", (messageData) => {
-          // Update chat list first
-          updateChatListWithNewMessage(messageData);
-
-          // If the current chat matches, append the message
-          if (
-            currentChat &&
-            (messageData.senderId === currentChat._id ||
-              messageData.receiverId === currentChat._id)
-          ) {
-            appendNewMessage(messageData);
-            markRead(currentChat._id); // Mark messages as read immediately
-          }
-        });
-
-        socket.on("disconnect", () => {
-          console.log("🔌 Socket disconnected");
-          document.getElementById("adminStatus").textContent = "Disconnected";
-          document.querySelector(".status-dot").style.background = "#95a5a6";
-        });
-
-        socket.on("connect_error", (error) => {
-          console.error("❌ Socket connection error:", error);
-          document.getElementById("adminStatus").textContent =
-            "Connection Error";
-          document.querySelector(".status-dot").style.background = "#e74c3c";
-        });
-
-        socket.on("error", (data) => {
-          console.error("❌ Socket error:", data);
-        });
-      }
-
-      // Update chat list when new message arrives
-      function updateChatListWithNewMessage(messageData) {
-        const senderId = messageData.senderId;
-        const receiverId = messageData.receiverId;
-        const otherUserId = senderId === currentAdminId ? receiverId : senderId;
-
-        const chatIndex = chats.findIndex((chat) => chat._id === otherUserId);
-
-        if (chatIndex !== -1) {
-          chats[chatIndex].lastMessage = messageData.message;
-
-          if (senderId !== currentAdminId && currentChat?._id !== otherUserId) {
-            chats[chatIndex].unreadCount =
-              (chats[chatIndex].unreadCount || 0) + 1;
-          }
-
-          renderChatList();
-        }
-      }
-
-      // Load chats from backend
-      async function loadChats() {
+      // -------------------------
+      // Fetch users from backend
+      async function fetchUsers(role) {
         try {
-          chats = await getAllChats(chatType);
-          renderChatList();
+          const res = await fetch(
+            `http://localhost:3000/api/admin/users/${role}`
+          );
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+          const users = await res.json();
+          if (!Array.isArray(users)) throw new Error("Invalid data received");
+
+          chatList.innerHTML = "";
+          if (users.length === 0) {
+            emptyChatList.style.display = "flex";
+            return;
+          } else {
+            emptyChatList.style.display = "none";
+          }
+
+          users.forEach((user) => {
+            const lastMsg = user.lastMessage || "Click to chat";
+            const li = document.createElement("li");
+            li.classList.add("chat-item");
+            li.dataset.userid = user._id; // use _id to identify user reliably
+            li.dataset.role = role;
+            li.innerHTML = `
+          <div class="chat-item-info">
+            <div class="user-avatar ${role.slice(0, -1)}">${user.name[0]}</div>
+            <div class="user-details">
+              <div class="user-name">${user.name}</div>
+              <div class="last-message">${lastMsg}</div>
+            </div>
+          </div>
+        `;
+            li.onclick = () => openChat(user, li, role);
+            chatList.appendChild(li);
+          });
         } catch (err) {
-          console.error("Error loading chats:", err);
+          console.error("Error fetching users:", err);
+          emptyChatList.style.display = "flex";
+          chatList.innerHTML = "";
         }
       }
 
-      // Fetch all chats based on type
-      async function getAllChats(type) {
-        const url =
-          type === "patients"
-            ? `${backendURL}/api/chats/all`
-            : `${backendURL}/api/doctor-chats/alldoctors`;
+      // Load initial users (patients)
+      fetchUsers("patients");
 
-        const res = await fetch(url, {
-          headers: { Authorization: `Bearer ${token}` },
+      // Switch buttons
+      patientsBtn.addEventListener("click", () => {
+        fetchUsers("patients");
+        patientsBtn.classList.add("active");
+        doctorsBtn.classList.remove("active");
+      });
+      doctorsBtn.addEventListener("click", () => {
+        fetchUsers("doctors");
+        doctorsBtn.classList.add("active");
+        patientsBtn.classList.remove("active");
+      });
+
+      // -------------------------
+      // Receive new messages globally
+      socket.off("new_message"); // ensure no duplicate listeners
+      socket.on("new_message", (msg) => {
+        // show in active chat
+        if (
+          activeUser &&
+          (msg.senderId === activeUser._id || msg.receiverId === activeUser._id)
+        ) {
+          addMessage(msg);
+        }
+
+        // update sidebar last message
+        const chatItems = document.querySelectorAll(".chat-item");
+        chatItems.forEach((item) => {
+          if (
+            item.dataset.userid === msg.senderId ||
+            item.dataset.userid === msg.receiverId
+          ) {
+            const lastMsgEl = item.querySelector(".last-message");
+            if (lastMsgEl) lastMsgEl.textContent = msg.message;
+          }
         });
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-        const data = await res.json();
-        console.log(`📋 Loaded ${data.length} ${type} chats`);
-        return data;
+      });
+
+      // -------------------------
+      // Open chat
+      function openChat(user, element, role) {
+        activeUser = user;
+        msgInput.disabled = false;
+        sendBtn.disabled = false;
+
+        setHeaderAvatar(user, role);
+
+        // Highlight selected user
+        document
+          .querySelectorAll(".chat-item")
+          .forEach((el) => el.classList.remove("active"));
+        element.classList.add("active");
+
+        // Join socket room
+        socket.emit("admin_join", { userId: user._id, role });
+
+        // Fetch chat history
+        fetch(`http://localhost:3000/api/chats/${user._id}`)
+          .then((res) => res.json())
+          .then((chats) => {
+            chatBox.innerHTML = "";
+            if (!chats || chats.length === 0) {
+              chatBox.innerHTML = `<div class="empty-state">
+            <div class="empty-state-icon">💭</div>
+            <h3>No messages yet</h3>
+          </div>`;
+            } else {
+              chats.forEach(addMessage);
+            }
+          });
       }
 
-      // Render chat list
-      function renderChatList() {
-        chatListEl.innerHTML = "";
+      // -------------------------
+      // Header avatar logic
+      function setHeaderAvatar(user, role) {
+        const avatarEl = document.getElementById("currentChatAvatar");
 
-        if (chats.length === 0) {
-          emptyChatListEl.style.display = "flex";
-          return;
+        avatarEl.style.backgroundImage = "";
+        avatarEl.textContent = "";
+
+        avatarEl.className = `chat-header-avatar ${role.slice(0, -1)}`;
+
+        if (user.avatar) {
+          avatarEl.style.backgroundImage = `url(${user.avatar})`;
+          avatarEl.style.backgroundSize = "cover";
+          avatarEl.style.backgroundPosition = "center";
+          avatarEl.textContent = "";
+        } else if (user.name && user.name.length > 0) {
+          avatarEl.textContent = user.name[0];
+        } else {
+          avatarEl.textContent = "👤";
+        }
+      }
+
+      // -------------------------
+      // Send message
+      function sendMessage() {
+        if (!activeUser) return;
+        const msg = msgInput.value.trim();
+        if (!msg) return;
+
+        const messageData = {
+          senderId: "ADMIN-ID", // replace with your admin ID
+          senderName: "Admin", // needed for sidebar update
+          senderRole: "admin",
+          receiverId: activeUser._id,
+          receiverName: activeUser.name,
+          receiverRole: activeUser.role,
+          message: msg,
+          timestamp: new Date().toISOString(),
+        };
+
+        socket.emit("send_message", messageData);
+        addMessage(messageData);
+
+        // update last message instantly in sidebar
+        const sidebarItem = document.querySelector(
+          `.chat-item[data-userid="${activeUser._id}"]`
+        );
+        if (sidebarItem) {
+          const lastMsgEl = sidebarItem.querySelector(".last-message");
+          if (lastMsgEl) lastMsgEl.textContent = msg;
         }
 
-        emptyChatListEl.style.display = "none";
+        msgInput.value = "";
+      }
 
-        chats.forEach((chat) => {
-          const chatIdStr = chat._id.toString();
+      // -------------------------
+      // Add message to chat window
+      function addMessage(msg) {
+        const msgEl = document.createElement("div");
+        msgEl.classList.add("message");
+        msgEl.classList.add(msg.senderRole === "admin" ? "sent" : "received");
 
-          const li = document.createElement("li");
-          li.className = "chat-item";
-          li.dataset.userId = chatIdStr;
+        const time = msg.timestamp || msg.createdAt || Date.now();
+        const dateObj = new Date(time);
+        const formattedTime = !isNaN(dateObj)
+          ? dateObj.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
 
-          const avatarClass = chatType === "patients" ? "patient" : "doctor";
-          const avatarText = chat.name.charAt(0).toUpperCase();
+        msgEl.innerHTML = `
+      <p>${msg.message}</p>
+      <div class="message-time">${formattedTime}</div>
+    `;
 
-          li.innerHTML = `
+        chatBox.appendChild(msgEl);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      // -------------------------
+      // Send message on Enter key
+      msgInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+    </script> -->
+
+    <script>
+      const socket = io("http://localhost:3000");
+      /* ----------------------------
+   ONLINE USER LIVE SYSTEM
+---------------------------- */
+      let latestOnlineUsers = {}; // store online users globally
+
+      socket.emit("admin_connected"); // notify backend when page opens
+
+      // Listen to online users list
+      socket.on("online_users", (users) => {
+        latestOnlineUsers = users; // store the latest online users
+        updateOnlineStatus(users); // immediately update the current chat list
+      });
+
+      // Paint online/offline dots in user sidebar
+      function updateOnlineStatus(users) {
+        const items = document.querySelectorAll(".chat-item");
+
+        items.forEach((item) => {
+          const uid = item.dataset.userid;
+          let dot = item.querySelector(".user-online-dot");
+
+          // Create dot if it doesn't exist
+          if (!dot) {
+            const nameEl = item.querySelector(".user-name");
+            if (!nameEl) return; // skip if element missing
+            dot = document.createElement("span");
+            dot.classList.add("user-online-dot");
+            dot.style.cssText = `
+        width:10px;height:10px;border-radius:50%;
+        display:inline-block;margin-left:8px;
+      `;
+            nameEl.appendChild(dot);
+          }
+
+          // Update dot color
+          if (users[uid]) {
+            dot.style.background = "#2ecc71"; // green = online
+          } else {
+            dot.style.background = "#bdc3c7"; // gray = offline
+          }
+        });
+      }
+
+      const patientsBtn = document.getElementById("patientsBtn");
+      const doctorsBtn = document.getElementById("doctorsBtn");
+      const chatList = document.getElementById("chatList");
+      const emptyChatList = document.getElementById("emptyChatList");
+      const chatBox = document.getElementById("chatMessages");
+      const msgInput = document.getElementById("msgInput");
+      const sendBtn = document.querySelector(".send-button");
+
+      let activeUser = null;
+      let currentRole = "patients";
+      let unreadCountsCache = {};
+
+      // -------------------------
+      // Initialize socket listeners
+      function initializeSocketListeners() {
+        socket.off("new_message");
+        socket.on("new_message", handleNewMessage);
+      }
+
+      // -------------------------
+      // Handle new message from socket
+      function handleNewMessage(msg) {
+        const adminId = "689f5be6e5432f608d4b3a54";
+        const isMessageForAdmin = msg.receiverId === adminId;
+        const isMessageFromAdmin = msg.senderId === adminId;
+
+        console.log("New message received:", {
+          msg,
+          isMessageForAdmin,
+          isMessageFromAdmin,
+          isRead: msg.read, // Check this value
+          activeUser: activeUser?._id,
+        });
+
+        // If message is FOR admin (not from admin) AND it's unread
+        if (isMessageForAdmin && !isMessageFromAdmin && !msg.read) {
+          const senderId = msg.senderId;
+
+          // Get current unread count
+          let currentUnread = parseInt(unreadCountsCache[senderId] || 0);
+
+          // If we're NOT currently viewing this user's chat, increment the count
+          if (!activeUser || activeUser._id !== senderId) {
+            currentUnread += 1;
+            unreadCountsCache[senderId] = currentUnread;
+            saveUnreadCounts();
+
+            console.log(
+              `Incremented unread count for ${senderId}: ${currentUnread}`
+            );
+
+            // Update the badge in UI
+            updateUnreadBadge(senderId, currentUnread);
+          }
+        }
+
+        // Update last message
+        updateLastMessage(msg.senderId, msg.message);
+
+        // If message is in active chat, show it
+        if (
+          activeUser &&
+          (msg.senderId === activeUser._id || msg.receiverId === activeUser._id)
+        ) {
+          addMessage(msg);
+          // If it's a new message TO admin in active chat, mark as read
+          if (msg.receiverId === adminId && !msg.read) {
+            markMessagesAsRead(activeUser._id);
+          }
+        }
+      }
+
+      // -------------------------
+      // Check if user exists in current list, if not add them
+      function checkAndAddUserToList(userId, userRole) {
+        // Check if user already exists in current view
+        const existingItem = document.querySelector(
+          `.chat-item[data-userid="${userId}"]`
+        );
+        if (existingItem) return;
+
+        // If user is not in current view but their role matches current tab,
+        // we need to fetch their info and add them
+        if (currentRole === userRole + "s") {
+          // Fetch user details and add to list
+          fetchUserAndAddToList(userId);
+        }
+      }
+
+      // -------------------------
+      // Fetch single user and add to list
+      async function fetchUserAndAddToList(userId) {
+        try {
+          const res = await fetch(
+            `http://localhost:3000/api/admin/user/${userId}`
+          );
+          if (!res.ok) return;
+
+          const user = await res.json();
+          if (!user) return;
+
+          // Add user to chat list
+          addUserToChatList(user, currentRole);
+        } catch (err) {
+          console.error("Error fetching user:", err);
+        }
+      }
+
+      // -------------------------
+      // Add user to chat list
+      function addUserToChatList(user, role) {
+        const existingItem = document.querySelector(
+          `.chat-item[data-userid="${user._id}"]`
+        );
+        if (existingItem) return;
+
+        const lastMsg = user.lastMessage || "Click to chat";
+        const unreadCount = unreadCountsCache[user._id] || 0;
+
+        const li = createChatListItem(user, role, lastMsg, unreadCount);
+
+        // Insert at the top of the list
+        if (chatList.firstChild) {
+          chatList.insertBefore(li, chatList.firstChild);
+        } else {
+          chatList.appendChild(li);
+        }
+
+        // Hide empty state if showing
+        emptyChatList.style.display = "none";
+      }
+
+      // -------------------------
+      // Update unread badge
+      function updateUnreadBadge(userId, count) {
+        console.log(`Updating badge for ${userId}: ${count}`);
+
+        const chatItem = document.querySelector(
+          `.chat-item[data-userid="${userId}"]`
+        );
+        if (chatItem) {
+          chatItem.dataset.unread = count;
+          const badge = chatItem.querySelector(".unread-badge");
+          if (badge) {
+            if (count > 0) {
+              badge.textContent = count;
+              badge.style.display = "inline-block";
+            } else {
+              badge.style.display = "none";
+              badge.textContent = "0";
+            }
+          }
+        }
+      }
+
+      // -------------------------
+      // Update last message
+      function updateLastMessage(userId, message) {
+        const chatItem = document.querySelector(
+          `.chat-item[data-userid="${userId}"]`
+        );
+        if (chatItem) {
+          const lastMsgEl = chatItem.querySelector(".last-message");
+          if (lastMsgEl) {
+            lastMsgEl.textContent = message;
+
+            // Move this chat to top of list
+            if (chatList.firstChild !== chatItem) {
+              chatList.insertBefore(chatItem, chatList.firstChild);
+            }
+          }
+        }
+      }
+
+      // -------------------------
+      // Storage functions
+      function loadUnreadCounts() {
+        try {
+          const stored = localStorage.getItem("admin_unread_counts") || "{}";
+          unreadCountsCache = JSON.parse(stored);
+        } catch (e) {
+          unreadCountsCache = {};
+        }
+      }
+
+      function saveUnreadCounts() {
+        try {
+          localStorage.setItem(
+            "admin_unread_counts",
+            JSON.stringify(unreadCountsCache)
+          );
+        } catch (e) {
+          console.error("Error saving unread counts:", e);
+        }
+      }
+
+      // -------------------------
+      // Fetch users with unread counts
+      async function fetchUsers(role) {
+        try {
+          const res = await fetch(
+            `http://localhost:3000/api/admin/users/${role}`
+          );
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+          const users = await res.json();
+          if (!Array.isArray(users)) throw new Error("Invalid data received");
+
+          chatList.innerHTML = "";
+
+          if (users.length === 0) {
+            emptyChatList.style.display = "flex";
+            return;
+          } else {
+            emptyChatList.style.display = "none";
+          }
+
+          loadUnreadCounts();
+
+          // Fetch unread counts from server for each user
+          const usersWithUnread = await Promise.all(
+            users.map(async (user) => {
+              try {
+                const unreadRes = await fetch(
+                  `http://localhost:3000/api/chats/unread-count?userId=${user._id}&adminId=689f5be6e5432f608d4b3a54`
+                );
+                let serverUnread = 0;
+
+                if (unreadRes.ok) {
+                  const data = await unreadRes.json();
+                  serverUnread = data.count || 0;
+                }
+
+                // Use server count, or cached count if higher
+                const cachedUnread = unreadCountsCache[user._id] || 0;
+                const finalUnread = Math.max(serverUnread, cachedUnread);
+
+                // Update cache
+                unreadCountsCache[user._id] = finalUnread;
+
+                return {
+                  ...user,
+                  unreadCount: finalUnread,
+                };
+              } catch (err) {
+                console.error("Error fetching unread for user:", user._id, err);
+                return {
+                  ...user,
+                  unreadCount: unreadCountsCache[user._id] || 0,
+                };
+              }
+            })
+          );
+
+          // Sort by unread count (highest first) then by last message time
+          usersWithUnread.sort((a, b) => {
+            if (b.unreadCount !== a.unreadCount) {
+              return b.unreadCount - a.unreadCount;
+            }
+            // You might want to sort by last message time here
+            return 0;
+          });
+
+          // Create list items
+          usersWithUnread.forEach((user) => {
+            const lastMsg = user.lastMessage || "Click to chat";
+            const li = createChatListItem(
+              user,
+              role,
+              lastMsg,
+              user.unreadCount
+            );
+            chatList.appendChild(li);
+          });
+          updateOnlineStatus(latestOnlineUsers); // paint green/gray online dots after list renders
+
+          saveUnreadCounts();
+        } catch (err) {
+          console.error("Error fetching users:", err);
+          emptyChatList.style.display = "flex";
+          chatList.innerHTML = "";
+        }
+      }
+
+      // -------------------------
+      // Create chat list item
+      function createChatListItem(user, role, lastMsg, unreadCount) {
+        const li = document.createElement("li");
+        li.classList.add("chat-item");
+        li.dataset.userid = user._id;
+        li.dataset.role = role;
+        li.dataset.unread = unreadCount;
+
+        li.innerHTML = `
       <div class="chat-item-info">
-        <div class="user-avatar ${avatarClass}">
-          ${avatarText}
-        </div>
+        <div class="user-avatar ${role.slice(0, -1)}">${user.name[0]}</div>
         <div class="user-details">
-          <div class="user-name">${chat.name}</div>
-          <div class="last-message">${
-            chat.lastMessage || "No messages yet"
-          }</div>
+      <div class="user-name">${
+        user.name
+      } <span class="user-online-dot"></span></div>
+          <div class="last-message">${lastMsg}</div>
         </div>
-      </div>
-      <div class="chat-meta">
         ${
-          chat.unreadCount > 0
-            ? `<span class="unread-badge">${chat.unreadCount}</span>`
-            : ""
+          unreadCount > 0
+            ? `<div class="unread-badge">${unreadCount}</div>`
+            : `<div class="unread-badge" style="display:none">0</div>`
         }
       </div>
     `;
 
-          li.onclick = () => openChat(chat);
-          chatListEl.appendChild(li);
-        });
+        li.onclick = () => openChat(user, li, role);
+        return li;
       }
 
-      // Open a chat
-      async function openChat(chat) {
-        currentChat = chat;
+      // -------------------------
+      // Initial load
+      initializeSocketListeners();
+      loadUnreadCounts();
+      fetchUsers("patients");
 
-        currentChatNameEl.textContent = chat.name;
-        currentChatAvatarEl.textContent = chat.name.charAt(0).toUpperCase();
-        currentChatAvatarEl.style.background =
-          chatType === "patients"
-            ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-            : "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)";
+      // -------------------------
+      // Switch buttons
+      patientsBtn.addEventListener("click", () => {
+        currentRole = "patients";
+        fetchUsers("patients");
+        patientsBtn.classList.add("active");
+        doctorsBtn.classList.remove("active");
+      });
 
-        currentChatStatusEl.textContent = "Ready to chat";
+      doctorsBtn.addEventListener("click", () => {
+        currentRole = "doctors";
+        fetchUsers("doctors");
+        doctorsBtn.classList.add("active");
+        patientsBtn.classList.remove("active");
+      });
 
-        msgInputEl.disabled = false;
-        sendButtonEl.disabled = false;
-        msgInputEl.placeholder = `Message ${chat.name}...`;
-        msgInputEl.focus();
-
-        await markRead(chat._id);
-        await loadMessagesService(chat._id);
-
-        document.querySelectorAll(".chat-item").forEach((item) => {
-          item.classList.remove("active");
-          if (item.dataset.userId === chat._id) item.classList.add("active");
-        });
-      }
-
-      // Load messages
-      async function loadMessagesService(contactId) {
+      // -------------------------
+      // Mark messages as read
+      async function markMessagesAsRead(userId) {
         try {
-          const url =
-            chatType === "patients"
-              ? `${backendURL}/api/chats/${currentAdminId}/${contactId}`
-              : `${backendURL}/api/doctor-chats/${currentAdminId}/${contactId}`;
-
-          const res = await fetch(url, {
-            headers: { Authorization: `Bearer ${token}` },
+          // Send to server
+          await fetch(`http://localhost:3000/api/admin/chats/mark-read`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: userId,
+              adminId: "689f5be6e5432f608d4b3a54",
+            }),
           });
-          if (!res.ok) throw new Error(`Error ${res.status}`);
 
-          const messages = await res.json();
-          renderMessages(messages);
+          // Update cache
+          unreadCountsCache[userId] = 0;
+          saveUnreadCounts();
+
+          // Update UI
+          updateUnreadBadge(userId, 0);
+
+          // Notify via socket
+          socket.emit("messages_read", {
+            userId: userId,
+            adminId: "689f5be6e5432f608d4b3a54",
+          });
         } catch (err) {
-          console.error("Error loading messages:", err);
+          console.error("Error marking messages as read:", err);
         }
       }
 
-      // Render messages
-      function renderMessages(messages) {
-        chatMessagesEl.innerHTML = "";
-        if (messages.length === 0) {
-          chatMessagesEl.innerHTML = `<div class="empty-state">
-      <div class="empty-state-icon">💬</div>
-      <h3>No messages yet</h3>
-      <p>Start the conversation with ${currentChat.name}</p>
-    </div>`;
+      // -------------------------
+      // Open chat
+      async function openChat(user, element, role) {
+        activeUser = user;
+        msgInput.disabled = false;
+        sendBtn.disabled = false;
+
+        setHeaderAvatar(user, role);
+
+        // Remove active class from all items
+        document.querySelectorAll(".chat-item").forEach((el) => {
+          el.classList.remove("active");
+        });
+
+        // Add active class to clicked item
+        element.classList.add("active");
+
+        // Mark messages as read
+        await markMessagesAsRead(user._id);
+
+        // Join user's room
+        socket.emit("admin_join", { userId: user._id, role });
+
+        // Fetch chat history
+        fetch(`http://localhost:3000/api/chats/${user._id}`)
+          .then((res) => res.json())
+          .then((chats) => {
+            chatBox.innerHTML = "";
+            if (!chats || chats.length === 0) {
+              chatBox.innerHTML = `<div class="empty-state">
+            <div class="empty-state-icon">💭</div>
+            <h3>No messages yet</h3>
+          </div>`;
+            } else {
+              chats.forEach(addMessage);
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+          })
+          .catch((err) => {
+            console.error("Error fetching chats:", err);
+            chatBox.innerHTML = `<div class="empty-state">
+          <div class="empty-state-icon">⚠️</div>
+          <h3>Error loading messages</h3>
+        </div>`;
+          });
+      }
+
+      // -------------------------
+      // Header avatar
+      function setHeaderAvatar(user, role) {
+        const avatarEl = document.getElementById("currentChatAvatar");
+        if (!avatarEl) return;
+
+        avatarEl.style.backgroundImage = "";
+        avatarEl.textContent = "";
+        avatarEl.className = `chat-header-avatar ${role.slice(0, -1)}`;
+
+        if (user.avatar) {
+          avatarEl.style.backgroundImage = `url(${user.avatar})`;
+          avatarEl.style.backgroundSize = "cover";
+          avatarEl.style.backgroundPosition = "center";
+        } else if (user.name && user.name.length > 0) {
+          avatarEl.textContent = user.name[0].toUpperCase();
+        } else {
+          avatarEl.textContent = "👤";
+        }
+      }
+
+      // -------------------------
+      // Send message
+      function sendMessage() {
+        if (!activeUser) {
+          alert("Please select a chat first");
           return;
         }
 
-        messages.forEach((message) => appendNewMessage(message));
-        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-      }
-
-      // Append single message
-      function appendNewMessage(message) {
-        const emptyState = chatMessagesEl.querySelector(".empty-state");
-        if (emptyState) emptyState.remove();
-
-        const isSent = message.senderId === currentAdminId;
-        const messageTime = new Date(
-          message.timestamp || new Date()
-        ).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        const div = document.createElement("div");
-        div.className = `message ${isSent ? "sent" : "received"}`;
-        div.innerHTML = `<div>${message.message}</div><div class="message-time">${messageTime}</div>`;
-
-        chatMessagesEl.appendChild(div);
-        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-      }
-
-      // Send message
-      async function sendMessageService() {
-        if (!currentChat || !socket) return;
-
-        const text = msgInputEl.value.trim();
-        if (!text) return;
+        const msg = msgInput.value.trim();
+        if (!msg) return;
 
         const messageData = {
-          senderId: currentAdminId,
-          receiverId: currentChat._id,
-          message: text,
+          senderId: "689f5be6e5432f608d4b3a54",
+          senderName: "Admin",
           senderRole: "admin",
-          timestamp: new Date(),
-          chatType,
+          receiverId: activeUser._id,
+          receiverName: activeUser.name,
+          receiverRole: activeUser.role,
+          message: msg,
+          timestamp: new Date().toISOString(),
         };
 
-        console.log("📤 Sending message:", messageData);
-
-        // Emit via socket
         socket.emit("send_message", messageData);
+        addMessage(messageData);
 
-        // Save to DB
-        try {
-          const url =
-            chatType === "patients"
-              ? `${backendURL}/api/chats/send`
-              : `${backendURL}/api/doctor-chats/send`;
+        // Update last message in sidebar
+        updateLastMessage(activeUser._id, msg);
 
-          const response = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(messageData),
-          });
-
-          if (!response.ok)
-            throw new Error(`Failed to save message: ${response.status}`);
-          console.log("✅ Message saved to database");
-        } catch (err) {
-          console.error("Error saving message to DB:", err);
-        }
-
-        // Clear input and show message immediately
-        msgInputEl.value = "";
-        appendNewMessage(messageData);
-        await loadChats();
+        msgInput.value = "";
       }
 
-      // Mark as read
-      async function markRead(chatId) {
-        try {
-          const url =
-            chatType === "patients"
-              ? `${backendURL}/api/chats/mark-read/${chatId}`
-              : `${backendURL}/api/doctor-chats/mark-read/${chatId}`;
+      // -------------------------
+      // Add message to chat window
+      function addMessage(msg) {
+        const msgEl = document.createElement("div");
+        msgEl.classList.add("message");
+        msgEl.classList.add(msg.senderRole === "admin" ? "sent" : "received");
 
-          await fetch(url, {
-            method: "POST",
-            headers: { Authorization: `Bearer ${token}` },
-          });
+        const time = msg.timestamp || msg.createdAt || Date.now();
+        const dateObj = new Date(time);
+        const formattedTime = !isNaN(dateObj.getTime())
+          ? dateObj.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
 
-          const chatIndex = chats.findIndex((chat) => chat._id === chatId);
-          if (chatIndex !== -1) chats[chatIndex].unreadCount = 0;
+        msgEl.innerHTML = `
+      <p>${msg.message}</p>
+      <div class="message-time">${formattedTime}</div>
+    `;
 
-          await loadChats();
-        } catch (err) {
-          console.error("Error marking read:", err);
-        }
+        chatBox.appendChild(msgEl);
+        chatBox.scrollTop = chatBox.scrollHeight;
       }
 
-      // Send message button
-      function sendMessage() {
-        sendMessageService();
-      }
+      // -------------------------
+      // Event listeners
+      msgInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
 
-      // Send on Enter key
-      msgInputEl.addEventListener("keypress", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
+      sendBtn.addEventListener("click", sendMessage);
+
+      // Refresh when tab becomes visible
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && currentRole) {
+          fetchUsers(currentRole);
         }
       });
 
-      // Switch chat type
-      function switchType(type) {
-        chatType = type;
-        document
-          .getElementById("patientsBtn")
-          .classList.toggle("active", type === "patients");
-        document
-          .getElementById("doctorsBtn")
-          .classList.toggle("active", type === "doctors");
-
-        currentChat = null;
-        resetChatWindow();
-        loadChats();
-      }
-
-      // Reset chat window
-      function resetChatWindow() {
-        currentChatNameEl.textContent = "Select a user";
-        currentChatStatusEl.textContent = "Click on a user to start chatting";
-        currentChatAvatarEl.textContent = "👤";
-        currentChatAvatarEl.style.background =
-          "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
-
-        chatMessagesEl.innerHTML = `<div class="empty-state">
-    <div class="empty-state-icon">💭</div>
-    <h3>No messages yet</h3>
-    <p>Select a conversation to start chatting</p>
-  </div>`;
-
-        msgInputEl.disabled = true;
-        sendButtonEl.disabled = true;
-        msgInputEl.placeholder = "Select a user to start chatting";
-      }
-
-      // Initialize app
-      document.addEventListener("DOMContentLoaded", initializeApp);
+      // Periodic refresh (every 10 seconds)
+      setInterval(() => {
+        if (currentRole && !activeUser) {
+          fetchUsers(currentRole);
+        }
+      }, 10000);
     </script>
   </body>
 </html>

@@ -293,8 +293,89 @@
         <button id="sendBtn">Send</button>
       </div>
     </div>
-
     <script>
+      const socket = io("http://localhost:3000");
+
+      // Doctor info
+      const userId = localStorage.getItem("doctorId");
+      const role = "doctor"; // you can also store in localStorage
+
+      const adminId = "689f5be6e5432f608d4b3a54"; // replace with real admin ID
+      const chatBox = document.getElementById("chatMessages");
+      const msgInput = document.getElementById("msgInput");
+      const sendBtn = document.getElementById("sendBtn");
+
+      // Join doctor room
+      socket.emit("join_user", { userId });
+
+      // Load chat history
+      async function loadChats() {
+        try {
+          const res = await fetch(`http://localhost:3000/api/chats/${userId}`);
+          const chats = await res.json();
+          chatBox.innerHTML = "";
+          chats.forEach(renderMessage);
+          scrollToBottom();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      // Send message
+      function sendMessage() {
+        const msg = msgInput.value.trim();
+        if (!msg) return;
+
+        const messageData = {
+          senderId: userId,
+          senderRole: role,
+          receiverId: adminId,
+          receiverRole: "admin",
+          message: msg,
+        };
+
+        socket.emit("send_message", messageData);
+        msgInput.value = "";
+      }
+
+      // Render message
+      function renderMessage(msg) {
+        const div = document.createElement("div");
+        div.classList.add("message");
+        div.classList.add(msg.senderRole === "doctor" ? "sent" : "received");
+        div.innerHTML = `
+    <div class="sender-label">${msg.senderRole}</div>
+    <p>${msg.message}</p>
+    <div class="timestamp">${new Date(
+      msg.createdAt || msg.updatedAt
+    ).toLocaleTimeString()}</div>
+  `;
+        chatBox.appendChild(div);
+        scrollToBottom();
+      }
+
+      function scrollToBottom() {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      // Receive real-time messages
+      socket.on("new_message", (msg) => {
+        if (msg.senderId === userId || msg.receiverId === userId) {
+          renderMessage(msg);
+        }
+      });
+
+      // Event listeners
+      sendBtn.addEventListener("click", sendMessage);
+      msgInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+
+      // Initial load
+      loadChats();
+    </script>
+
+    <!-- <script>
       const backendURL = "http://localhost:3000";
       const doctorId = localStorage.getItem("doctorId");
       const adminId = "689f5be6e5432f608d4b3a54";
@@ -552,6 +633,6 @@
       }
 
       document.addEventListener("DOMContentLoaded", initializeChat);
-    </script>
+    </script> -->
   </body>
 </html>

@@ -329,8 +329,11 @@
         </div>
       </div>
     </div>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
 
     <script>
+      const socket = io("http://localhost:3000");
+
       function validateName(name) {
         const regex = /^[A-Za-z\s]+$/;
         if (!name) return "Name is required.";
@@ -523,6 +526,7 @@
                 const doctorId = data.doctor._id;
                 localStorage.setItem("doctorId", doctorId);
                 localStorage.setItem("userId", doctorId);
+                socket.emit("join_user", { userId: doctorId, role: "doctor" });
 
                 console.log("👨‍⚕️ Doctor Login Successful");
                 console.log("🔄 Redirecting to docpanel.html");
@@ -539,6 +543,7 @@
             if (role === "admin") {
               localStorage.setItem("adminId", patientId);
               localStorage.setItem("userId", patientId);
+              socket.emit("join_user", { userId: patientId, role: "admin" });
 
               console.log("👑 Admin Login:", {
                 id: patientId,
@@ -552,6 +557,7 @@
             else if (role === "patient") {
               localStorage.setItem("patientId", patientId);
               localStorage.setItem("userId", patientId);
+              socket.emit("join_user", { userId: patientId, role: "patient" });
 
               console.log("👤 Patient Login:", {
                 id: patientId,
@@ -738,6 +744,16 @@
             (hasSpecial ? "✅" : "❌") +
             " At least one special character (@$!%*?&)";
         });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const userId = localStorage.getItem("userId");
+        const role = localStorage.getItem("userRole");
+
+        if (userId && role) {
+          console.log("🟢 Reconnecting online:", userId, role);
+          socket.emit("join_user", { userId, role });
+        }
+      });
     </script>
   </body>
 </html>

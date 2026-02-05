@@ -324,8 +324,81 @@
     </div>
 
     <div id="footer"></div>
-
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
+      const socket = io("http://localhost:3000");
+
+      const userId = localStorage.getItem("patientId");
+      const role = localStorage.getItem("role");
+      const receiverId = "689f5be6e5432f608d4b3a54"; // replace with actual admin ID
+      const chatBox = document.getElementById("messages");
+      const msgInput = document.getElementById("msgInput");
+
+      // join room for live updates
+      socket.emit("join_user", { userId });
+
+      // load previous chat
+      fetch(`http://localhost:3000/api/chats/${userId}`)
+        .then((res) => res.json())
+        .then((chats) => chats.forEach(addMessage))
+        .catch((err) => console.error(err));
+
+      // send message
+      function sendMessage() {
+        const msg = msgInput.value.trim();
+        if (!msg) return;
+
+        socket.emit("send_message", {
+          senderId: userId,
+          senderRole: role,
+          receiverId,
+          receiverRole: "admin",
+          message: msg,
+        });
+
+        msgInput.value = "";
+      }
+
+      // receive real-time messages
+      socket.on("new_message", (msg) => {
+        if (msg.senderId === userId || msg.receiverId === userId) {
+          addMessage(msg);
+        }
+      });
+
+      // render message
+      function addMessage(msg) {
+        const div = chatBox;
+
+        // Create message row
+        const row = document.createElement("div");
+        row.classList.add("message-row");
+        row.classList.add(msg.senderRole === "patient" ? "sent" : "received");
+
+        // Message container
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        messageDiv.innerHTML = `
+    <div class="sender-label">${msg.senderRole}</div>
+    <p>${msg.message}</p>
+    <div class="timestamp">${new Date(
+      msg.createdAt || msg.updatedAt
+    ).toLocaleTimeString()}</div>
+  `;
+
+        row.appendChild(messageDiv);
+        div.appendChild(row);
+
+        div.scrollTop = div.scrollHeight;
+      }
+      msgInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+
+      sendBtn.addEventListener("click", sendMessage);
+    </script>
+
+    <!-- <script>
       const BASE_URL = "http://localhost:3000/api/chats";
       const ADMIN_ID = "689f5be6e5432f608d4b3a54";
 
@@ -568,6 +641,6 @@
       setInterval(() => {
         loadMessages();
       }, 30000); // Sync every 30 seconds
-    </script>
+    </script> -->
   </body>
 </html>
