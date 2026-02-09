@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -8,8 +8,9 @@
 
     <style>
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Oxygen, Ubuntu, sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          sans-serif;
         margin: 0;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         height: 100vh;
@@ -523,7 +524,7 @@
         <div class="sidebar-header">
           <button
             class="back-btn"
-            onclick="window.location.href='Adminpanel.html'"
+            onclick="window.location.href = 'Adminpanel.html'"
           >
             Back to Dashboard
           </button>
@@ -812,6 +813,7 @@
 
     <script>
       const socket = io("http://localhost:3000");
+
       /* ----------------------------
    ONLINE USER LIVE SYSTEM
 ---------------------------- */
@@ -903,7 +905,7 @@
             saveUnreadCounts();
 
             console.log(
-              `Incremented unread count for ${senderId}: ${currentUnread}`
+              `Incremented unread count for ${senderId}: ${currentUnread}`,
             );
 
             // Update the badge in UI
@@ -932,7 +934,7 @@
       function checkAndAddUserToList(userId, userRole) {
         // Check if user already exists in current view
         const existingItem = document.querySelector(
-          `.chat-item[data-userid="${userId}"]`
+          `.chat-item[data-userid="${userId}"]`,
         );
         if (existingItem) return;
 
@@ -949,7 +951,7 @@
       async function fetchUserAndAddToList(userId) {
         try {
           const res = await fetch(
-            `http://localhost:3000/api/admin/user/${userId}`
+            `http://localhost:3000/api/admin/user/${userId}`,
           );
           if (!res.ok) return;
 
@@ -967,7 +969,7 @@
       // Add user to chat list
       function addUserToChatList(user, role) {
         const existingItem = document.querySelector(
-          `.chat-item[data-userid="${user._id}"]`
+          `.chat-item[data-userid="${user._id}"]`,
         );
         if (existingItem) return;
 
@@ -993,7 +995,7 @@
         console.log(`Updating badge for ${userId}: ${count}`);
 
         const chatItem = document.querySelector(
-          `.chat-item[data-userid="${userId}"]`
+          `.chat-item[data-userid="${userId}"]`,
         );
         if (chatItem) {
           chatItem.dataset.unread = count;
@@ -1014,7 +1016,7 @@
       // Update last message
       function updateLastMessage(userId, message) {
         const chatItem = document.querySelector(
-          `.chat-item[data-userid="${userId}"]`
+          `.chat-item[data-userid="${userId}"]`,
         );
         if (chatItem) {
           const lastMsgEl = chatItem.querySelector(".last-message");
@@ -1044,7 +1046,7 @@
         try {
           localStorage.setItem(
             "admin_unread_counts",
-            JSON.stringify(unreadCountsCache)
+            JSON.stringify(unreadCountsCache),
           );
         } catch (e) {
           console.error("Error saving unread counts:", e);
@@ -1056,7 +1058,7 @@
       async function fetchUsers(role) {
         try {
           const res = await fetch(
-            `http://localhost:3000/api/admin/users/${role}`
+            `http://localhost:3000/api/admin/users/${role}`,
           );
           if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
@@ -1079,7 +1081,7 @@
             users.map(async (user) => {
               try {
                 const unreadRes = await fetch(
-                  `http://localhost:3000/api/chats/unread-count?userId=${user._id}&adminId=689f5be6e5432f608d4b3a54`
+                  `http://localhost:3000/api/chats/unread-count?userId=${user._id}&adminId=689f5be6e5432f608d4b3a54`,
                 );
                 let serverUnread = 0;
 
@@ -1106,7 +1108,7 @@
                   unreadCount: unreadCountsCache[user._id] || 0,
                 };
               }
-            })
+            }),
           );
 
           // Sort by unread count (highest first) then by last message time
@@ -1125,7 +1127,7 @@
               user,
               role,
               lastMsg,
-              user.unreadCount
+              user.unreadCount,
             );
             chatList.appendChild(li);
           });
@@ -1313,7 +1315,7 @@
         };
 
         socket.emit("send_message", messageData);
-        addMessage(messageData);
+        // addMessage(messageData);
 
         // Update last message in sidebar
         updateLastMessage(activeUser._id, msg);

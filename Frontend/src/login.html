@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -62,7 +62,9 @@
         border-radius: 12px;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
       }
 
       .container:hover {
@@ -214,6 +216,29 @@
         color: #555;
         margin-top: 6px;
       }
+      .password-wrapper {
+        position: relative;
+      }
+
+      .password-wrapper input {
+        padding-right: 45px;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 18px;
+        color: #555;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      .toggle-password:hover {
+        color: #009688;
+      }
     </style>
   </head>
 
@@ -224,7 +249,10 @@
         <header>Login</header>
         <form
           id="login-form"
-          onsubmit="event.preventDefault(); redirectUser();"
+          onsubmit="
+            event.preventDefault();
+            redirectUser();
+          "
         >
           <select id="login-role" title="jh" required>
             <option value="" disabled selected>Select your role</option>
@@ -240,12 +268,20 @@
             required
           />
           <small id="login-email-error" class="error"></small>
-          <input
-            type="password"
-            id="login-password"
-            placeholder="Enter your password"
-            required
-          />
+          <div class="password-wrapper">
+            <input
+              type="password"
+              id="login-password"
+              placeholder="Enter your password"
+              required
+            />
+            <span
+              class="toggle-password"
+              onclick="togglePassword('login-password', this)"
+              >👁</span
+            >
+          </div>
+
           <small id="login-password-error" class="error"></small>
           <a href="forgotpassword.html">Forgot password?</a>
           <input type="submit" class="button" value="Login" />
@@ -261,7 +297,10 @@
         <header>Signup</header>
         <form
           id="signup-form"
-          onsubmit="event.preventDefault(); handleSignup();"
+          onsubmit="
+            event.preventDefault();
+            handleSignup();
+          "
         >
           <input type="hidden" id="signup-role" value="patient" />
           <input
@@ -333,6 +372,17 @@
 
     <script>
       const socket = io("http://localhost:3000");
+      function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+
+        if (input.type === "password") {
+          input.type = "text";
+          icon.textContent = "🙈";
+        } else {
+          input.type = "password";
+          icon.textContent = "👁";
+        }
+      }
 
       function validateName(name) {
         const regex = /^[A-Za-z\s]+$/;
@@ -396,7 +446,7 @@
 
       document.getElementById("signup-name").addEventListener("input", (e) => {
         document.getElementById("signup-name-error").textContent = validateName(
-          e.target.value
+          e.target.value,
         );
       });
 
@@ -426,7 +476,7 @@
         });
       document.getElementById("signup-cnic").addEventListener("input", (e) => {
         document.getElementById("signup-cnic-error").textContent = validateCnic(
-          e.target.value
+          e.target.value,
         );
       });
 
@@ -656,7 +706,7 @@
           sessionStorage.setItem("pendingOtpEmail", email);
           await requestOtp(email);
           window.location.href = `verify-otp.html?email=${encodeURIComponent(
-            email
+            email,
           )}`;
         } else {
           const contentType = response.headers.get("content-type");
@@ -705,7 +755,7 @@
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email, otp }),
-            }
+            },
           );
 
           const responseData = await response.json();

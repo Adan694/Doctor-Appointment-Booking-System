@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -171,7 +171,9 @@
         padding: 10px 16px;
         border-radius: 10px;
         cursor: pointer;
-        transition: background 0.25s ease, transform 0.1s ease;
+        transition:
+          background 0.25s ease,
+          transform 0.1s ease;
       }
 
       .chat-input button:hover {
@@ -318,7 +320,7 @@
 
         <div class="chat-input">
           <input id="msgInput" type="text" placeholder="Type your message..." />
-          <button onclick="sendMessage()">Send</button>
+          <button id="sendBtn" onclick="sendMessage()">Send</button>
         </div>
       </div>
     </div>
@@ -329,7 +331,7 @@
       const socket = io("http://localhost:3000");
 
       const userId = localStorage.getItem("patientId");
-      const role = localStorage.getItem("role");
+      const role = localStorage.getItem("userRole") || "patient";
       const receiverId = "689f5be6e5432f608d4b3a54"; // replace with actual admin ID
       const chatBox = document.getElementById("messages");
       const msgInput = document.getElementById("msgInput");
@@ -373,16 +375,16 @@
         // Create message row
         const row = document.createElement("div");
         row.classList.add("message-row");
-        row.classList.add(msg.senderRole === "patient" ? "sent" : "received");
+        row.classList.add(msg.senderId === userId ? "sent" : "received");
 
         // Message container
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("message");
         messageDiv.innerHTML = `
-    <div class="sender-label">${msg.senderRole}</div>
+<div class="sender-label">${msg.senderId === userId ? "You" : msg.senderRole || "Admin"}</div>
     <p>${msg.message}</p>
     <div class="timestamp">${new Date(
-      msg.createdAt || msg.updatedAt
+      msg.createdAt || msg.updatedAt,
     ).toLocaleTimeString()}</div>
   `;
 
@@ -395,7 +397,7 @@
         if (e.key === "Enter") sendMessage();
       });
 
-      sendBtn.addEventListener("click", sendMessage);
+      // sendBtn.addEventListener("click", sendMessage);
     </script>
 
     <!-- <script>
