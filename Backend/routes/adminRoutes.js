@@ -86,7 +86,9 @@ router.get('/:id', authenticateToken, authorizeAdmin, getAdminProfile);
 // GET all patients with last message
 router.get('/users/patients', async (req, res) => {
   try {
-    const patients = await User.find({ role: 'patient' }).select('name email');
+    const patients = await User.find({ role: 'patient' })
+      .select('_id name email')
+      .lean();
 
     const patientsWithLastMsg = await Promise.all(
       patients.map(async (patient) => {
@@ -96,18 +98,25 @@ router.get('/users/patients', async (req, res) => {
             { receiverId: patient._id }
           ]
         })
-        .sort({ createdAt: -1 })
-        .select('message createdAt senderId receiverId');
+          .sort({ createdAt: -1 })
+          .select('message createdAt')
+          .lean();
 
         return {
-          _id: patient._id,
-          name: patient.name,
-          email: patient.email,
-          lastMessage: lastChat ? lastChat.message : '',
-          lastMessageTime: lastChat ? lastChat.createdAt : null
+          ...patient,
+          lastMessage: lastChat?.message || '',
+          lastMessageTime: lastChat?.createdAt || null
         };
       })
     );
+
+    // 🔥 THIS FIXES THE ORDER FOREVER
+    patientsWithLastMsg.sort((a, b) => {
+      if (!a.lastMessageTime && !b.lastMessageTime) return 0;
+      if (!a.lastMessageTime) return 1;
+      if (!b.lastMessageTime) return -1;
+      return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
+    });
 
     res.json(patientsWithLastMsg);
   } catch (err) {
@@ -119,7 +128,9 @@ router.get('/users/patients', async (req, res) => {
 // GET all doctors with last message
 router.get('/users/doctors', async (req, res) => {
   try {
-    const doctors = await Doctor.find().select('_id name email speciality available');
+    const doctors = await Doctor.find()
+      .select('_id name email speciality available')
+      .lean();
 
     const doctorsWithLastMsg = await Promise.all(
       doctors.map(async (doctor) => {
@@ -129,18 +140,25 @@ router.get('/users/doctors', async (req, res) => {
             { receiverId: doctor._id }
           ]
         })
-        .sort({ createdAt: -1 })
-        .select('message createdAt senderId receiverId');
+          .sort({ createdAt: -1 })
+          .select('message createdAt')
+          .lean();
 
         return {
-          _id: doctor._id,
-          name: doctor.name,
-          email: doctor.email,
-          lastMessage: lastChat ? lastChat.message : '',
-          lastMessageTime: lastChat ? lastChat.createdAt : null
+          ...doctor,
+          lastMessage: lastChat?.message || '',
+          lastMessageTime: lastChat?.createdAt || null
         };
       })
     );
+
+    // 🔥 SORT BY LAST MESSAGE
+    doctorsWithLastMsg.sort((a, b) => {
+      if (!a.lastMessageTime && !b.lastMessageTime) return 0;
+      if (!a.lastMessageTime) return 1;
+      if (!b.lastMessageTime) return -1;
+      return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
+    });
 
     res.json(doctorsWithLastMsg);
   } catch (err) {
@@ -148,7 +166,6 @@ router.get('/users/doctors', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
 
 // 1. Get unread message count
 router.get('/api/chats/unread-count', async (req, res) => {

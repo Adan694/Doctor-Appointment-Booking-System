@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -100,7 +100,10 @@
         margin: 40px;
         margin-top: 120px;
         border: 1px solid #e0e0e0;
-        transition: box-shadow 0.3s ease, transform 0.3s ease, border 0.3s ease;
+        transition:
+          box-shadow 0.3s ease,
+          transform 0.3s ease,
+          border 0.3s ease;
       }
 
       .main-content:hover {
@@ -154,7 +157,9 @@
         border-radius: 14px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease,
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease,
           background 0.3s ease;
         border: 1px solid #e0e0e0;
         cursor: pointer;
@@ -171,7 +176,9 @@
         font-size: 40px;
         margin-bottom: 12px;
         color: #007b7b;
-        transition: color 0.3s ease, transform 0.3s ease;
+        transition:
+          color 0.3s ease,
+          transform 0.3s ease;
       }
 
       .stat-card:hover i {
@@ -201,7 +208,10 @@
         margin-left: auto;
         margin-right: auto;
         border: 1px solid #e0e0e0;
-        transition: box-shadow 0.3s ease, transform 0.3s ease, border 0.3s ease;
+        transition:
+          box-shadow 0.3s ease,
+          transform 0.3s ease,
+          border 0.3s ease;
       }
 
       .chart-section:hover {
@@ -229,7 +239,10 @@
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         margin-bottom: 40px;
         border: 1px solid #e0e0e0;
-        transition: box-shadow 0.3s ease, transform 0.3s ease, border 0.3s ease;
+        transition:
+          box-shadow 0.3s ease,
+          transform 0.3s ease,
+          border 0.3s ease;
       }
 
       .latest-bookings:hover {
@@ -287,7 +300,9 @@
         cursor: pointer;
         font-size: 22px;
         margin-left: 18px;
-        transition: color 0.25s ease, transform 0.2s ease;
+        transition:
+          color 0.25s ease,
+          transform 0.2s ease;
       }
 
       .latest-bookings li button:hover {
@@ -400,7 +415,9 @@
           overflow: hidden;
           max-height: 0;
           opacity: 0;
-          transition: max-height 0.4s ease, opacity 0.4s ease;
+          transition:
+            max-height 0.4s ease,
+            opacity 0.4s ease;
         }
 
         nav ul.show {
@@ -642,14 +659,14 @@
       }
 
       // ------------------- CHAT BUTTON -------------------
-      chatBtn.addEventListener("click", () => {
-        unreadCount = 0;
-        updateChatNotification();
-        window.location.href = "doctorchat.html";
-      });
+      // chatBtn.addEventListener("click", () => {
+      //   unreadCount = 0;
+      //   updateChatNotification();
+      //   window.location.href = "doctorchat.html";
+      // });
 
       // ------------------- INITIALIZE -------------------
-      initializeSocketConnection();
+      // initializeSocketConnection();
 
       // ------------------- CHAT BUTTON -------------------
       chatBtn.addEventListener("click", async () => {
@@ -673,7 +690,7 @@
           const data = await response.json();
 
           const bookings = (Array.isArray(data) ? data : []).filter(
-            (b) => b.doctorId?._id === doctorId
+            (b) => b.doctorId?._id === doctorId,
           );
 
           localStorage.setItem("bookings", JSON.stringify(bookings));
@@ -690,12 +707,13 @@
           JSON.parse(localStorage.getItem("removedBookingIds")) || [];
         const pendingAppointments = bookings.filter(
           (b) =>
-            b.status?.toLowerCase() === "pending" && !removedIds.includes(b._id)
+            b.status?.toLowerCase() === "pending" &&
+            !removedIds.includes(b._id),
         );
 
         const today = new Date().toDateString();
         const todayAppointments = bookings.filter(
-          (b) => new Date(b.date).toDateString() === today
+          (b) => new Date(b.date).toDateString() === today,
         );
 
         const completedThisMonth = bookings.filter((b) => {
@@ -710,7 +728,7 @@
         });
 
         const uniquePatients = new Set(
-          bookings.map((b) => b.patientId?._id).filter(Boolean)
+          bookings.map((b) => b.patientId?._id).filter(Boolean),
         );
 
         appointmentsCount = pendingAppointments.length;
@@ -752,8 +770,8 @@
                 </div>
                 <div class="booking-actions">
                     <span class="status ${bookingStatus}">${capitalizeFirstLetter(
-          bookingStatus
-        )}</span>
+                      bookingStatus,
+                    )}</span>
                 </div>
             `;
         document.getElementById("booking-list").appendChild(newBooking);
@@ -872,7 +890,7 @@
         if (!doctorId) return;
         try {
           const res = await fetch(
-            `${backendURL}/api/doctor-chats/unread-count/${doctorId}`
+            `${backendURL}/api/doctor-chats/unread-count/${doctorId}`,
           );
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
@@ -897,7 +915,7 @@
                   localStorage.getItem("authToken") || ""
                 }`,
               },
-            }
+            },
           );
 
           if (!res.ok) throw new Error(`HTTP ${res.status}`);

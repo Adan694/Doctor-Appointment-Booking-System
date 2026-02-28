@@ -336,6 +336,24 @@
       const chatBox = document.getElementById("messages");
       const msgInput = document.getElementById("msgInput");
 
+      let lastRenderedDate = null; // Track last date for separators
+
+      function formatChatDate(date) {
+        const d = new Date(date);
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        if (d.toDateString() === today.toDateString()) return "Today";
+        if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+
+        return d.toLocaleDateString(undefined, {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      }
+
       // join room for live updates
       socket.emit("join_user", { userId });
 
@@ -372,6 +390,20 @@
       function addMessage(msg) {
         const div = chatBox;
 
+        const msgDate = formatChatDate(msg.createdAt || msg.updatedAt);
+
+        // Add date separator if day changed
+        if (msgDate !== lastRenderedDate) {
+          lastRenderedDate = msgDate;
+          const sep = document.createElement("div");
+          sep.style.textAlign = "center";
+          sep.style.fontSize = "12px";
+          sep.style.margin = "10px 0";
+          sep.style.color = "#555";
+          sep.textContent = `— ${msgDate} —`;
+          div.appendChild(sep);
+        }
+
         // Create message row
         const row = document.createElement("div");
         row.classList.add("message-row");
@@ -381,268 +413,25 @@
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("message");
         messageDiv.innerHTML = `
-<div class="sender-label">${msg.senderId === userId ? "You" : msg.senderRole || "Admin"}</div>
-    <p>${msg.message}</p>
-    <div class="timestamp">${new Date(
-      msg.createdAt || msg.updatedAt,
-    ).toLocaleTimeString()}</div>
-  `;
+      <div class="sender-label">${msg.senderId === userId ? "You" : msg.senderRole || "Admin"}</div>
+      <p>${msg.message}</p>
+      <div class="timestamp">${new Date(
+        msg.createdAt || msg.updatedAt,
+      ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+    `;
 
         row.appendChild(messageDiv);
         div.appendChild(row);
 
         div.scrollTop = div.scrollHeight;
       }
+
       msgInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") sendMessage();
       });
 
+      // Optional: you can uncomment if you have a send button
       // sendBtn.addEventListener("click", sendMessage);
     </script>
-
-    <!-- <script>
-      const BASE_URL = "http://localhost:3000/api/chats";
-      const ADMIN_ID = "689f5be6e5432f608d4b3a54";
-
-      let token = localStorage.getItem("authToken");
-      let currentUserId = localStorage.getItem("patientId");
-      let currentUserName = localStorage.getItem("patientName") || "Patient";
-
-      if (!currentUserId) {
-        alert("Login required!");
-        window.location.href = "/login.html";
-      }
-
-      // 🚀 Socket connection
-      const socket = io("http://localhost:3000", {
-        auth: {
-          token,
-          role: "patient",
-          email: localStorage.getItem("patientEmail") || "unknown",
-        },
-      });
-
-      // Store temporary messages until they're confirmed
-      const pendingMessages = new Map();
-
-      // Socket event listeners
-      socket.on("connect", () => {
-        console.log("✅ Socket connected:", socket.id);
-        loadMessages(); // Load messages when connected
-      });
-
-      socket.on("connect_error", (err) => {
-        console.error("❌ Socket connection error:", err.message);
-      });
-
-      socket.on("disconnect", (reason) => {
-        console.log("⚠️ Socket disconnected:", reason);
-      });
-
-      // ✅ CRITICAL: Listen for incoming messages from admin
-      socket.on("receive_message", (message) => {
-        console.log("📨 New message received from admin:", message);
-        addMessageToUI(message, false);
-      });
-
-      // ✅ Listen for message confirmation (when our sent message is saved)
-      socket.on("message_sent", (message) => {
-        console.log("✅ Message confirmed by server:", message);
-        // Update the pending message with the actual saved message
-        const tempId = Object.keys(pendingMessages).find(
-          (key) => pendingMessages[key].message === message.message
-        );
-        if (tempId) {
-          // Replace the temporary message with the actual saved one
-          updatePendingMessage(tempId, message);
-        }
-      });
-
-      // Load chat history from database
-      function loadMessages() {
-        console.log("📖 Loading messages from database...");
-        fetch(`${BASE_URL}/${currentUserId}/${ADMIN_ID}`, {
-          headers: { Authorization: "Bearer " + token },
-        })
-          .then((res) => {
-            if (!res.ok) {
-              throw new Error("Failed to fetch messages");
-            }
-            return res.json();
-          })
-          .then((messages) => {
-            console.log("✅ Messages loaded from DB:", messages.length);
-            displayMessages(messages);
-          })
-          .catch((err) => {
-            console.error("❌ Cannot load messages:", err);
-            const box = document.getElementById("messages");
-            box.innerHTML =
-              '<div style="text-align: center; padding: 20px; color: #666;">Failed to load messages. Please refresh.</div>';
-          });
-      }
-
-      function displayMessages(messages) {
-        const box = document.getElementById("messages");
-        box.innerHTML = "";
-
-        if (messages.length === 0) {
-          box.innerHTML =
-            '<div style="text-align: center; padding: 20px; color: #666;">No messages yet. Start the conversation!</div>';
-          return;
-        }
-
-        // Sort messages by timestamp
-        messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
-        messages.forEach((msg) => addMessageToUI(msg, false));
-        box.scrollTop = box.scrollHeight;
-      }
-
-      function addMessageToUI(msg, isPending = false) {
-        const box = document.getElementById("messages");
-
-        // Remove "no messages" placeholder if it exists
-        if (box.innerHTML.includes("No messages yet")) {
-          box.innerHTML = "";
-        }
-
-        const messageId = msg._id || `temp-${Date.now()}-${Math.random()}`;
-        const row = document.createElement("div");
-        row.id = `msg-${messageId}`;
-        row.className = `message-row ${
-          msg.senderId === currentUserId ? "sent" : "received"
-        } ${isPending ? "message-sending" : "message-sent"}`;
-
-        const avatar =
-          msg.senderId === currentUserId ? currentUserName.charAt(0) : "A";
-        const senderName = msg.senderId === currentUserId ? "You" : "Admin";
-
-        row.innerHTML = `
-          <div class="chat-avatar">${avatar}</div>
-          <div class="message">
-            <div class="sender-label">${senderName}</div>
-            <div class="message-text">${msg.message}</div>
-            <div class="timestamp">
-              ${new Date(msg.createdAt || Date.now()).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-              ${isPending ? "⏳" : ""}
-            </div>
-          </div>
-        `;
-
-        box.appendChild(row);
-        box.scrollTop = box.scrollHeight;
-
-        // Store pending message
-        if (isPending) {
-          pendingMessages[messageId] = msg;
-        }
-      }
-
-      function updatePendingMessage(tempId, savedMessage) {
-        const row = document.getElementById(`msg-${tempId}`);
-        if (row) {
-          row.className = row.className.replace(
-            "message-sending",
-            "message-sent"
-          );
-          const timestamp = row.querySelector(".timestamp");
-          if (timestamp) {
-            timestamp.innerHTML = new Date(
-              savedMessage.createdAt
-            ).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
-          }
-        }
-        // Remove from pending
-        delete pendingMessages[tempId];
-      }
-
-      function sendMessage() {
-        const input = document.getElementById("msgInput");
-        const text = input.value.trim();
-        if (!text) return;
-
-        const msgObj = {
-          senderId: currentUserId,
-          receiverId: ADMIN_ID,
-          message: text,
-        };
-
-        console.log("📤 Sending message:", msgObj);
-
-        // Show instantly (optimistic update)
-        const tempMsg = {
-          ...msgObj,
-          _id: `temp-${Date.now()}`,
-          createdAt: new Date(),
-        };
-        addMessageToUI(tempMsg, true);
-
-        // Send to server via HTTP POST to ensure persistence
-        fetch(`${BASE_URL}/send`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-          body: JSON.stringify(msgObj),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Failed to send message");
-            }
-            return response.json();
-          })
-          .then((result) => {
-            console.log("✅ Message saved to database:", result);
-            // Also send via socket for real-time delivery
-            socket.emit("send_message", msgObj);
-
-            // Update the UI with the actual saved message
-            updatePendingMessage(tempMsg._id, result.chat);
-          })
-          .catch((error) => {
-            console.error("❌ Failed to send message:", error);
-            // Show error in UI
-            const row = document.getElementById(`msg-${tempMsg._id}`);
-            if (row) {
-              const timestamp = row.querySelector(".timestamp");
-              if (timestamp) {
-                timestamp.innerHTML = "❌ Failed to send";
-                timestamp.style.color = "red";
-              }
-            }
-          });
-
-        input.value = "";
-      }
-
-      // Send message on Enter key
-      document.getElementById("msgInput").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          sendMessage();
-        }
-      });
-
-      function goBack() {
-        window.location.href = "myprofile.html";
-      }
-
-      // Debug: Log socket events
-      socket.onAny((event, ...args) => {
-        console.log(`🔍 Socket event: ${event}`, args);
-      });
-
-      // Periodic message sync (in case of missed messages)
-      setInterval(() => {
-        loadMessages();
-      }, 30000); // Sync every 30 seconds
-    </script> -->
   </body>
 </html>

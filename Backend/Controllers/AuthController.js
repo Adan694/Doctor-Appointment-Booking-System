@@ -41,6 +41,13 @@ function generateToken(user) {
 async function sendOtpToEmail(email) {
     const otp = Math.floor(100000 + Math.random() * 900000);
     const expiration = new Date(Date.now() + 10 * 60 * 1000); 
+
+    console.log("📧 OTP GENERATED");
+    console.log("➡ Email:", email);
+    console.log("🔐 OTP:", otp);
+    console.log("⏰ Expires At:", expiration.toLocaleString());
+    console.log("────────────────────────────");
+    
     const user = await User.findOneAndUpdate(
         { email },
         { otp: otp, otpExpiration: expiration },

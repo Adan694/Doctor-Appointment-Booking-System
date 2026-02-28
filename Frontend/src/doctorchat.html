@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -278,9 +278,9 @@
         <button class="back-btn" id="backBtn">← Back</button>
         <div>
           Chat with Admin
-          <span id="connectionStatus" class="status-indicator"
+          <!-- <span id="connectionStatus" class="status-indicator"
             >● Connecting...</span
-          >
+          > -->
         </div>
       </div>
       <div class="chat-messages" id="chatMessages">
@@ -339,17 +339,52 @@
       }
 
       // Render message
+      let lastRenderedDate = null; // keep track of last rendered date
+
+      function formatChatDate(date) {
+        const d = new Date(date);
+        const today = new Date();
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+
+        if (d.toDateString() === today.toDateString()) return "Today";
+        if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+
+        return d.toLocaleDateString(undefined, {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      }
+
       function renderMessage(msg) {
+        const msgDate = formatChatDate(msg.createdAt || msg.updatedAt);
+
+        // Add date separator if the day has changed
+        if (msgDate !== lastRenderedDate) {
+          lastRenderedDate = msgDate;
+          const sep = document.createElement("div");
+          sep.style.textAlign = "center";
+          sep.style.fontSize = "12px";
+          sep.style.margin = "10px 0";
+          sep.style.color = "#555";
+          sep.textContent = `— ${msgDate} —`;
+          chatBox.appendChild(sep);
+        }
+
+        // Create message bubble
         const div = document.createElement("div");
         div.classList.add("message");
         div.classList.add(msg.senderRole === "doctor" ? "sent" : "received");
+
         div.innerHTML = `
     <div class="sender-label">${msg.senderRole}</div>
     <p>${msg.message}</p>
     <div class="timestamp">${new Date(
-      msg.createdAt || msg.updatedAt
-    ).toLocaleTimeString()}</div>
+      msg.createdAt || msg.updatedAt,
+    ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
   `;
+
         chatBox.appendChild(div);
         scrollToBottom();
       }
