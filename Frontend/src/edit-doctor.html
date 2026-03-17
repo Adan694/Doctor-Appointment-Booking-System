@@ -1,375 +1,472 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Doctor</title>
     <style>
-        /* Basic styling similar to add-doctors.html */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-    background-color: #e6f2ff;
-        }
+      /* Basic styling similar to add-doctors.html */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        display: flex;
+        background-color: #e6f2ff;
+      }
 
-        .sidebar {
-            width: 220px;
-            background-color: #ffffff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+      .sidebar {
+        width: 220px;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        .sidebar h2 {
-            margin: 0;
-            font-size: 24px;
-            color: rgb(9, 102, 102);
-        }
+      .sidebar h2 {
+        margin: 0;
+        font-size: 24px;
+        color: rgb(9, 102, 102);
+      }
 
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
+      .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+      }
 
-        .sidebar ul li {
-            margin: 15px 0;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s;
-            cursor: pointer;
-        }
+      .sidebar ul li {
+        margin: 15px 0;
+        padding: 10px;
+        border-radius: 5px;
+        transition: background 0.3s;
+        cursor: pointer;
+      }
 
-        .sidebar ul li:hover {
-            background: #e8f0fe;
-            font-weight: bold;
-        }
+      .sidebar ul li:hover {
+        background: #e8f0fe;
+        font-weight: bold;
+      }
 
-        .sidebar ul li a {
-            text-decoration: none;
-            color: #343a40;
-            display: block;
-            padding: 10px;
-        }
+      .sidebar ul li a {
+        text-decoration: none;
+        color: #343a40;
+        display: block;
+        padding: 10px;
+      }
 
-        .sidebar ul li a:hover {
-            background: #e8f0fe;
-            color: #007bff;
-        }
+      .sidebar ul li a:hover {
+        background: #e8f0fe;
+        color: #007bff;
+      }
 
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+      .main-content {
+        flex: 1;
+        padding: 20px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: rgb(9, 102, 102);
-            color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
 
-        .logout-btn {
-            padding: 10px 15px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
+      .logout-btn {
+        padding: 10px 15px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
 
-        .logout-btn:hover {
-            background-color: #c82333;
-        }
+      .logout-btn:hover {
+        background-color: #c82333;
+      }
 
-        .form-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+      .form-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-            color: #333;
-        }
+      label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        color: #333;
+      }
 
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            transition: border-color 0.3s;
-        }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: border-color 0.3s;
+      }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #007BFF;
-            outline: none;
-        }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: #007bff;
+        outline: none;
+      }
 
-        .upload-button {
-            padding: 20px;
-            border: 2px dashed #007BFF;
-            background-color: #f0f8ff;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
+      .upload-button {
+        padding: 20px;
+        border: 2px dashed #007bff;
+        background-color: #f0f8ff;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
 
-        .upload-button:hover {
-            background-color: #e7f0ff;
-        }
+      .upload-button:hover {
+        background-color: #e7f0ff;
+      }
 
-        .btn {
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.3s;
-        }
+      .btn {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.3s;
+      }
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
+      .btn:hover {
+        background-color: #0056b3;
+      }
 
-        .current-photo {
-            margin-bottom: 15px;
-            text-align: center;
-        }
+      .current-photo {
+        margin-bottom: 15px;
+        text-align: center;
+      }
 
-        .current-photo img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #007BFF;
-        }
+      .current-photo img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #007bff;
+      }
+      .upload-button {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 14px;
+      }
+
+      /* Hide the default file input */
+      .upload-button input[type="file"] {
+        position: absolute;
+        opacity: 0;
+        width: 0.1px;
+        height: 0.1px;
+        overflow: hidden;
+      }
+
+      /* Style the visible label as a button */
+      .upload-label {
+        display: inline-block;
+        padding: 10px 16px;
+        background-color: #006d6d;
+        color: white;
+        font-size: 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition:
+          background-color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .upload-label:hover {
+        background-color: #004c4c;
+        transform: translateY(-1px);
+      }
+
+      /* File name display */
+      #file-name {
+        display: inline-block;
+        margin-left: 10px;
+        font-size: 13px;
+        color: #333;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="sidebar">
-        <h2>DocAssist</h2>
-        <ul>
-            <li><a href="Adminpanel.html">Dashboard</a></li>
-            <li><a href="adminappoint.html">Appointments</a></li>
-            <li><a href="add-doctors.html">Add Doctor</a></li>
-            <li><a href="Alldoctorsreal.html">Doctors List</a></li>
-            <li><a href="patients-list.html">Patients List</a></li>
-            <li><a href="settings.html">Settings</a></li>
-        </ul>
+      <h2>DocAssist</h2>
+      <ul>
+        <li><a href="Adminpanel.html">Dashboard</a></li>
+        <li><a href="adminappoint.html">Appointments</a></li>
+        <li><a href="add-doctors.html">Add Doctor</a></li>
+        <li><a href="Alldoctorsreal.html">Doctors List</a></li>
+        <li><a href="patients-list.html">Patients List</a></li>
+        <li><a href="settings.html">Settings</a></li>
+      </ul>
     </div>
 
     <div class="main-content">
-        <div class="header">
-            <h1>Edit Doctor</h1>
-            <button class="logout-btn">Logout</button>
-        </div>
+      <div class="header">
+        <h1>Edit Doctor</h1>
+        <button class="logout-btn">Logout</button>
+      </div>
 
-        <div class="form-container">
-            <form id="edit-doctor-form" enctype="multipart/form-data">
-                <div class="current-photo" id="current-photo-container">
-                    <!-- Current photo will be displayed here -->
-                </div>
+      <div class="form-container">
+        <form id="edit-doctor-form" enctype="multipart/form-data">
+          <div class="current-photo" id="current-photo-container">
+            <!-- Current photo will be displayed here -->
+          </div>
 
-                <div class="form-group">
-                    <div class="upload-button">
-                        <input type="file" id="photo" name="photo"
-                            style="opacity: 0; position: absolute; width: 0.1px; height: 0.1px" />
-                        <label for="photo" style="cursor: pointer;">Change Doctor Picture</label>
-                        <label for="photo" style="cursor: pointer;">
-                            <span id="file-name">Choose a new picture</span>
-                        </label>
-                    </div>
-                </div>
+          <div class="form-group">
+            <div class="upload-button">
+              <input type="file" id="photo" name="photo" />
+              <label for="photo" class="upload-label">
+                Change Doctor Picture
+                <span id="file-name">Choose a new picture</span>
+              </label>
+            </div>
+          </div>
 
-                <div class="form-group">
-                    <label for="name">Doctor Name</label>
-                    <input type="text" id="name" name="name" placeholder="Name" required />
-                </div>
+          <div class="form-group">
+            <label for="name">Doctor Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Name"
+              required
+            />
+          </div>
 
-                <div class="form-group">
-                    <label for="email">Doctor Email</label>
-                    <input type="email" id="email" name="email" placeholder="Email" required />
-                </div>
+          <div class="form-group">
+            <label for="email">Doctor Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email"
+              required
+            />
+          </div>
 
-                <div class="form-group">
-                    <label for="speciality">Speciality</label>
-                    <select id="speciality" name="speciality" required>
-                        <option value="general">General Physician</option>
-                        <option value="cardiologist">Cardiologist</option>
-                        <option value="dermatologist">Dermatologist</option>
-                        <option value="orthopedist">Orthopedist</option>
-                        <option value="Surgeon">Surgeon</option>
-                        <option value="Opthamologist">Opthamologist</option>
-                    </select>
-                </div>
+          <div class="form-group">
+            <label for="speciality">Speciality</label>
+            <select id="speciality" name="speciality" required>
+              <option value="general">General Physician</option>
+              <option value="cardiologist">Cardiologist</option>
+              <option value="dermatologist">Dermatologist</option>
+              <option value="orthopedist">Orthopedist</option>
+              <option value="Surgeon">Surgeon</option>
+              <option value="Opthamologist">Opthamologist</option>
+            </select>
+          </div>
 
-                <div class="form-group">
-                    <label for="degree">Degree</label>
-                    <input type="text" id="degree" name="degree" placeholder="Degree" required />
-                </div>
+          <div class="form-group">
+            <label for="degree">Degree</label>
+            <input
+              type="text"
+              id="degree"
+              name="degree"
+              placeholder="Degree"
+              required
+            />
+          </div>
 
-                <div class="form-group">
-                    <label for="address1">Address 1</label>
-                    <input type="text" id="address1" name="address1" placeholder="Address 1" required />
-                </div>
+          <div class="form-group">
+            <label for="address1">Address 1</label>
+            <input
+              type="text"
+              id="address1"
+              name="address1"
+              placeholder="Address 1"
+              required
+            />
+          </div>
 
-                <div class="form-group">
-                    <label for="address2">Address 2</label>
-                    <input type="text" id="address2" name="address2" placeholder="Address 2 (optional)" />
-                </div>
+          <div class="form-group">
+            <label for="address2">Address 2</label>
+            <input
+              type="text"
+              id="address2"
+              name="address2"
+              placeholder="Address 2 (optional)"
+            />
+          </div>
 
-                <div class="form-group">
-                    <label for="experience">Experience</label>
-                    <input type="text" id="experience" name="experience" placeholder="e.g., 1 Year" required />
-                </div>
+          <div class="form-group">
+            <label for="experience">Experience</label>
+            <input
+              type="text"
+              id="experience"
+              name="experience"
+              placeholder="e.g., 1 Year"
+              required
+            />
+          </div>
 
-                <div class="form-group">
-                    <label for="fees">Doctor Fees</label>
-                    <input type="number" id="fees" name="fees" placeholder="Doctor Fees" required />
-                </div>
+          <div class="form-group">
+            <label for="fees">Doctor Fees</label>
+            <input
+              type="number"
+              id="fees"
+              name="fees"
+              placeholder="Doctor Fees"
+              required
+            />
+          </div>
 
-                <div class="form-group">
-                    <label for="about-doctor">About Doctor</label>
-                    <textarea id="about-doctor" name="about" placeholder="Write about the doctor" rows="4"
-                        required></textarea>
-                </div>
+          <div class="form-group">
+            <label for="about-doctor">About Doctor</label>
+            <textarea
+              id="about-doctor"
+              name="about"
+              placeholder="Write about the doctor"
+              rows="4"
+              required
+            ></textarea>
+          </div>
 
-                <div class="form-group">
-                    <label for="available">Availability</label>
-                    <select id="available" name="available" required>
-                        <option value="true">Available</option>
-                        <option value="false">Not Available</option>
-                    </select>
-                </div>
+          <div class="form-group">
+            <label for="available">Availability</label>
+            <select id="available" name="available" required>
+              <option value="true">Available</option>
+              <option value="false">Not Available</option>
+            </select>
+          </div>
 
-                <input type="hidden" id="doctor-id" name="doctor-id" />
+          <input type="hidden" id="doctor-id" name="doctor-id" />
 
-                <button type="submit" class="btn">Update Doctor</button>
-            </form>
-        </div>
+          <button type="submit" class="btn">Update Doctor</button>
+        </form>
+      </div>
     </div>
 
     <script>
-        // Extract doctor ID from URL query parameter
-        function getDoctorIdFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('id');
+      // Extract doctor ID from URL query parameter
+      function getDoctorIdFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("id");
+      }
+
+      // Fetch doctor data by ID and pre-fill the form
+      async function fetchDoctorData(doctorId) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/doctors/${doctorId}`,
+          );
+          if (!response.ok) throw new Error("Failed to fetch doctor data");
+          const doctor = await response.json();
+
+          document.getElementById("doctor-id").value = doctor._id;
+          document.getElementById("name").value = doctor.name;
+          document.getElementById("email").value = doctor.email;
+          document.getElementById("speciality").value = doctor.speciality;
+          document.getElementById("degree").value = doctor.degree;
+          document.getElementById("address1").value = doctor.address1;
+          document.getElementById("address2").value = doctor.address2 || "";
+          document.getElementById("experience").value = doctor.experience;
+          document.getElementById("fees").value = doctor.fees;
+          document.getElementById("about-doctor").value = doctor.about;
+          document.getElementById("available").value = doctor.available
+            ? "true"
+            : "false";
+
+          // Show current photo
+          const photoContainer = document.getElementById(
+            "current-photo-container",
+          );
+          if (doctor.photo) {
+            photoContainer.innerHTML = `<img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" />`;
+          } else {
+            photoContainer.innerHTML = "<p>No photo available</p>";
+          }
+        } catch (error) {
+          alert(error.message);
         }
+      }
 
-        // Fetch doctor data by ID and pre-fill the form
-        async function fetchDoctorData(doctorId) {
-            try {
-                const response = await fetch(`http://localhost:3000/api/doctors/${doctorId}`);
-                if (!response.ok) throw new Error('Failed to fetch doctor data');
-                const doctor = await response.json();
+      // Handle file input display
+      document.getElementById("photo").addEventListener("change", function (e) {
+        const fileName = e.target.files[0]
+          ? e.target.files[0].name
+          : "Choose a new picture";
+        document.getElementById("file-name").textContent = fileName;
+      });
 
-                document.getElementById('doctor-id').value = doctor._id;
-                document.getElementById('name').value = doctor.name;
-                document.getElementById('email').value = doctor.email;
-                document.getElementById('speciality').value = doctor.speciality;
-                document.getElementById('degree').value = doctor.degree;
-                document.getElementById('address1').value = doctor.address1;
-                document.getElementById('address2').value = doctor.address2 || '';
-                document.getElementById('experience').value = doctor.experience;
-                document.getElementById('fees').value = doctor.fees;
-                document.getElementById('about-doctor').value = doctor.about;
-                document.getElementById('available').value = doctor.available ? 'true' : 'false';
+      // Handle form submission to update doctor
+      document
+        .getElementById("edit-doctor-form")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
 
-                // Show current photo
-                const photoContainer = document.getElementById('current-photo-container');
-                if (doctor.photo) {
-                    photoContainer.innerHTML = `<img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" />`;
-                } else {
-                    photoContainer.innerHTML = '<p>No photo available</p>';
-                }
-            } catch (error) {
-                alert(error.message);
+          const doctorId = document.getElementById("doctor-id").value;
+          const form = document.getElementById("edit-doctor-form");
+          const formData = new FormData(form);
+          const submitBtn = form.querySelector('button[type="submit"]');
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Updating...";
+
+          try {
+            const response = await fetch(
+              `http://localhost:3000/api/doctors/${doctorId}`,
+              {
+                method: "PUT",
+                body: formData,
+              },
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.message || "Failed to update doctor");
             }
+
+            alert("Doctor updated successfully!");
+            window.location.href = "Alldoctorsreal.html";
+          } catch (err) {
+            alert(err.message);
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Update Doctor";
+          }
+        });
+
+      // On page load, fetch doctor data
+      document.addEventListener("DOMContentLoaded", () => {
+        const doctorId = getDoctorIdFromUrl();
+        if (doctorId) {
+          fetchDoctorData(doctorId);
+        } else {
+          alert("No doctor ID provided");
+          window.location.href = "Alldoctorsreal.html";
         }
-
-        // Handle file input display
-        document.getElementById('photo').addEventListener('change', function (e) {
-            const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a new picture';
-            document.getElementById('file-name').textContent = fileName;
-        });
-
-        // Handle form submission to update doctor
-        document.getElementById('edit-doctor-form').addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            const doctorId = document.getElementById('doctor-id').value;
-            const form = document.getElementById('edit-doctor-form');
-            const formData = new FormData(form);
-            const submitBtn = form.querySelector('button[type="submit"]');
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Updating...';
-
-            try {
-                const response = await fetch(`http://localhost:3000/api/doctors/${doctorId}`, {
-                    method: 'PUT',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Failed to update doctor');
-                }
-
-                alert('Doctor updated successfully!');
-                window.location.href = 'Alldoctorsreal.html';
-            } catch (err) {
-                alert(err.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Update Doctor';
-            }
-        });
-
-        // On page load, fetch doctor data
-        document.addEventListener('DOMContentLoaded', () => {
-            const doctorId = getDoctorIdFromUrl();
-            if (doctorId) {
-                fetchDoctorData(doctorId);
-            } else {
-                alert('No doctor ID provided');
-                window.location.href = 'Alldoctorsreal.html';
-            }
-        });
+      });
     </script>
-</body>
-
+  </body>
 </html>

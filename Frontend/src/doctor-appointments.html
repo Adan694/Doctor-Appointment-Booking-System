@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Doctor Appointments</title>
     <style>
  * {
@@ -515,6 +515,21 @@
 
         fetchAppointments();
     </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+<script>
+  const socket = io("http://localhost:3000");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("userRole");
+
+    if (userId && role) {
+      console.log("🟢 Reconnecting user:", userId, role);
+      socket.emit("join_user", { userId, role });
+    }
+  });
+</script>
 </body>
 
 </html>

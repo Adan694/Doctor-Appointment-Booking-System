@@ -557,6 +557,23 @@
       #emptyChatList {
         display: none;
       }
+      .type-unread-badge {
+        background: red;
+        color: white;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 12px;
+        margin-left: 6px;
+        display: none;
+        font-weight: bold;
+      }
+
+      /* Loading text */
+      .loading-text {
+        text-align: center;
+        color: gray;
+        font-size: 18px;
+      }
     </style>
   </head>
   <body>
@@ -579,21 +596,12 @@
         <div class="user-type-switcher">
           <button id="patientsBtn" class="user-type-btn active">
             👥 Patients
-            <span
-              id="patientsUnreadBadge"
-              class="type-unread-badge"
-              style="display: none"
-              >0</span
-            >
+            <span id="patientsUnreadBadge" class="type-unread-badge">0</span>
           </button>
+
           <button id="doctorsBtn" class="user-type-btn">
             👨‍⚕️ Doctors
-            <span
-              id="doctorsUnreadBadge"
-              class="type-unread-badge"
-              style="display: none"
-              >0</span
-            >
+            <span id="doctorsUnreadBadge" class="type-unread-badge">0</span>
           </button>
         </div>
         <div class="search-container">
@@ -902,7 +910,8 @@
         // ----------------------------
         if (
           activeUser &&
-          (msg.senderId === activeUser._id || msg.receiverId === activeUser._id)
+          msg.senderRole === "patient" &&
+          msg.senderId === activeUser._id
         ) {
           console.log("Message belongs to active chat — adding to window");
           addMessage(msg);
@@ -1149,14 +1158,19 @@
         const msg = msgInput.value.trim();
         if (!msg) return;
 
-        socket.emit("send_message", {
+        const messageData = {
           senderId: "689f5be6e5432f608d4b3a54",
           senderRole: "admin",
           receiverId: activeUser._id,
           message: msg,
           timestamp: new Date().toISOString(),
-        });
+        };
 
+        // send to server
+        socket.emit("send_message", messageData);
+
+        // show instantly in admin chat
+        addMessage(messageData);
         updateLastMessage(activeUser._id, msg);
         msgInput.value = "";
       }
@@ -1244,6 +1258,22 @@
         if (e.key === "Enter") sendMessage();
       });
       sendBtn.onclick = sendMessage;
+
+      searchInput.addEventListener("input", function () {
+        const query = this.value.toLowerCase();
+
+        document.querySelectorAll(".chat-item").forEach((item) => {
+          const name = item
+            .querySelector(".user-name")
+            .textContent.toLowerCase();
+
+          if (name.includes(query)) {
+            item.style.display = "flex";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      });
     </script>
   </body>
 </html>

@@ -329,7 +329,25 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
       const socket = io("http://localhost:3000");
+      async function clearUnreadMessages() {
+        const token = localStorage.getItem("authToken");
 
+        try {
+          await fetch("http://localhost:3000/user/chat/mark-read", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          console.log("Unread messages cleared");
+        } catch (err) {
+          console.error("Error clearing unread:", err);
+        }
+      }
+      window.addEventListener("load", () => {
+        clearUnreadMessages();
+      });
       const userId = localStorage.getItem("patientId");
       const role = localStorage.getItem("userRole") || "patient";
       const receiverId = "689f5be6e5432f608d4b3a54"; // replace with actual admin ID

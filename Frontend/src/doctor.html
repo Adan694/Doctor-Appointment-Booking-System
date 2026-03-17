@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -100,7 +100,9 @@
         border: 1px solid #ddd;
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        transition:
+          box-shadow 0.3s ease,
+          transform 0.3s ease;
       }
       .profile-card img {
         border-radius: 16px;
@@ -156,7 +158,9 @@
         font-size: 16px;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        transition: background 0.3s ease, transform 0.2s ease;
+        transition:
+          background 0.3s ease,
+          transform 0.2s ease;
       }
 
       .book-button:hover {
@@ -221,8 +225,12 @@
         align-items: flex-start;
 
         /* Smooth transition for hover changes */
-        transition: color 0.3s ease, border-color 0.3s ease,
-          background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+        transition:
+          color 0.3s ease,
+          border-color 0.3s ease,
+          background-color 0.3s ease,
+          box-shadow 0.3s ease,
+          transform 0.3s ease;
       }
 
       .feedback-item:hover {
@@ -381,7 +389,9 @@
         opacity: 0;
         transform: translateY(-10px);
         pointer-events: none;
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
         flex-direction: column;
         overflow: visible;
       }
@@ -488,7 +498,9 @@
         height: 2px;
         background: white;
         border-radius: 2px;
-        transition: width 0.3s ease, left 0.3s ease;
+        transition:
+          width 0.3s ease,
+          left 0.3s ease;
       }
 
       .quick-links a:hover::after,
@@ -577,7 +589,9 @@
           box-shadow: none;
           border: 1px solid #f0f0f0;
           border-top: none;
-          transition: opacity 0.3s ease, max-height 0.3s ease;
+          transition:
+            opacity 0.3s ease,
+            max-height 0.3s ease;
           max-height: 0;
           overflow: hidden;
           flex-direction: row;
@@ -823,11 +837,11 @@
             console.log("Today:", todayStr, "Tomorrow:", tomorrowStr);
             console.log(
               "Doctor availabilitySlots:",
-              JSON.stringify(doctor.availabilitySlots, null, 2)
+              JSON.stringify(doctor.availabilitySlots, null, 2),
             );
             // Check today's slots and only mark as available if some are still upcoming
             const todaySlot = doctor.availabilitySlots?.find(
-              (slot) => slot.date === todayStr
+              (slot) => slot.date === todayStr,
             );
             console.log("TodaySlot:", todaySlot);
 
@@ -837,7 +851,7 @@
                 const isFuture = slotDateTime > now;
                 console.log(
                   `   Slot time: ${time} → ${slotDateTime.toISOString()} | Future?`,
-                  isFuture
+                  isFuture,
                 );
                 return isFuture;
               });
@@ -943,12 +957,12 @@
               console.log(
                 "From feedback:",
                 feedback.patientId,
-                typeof feedback.patientId
+                typeof feedback.patientId,
               );
               console.log(
                 "From storage:",
                 loggedInPatientId,
-                typeof loggedInPatientId
+                typeof loggedInPatientId,
               );
 
               let initials = (feedback.userName || "A")
@@ -966,7 +980,7 @@
         <div class="star-rating">${stars}</div>
         <p>${feedback.comment}</p>
 <p><small><strong>Submitted:</strong> ${dayjs(
-                feedback.timestamp
+                feedback.timestamp,
               ).fromNow()}</small></p>
     
 `;
@@ -1007,7 +1021,7 @@
         const currentComment = decodeURIComponent(encodedComment);
 
         const feedbackItem = document.querySelector(
-          `[data-feedback-id="${feedbackId}"]`
+          `[data-feedback-id="${feedbackId}"]`,
         );
         if (!feedbackItem) return;
 
@@ -1020,7 +1034,7 @@
         
         <button onclick="submitEditedFeedback('${feedbackId}')">Save</button>
         <button onclick="fetchFeedbackForDoctor('${new URLSearchParams(
-          window.location.search
+          window.location.search,
         ).get("id")}')">Cancel</button>
     `;
       }
@@ -1029,10 +1043,10 @@
         const doctorId = new URLSearchParams(window.location.search).get("id");
         const token = localStorage.getItem("authToken");
         const rating = document.getElementById(
-          `edit-rating-${feedbackId}`
+          `edit-rating-${feedbackId}`,
         ).value;
         const comment = document.getElementById(
-          `edit-comment-${feedbackId}`
+          `edit-comment-${feedbackId}`,
         ).value;
 
         const updatedFeedback = {
@@ -1063,7 +1077,7 @@
 
       function deleteFeedback(feedbackId) {
         const confirmFeedback = confirm(
-          "Are you sure you want to delete this feedback?"
+          "Are you sure you want to delete this feedback?",
         );
         if (!confirmFeedback) return;
         const token = localStorage.getItem("authToken");
@@ -1121,7 +1135,7 @@
           name: document.getElementById("edit-name").value,
           speciality: document.getElementById("edit-speciality").value,
           experience: parseInt(
-            document.getElementById("edit-experience").value
+            document.getElementById("edit-experience").value,
           ),
           degree: document.getElementById("edit-degree").value,
           fees: parseInt(document.getElementById("edit-fees").value),
@@ -1152,6 +1166,21 @@
             alert("Error saving profile");
           });
       }
+    </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io("http://localhost:3000");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const userId = localStorage.getItem("userId");
+        const role = localStorage.getItem("userRole");
+
+        if (userId && role) {
+          console.log("🟢 Reconnecting user:", userId, role);
+          socket.emit("join_user", { userId, role });
+        }
+      });
     </script>
   </body>
 </html>

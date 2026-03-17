@@ -111,8 +111,8 @@ nav ul li a:hover {
 .logo h1 {
     font-size: 28px;
     background: linear-gradient(45deg, #ffffff, #cceeff);
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -354,6 +354,7 @@ nav ul li a:hover {
         height: 100vh;
         background: rgba(255, 255, 255, 0.7);
         z-index: 4000;
+        -webkit-backdrop-filter: blur(4);
         backdrop-filter: blur(4px);
         align-items: center;
         justify-content: center;
@@ -415,6 +416,7 @@ nav ul li a:hover {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    -webkit-backdrop-filter: blur(4);
     backdrop-filter: blur(4px);
 }
 
@@ -739,6 +741,10 @@ body {
         padding: 2px 4px;
     }
 }
+.error-message {
+    color: red;
+    display: none;
+}
 
     </style>
 </head>
@@ -811,7 +817,7 @@ body {
                 <div class="form-group">
     <label for="modalPhone">Phone</label>
     <input type="text" id="modalPhone" maxlength="11" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
-    <small id="phoneError" style="color: red; display: none;"></small>
+<small id="phoneError" class="error-message"></small>
 </div>
 <div class="form-group">
     <label for="modalEmail">Email</label>
@@ -820,8 +826,7 @@ body {
 <div class="form-group">
     <label for="modalAge">Age</label>
     <input type="number" id="modalAge" min="0" max="120" />
-        <small id="ageError" style="color:red; display:none;"></small>
-</div>
+<small id="ageError" class="error-message"></small></div>
 <div class="form-group">
     <label for="modalIssue">Issue / Problem</label>
     <textarea id="modalIssue" rows="3" placeholder="Briefly describe your medical issue"></textarea>
@@ -1345,5 +1350,20 @@ const normalizedTime = normalizeTime(selectedTime);
                                         });
                                     });
     </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+<script>
+  const socket = io("http://localhost:3000");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("userRole");
+
+    if (userId && role) {
+      console.log("🟢 Reconnecting user:", userId, role);
+      socket.emit("join_user", { userId, role });
+    }
+  });
+</script>
 </body>
 </html>

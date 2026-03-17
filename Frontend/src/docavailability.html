@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Doctor Profile Editor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
@@ -82,8 +83,8 @@
     .logo h1 {
     font-size: 28px;
     background: linear-gradient(45deg, #ffffff, #cceeff);
+        -webkit-background-clip: text;
     background-clip: text;
-    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     }
 
@@ -163,6 +164,7 @@ textarea:focus {
     color: rgb(9, 102, 102);
     font-weight: 600;
     letter-spacing: 0.05em;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -225,6 +227,7 @@ textarea:focus {
     transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     display: inline-block;
     text-align: center;
+    -webkit-user-select: none;
     user-select: none;
 }
 .add-slot-btn:hover {
@@ -241,6 +244,7 @@ textarea:focus {
     padding-bottom: 6px;
     font-weight: 700;
     letter-spacing: 0.05em;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -306,6 +310,7 @@ textarea:focus {
     font-size: 14px;
     cursor: pointer;
     white-space: nowrap;
+    -webkit-user-select: none;
     user-select: none;
     transition: color 0.3s ease;
 }
@@ -335,6 +340,7 @@ textarea:focus {
         height: 100vh;
         background: rgba(255, 255, 255, 0.7);
         z-index: 2000;
+        -webkit-backdrop-filter: blur(4);
         backdrop-filter: blur(4px);
         align-items: center;
         justify-content: center;
@@ -520,6 +526,7 @@ textarea:focus {
     border-radius: 6px;
     cursor: pointer;
     transition: 0.3s ease;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -530,6 +537,28 @@ textarea:focus {
 
 .slots-container.hidden {
     display: none;
+}
+.day-checkboxes {
+    margin-bottom: 14px;
+}
+
+.day-checkboxes label {
+    margin-right: 10px; /* space between checkboxes */
+    cursor: pointer;
+}
+
+.time-range {
+    margin-bottom: 14px;
+}
+
+.time-range label {
+    margin-right: 12px;
+}
+
+.time-range input[type="time"] {
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
 
 </style>
@@ -592,20 +621,20 @@ textarea:focus {
         <span class="modal-close" onclick="closeQuickAddPopup()">&times;</span>
         <div class="modal-header">Quick Add Availability</div>
 
-        <div style="margin-bottom:14px;">
-            <label><input type="checkbox" class="dayCheckbox" value="Mon"> Mon</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Tue"> Tue</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Wed"> Wed</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Thu"> Thu</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Fri"> Fri</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Sat"> Sat</label>
-            <label><input type="checkbox" class="dayCheckbox" value="Sun"> Sun</label>
-        </div>
+      <div class="day-checkboxes">
+    <label><input type="checkbox" class="dayCheckbox" value="Mon"> Mon</label>
+    <label><input type="checkbox" class="dayCheckbox" value="Tue"> Tue</label>
+    <label><input type="checkbox" class="dayCheckbox" value="Wed"> Wed</label>
+    <label><input type="checkbox" class="dayCheckbox" value="Thu"> Thu</label>
+    <label><input type="checkbox" class="dayCheckbox" value="Fri"> Fri</label>
+    <label><input type="checkbox" class="dayCheckbox" value="Sat"> Sat</label>
+    <label><input type="checkbox" class="dayCheckbox" value="Sun"> Sun</label>
+</div>
 
-        <div style="margin-bottom:14px;">
-            <label>From: <input type="time" id="quickStart" value="09:00"></label>
-            <label style="margin-left:12px;">To: <input type="time" id="quickEnd" value="17:00"></label>
-        </div>
+<div class="time-range">
+    <label>From: <input type="time" id="quickStart" value="09:00"></label>
+    <label>To: <input type="time" id="quickEnd" value="17:00"></label>
+</div>
 
         <div class="modal-footer">
             <button class="btn" onclick="applyQuickAvailability()">Save Availability</button>
@@ -1210,5 +1239,20 @@ function addSlot() {
         }  
 
     </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+<script>
+  const socket = io("http://localhost:3000");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("userRole");
+
+    if (userId && role) {
+      console.log("🟢 Reconnecting user:", userId, role);
+      socket.emit("join_user", { userId, role });
+    }
+  });
+</script>
 </body>
 </html>

@@ -405,7 +405,21 @@ h1.FAQ:hover {
                     menu.classList.toggle('active'); 
                 });
         </script>
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
 
+<script>
+  const socket = io("http://localhost:3000");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("userRole");
+
+    if (userId && role) {
+      console.log("🟢 Reconnecting user:", userId, role);
+      socket.emit("join_user", { userId, role });
+    }
+  });
+</script>
     </div>
 </body>
 

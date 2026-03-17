@@ -370,8 +370,8 @@ nav ul li a:hover {
 .logo h1 {
     font-size: 28px;
     background: linear-gradient(45deg, #ffffff, #cceeff);
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -572,6 +572,16 @@ nav ul li a:hover {
         padding: 2px 4px;
     }
 }
+.loading-text {
+    text-align: center;
+    color: gray;
+    font-size: 18px;
+}
+
+/* No doctors message */
+.no-doctors-message {
+    display: none;
+}
 
     </style>
 </head>
@@ -624,8 +634,7 @@ nav ul li a:hover {
     </ul>
            
     </nav>
-    <div id="loading" style="text-align:center; color: gray; font-size: 18px;">Loading doctors...</div>
-
+<div id="loading" class="loading-text">Loading doctors...</div>
 
     <div id="doctors">
         <div class="head">
@@ -637,7 +646,7 @@ nav ul li a:hover {
             <button id="search-btn">Search</button>
         </div>
         <div class="doctor-list"></div>
-        <p class="no-doctors-message" style="display: none;">No doctors found.</p>
+  <p class="no-doctors-message">No doctors found.</p>
 
     <div class="footer">
        <div class="contact-info">
@@ -865,7 +874,21 @@ if (todaySlot) {
         });
     </script>
 
-        
+        <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+<script>
+  const socket = io("http://localhost:3000");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("userRole");
+
+    if (userId && role) {
+      console.log("🟢 Reconnecting user:", userId, role);
+      socket.emit("join_user", { userId, role });
+    }
+  });
+</script>
 
 </body>
 

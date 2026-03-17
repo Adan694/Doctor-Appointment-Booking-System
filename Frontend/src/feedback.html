@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -69,7 +69,9 @@
         padding: 40px 30px;
         border-radius: 15px;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
       }
 
       .container:hover {
@@ -102,7 +104,9 @@
         margin-bottom: 20px;
         border-radius: 8px;
         border: 1px solid #ccc;
-        transition: border-color 0.3s, box-shadow 0.3s;
+        transition:
+          border-color 0.3s,
+          box-shadow 0.3s;
         font-size: 16px;
       }
 
@@ -123,7 +127,9 @@
         cursor: pointer;
         font-size: 16px;
         font-weight: 600;
-        transition: background-color 0.3s, transform 0.2s;
+        transition:
+          background-color 0.3s,
+          transform 0.2s;
       }
 
       button:hover {
@@ -138,7 +144,9 @@
         color: #006d6d;
         font-weight: 500;
         text-decoration: none;
-        transition: color 0.3s, transform 0.2s;
+        transition:
+          color 0.3s,
+          transform 0.2s;
       }
 
       .back-link:hover {
@@ -156,7 +164,9 @@
         padding: 15px 20px;
         border-radius: 8px;
         margin-bottom: 15px;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
 
       .feedback-item:hover {
@@ -315,7 +325,7 @@
             `http://localhost:3000/api/doctors/${doctorId}`,
             {
               headers: token ? { Authorization: `Bearer ${token}` } : {},
-            }
+            },
           );
 
           const doctor = await res.json();
@@ -366,7 +376,7 @@
               throw new Error(data.message || "Error submitting feedback");
 
             let submitted = JSON.parse(
-              localStorage.getItem("feedbackGiven") || "[]"
+              localStorage.getItem("feedbackGiven") || "[]",
             );
             if (!submitted.includes(String(payload.appointmentId))) {
               submitted.push(String(payload.appointmentId));
@@ -387,7 +397,7 @@
 
         try {
           const res = await fetch(
-            `http://localhost:3000/api/feedback/doctor/${doctorId}`
+            `http://localhost:3000/api/feedback/doctor/${doctorId}`,
           );
           const feedbacks = await res.json();
 
@@ -407,10 +417,10 @@
                         }</strong> rated <strong>${fb.rating}/5</strong>
                         <p>${fb.comment}</p>
                         <small>${new Date(
-                          fb.timestamp
+                          fb.timestamp,
                         ).toLocaleString()}</small>
                     </div>
-                `
+                `,
             )
             .join("");
         } catch (err) {
@@ -418,6 +428,21 @@
           feedbackContainer.innerHTML = "<p></p>";
         }
       }
+    </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io("http://localhost:3000");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const userId = localStorage.getItem("userId");
+        const role = localStorage.getItem("userRole");
+
+        if (userId && role) {
+          console.log("🟢 Reconnecting user:", userId, role);
+          socket.emit("join_user", { userId, role });
+        }
+      });
     </script>
   </body>
 </html>

@@ -621,12 +621,20 @@
         });
 
         // Receive messages
-        socket.on("new_message", (msg) => {
-          // Only count messages where doctor is receiver
+        socket.on("new_message", async (msg) => {
+          console.log("📩 [DEBUG] Socket 'new_message' event received:", msg);
+
+          if (!doctorId) {
+            console.warn("⚠️ [DEBUG] No doctorId found in localStorage");
+          }
+
           if (msg.receiverId === doctorId) {
-            unreadCount++;
-            updateChatNotification();
-            console.log("📩 New message received:", msg);
+            console.log(
+              "✅ [DEBUG] Message is for this doctor, updating unread count...",
+            );
+            await fetchUnreadMessages();
+          } else {
+            console.log("❌ [DEBUG] Message not for this doctor, ignored");
           }
         });
 
@@ -650,29 +658,50 @@
       }
 
       function updateChatNotification() {
+        console.log(
+          "🔔 [DEBUG] Updating chat badge. Current unreadCount:",
+          unreadCount,
+        );
+
         if (unreadCount > 0) {
           chatNotificationEl.style.display = "inline";
           chatNotificationEl.textContent = unreadCount > 9 ? "9+" : unreadCount;
+          console.log(
+            "🔔 [DEBUG] Badge shown:",
+            chatNotificationEl.textContent,
+          );
         } else {
           chatNotificationEl.style.display = "none";
+          console.log("🔔 [DEBUG] Badge hidden");
         }
+
+        localStorage.setItem("unreadCount", unreadCount);
       }
-
-      // ------------------- CHAT BUTTON -------------------
-      // chatBtn.addEventListener("click", () => {
-      //   unreadCount = 0;
-      //   updateChatNotification();
-      //   window.location.href = "doctorchat.html";
-      // });
-
-      // ------------------- INITIALIZE -------------------
-      // initializeSocketConnection();
 
       // ------------------- CHAT BUTTON -------------------
       chatBtn.addEventListener("click", async () => {
         console.log("💬 Chat button clicked");
-        await markMessagesAsRead();
+
+        // Hide badge instantly
+        unreadCount = 0;
+        updateChatNotification();
+
+        // Mark messages as read on backend
+        try {
+          await markMessagesAsRead();
+        } catch (err) {
+          console.error("❌ Could not mark messages read:", err);
+        }
+
+        // Navigate to chat page
         window.location.href = "doctorchat.html";
+      });
+
+      document.addEventListener("visibilitychange", async () => {
+        if (document.visibilityState === "visible") {
+          console.log("👀 Page visible again - refreshing unread messages");
+          await fetchUnreadMessages();
+        }
       });
 
       // ------------------- NAV TOGGLE -------------------
@@ -731,8 +760,8 @@
           bookings.map((b) => b.patientId?._id).filter(Boolean),
         );
 
-        appointmentsCount = pendingAppointments.length;
-        patientsCount = uniquePatients.size;
+        const appointmentsCount = pendingAppointments.length;
+        const patientsCount = uniquePatients.size;
 
         // Update stats cards
         document
@@ -765,15 +794,15 @@
       function addBookingToList(patientName, bookingDate, bookingStatus) {
         const newBooking = document.createElement("li");
         newBooking.innerHTML = `
-                <div class="booking-info">
-                    <strong>${patientName}</strong> - Booking on ${bookingDate}
-                </div>
-                <div class="booking-actions">
-                    <span class="status ${bookingStatus}">${capitalizeFirstLetter(
-                      bookingStatus,
-                    )}</span>
-                </div>
-            `;
+    <div class="booking-info">
+      <strong>${patientName}</strong> - Booking on ${bookingDate}
+    </div>
+    <div class="booking-actions">
+      <span class="status ${bookingStatus}">${capitalizeFirstLetter(
+        bookingStatus,
+      )}</span>
+    </div>
+  `;
         document.getElementById("booking-list").appendChild(newBooking);
       }
 
@@ -804,9 +833,7 @@
             month: "short",
             day: "numeric",
           });
-          if (counts[dateStr] !== undefined) {
-            counts[dateStr] += 1;
-          }
+          if (counts[dateStr] !== undefined) counts[dateStr] += 1;
         });
 
         const ctx = document
@@ -836,8 +863,6 @@
       // ------------------- LOGOUT -------------------
       function logout() {
         console.log("🚪 Logging out...");
-
-        // Emit offline status before leaving
         if (socket && socket.connected) {
           socket.emit("doctor_offline", {
             doctorId: doctorId,
@@ -846,7 +871,6 @@
           socket.disconnect();
         }
 
-        // Clear local storage
         localStorage.removeItem("authToken");
         localStorage.removeItem("doctorId");
         localStorage.removeItem("userId");
@@ -854,66 +878,45 @@
         localStorage.removeItem("userEmail");
         localStorage.removeItem("socketId");
 
-        // Redirect to login
         window.location.href = "login.html";
       }
 
-      // ------------------- INITIALIZATION -------------------
-      document.addEventListener("DOMContentLoaded", async function () {
-        console.log("🌐 DOM fully loaded");
-        const token = localStorage.getItem("authToken") || "";
-
-        console.log("📋 Session Data:", {
-          doctorId: doctorId,
-          hasToken: !!token,
-          userEmail: localStorage.getItem("userEmail"),
-        });
-
-        // Check if doctor is logged in
-        if (!doctorId || !token) {
-          console.error("❌ Doctor not logged in - redirecting to login");
-          window.location.href = "login.html";
-          return;
-        }
-
-        // Initialize socket connection
-        initializeSocketConnection();
-
-        // Fetch initial data
-        await fetchUnreadMessages();
-        await loadBookings();
-
-        console.log("✅ Doctor panel initialization complete");
-      });
-
+      // ------------------- FETCH UNREAD MESSAGES -------------------
       async function fetchUnreadMessages() {
         if (!doctorId) return;
+
+        console.log(
+          "📊 [DEBUG] Fetching unread messages for doctorId:",
+          doctorId,
+        );
+
         try {
           const res = await fetch(
             `${backendURL}/api/doctor-chats/unread-count/${doctorId}`,
           );
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
           const data = await res.json();
           unreadCount = data.count || 0;
+          console.log("📊 [DEBUG] Unread messages count:", unreadCount);
+
           updateChatNotification();
-          console.log("📊 Unread messages:", unreadCount);
         } catch (err) {
-          console.error("❌ Error fetching unread messages:", err);
+          console.error("❌ [DEBUG] Error fetching unread messages:", err);
         }
       }
+
+      // ------------------- MARK MESSAGES READ -------------------
       async function markMessagesAsRead() {
         if (!doctorId) return;
         try {
           const res = await fetch(
-            `${backendURL}/mark-read?doctorId=${doctorId}`,
+            `${backendURL}/api/doctor-chats/mark-read?doctorId=${doctorId}`,
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                // Include token if your backend requires authentication
-                Authorization: `Bearer ${
-                  localStorage.getItem("authToken") || ""
-                }`,
+                Authorization: `Bearer ${localStorage.getItem("authToken") || ""}`,
               },
             },
           );
@@ -922,19 +925,39 @@
           const data = await res.json();
           console.log(`✅ Messages marked as read: ${data.markedCount}`);
 
-          // Reset unread count on frontend
           unreadCount = 0;
+          localStorage.setItem("unreadCount", unreadCount);
           updateChatNotification();
         } catch (err) {
           console.error("❌ Error marking messages as read:", err);
         }
       }
 
-      // Cleanup on page unload
+      // ------------------- CLEANUP -------------------
       window.addEventListener("beforeunload", function () {
         console.log("🧹 Page unloading - cleaning up...");
-        // Note: We're NOT disconnecting socket here to maintain online status
-        // The socket will handle disconnection naturally
+      });
+
+      // ------------------- INITIALIZATION -------------------
+      document.addEventListener("DOMContentLoaded", async function () {
+        console.log("🌐 DOM fully loaded");
+        const token = localStorage.getItem("authToken") || "";
+
+        if (!doctorId || !token) {
+          console.error("❌ Doctor not logged in - redirecting to login");
+          window.location.href = "login.html";
+          return;
+        }
+
+        initializeSocketConnection();
+
+        // Restore unread count from localStorage and reset backend if needed
+        unreadCount = parseInt(localStorage.getItem("unreadCount") || "0");
+        updateChatNotification();
+        if (unreadCount > 0) await markMessagesAsRead();
+
+        await loadBookings();
+        console.log("✅ Doctor panel initialization complete");
       });
     </script>
   </body>

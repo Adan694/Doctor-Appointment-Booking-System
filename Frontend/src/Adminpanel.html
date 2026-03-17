@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -67,7 +67,9 @@
         color: white;
         font-size: 16px;
         display: block;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
         border-radius: 6px;
         padding: 10px 15px;
       }
@@ -199,7 +201,9 @@
         overflow: hidden;
         flex: 1;
         min-width: 240px;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
       }
 
       .card:hover {
@@ -248,7 +252,9 @@
         padding: 25px 30px;
         border-radius: 14px;
         box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
       }
 
       .chart-container:hover {
@@ -564,12 +570,29 @@
         overlay.classList.remove("active");
       });
 
+      // document
+      //   .getElementById("logoutBtn")
+      //   .addEventListener("click", function () {
+      //     localStorage.removeItem("authToken");
+      //     localStorage.removeItem("userRole");
+      //     localStorage.removeItem("patientId");
+      //     window.location.href = "login.html";
+      //   });
       document
         .getElementById("logoutBtn")
         .addEventListener("click", function () {
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("userRole");
-          localStorage.removeItem("patientId");
+          const userId = localStorage.getItem("userId");
+          const role = localStorage.getItem("userRole");
+
+          if (userId && role) {
+            socket.emit("user_logout", { userId, role });
+          }
+
+          socket.disconnect();
+
+          localStorage.clear();
+          sessionStorage.clear();
+
           window.location.href = "login.html";
         });
 
@@ -593,7 +616,7 @@
             "http://localhost:3000/api/admin/dashboard/user-counts",
             {
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
           const countsData = await countsRes.json();
           document.getElementById("admittedPatientsCount").textContent =
@@ -605,7 +628,7 @@
             "http://localhost:3000/api/admin/dashboard/todays-appointments",
             {
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
           const appointmentsData = await appointmentsRes.json();
           console.log("Appointments Data:", appointmentsData);
@@ -624,7 +647,7 @@
             "http://localhost:3000/api/admin/dashboard/todays-appointments",
             {
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
           const data = await res.json();
           console.log("Appointments Data:", data);
@@ -689,19 +712,19 @@
               "http://localhost:3000/api/admin/dashboard/patients-time-series",
               {
                 headers: { Authorization: "Bearer " + token },
-              }
+              },
             ),
             fetch(
               "http://localhost:3000/api/admin/dashboard/appointments-time-series",
               {
                 headers: { Authorization: "Bearer " + token },
-              }
+              },
             ),
             fetch(
               "http://localhost:3000/api/admin/dashboard/doctors-time-series",
               {
                 headers: { Authorization: "Bearer " + token },
-              }
+              },
             ),
           ]);
 
@@ -825,7 +848,7 @@
               headers: {
                 Authorization: "Bearer " + token,
               },
-            }
+            },
           );
 
           if (res.ok) {

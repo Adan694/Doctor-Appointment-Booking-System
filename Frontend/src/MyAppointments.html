@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -94,8 +94,8 @@
       .logo h1 {
         font-size: 28px;
         background: linear-gradient(45deg, #ffffff, #cceeff);
-        background-clip: text;
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 0;
       }
@@ -159,7 +159,9 @@
         cursor: pointer;
         width: 100%;
         font-size: 16px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
+        transition:
+          background-color 0.3s ease,
+          transform 0.2s ease;
       }
 
       .edit-button:hover,
@@ -265,7 +267,9 @@
         height: 2px;
         background: white;
         border-radius: 2px;
-        transition: width 0.3s ease, left 0.3s ease;
+        transition:
+          width 0.3s ease,
+          left 0.3s ease;
       }
 
       .quick-links a:hover::after,
@@ -301,8 +305,11 @@
         text-align: center;
         border-radius: 8px;
         cursor: pointer;
+        -webkit-user-select: none;
         user-select: none;
-        transition: background 0.25s ease, transform 0.2s ease,
+        transition:
+          background 0.25s ease,
+          transform 0.2s ease,
           box-shadow 0.25s ease;
       }
 
@@ -359,12 +366,15 @@
         text-align: center;
         border-radius: 8px;
         cursor: pointer;
+        -webkit-user-select: none;
         user-select: none;
         background: linear-gradient(180deg, #0f8080);
         color: #fff;
         border: 1px solid rgba(67, 56, 202, 0.9);
         box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
-        transition: background 0.25s ease, transform 0.2s ease,
+        transition:
+          background 0.25s ease,
+          transform 0.2s ease,
           box-shadow 0.25s ease;
         vertical-align: middle;
         width: 150px;
@@ -410,7 +420,9 @@
         justify-content: center;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
+        transition:
+          opacity 0.3s ease,
+          visibility 0.3s ease;
         z-index: 1999;
       }
 
@@ -428,7 +440,8 @@
         opacity: 0;
         max-width: 500px;
         width: 90%;
-        transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1),
+        transition:
+          transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1),
           opacity 0.3s ease;
       }
 
@@ -527,6 +540,7 @@
         height: 100%;
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.6);
+        -webkit-backdrop-filter: blur(4);
         backdrop-filter: blur(4px);
         justify-content: center;
         align-items: center;
@@ -577,8 +591,11 @@
         cursor: pointer;
         font-size: 15px;
         font-weight: 700;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease;
         width: 100%;
+        -webkit-user-select: none;
         user-select: none;
       }
 
@@ -602,7 +619,10 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: background-color 0.25s ease, transform 0.25s ease;
+        transition:
+          background-color 0.25s ease,
+          transform 0.25s ease;
+        -webkit-user-select: none;
         user-select: none;
       }
 
@@ -907,7 +927,7 @@
                 const submitted = feedbacks.map((f) => String(f.appointmentId));
                 localStorage.setItem(
                   "feedbackGiven",
-                  JSON.stringify(submitted)
+                  JSON.stringify(submitted),
                 );
 
                 // now your original render works as-is
@@ -929,7 +949,7 @@
 
       function renderAppointments(appointments, type = "upcoming") {
         const submittedFeedbacks = JSON.parse(
-          localStorage.getItem("feedbackGiven") || "[]"
+          localStorage.getItem("feedbackGiven") || "[]",
         );
 
         const appointmentsBody = document.getElementById("appointments-body");
@@ -937,7 +957,7 @@
 
         const now = new Date();
         const removedIds = JSON.parse(
-          localStorage.getItem("removedAppointments") || "[]"
+          localStorage.getItem("removedAppointments") || "[]",
         );
 
         const filtered = appointments.filter((appointment) => {
@@ -1027,13 +1047,13 @@
         const startIndex = (currentPage - 1) * pageSize;
         const paginatedAppointments = filtered.slice(
           startIndex,
-          startIndex + pageSize
+          startIndex + pageSize,
         );
 
         paginatedAppointments.forEach((appointment) => {
           const appointmentElement = document.createElement("tr");
           const feedbackGiven = submittedFeedbacks.includes(
-            String(appointment._id)
+            String(appointment._id),
           );
 
           let appointmentDate = new Date(appointment.date);
@@ -1071,12 +1091,12 @@
           type === "upcoming"
             ? `<span class="btn-cancel" onclick="cancelAppointment('${appointment._id}')">Cancel</span>`
             : effectiveStatus === "completed" &&
-              !submittedFeedbacks.includes(appointment._id)
-            ? `<button class="btn-feedback" onclick="giveFeedback('${appointment._id}', '${appointment.doctorId?._id}', '${appointment.doctorId?.name}')">Give Feedback</button>`
-            : effectiveStatus === "completed" &&
-              submittedFeedbacks.includes(appointment._id)
-            ? `<div style="margin-top: 4px; color: green; font-size: 0.9em;">Feedback Submitted</div>`
-            : ""
+                !submittedFeedbacks.includes(appointment._id)
+              ? `<button class="btn-feedback" onclick="giveFeedback('${appointment._id}', '${appointment.doctorId?._id}', '${appointment.doctorId?.name}')">Give Feedback</button>`
+              : effectiveStatus === "completed" &&
+                  submittedFeedbacks.includes(appointment._id)
+                ? `<div style="margin-top: 4px; color: green; font-size: 0.9em;">Feedback Submitted</div>`
+                : ""
         }
       </td>
     `;
@@ -1109,9 +1129,8 @@
 
       function updatePageInfo() {
         const totalPages = Math.ceil(currentAppointments.length / pageSize);
-        document.getElementById(
-          "page-info"
-        ).innerText = `Page ${currentPage} of ${totalPages}`;
+        document.getElementById("page-info").innerText =
+          `Page ${currentPage} of ${totalPages}`;
       }
 
       function nextPage() {
@@ -1158,7 +1177,7 @@
                           data.doctorId?.name || "N/A"
                         }</p>
                         <p><strong>Date:</strong> ${new Date(
-                          data.date
+                          data.date,
                         ).toLocaleDateString()}</p>
                         <p><strong>Time:</strong> ${data.time}</p>
                         <p><strong>Status:</strong> ${data.status}</p>
@@ -1204,7 +1223,7 @@
                 status: "Cancelled",
                 canceledBy: "patient",
               }),
-            }
+            },
           )
             .then((response) => {
               if (!response.ok) throw new Error("Failed to cancel appointment");
@@ -1238,6 +1257,21 @@
       function hideLoader() {
         document.getElementById("loader").style.display = "none";
       }
+    </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io("http://localhost:3000");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const userId = localStorage.getItem("userId");
+        const role = localStorage.getItem("userRole");
+
+        if (userId && role) {
+          console.log("🟢 Reconnecting user:", userId, role);
+          socket.emit("join_user", { userId, role });
+        }
+      });
     </script>
   </body>
 </html>

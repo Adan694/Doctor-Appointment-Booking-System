@@ -607,6 +607,21 @@ margin-top:15px
         display: none;
         z-index: 3000;
         }
+        .unread-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
 </style>
 
 </head>
@@ -707,15 +722,39 @@ margin-top:15px
 
 </div>
 <!-- Floating Chat Button -->
+
+    <!-- Floating Chat Button -->
 <div id="chatFloatingBtn">
     <i class="fa-solid fa-comments"></i>
+   <span id="unreadCount" class="unread-badge">0</span>
 </div>
 
  <script>
-document.getElementById("chatFloatingBtn").addEventListener("click", () => {
+// document.getElementById("chatFloatingBtn").addEventListener("click", () => {
+//     window.location.href = "Patientchat.html";
+// });
+document.getElementById("chatFloatingBtn").addEventListener("click", async () => {
+
+    const token = localStorage.getItem('authToken');
+
+    try {
+        await fetch('http://localhost:3000/user/chat/mark-read', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const badge = document.getElementById("unreadCount");
+        badge.innerText = "";
+        badge.style.display = "none";
+
+    } catch (err) {
+        console.error("Error clearing unread:", err);
+    }
+
     window.location.href = "Patientchat.html";
 });
-
 document.addEventListener('DOMContentLoaded', () => {
     const changePasswordBtn = document.getElementById('change-password-btn');
     const passwordFields = document.getElementById('password-fields');
@@ -1017,7 +1056,54 @@ function updateProfile() {
 
 function showLoader() { document.getElementById('loader').style.display = 'block'; }
 function hideLoader() { document.getElementById('loader').style.display = 'none'; }
+async function updateUnreadCount() {
+    const token = localStorage.getItem('authToken');
+    if (!token) return;
 
+    try {
+        const res = await fetch('http://localhost:3000/user/chat/unread-count', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const count = data.unreadCount || 0;
+
+        const badge = document.getElementById('unreadCount');
+        badge.innerText = count > 0 ? count : '';
+        badge.style.display = count > 0 ? 'flex' : 'none';
+
+    } catch (err) {
+        console.error('Error fetching unread count:', err);
+    }
+}
+// initial load
+updateUnreadCount();
+
+// optionally, refresh every 10 seconds
+// setInterval(updateUnreadCount, 10000);
+</script>
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+<script>
+  const socket = io("http://localhost:3000");
+  socket.on("new_message", () => {
+    const badge = document.getElementById("unreadCount");
+
+    let current = parseInt(badge.innerText) || 0;
+    current++;
+
+    badge.innerText = current;
+    badge.style.display = "flex";
+});
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("userRole");
+
+    if (userId && role) {
+      console.log("🟢 Reconnecting user:", userId, role);
+      socket.emit("join_user", { userId, role });
+    }
+  });
 </script>
 
 

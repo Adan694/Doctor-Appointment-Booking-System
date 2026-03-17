@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -64,8 +64,8 @@
       .logo h1 {
         font-size: 28px;
         background: linear-gradient(45deg, #ffffff, #cceeff);
-        background-clip: text;
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
       }
       nav ul {
@@ -106,7 +106,9 @@
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
         margin-bottom: 30px;
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        transition:
+          box-shadow 0.3s ease,
+          transform 0.3s ease;
         cursor: default;
       }
 
@@ -141,6 +143,7 @@
         text-transform: uppercase;
         letter-spacing: 0.1em;
         border-radius: 6px;
+        -webkit-user-select: none;
         user-select: none;
         text-align: center;
       }
@@ -149,7 +152,9 @@
         background: rgba(255, 255, 255, 0.9);
         border-radius: 12px;
         box-shadow: 0 3px 8px rgba(0, 128, 128, 0.07);
-        transition: box-shadow 0.3s ease, transform 0.3s ease,
+        transition:
+          box-shadow 0.3s ease,
+          transform 0.3s ease,
           border-color 0.3s ease;
         border: 2px solid transparent;
         cursor: pointer;
@@ -169,7 +174,9 @@
       .appointment-table tbody td {
         padding: 14px 18px;
         border-left: 1px solid rgba(0, 128, 128, 0.15);
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
         position: relative;
       }
       .appointment-table tbody td:nth-child(4) {
@@ -200,6 +207,7 @@
         font-weight: 700;
         letter-spacing: 0.05em;
         text-align: center;
+        -webkit-user-select: none;
         user-select: none;
         transition: color 0.3s ease;
       }
@@ -226,7 +234,9 @@
         border-radius: 8px;
         font-weight: 700;
         cursor: pointer;
-        transition: background-color 0.25s ease, box-shadow 0.25s ease;
+        transition:
+          background-color 0.25s ease,
+          box-shadow 0.25s ease;
         box-shadow: 0 3px 8px rgba(0, 153, 153, 0.4);
       }
 
@@ -259,6 +269,7 @@
         height: 100%;
         overflow: auto;
         background-color: rgba(0, 0, 0, 0.6);
+        -webkit-backdrop-filter: blur(4);
         backdrop-filter: blur(4px);
         justify-content: center;
         align-items: center;
@@ -276,7 +287,9 @@
         position: relative;
         box-shadow: 0 10px 28px rgba(0, 153, 153, 0.3);
         animation: fadeIn 0.35s ease-in-out;
-        transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        transition:
+          box-shadow 0.3s ease,
+          border-color 0.3s ease;
       }
 
       .modal-content:hover {
@@ -287,6 +300,7 @@
       .modal-content h3 {
         margin-top: 0;
         color: #006666;
+        -webkit-user-select: none;
         user-select: none;
       }
 
@@ -300,8 +314,11 @@
         cursor: pointer;
         font-size: 15px;
         font-weight: 700;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease;
         width: 100%;
+        -webkit-user-select: none;
         user-select: none;
       }
 
@@ -318,7 +335,9 @@
         border-radius: 8px;
         margin-bottom: 20px;
         outline: none;
-        transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+        transition:
+          border-color 0.25s ease-in-out,
+          box-shadow 0.25s ease-in-out;
       }
 
       #availableSlots:focus {
@@ -335,6 +354,7 @@
         font-size: 26px;
         cursor: pointer;
         transition: color 0.3s ease;
+        -webkit-user-select: none;
         user-select: none;
       }
 
@@ -383,7 +403,9 @@
           left: 0;
           background-color: rgb(9, 102, 102);
           opacity: 0;
-          transition: max-height 0.4s ease, opacity 0.4s ease;
+          transition:
+            max-height 0.4s ease,
+            opacity 0.4s ease;
           overflow: hidden;
           max-height: 0;
         }
@@ -563,7 +585,9 @@
         border: 2px solid transparent;
         border-radius: 8px;
         font-weight: 600;
-        transition: background-color 0.25s ease, border-color 0.25s ease,
+        transition:
+          background-color 0.25s ease,
+          border-color 0.25s ease,
           box-shadow 0.25s ease;
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
       }
@@ -621,6 +645,9 @@
       .modal-open {
         overflow: hidden;
       }
+      .modal-overlay {
+        display: none;
+      }
     </style>
   </head>
 
@@ -649,7 +676,7 @@
           id="searchAppointments"
           placeholder="Search by patient name..."
         />
-        <select id="statusFilter">
+        <select id="statusFilter" title="statusfilter">
           <option value="all">All</option>
           <option value="new">New</option>
           <option value="cancelled">Cancelled</option>
@@ -760,7 +787,7 @@
     </div>
 
     <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal-overlay" style="display: none">
+    <div id="confirmModal" class="modal-overlay">
       <div class="modal-content">
         <p>Are you sure you want to mark this appointment as Completed?</p>
         <button id="confirmYes">Yes</button>
@@ -769,7 +796,7 @@
     </div>
 
     <!-- Success Modal -->
-    <div id="successModal" class="modal-overlay" style="display: none">
+    <div id="successModal" class="modal-overlay">
       <div class="modal-content">
         <p>Appointment moved to completed successfully.</p>
         <button id="successOk">OK</button>
@@ -777,7 +804,7 @@
     </div>
     <!-- Adeed -->
     <!-- Missed Confirmation Modal -->
-    <div id="missedConfirmModal" class="modal-overlay" style="display: none">
+    <div id="missedConfirmModal" class="modal-overlay">
       <div class="modal-content">
         <p>Are you sure you want to mark this appointment as Missed?</p>
         <button id="missedConfirmYes">Yes</button>
@@ -786,7 +813,7 @@
     </div>
 
     <!-- Missed Success Modal -->
-    <div id="missedSuccessModal" class="modal-overlay" style="display: none">
+    <div id="missedSuccessModal" class="modal-overlay">
       <div class="modal-content">
         <p>Appointment marked as Missed successfully.</p>
         <button id="missedSuccessOk">OK</button>
@@ -794,7 +821,7 @@
     </div>
 
     <!-- Cancelled Confirmation Modal -->
-    <div id="cancelConfirmModal" class="modal-overlay" style="display: none">
+    <div id="cancelConfirmModal" class="modal-overlay">
       <div class="modal-content">
         <p>Are you sure you want to mark this appointment as Cancelled?</p>
         <button id="cancelConfirmYes">Yes</button>
@@ -802,7 +829,7 @@
       </div>
     </div>
 
-    <div id="cancelSuccessModal" class="modal-overlay" style="display: none">
+    <div id="cancelSuccessModal" class="modal-overlay">
       <div class="modal-content">
         <p>Appointment cancelled successfully.</p>
         <button id="cancelSuccessOk">OK</button>
@@ -879,7 +906,7 @@
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ status: "Missed" }),
-          }
+          },
         )
           .then((response) => {
             if (!response.ok)
@@ -894,11 +921,10 @@
 
       function loadPatientAppointments() {
         const token = localStorage.getItem("authToken");
-        const patientId = localStorage.getItem("patientId");
         const doctorId = localStorage.getItem("doctorId");
 
-        if (!token || !patientId || !doctorId) {
-          console.error("Missing required localStorage data.");
+        if (!token || !doctorId) {
+          console.error("Missing doctor authentication data.");
           return;
         }
 
@@ -911,9 +937,12 @@
             return res.json();
           }),
 
-          fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }).then((res) => {
+          fetch(
+            `http://localhost:3000/api/feedback/doctors/${doctorId}/feedback`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          ).then((res) => {
             if (!res.ok) throw new Error("Failed to fetch feedback");
             return res.json();
           }),
@@ -926,7 +955,7 @@
 
               const status = appointment.status?.toLowerCase() || "pending";
               const appointmentDateTime = new Date(
-                `${appointment.date} ${appointment.time}`
+                `${appointment.date} ${appointment.time}`,
               );
               const now = new Date();
               const feedback = feedbackList.find((fb) => {
@@ -950,7 +979,7 @@
                 "Looking for feedback: userId",
                 appointment.patientId?._id,
                 "doctorId",
-                doctorId
+                doctorId,
               );
 
               if (status === "cancelled") {
@@ -1002,7 +1031,7 @@
           .catch((err) => {
             console.error(
               "Error fetching patient appointments or feedback:",
-              err
+              err,
             );
           });
       }
@@ -1033,7 +1062,7 @@
             });
           })
           .catch((err) =>
-            console.error("Error fetching doctor appointments:", err)
+            console.error("Error fetching doctor appointments:", err),
           );
       }
 
@@ -1074,7 +1103,7 @@
 
       function addCancelledAppointmentRow(appointment) {
         const formattedTime = new Date(
-          appointment.appointmentTime
+          appointment.appointmentTime,
         ).toLocaleString([], {
           year: "numeric",
           month: "2-digit",
@@ -1148,7 +1177,7 @@
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({ status: "Completed" }),
-            }
+            },
           )
             .then((response) => {
               if (!response.ok) throw new Error("Failed to update appointment");
@@ -1203,7 +1232,7 @@
             `http://localhost:3000/api/doctors/${doctorId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
-            }
+            },
           );
 
           if (!res.ok) throw new Error("Failed to fetch availability");
@@ -1237,7 +1266,7 @@
                 month - 1,
                 dayNum,
                 hour,
-                minute
+                minute,
               );
 
               console.log("Parsed slotDateTime:", slotDateTime.toString());
@@ -1268,7 +1297,7 @@
       function confirmReschedule() {
         const selectedSlot = document.getElementById("availableSlots").value;
         const confirmBtn = document.querySelector(
-          '#rescheduleModal button[onclick="confirmReschedule()"]'
+          '#rescheduleModal button[onclick="confirmReschedule()"]',
         );
         const originalBtnText = confirmBtn.textContent;
         confirmBtn.disabled = true;
@@ -1302,7 +1331,7 @@
               newTime,
               rescheduledBy: "doctor",
             }),
-          }
+          },
         )
           .then((res) => res.json())
           .then((data) => {
@@ -1316,7 +1345,7 @@
               location.reload();
             } else {
               alert(
-                "Failed to reschedule: " + (data.message || "Unknown error")
+                "Failed to reschedule: " + (data.message || "Unknown error"),
               );
             }
           })
@@ -1377,13 +1406,13 @@
                 status: "Cancelled",
                 canceledBy: "doctor",
               }),
-            }
+            },
           )
             .then((response) => {
               if (!response.ok) {
                 return response.json().then((err) => {
                   throw new Error(
-                    err.message || "Failed to cancel appointment"
+                    err.message || "Failed to cancel appointment",
                   );
                 });
               }
@@ -1457,7 +1486,7 @@
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({ status: "Missed" }),
-            }
+            },
           )
             .then((response) => {
               if (!response.ok) throw new Error("Failed to mark as missed");
@@ -1525,15 +1554,14 @@
         });
 
         const totalPages = Math.ceil(state.rows.length / pageSize) || 1;
-        document.getElementById(
-          `${sectionId}PageInfo`
-        ).textContent = `Page ${state.currentPage} of ${totalPages}`;
+        document.getElementById(`${sectionId}PageInfo`).textContent =
+          `Page ${state.currentPage} of ${totalPages}`;
 
         const prevBtn = document.querySelector(
-          `#${sectionId}Pagination button:first-child`
+          `#${sectionId}Pagination button:first-child`,
         );
         const nextBtn = document.querySelector(
-          `#${sectionId}Pagination button:last-child`
+          `#${sectionId}Pagination button:last-child`,
         );
 
         prevBtn.disabled = state.currentPage === 1;
@@ -1559,7 +1587,7 @@
 
       function updateLocalStorage() {
         const newAppointments = Array.from(
-          document.querySelectorAll("#newAppointments tr")
+          document.querySelectorAll("#newAppointments tr"),
         ).map((row) => ({
           patientName: row.cells[0].innerText,
           appointmentTime: row.cells[1].innerText,
@@ -1567,7 +1595,7 @@
         }));
 
         const cancelledAppointments = Array.from(
-          document.querySelectorAll("#cancelledAppointments tr")
+          document.querySelectorAll("#cancelledAppointments tr"),
         ).map((row) => ({
           id: row.getAttribute("data-appointment-id"),
           patientName: row.cells[0].innerText,
@@ -1576,7 +1604,7 @@
         }));
 
         const completedAppointments = Array.from(
-          document.querySelectorAll("#completedAppointments tr")
+          document.querySelectorAll("#completedAppointments tr"),
         ).map((row) => ({
           patientName: row.cells[0].innerText,
           appointmentTime: row.cells[1].innerText,
@@ -1584,17 +1612,32 @@
 
         localStorage.setItem(
           "newAppointments",
-          JSON.stringify(newAppointments)
+          JSON.stringify(newAppointments),
         );
         localStorage.setItem(
           "cancelledAppointments",
-          JSON.stringify(cancelledAppointments)
+          JSON.stringify(cancelledAppointments),
         );
         localStorage.setItem(
           "completedAppointments",
-          JSON.stringify(completedAppointments)
+          JSON.stringify(completedAppointments),
         );
       }
+    </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io("http://localhost:3000");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const userId = localStorage.getItem("userId");
+        const role = localStorage.getItem("userRole");
+
+        if (userId && role) {
+          console.log("🟢 Reconnecting user:", userId, role);
+          socket.emit("join_user", { userId, role });
+        }
+      });
     </script>
   </body>
 </html>

@@ -487,7 +487,7 @@
                 </ul>
             </div>
         <div class="content">
-            <button id="close">
+            <button id="close" title="close">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div class="contentDetail">
@@ -505,5 +505,20 @@
                 }, 1500);
             }    
     </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+<script>
+  const socket = io("http://localhost:3000");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("userRole");
+
+    if (userId && role) {
+      console.log("🟢 Reconnecting user:", userId, role);
+      socket.emit("join_user", { userId, role });
+    }
+  });
+</script>
 </body>
 </html>

@@ -282,7 +282,7 @@ function initializeSocket(io) {
 
       io.emit("online_users", onlineUsers);
     });
-
+console.log("🟢 Current online users:", onlineUsers);
     /* ---------------------------------------
        ADMIN opened dashboard -> send list
     ---------------------------------------- */
@@ -315,7 +315,18 @@ function initializeSocket(io) {
 
       console.log(`💬 Message from ${senderId} -> ${receiverId}`);
     });
+/* ---------------------------------------
+   USER LOGOUT -> mark offline
+---------------------------------------- */
+socket.on("user_logout", ({ userId }) => {
+  if (!userId) return;
 
+  console.log(`🔴 ${userId} logged out`);
+
+  delete onlineUsers[userId];
+
+  io.emit("online_users", onlineUsers);
+});
     /* ---------------------------------------
          USER DISCONNECTED -> mark offline
     ---------------------------------------- */

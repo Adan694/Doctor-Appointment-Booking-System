@@ -1,7 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Doctor Profile Editor</title>
     <link
       rel="stylesheet"
@@ -73,8 +74,8 @@
       .logo h1 {
         font-size: 28px;
         background: linear-gradient(45deg, #ffffff, #cceeff);
-        background-clip: text;
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
       }
 
@@ -90,7 +91,9 @@
         padding: 25px;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
         margin-bottom: 20px;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
 
       .card:hover {
@@ -301,6 +304,7 @@
         height: 100vh;
         background: rgba(255, 255, 255, 0.7);
         z-index: 2000;
+        -webkit-backdrop-filter: blur(4);
         backdrop-filter: blur(4px);
         align-items: center;
         justify-content: center;
@@ -388,6 +392,48 @@
         font-size: 12px;
         display: none;
       }
+      .input-group {
+        position: relative;
+        margin-bottom: 16px;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        outline: none;
+        font-size: 16px;
+        background: #f9f9f9;
+      }
+
+      .input-group label {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+        font-size: 16px;
+        pointer-events: none;
+        transition: all 0.2s ease;
+      }
+
+      .input-group input:focus + label,
+      .input-group input:not(:placeholder-shown) + label {
+        top: -8px;
+        left: 10px;
+        font-size: 12px;
+        color: #006d6d;
+        background: white;
+        padding: 0 4px;
+      }
+
+      .error-message {
+        color: red;
+        font-size: 13px;
+        margin-top: 2px;
+        display: block;
+      }
     </style>
   </head>
 
@@ -430,7 +476,7 @@
           <div class="profile-info">
             <input type="text" id="doctorName" placeholder="Doctor Name" />
 
-            <select id="specialization">
+            <select id="specialization" title="specialization">
               <option value="" disabled selected>Select Specialization</option>
 
               <optgroup label="Primary Care">
@@ -499,33 +545,39 @@
         <div class="tab-content active" id="professional">
           <div class="input-group">
             <input type="text" id="qualifications" placeholder=" " />
-            <label>Qualifications</label>
+            <label for="qualifications">Qualifications</label>
           </div>
+
           <div class="input-group">
             <input type="text" id="services" placeholder=" " />
-            <label>Services</label>
+            <label for="services">Services</label>
           </div>
+
           <div class="input-group">
             <input type="text" id="conditions" placeholder=" " />
-            <label>Conditions Treated</label>
+            <label for="conditions">Conditions Treated</label>
           </div>
+
           <div class="input-group">
             <input type="text" id="experience" placeholder=" " />
-            <label>Experience</label>
+            <label for="experience">Experience</label>
             <span id="experienceError" class="error-message"></span>
           </div>
+
           <div class="input-group">
             <input type="text" id="memberships" placeholder=" " />
-            <label>Memberships</label>
+            <label for="memberships">Memberships</label>
           </div>
+
           <div class="input-group">
             <input type="number" id="fees" placeholder=" " />
-            <label>Fees (Rs.)</label>
+            <label for="fees">Fees (Rs.)</label>
             <span id="feesError" class="error-message"></span>
           </div>
+
           <div class="input-group">
             <input type="text" id="locations" placeholder=" " />
-            <label>Practice Locations</label>
+            <label for="locations">Practice Locations</label>
           </div>
         </div>
 
@@ -737,24 +789,24 @@
         profile.append("name", document.getElementById("doctorName").value);
         profile.append(
           "speciality",
-          document.getElementById("specialization").value
+          document.getElementById("specialization").value,
         );
         profile.append(
           "qualifications",
-          document.getElementById("qualifications").value
+          document.getElementById("qualifications").value,
         );
         profile.append("services", document.getElementById("services").value);
         profile.append(
           "conditions",
-          document.getElementById("conditions").value
+          document.getElementById("conditions").value,
         );
         profile.append(
           "experience",
-          document.getElementById("experience").value
+          document.getElementById("experience").value,
         );
         profile.append(
           "memberships",
-          document.getElementById("memberships").value
+          document.getElementById("memberships").value,
         );
         profile.append("fees", document.getElementById("fees").value);
         profile.append("locations", document.getElementById("locations").value);
@@ -782,7 +834,7 @@
               /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/;
             if (!passwordRegex.test(newPassword))
               return alert(
-                "Password must include uppercase, lowercase, number, special char."
+                "Password must include uppercase, lowercase, number, special char.",
               );
             profile.append("currentPassword", currentPassword);
             profile.append("newPassword", newPassword);
@@ -829,6 +881,21 @@
         toast.style.display = "block";
         setTimeout(() => (toast.style.display = "none"), 3000);
       }
+    </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io("http://localhost:3000");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const userId = localStorage.getItem("userId");
+        const role = localStorage.getItem("userRole");
+
+        if (userId && role) {
+          console.log("🟢 Reconnecting user:", userId, role);
+          socket.emit("join_user", { userId, role });
+        }
+      });
     </script>
   </body>
 </html>

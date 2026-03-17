@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -264,7 +264,9 @@
         -webkit-backdrop-filter: 8;
         backdrop-filter: blur(8px);
         box-shadow: 0 4px 10px rgba(0, 128, 128, 0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease,
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease,
           border-color 0.3s ease;
         opacity: 0;
         overflow: hidden;
@@ -371,7 +373,9 @@
           max-height: 0;
           overflow: hidden;
           opacity: 0;
-          transition: max-height 0.4s ease, opacity 0.4s ease;
+          transition:
+            max-height 0.4s ease,
+            opacity 0.4s ease;
         }
 
         nav ul li {
@@ -527,7 +531,7 @@
               // Date
               const dateCell = document.createElement("td");
               dateCell.textContent = new Date(
-                feedback.timestamp
+                feedback.timestamp,
               ).toLocaleDateString();
               dateCell.setAttribute("data-label", "Date");
 
@@ -603,7 +607,7 @@
 
           const dateCell = document.createElement("td");
           dateCell.textContent = new Date(
-            feedback.timestamp
+            feedback.timestamp,
           ).toLocaleDateString();
           dateCell.setAttribute("data-label", "Date");
 
@@ -628,7 +632,7 @@
           `http://localhost:3000/api/feedback/doctors/${doctorId}/feedback`,
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         )
           .then((res) => res.json())
           .then((feedbacks) => {
@@ -650,11 +654,11 @@
 
           if (value === "dateDesc")
             sorted.sort(
-              (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+              (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
             );
           if (value === "dateAsc")
             sorted.sort(
-              (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+              (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
             );
           if (value === "ratingDesc")
             sorted.sort((a, b) => b.rating - a.rating);
@@ -662,6 +666,21 @@
 
           renderFeedbackTable(sorted);
         });
+    </script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+
+    <script>
+      const socket = io("http://localhost:3000");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const userId = localStorage.getItem("userId");
+        const role = localStorage.getItem("userRole");
+
+        if (userId && role) {
+          console.log("🟢 Reconnecting user:", userId, role);
+          socket.emit("join_user", { userId, role });
+        }
+      });
     </script>
   </body>
 </html>
