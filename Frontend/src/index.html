@@ -494,6 +494,11 @@
             </div>
         </div>
     </div>
+    <!-- Floating Chat Button -->
+<div id="chatFloatingBtn">
+    <i class="fa-solid fa-comments"></i>
+    <span id="unreadCount" class="unread-badge">0</span>
+</div>
 
     <script src="main.js">
           document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -519,6 +524,67 @@
       socket.emit("join_user", { userId, role });
     }
   });
+</script>
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('userId');
+    const role = localStorage.getItem('userRole');
+    const chatBtn = document.getElementById('chatFloatingBtn');
+    const unreadBadge = document.getElementById('unreadCount');
+
+    if (!token) {
+        chatBtn.style.display = 'none'; // hide button if not logged in
+        return;
+    }
+
+    chatBtn.style.display = 'flex'; // show button for logged-in users
+
+    // Connect socket
+    const socket = io("http://localhost:3000");
+    if (userId && role) {
+        socket.emit("join_user", { userId, role });
+    }
+
+    socket.on("new_message", () => {
+        let current = parseInt(unreadBadge.innerText) || 0;
+        current++;
+        unreadBadge.innerText = current;
+        unreadBadge.style.display = "flex";
+    });
+
+    // Fetch initial unread count
+    async function updateUnreadCount() {
+        try {
+            const res = await fetch('http://localhost:3000/user/chat/unread-count', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            const count = data.unreadCount || 0;
+            unreadBadge.innerText = count > 0 ? count : '';
+            unreadBadge.style.display = count > 0 ? 'flex' : 'none';
+        } catch (err) {
+            console.error('Error fetching unread count:', err);
+        }
+    }
+    updateUnreadCount();
+
+    // Click event to go to chat and mark messages read
+    chatBtn.addEventListener('click', async () => {
+        try {
+            await fetch('http://localhost:3000/user/chat/mark-read', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            unreadBadge.innerText = "";
+            unreadBadge.style.display = "none";
+        } catch (err) {
+            console.error("Error clearing unread:", err);
+        }
+        window.location.href = "Patientchat.html";
+    });
+});
 </script>
 </body>
 </html>

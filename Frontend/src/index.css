@@ -34,8 +34,8 @@ h6 {
     background: #ffffff;
     background-size: 200% auto;
     color: transparent;
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     animation: gradientFlow 6s ease infinite, fadeSlideIn 1.2s ease-out forwards, floatUpDown 3s ease-in-out infinite;
     opacity: 0;
     letter-spacing: 1px;
@@ -43,6 +43,9 @@ h6 {
     transition: text-shadow 0.4s ease, transform 0.3s ease;
 }
 
+#chatFloatingBtn{
+    display: none;
+}
 /* Hover glow effect */
 #heading1:hover {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.295),
@@ -102,8 +105,8 @@ h6 {
     background: #ffffff;
     background-size: 200% auto;
     color: transparent;
+        -webkit-background-clip: text;
     background-clip: text;
-    -webkit-background-clip: text;
     animation: gradientFlow 6s ease infinite, fadeSlideIn 1.2s ease-out forwards, floatUpDown 3s ease-in-out infinite;
     opacity: 0;
     letter-spacing: 1px;
@@ -172,6 +175,7 @@ nav {
     top: 0;
     width: 100%;
     background: rgba(9, 102, 102, 0.75);
+    -webkit-backdrop-filter: blur(10);
     backdrop-filter: blur(10px);
     color: white;
     z-index: 1000;
@@ -259,7 +263,6 @@ nav ul li a:hover {
     font-size: 28px;
     background: linear-gradient(45deg, #ffffff, #cceeff);
     background-clip: text;
-    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -334,7 +337,6 @@ nav ul li a:hover {
     background: linear-gradient(90deg, #fff, #b2f7ef, #ffffff);
     background-size: 200% 200%;
     background-clip: text;
-    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shineText 5s ease infinite;
     transition: transform 0.3s ease;
@@ -364,8 +366,8 @@ nav ul li a:hover {
     opacity: 0;
     animation: fadeIn 0.5s ease forwards;
     background: inherit;
-    background-clip: inherit;
     -webkit-background-clip: inherit;
+    background-clip: inherit;
     -webkit-text-fill-color: inherit;
 }
 .main img {
@@ -465,8 +467,8 @@ nav ul li a:hover {
     font-size: 40px;
     margin-bottom: 25px;
     background: linear-gradient(135deg, #0f8080, #0a5050);
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 800;
     letter-spacing: 1px;
@@ -678,8 +680,8 @@ nav ul li a:hover {
     letter-spacing: 1.5px;
     position: relative;
     background: linear-gradient(135deg, #0f8080, #0a5050);
+        -webkit-background-clip: text;
     background-clip: text;
-    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     transition: all 0.4s ease-in-out;
 }
@@ -815,6 +817,7 @@ nav ul li a:hover {
     padding: 7px 10px;
     cursor: pointer;
     border-radius: 50%;
+    -webkit-user-select: none;
     user-select: none;
     z-index: 10;
     box-shadow: 0 4px 15px rgba(0, 150, 136, 0.4);
@@ -1613,4 +1616,44 @@ transition: all 0.3s ease;
     .dropdown-menu {
         width: 220px;
     }
+}
+
+#chatFloatingBtn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background-color: #009999;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    z-index: 5000;
+    transition: 0.3s ease;
+}
+
+#chatFloatingBtn:hover {
+    background-color: #007d7d;
+    transform: scale(1.08);
+}
+
+.unread-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
 }

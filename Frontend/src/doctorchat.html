@@ -254,6 +254,14 @@
           max-height: 400px;
         }
       }
+      /* loading.css */
+      .loading-container {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        font-family: Arial, sans-serif; /* optional for consistency */
+        font-size: 16px; /* optional */
+      }
     </style>
   </head>
   <body>
@@ -284,9 +292,8 @@
         </div>
       </div>
       <div class="chat-messages" id="chatMessages">
-        <div style="text-align: center; padding: 20px; color: #666">
-          Loading messages...
-        </div>
+        <!-- loading.html -->
+        <div class="loading-container">Loading messages...</div>
       </div>
       <div class="chat-input">
         <input type="text" id="msgInput" placeholder="Type your message..." />
