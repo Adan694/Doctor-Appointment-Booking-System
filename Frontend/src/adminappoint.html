@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -69,7 +69,9 @@
         color: white;
         font-size: 16px;
         display: block;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
         border-radius: 6px;
         padding: 10px 15px;
       }
@@ -111,7 +113,9 @@
         align-items: center;
         box-sizing: border-box;
         border-bottom: 3px solid white;
-        transition: background-color 0.3s ease, border-color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          border-color 0.3s ease;
       }
 
       header:hover {
@@ -127,7 +131,9 @@
         font-size: 16px;
         border-radius: 8px;
         cursor: pointer;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease;
         box-shadow: 0 3px 6px rgba(40, 167, 69, 0.4);
       }
 
@@ -142,7 +148,9 @@
         padding-bottom: 8px;
         font-weight: 700;
         cursor: default;
-        transition: color 0.3s ease, transform 0.3s ease;
+        transition:
+          color 0.3s ease,
+          transform 0.3s ease;
         position: relative;
         display: inline-block;
       }
@@ -179,7 +187,9 @@
         overflow: hidden;
         box-shadow: 0 4px 12px rgba(22, 110, 107, 0.15);
         table-layout: fixed;
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        transition:
+          box-shadow 0.3s ease,
+          transform 0.3s ease;
         border: 1px solid #ccc;
       }
 
@@ -213,7 +223,9 @@
       }
 
       tr {
-        transition: background-color 0.3s ease, box-shadow 0.3s ease,
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease,
           transform 0.3s ease;
         will-change: transform, box-shadow;
       }
@@ -260,7 +272,9 @@
         cursor: pointer;
         color: #166e6b;
         font-size: 18px;
-        transition: color 0.3s ease, transform 0.2s ease;
+        transition:
+          color 0.3s ease,
+          transform 0.2s ease;
       }
 
       .delete-btn:hover {
@@ -304,7 +318,9 @@
         color: white;
         font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease;
         box-shadow: 0 3px 6px rgba(0, 123, 255, 0.4);
       }
 
@@ -404,7 +420,9 @@
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 
         border: 1px solid #e0e0e0;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
       }
 
       .modal-content:hover {
@@ -419,7 +437,9 @@
         font-size: 26px;
         color: #666;
         cursor: pointer;
-        transition: color 0.2s ease, transform 0.2s ease;
+        transition:
+          color 0.2s ease,
+          transform 0.2s ease;
       }
       .close-btn:hover {
         color: #e74c3c;
@@ -449,7 +469,9 @@
         border: 1px solid #ccc;
         margin-bottom: 20px;
         font-size: 15px;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
       }
 
       .modal-content select:focus {
@@ -471,7 +493,9 @@
         cursor: pointer;
         font-size: 14px;
         font-weight: 500;
-        transition: transform 0.2s ease, background 0.3s ease;
+        transition:
+          transform 0.2s ease,
+          background 0.3s ease;
       }
 
       .modal-actions button:first-child {
@@ -816,10 +840,10 @@
 
         // Disable/enable buttons
         const prevBtn = document.querySelector(
-          `.pagination-controls[data-table="${tableId}"] button:first-child`
+          `.pagination-controls[data-table="${tableId}"] button:first-child`,
         );
         const nextBtn = document.querySelector(
-          `.pagination-controls[data-table="${tableId}"] button:last-child`
+          `.pagination-controls[data-table="${tableId}"] button:last-child`,
         );
 
         if (prevBtn) prevBtn.disabled = state.page === 1;
@@ -861,19 +885,19 @@
       async function fetchAppointments() {
         try {
           const response = await fetch(
-            "http://localhost:3000/api/appointments/all"
+            "http://localhost:3000/api/appointments/all",
           );
           if (!response.ok) throw new Error("Network response was not ok");
           const appointments = await response.json();
 
           const upcomingTableBody = document.getElementById(
-            "upcoming-appointments-table"
+            "upcoming-appointments-table",
           );
           const completedTableBody = document.getElementById(
-            "completed-appointments-table"
+            "completed-appointments-table",
           );
           const missedCancelledTableBody = document.getElementById(
-            "missed-cancelled-appointments-table"
+            "missed-cancelled-appointments-table",
           );
 
           upcomingTableBody.innerHTML = "";
@@ -902,7 +926,7 @@
                         }</td>
                         <td>${appointment.patientId?.age || "N/A"}</td>
                         <td>${new Date(
-                          appointment.date
+                          appointment.date,
                         ).toLocaleDateString()} ${appointment.time}</td>
                         <td>${appointment.doctorId?.name || "N/A"}</td>
                         <td class="action-cell"></td>
@@ -929,7 +953,7 @@
                         }</td>
                         <td>${appointment.patientId?.age || "N/A"}</td>
                         <td>${new Date(
-                          appointment.date
+                          appointment.date,
                         ).toLocaleDateString()} ${appointment.time}</td>
                         <td>${appointment.doctorId?.name || "N/A"}</td>
                     `;
@@ -956,9 +980,11 @@
       }
 
       window.rescheduleAppointment = async function (row) {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("authToken");
         const appointmentId = row.dataset.id;
         const doctorId = row.dataset.doctorId;
+
+        console.log("Rescheduling appointment:", { appointmentId, doctorId });
 
         document.getElementById("appointmentId").value = appointmentId;
         const select = document.getElementById("availableSlots");
@@ -971,37 +997,52 @@
             `http://localhost:3000/api/doctors/${doctorId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
-            }
+            },
           );
+
+          if (!res.ok) throw new Error("Failed to fetch doctor availability");
+
           const data = await res.json();
           const slotsData = data.availabilitySlots || [];
 
+          // Fetch all appointments to check booked slots
           const appointmentsRes = await fetch(
-            `http://localhost:3000/api/appointments/all`
+            `http://localhost:3000/api/appointments/all`,
           );
           const allAppointments = await appointmentsRes.json();
+
           const bookedSlots = allAppointments
             .filter(
               (app) =>
-                app.doctorId?._id === doctorId && app.status !== "cancelled"
+                app.doctorId?._id === doctorId &&
+                app.status !== "cancelled" &&
+                app._id !== appointmentId, // Don't block current appointment
             )
             .map((app) => `${app.date}|${app.time}`);
 
           select.innerHTML = "<option value=''>Select a slot</option>";
           let slotCount = 0;
+          const now = new Date();
 
           slotsData.forEach((day) => {
             const dateStr = day.date.trim();
-            console.log("Raw date string:", dateStr);
+
+            // Skip past dates
+            const [year, month, dayNum] = dateStr.split("-").map(Number);
+            const dateObj = new Date(year, month - 1, dayNum);
+            if (
+              dateObj <
+              new Date(now.getFullYear(), now.getMonth(), now.getDate())
+            )
+              return;
 
             day.slots.forEach((timeStr) => {
               const timeTrimmed = timeStr.trim();
-              console.log("Raw time string:", timeTrimmed);
 
+              // Skip booked slots
               if (bookedSlots.includes(`${dateStr}|${timeTrimmed}`)) return;
 
-              const [year, month, dayNum] = dateStr.split("-").map(Number);
-
+              // Parse time
               let [timePart, ampm] = timeTrimmed.split(" ");
               let [hour, minute] = timePart.split(":").map(Number);
 
@@ -1016,12 +1057,11 @@
                 month - 1,
                 dayNum,
                 hour,
-                minute
+                minute,
               );
 
-              console.log("Parsed slotDateTime:", slotDateTime.toString());
-
-              if (slotDateTime <= new Date()) return;
+              // Skip past time slots
+              if (slotDateTime <= now) return;
 
               const option = document.createElement("option");
               option.value = `${dateStr}|${timeTrimmed}`;
@@ -1043,7 +1083,6 @@
       async function confirmReschedule() {
         const confirmBtn = document.getElementById("confirmRescheduleBtn");
         const cancelBtn = document.getElementById("cancelModalBtn");
-
         const selectedSlot = document.getElementById("availableSlots").value;
         const appointmentId = document.getElementById("appointmentId").value;
 
@@ -1054,34 +1093,55 @@
 
         const [newDate, newTime] = selectedSlot.split("|");
 
+        // Get the row to extract doctorId
+        const row = document.querySelector(`tr[data-id="${appointmentId}"]`);
+        const doctorId = row ? row.dataset.doctorId : null;
+
+        console.log("Reschedule request:", {
+          appointmentId,
+          newDate,
+          newTime,
+          doctorId,
+        });
+
         confirmBtn.disabled = true;
         cancelBtn.disabled = true;
         confirmBtn.textContent = "Processing...";
 
         try {
+          const token = localStorage.getItem("authToken");
+
           const res = await fetch(
             `http://localhost:3000/api/appointments/${appointmentId}/reschedule`,
             {
               method: "PUT",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
               body: JSON.stringify({
-                newDate,
-                newTime,
+                newDate: newDate, // Send as is (should be YYYY-MM-DD)
+                newTime: newTime, // Send as is (e.g., "3:00 PM")
                 rescheduledBy: "admin",
+                doctorId: doctorId, // Add doctorId if backend needs it
               }),
-            }
+            },
           );
-          const data = await res.json();
 
-          if (data.success) {
+          const data = await res.json();
+          console.log("Response:", data);
+
+          if (res.ok && data.success) {
             closeModal();
             showSuccessPopup("Appointment successfully rescheduled!");
             setTimeout(() => location.reload(), 2000);
           } else {
-            showSuccessPopup("Failed to reschedule, try again.");
+            showSuccessPopup(
+              data.message || "Failed to reschedule, try again.",
+            );
           }
         } catch (err) {
-          console.error(err);
+          console.error("Reschedule error:", err);
           alert("Error occurred. Try again.");
         } finally {
           confirmBtn.disabled = false;
@@ -1091,7 +1151,7 @@
       }
 
       function showSuccessPopup(
-        message = "Appointment Rescheduled Successfully!"
+        message = "Appointment Rescheduled Successfully!",
       ) {
         const popup = document.getElementById("successPopup");
         popup.style.display = "flex";

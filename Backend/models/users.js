@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
   phone: String,
   age: Number,
   dob: String,
-  gender: { type: String, enum: ['male', 'female', 'other'] },
+  gender: { type: String },
   missedAppointments: { type: Number, default: 0 },
   isBlocked: { type: Boolean, default: false },
   blockedUntil: { type: Date, default: null },

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -67,7 +67,9 @@
         display: block;
         border-radius: 6px;
         padding: 10px 15px;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
       }
 
       .sidebar ul li a:hover,
@@ -340,6 +342,79 @@
           color: #166e6b;
         }
       }
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+      }
+
+      .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .confirm-yes {
+        background: #28a745;
+        color: white;
+        padding: 8px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .confirm-no {
+        background: #dc3545;
+        color: white;
+        padding: 8px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .blocked-badge {
+        display: inline-block;
+        background: #dc3545;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 10px;
+      }
+
+      .active-badge {
+        background: #28a745;
+      }
+
+      .unblock-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 10px;
+      }
     </style>
   </head>
 
@@ -377,12 +452,35 @@
         <p>Loading...</p>
       </div>
     </div>
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal-overlay">
+      <div class="modal-content">
+        <p>Are you sure you want to unblock this patient?</p>
+        <div class="modal-buttons">
+          <button class="confirm-yes" onclick="confirmUnblock()">
+            Yes, Unblock
+          </button>
+          <button class="confirm-no" onclick="closeConfirmModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal-overlay">
+      <div class="modal-content">
+        <p id="successMessage">Patient unblocked successfully!</p>
+        <button class="confirm-yes" onclick="closeSuccessModal()">OK</button>
+      </div>
+    </div>
 
     <script>
       // Sidebar toggle
       const bar = document.getElementById("bar");
       const sidebar = document.querySelector(".sidebar");
       const overlay = document.getElementById("overlay");
+      let currentPatient = null;
 
       bar.addEventListener("click", () => {
         sidebar.classList.toggle("active");
@@ -467,8 +565,8 @@
               currentPage === 1 ? "disabled" : ""
             }>Previous</button>
             <span>Page ${currentPage} of ${Math.ceil(
-          appointments.length / itemsPerPage
-        )}</span>
+              appointments.length / itemsPerPage,
+            )}</span>
             <button onclick="nextPage()" ${
               end >= appointments.length ? "disabled" : ""
             }>Next</button>
@@ -499,39 +597,56 @@
             `http://localhost:3000/api/admin/patients/${patientId}`,
             {
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
-          const patient = await res.json();
+          currentPatient = await res.json();
 
-          // Show full profile data
+          // Show full profile data with unblock button if blocked
+          let unblockButtonHtml = "";
+          if (currentPatient.isBlocked) {
+            unblockButtonHtml = `
+        <button class="unblock-btn" onclick="showUnblockConfirm()">
+          <i class="fas fa-unlock-alt"></i> Unblock Patient
+        </button>
+      `;
+          }
+
+          let blockedUntilInfo = "";
+          if (currentPatient.blockedUntil) {
+            const blockedUntilDate = new Date(currentPatient.blockedUntil);
+            blockedUntilInfo = `<p><strong>Blocked Until:</strong> ${blockedUntilDate.toLocaleDateString()} ${blockedUntilDate.toLocaleTimeString()}</p>`;
+          }
+
           document.getElementById("patient-info").innerHTML = `
-            <h2>Profile Info</h2>
-            <p><strong>Name:</strong> ${patient.name || ""}</p>
-            <p><strong>Email:</strong> ${patient.email || ""}</p>
-            <p><strong>Phone:</strong> ${patient.phone || ""}</p>
-            <p><strong>Age:</strong> ${patient.age || ""}</p>
-            <p><strong>DOB:</strong> ${patient.dob || ""}</p>
-            <p><strong>Gender:</strong> ${patient.gender || ""}</p>
-            <p><strong>Role:</strong> ${patient.role || ""}</p>
-            <p><strong>Missed Appointments:</strong> ${
-              patient.missedAppointments || 0
-            }</p>
-            <p><strong>Blocked:</strong> ${patient.isBlocked ? "Yes" : "No"}</p>
-            ${
-              patient.unblockDate
-                ? `<p><strong>Unblock Date:</strong> ${new Date(
-                    patient.unblockDate
-                  ).toLocaleDateString()}</p>`
-                : ""
-            }
-        `;
+      <h2>Profile Info</h2>
+      <p><strong>Name:</strong> ${currentPatient.name || ""}</p>
+      <p><strong>Email:</strong> ${currentPatient.email || ""}</p>
+      <p><strong>Phone:</strong> ${currentPatient.phone || ""}</p>
+      <p><strong>CNIC:</strong> ${currentPatient.cnic || ""}</p>
+      <p><strong>Age:</strong> ${currentPatient.age || ""}</p>
+      <p><strong>DOB:</strong> ${currentPatient.dob || ""}</p>
+      <p><strong>Gender:</strong> ${currentPatient.gender || ""}</p>
+      <p><strong>Role:</strong> ${currentPatient.role || ""}</p>
+      <p><strong>Missed Appointments:</strong> ${currentPatient.missedAppointments || 0} 
+       
+      </p>
+      <p><strong>Status:</strong> 
+        ${
+          currentPatient.isBlocked
+            ? '<span class="blocked-badge">🔴 BLOCKED</span>'
+            : '<span class="blocked-badge active-badge">🟢 ACTIVE</span>'
+        }
+      </p>
+      ${blockedUntilInfo}
+      ${unblockButtonHtml}
+    `;
 
           // Fetch appointments
           const res2 = await fetch(
             `http://localhost:3000/api/admin/patients/${patientId}/appointments`,
             {
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
           appointments = await res2.json();
           renderAppointments();
@@ -540,8 +655,60 @@
           alert("Error loading patient data");
         }
       }
+      async function unblockPatient() {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/admin/patients/${patientId}/unblock`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json",
+              },
+            },
+          );
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.message || "Failed to unblock patient");
+          }
+
+          document.getElementById("successMessage").textContent =
+            "Patient unblocked successfully!";
+          document.getElementById("successModal").style.display = "flex";
+          await fetchPatientDetails();
+        } catch (err) {
+          console.error("Error unblocking patient:", err);
+          document.getElementById("successMessage").textContent =
+            err.message || "Failed to unblock patient";
+          document.getElementById("successModal").style.display = "flex";
+        }
+      }
+
+      function showUnblockConfirm() {
+        document.getElementById("confirmModal").style.display = "flex";
+      }
+
+      function confirmUnblock() {
+        closeConfirmModal();
+        unblockPatient();
+      }
+
+      function closeConfirmModal() {
+        document.getElementById("confirmModal").style.display = "none";
+      }
+
+      function closeSuccessModal() {
+        document.getElementById("successModal").style.display = "none";
+        window.location.reload();
+      }
 
       fetchPatientDetails();
+      window.showUnblockConfirm = showUnblockConfirm;
+      window.confirmUnblock = confirmUnblock;
+      window.closeConfirmModal = closeConfirmModal;
+      window.closeSuccessModal = closeSuccessModal;
     </script>
   </body>
 </html>

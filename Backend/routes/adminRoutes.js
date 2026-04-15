@@ -205,6 +205,65 @@ router.post('/chats/mark-read', async (req, res) => {
   
   res.json({ success: true });
 });
+// Unblock patient route
+router.put('/patients/:id/unblock', authenticateToken, authorizeAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Find the patient
+    const patient = await User.findById(id);
+    
+    if (!patient) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Patient not found' 
+      });
+    }
+    
+    // Check if user is actually a patient
+    if (patient.role !== 'patient') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'User is not a patient' 
+      });
+    }
+    
+    // Check if patient is actually blocked
+    if (!patient.isBlocked) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Patient is not currently blocked' 
+      });
+    }
+    
+    // Unblock the patient
+    patient.isBlocked = false;
+    patient.blockedUntil = null;
+        patient.missedAppointments = 0;  // 👈 ADD THIS LINE HERE
+
+    
+    await patient.save();
+    
+    res.status(200).json({
+      success: true,
+      message: 'Patient unblocked successfully',
+      patient: {
+        id: patient._id,
+        name: patient.name,
+        email: patient.email,
+        isBlocked: patient.isBlocked,
+        missedAppointments: patient.missedAppointments
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error unblocking patient:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error' 
+    });
+  }
+});
 // Simple endpoint to get admin's total unread messages
 // Add this endpoint for admin's total unread messages
 

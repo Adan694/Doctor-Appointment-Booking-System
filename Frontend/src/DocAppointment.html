@@ -648,6 +648,109 @@
       .modal-overlay {
         display: none;
       }
+      /* Tab Styles */
+      .tabs-container {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
+
+      .tabs {
+        display: flex;
+        background: #f8f9fa;
+        border-bottom: 2px solid #e9ecef;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .tab-btn {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #6c757d;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        white-space: nowrap;
+      }
+
+      .tab-btn:hover {
+        color: #0b2b3b;
+        background: #f1f3f5;
+      }
+
+      .tab-btn.active {
+        color: #0b2b3b;
+        background: white;
+      }
+
+      .tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: #0b2b3b;
+      }
+
+      .tab-badge {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 2px 8px;
+        background: #e9ecef;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .tab-btn.active .tab-badge {
+        background: #0b2b3b;
+        color: white;
+      }
+
+      .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Adjust section-block for tabs */
+      .section-block {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .section-block h2 {
+        margin-bottom: 1.5rem;
+        color: #0b2b3b;
+        font-size: 1.3rem;
+        border-left: 4px solid #0b2b3b;
+        padding-left: 1rem;
+      }
     </style>
   </head>
 
@@ -670,6 +773,7 @@
 
     <div class="container">
       <h1 class="page-title">Appointment Management</h1>
+
       <div class="filter-bar">
         <input
           type="text"
@@ -685,88 +789,117 @@
         </select>
       </div>
 
-      <!-- New Appointments Section -->
-      <div class="section-block">
-        <h2>New Appointments</h2>
-        <table class="table appointment-table">
-          <thead>
-            <tr>
-              <th>Patient Name</th>
-              <th>Appointment Date & Time</th>
-              <th>Phone Number</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="newAppointments"></tbody>
-        </table>
-        <div id="newAppointmentsPagination" class="pagination-controls">
-          <button onclick="prevPage('newAppointments')">Prev</button>
-          <span id="newAppointmentsPageInfo"></span>
-          <button onclick="nextPage('newAppointments')">Next</button>
+      <!-- Tabs Navigation -->
+      <div class="tabs-container">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="new">
+            New Appointments
+            <span id="newBadge" class="tab-badge">0</span>
+          </button>
+          <button class="tab-btn" data-tab="cancelled">
+            Cancelled
+            <span id="cancelledBadge" class="tab-badge">0</span>
+          </button>
+          <button class="tab-btn" data-tab="completed">
+            Completed
+            <span id="completedBadge" class="tab-badge">0</span>
+          </button>
+          <button class="tab-btn" data-tab="missed">
+            Missed
+            <span id="missedBadge" class="tab-badge">0</span>
+          </button>
         </div>
       </div>
 
-      <!-- Cancelled Appointments Section -->
-      <div class="section-block">
-        <h2>Cancelled Appointments</h2>
-        <table class="table appointment-table">
-          <thead>
-            <tr>
-              <th>Patient Name</th>
-              <th>Appointment Date & Time</th>
-              <th>Phone Number</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="cancelledAppointments"></tbody>
-        </table>
-        <div id="cancelledAppointmentsPagination" class="pagination-controls">
-          <button onclick="prevPage('cancelledAppointments')">Prev</button>
-          <span id="cancelledAppointmentsPageInfo"></span>
-          <button onclick="nextPage('cancelledAppointments')">Next</button>
+      <!-- Tab Content: New Appointments -->
+      <div id="tab-new" class="tab-content active">
+        <div class="section-block">
+          <h2>New Appointments</h2>
+          <table class="table appointment-table">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Appointment Date & Time</th>
+                <th>Phone Number</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="newAppointments"></tbody>
+          </table>
+          <div id="newAppointmentsPagination" class="pagination-controls">
+            <button onclick="prevPage('newAppointments')">Prev</button>
+            <span id="newAppointmentsPageInfo"></span>
+            <button onclick="nextPage('newAppointments')">Next</button>
+          </div>
         </div>
       </div>
 
-      <!-- Completed Appointments Section -->
-      <div class="section-block">
-        <h2>Completed Appointments</h2>
-        <table class="table appointment-table">
-          <thead>
-            <tr>
-              <th>Patient Name</th>
-              <th>Appointment Date & Time</th>
-              <th>Phone Number</th>
-              <th>Feedback</th>
-            </tr>
-          </thead>
-          <tbody id="completedAppointments"></tbody>
-        </table>
-
-        <div id="completedAppointmentsPagination" class="pagination-controls">
-          <button onclick="prevPage('completedAppointments')">Prev</button>
-          <span id="completedAppointmentsPageInfo"></span>
-          <button onclick="nextPage('completedAppointments')">Next</button>
+      <!-- Tab Content: Cancelled Appointments -->
+      <div id="tab-cancelled" class="tab-content">
+        <div class="section-block">
+          <h2>Cancelled Appointments</h2>
+          <table class="table appointment-table">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Appointment Date & Time</th>
+                <th>Phone Number</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="cancelledAppointments"></tbody>
+          </table>
+          <div id="cancelledAppointmentsPagination" class="pagination-controls">
+            <button onclick="prevPage('cancelledAppointments')">Prev</button>
+            <span id="cancelledAppointmentsPageInfo"></span>
+            <button onclick="nextPage('cancelledAppointments')">Next</button>
+          </div>
         </div>
       </div>
 
-      <!-- Missed Appointments Section -->
-      <div class="section-block">
-        <h2>Missed Appointments</h2>
-        <table class="table appointment-table">
-          <thead>
-            <tr>
-              <th>Patient Name</th>
-              <th>Appointment Date & Time</th>
-              <th>Phone Number</th>
-            </tr>
-          </thead>
-          <tbody id="missedAppointments"></tbody>
-        </table>
-        <div id="missedAppointmentsPagination" class="pagination-controls">
-          <button onclick="prevPage('missedAppointments')">Prev</button>
-          <span id="missedAppointmentsPageInfo"></span>
-          <button onclick="nextPage('missedAppointments')">Next</button>
+      <!-- Tab Content: Completed Appointments -->
+      <div id="tab-completed" class="tab-content">
+        <div class="section-block">
+          <h2>Completed Appointments</h2>
+          <table class="table appointment-table">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Appointment Date & Time</th>
+                <th>Phone Number</th>
+                <th>Feedback</th>
+              </tr>
+            </thead>
+            <tbody id="completedAppointments"></tbody>
+          </table>
+          <div id="completedAppointmentsPagination" class="pagination-controls">
+            <button onclick="prevPage('completedAppointments')">Prev</button>
+            <span id="completedAppointmentsPageInfo"></span>
+            <button onclick="nextPage('completedAppointments')">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Missed Appointments -->
+      <div id="tab-missed" class="tab-content">
+        <div class="section-block">
+          <h2>Missed Appointments</h2>
+          <table class="table appointment-table">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Appointment Date & Time</th>
+                <th>Phone Number</th>
+              </tr>
+            </thead>
+            <tbody id="missedAppointments"></tbody>
+          </table>
+          <div id="missedAppointmentsPagination" class="pagination-controls">
+            <button onclick="prevPage('missedAppointments')">Prev</button>
+            <span id="missedAppointmentsPageInfo"></span>
+            <button onclick="nextPage('missedAppointments')">Next</button>
+          </div>
         </div>
       </div>
     </div>
@@ -846,9 +979,16 @@
           logoutButton.addEventListener("click", logout);
         }
 
-        bar.addEventListener("click", function () {
-          menu.classList.toggle("active");
-        });
+        if (bar) {
+          bar.addEventListener("click", function () {
+            menu.classList.toggle("active");
+          });
+        }
+
+        // Initialize tabs
+        initializeTabs();
+        // Update badges after loading
+        setTimeout(updateTabBadges, 500);
       });
       function filterAppointments() {
         const searchValue = document
@@ -856,27 +996,23 @@
           .value.toLowerCase();
         const statusValue = document.getElementById("statusFilter").value;
 
-        // Control which sections are visible
-        document.querySelectorAll(".section-block").forEach((section) => {
-          const sectionTitle = section
-            .querySelector("h2")
-            .textContent.toLowerCase();
-
-          if (statusValue === "all") {
-            section.style.display = "";
-          } else if (sectionTitle.includes(statusValue)) {
-            section.style.display = "";
-          } else {
-            section.style.display = "none";
+        // Determine which tab to show based on filter
+        if (statusValue !== "all") {
+          // Switch to the corresponding tab
+          const tabBtn = document.querySelector(
+            `.tab-btn[data-tab="${statusValue}"]`,
+          );
+          if (tabBtn) {
+            tabBtn.click();
           }
-        });
+        }
 
-        // Apply search filter inside visible sections
+        // Apply search filter in all tabs
         document
           .querySelectorAll(".appointment-table tbody tr")
           .forEach((row) => {
             const patientName =
-              row.querySelector("td:nth-child(1)")?.textContent.toLowerCase() ||
+              row.querySelector("td:first-child")?.textContent.toLowerCase() ||
               "";
 
             if (patientName.includes(searchValue)) {
@@ -1099,6 +1235,7 @@
 
         paginationState.newAppointments.rows.push(rowHTML);
         paginateTable("newAppointments");
+        updateTabBadges(); // ADD THIS LINE
       }
 
       function addCancelledAppointmentRow(appointment) {
@@ -1122,6 +1259,7 @@
     </tr>`;
         paginationState.cancelledAppointments.rows.push(rowHTML);
         paginateTable("cancelledAppointments");
+        updateTabBadges(); // ADD THIS LINE
       }
 
       function addCompletedAppointmentRow(appointment) {
@@ -1140,8 +1278,51 @@
     </tr>`;
         paginationState.completedAppointments.rows.push(rowHTML);
         paginateTable("completedAppointments");
+        updateTabBadges(); // ADD THIS LINE
       }
+      function initializeTabs() {
+        const tabBtns = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
 
+        tabBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const tabId = btn.getAttribute("data-tab");
+
+            // Remove active class from all buttons and contents
+            tabBtns.forEach((b) => b.classList.remove("active"));
+            tabContents.forEach((c) => c.classList.remove("active"));
+
+            // Add active class to current button and content
+            btn.classList.add("active");
+            document.getElementById(`tab-${tabId}`).classList.add("active");
+          });
+        });
+      }
+      // Update tab badges with counts
+      function updateTabBadges() {
+        const newCount = document.querySelectorAll(
+          "#newAppointments tr:not(.empty-row)",
+        ).length;
+        const cancelledCount = document.querySelectorAll(
+          "#cancelledAppointments tr:not(.empty-row)",
+        ).length;
+        const completedCount = document.querySelectorAll(
+          "#completedAppointments tr:not(.empty-row)",
+        ).length;
+        const missedCount = document.querySelectorAll(
+          "#missedAppointments tr:not(.empty-row)",
+        ).length;
+
+        const newBadge = document.getElementById("newBadge");
+        const cancelledBadge = document.getElementById("cancelledBadge");
+        const completedBadge = document.getElementById("completedBadge");
+        const missedBadge = document.getElementById("missedBadge");
+
+        if (newBadge) newBadge.textContent = newCount;
+        if (cancelledBadge) cancelledBadge.textContent = cancelledCount;
+        if (completedBadge) completedBadge.textContent = completedCount;
+        if (missedBadge) missedBadge.textContent = missedCount;
+      }
       function completeAppointment(button) {
         const row = button.parentElement.parentElement;
         const patientName = row.cells[0].innerText;
@@ -1532,6 +1713,7 @@
         paginationState.missedAppointments.rows.push(rowHTML);
 
         paginateTable("missedAppointments");
+        updateTabBadges(); // ADD THIS LINE
       }
 
       const pageSize = 6;
@@ -1566,6 +1748,7 @@
 
         prevBtn.disabled = state.currentPage === 1;
         nextBtn.disabled = state.currentPage === totalPages;
+        updateTabBadges(); // ADD THIS LINE
       }
 
       function nextPage(sectionId) {

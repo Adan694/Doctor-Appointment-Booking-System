@@ -574,6 +574,30 @@
         color: gray;
         font-size: 18px;
       }
+      .chat-header-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        margin-right: 15px;
+      }
+      /* Hide search container and chat input area by default */
+      .search-container.hide,
+      .chat-input-area.hide {
+        display: none;
+      }
+
+      /* Optional: Add smooth transition */
+      .search-container,
+      .chat-input-area {
+        transition: all 0.3s ease;
+      }
     </style>
   </head>
   <body>
@@ -595,16 +619,18 @@
 
         <div class="user-type-switcher">
           <button id="patientsBtn" class="user-type-btn active">
-            👥 Patients
+            Patients
             <span id="patientsUnreadBadge" class="type-unread-badge">0</span>
           </button>
 
           <button id="doctorsBtn" class="user-type-btn">
-            👨‍⚕️ Doctors
+            Doctors
             <span id="doctorsUnreadBadge" class="type-unread-badge">0</span>
           </button>
         </div>
-        <div class="search-container">
+
+        <!-- Search bar - hidden when no chat selected -->
+        <div class="search-container" id="searchContainer">
           <input
             type="text"
             id="searchInput"
@@ -626,7 +652,7 @@
       <div class="chat-window">
         <div class="chat-header" id="chatHeader">
           <div class="chat-header-info">
-            <div class="chat-header-avatar" id="currentChatAvatar">👤</div>
+            <div class="chat-header-avatar" id="currentChatAvatar"></div>
             <div>
               <div class="chat-user-name" id="currentChatName">
                 Select a user
@@ -646,7 +672,8 @@
           </div>
         </div>
 
-        <div class="chat-input-area">
+        <!-- Chat input area - hidden when no chat selected -->
+        <div class="chat-input-area" id="chatInputArea">
           <input
             id="msgInput"
             class="chat-input"
@@ -991,15 +1018,17 @@
    FETCH USERS - UPDATED TO USE MASTER CACHE
 ---------------------------- */
       async function fetchUsers(role) {
-        console.log(
-          "🚨 fetchUsers CALLED for role:",
-          role,
-          "Time:",
-          Date.now(),
-        );
-        activeUser = null; // ✅ ADD THIS
-        msgInput.disabled = true; // ✅ ADD THIS
-        sendBtn.disabled = true; // ✅ ADD THIS
+        console.log(" fetchUsers CALLED for role:", role, "Time:", Date.now());
+        activeUser = null;
+        msgInput.disabled = true;
+        sendBtn.disabled = true;
+        const currentChatName = document.getElementById("currentChatName");
+        const currentChatStatus = document.getElementById("currentChatStatus");
+        const currentChatAvatar = document.getElementById("currentChatAvatar");
+        if (currentChatName) currentChatName.textContent = "Select a user";
+        if (currentChatStatus)
+          currentChatStatus.textContent = "Click on a user to start chatting";
+        if (currentChatAvatar) currentChatAvatar.textContent = "👤";
         const res = await fetch(
           `http://localhost:3000/api/admin/users/${role}`,
         );
@@ -1073,15 +1102,59 @@
         li.onclick = () => openChat(user, li, role);
         return li;
       }
+      function toggleChatElements(show) {
+        const searchContainer = document.getElementById("searchContainer");
+        const chatInputArea = document.getElementById("chatInputArea");
+        const chatHeader = document.getElementById("chatHeader");
 
+        if (show) {
+          // Show elements when chat is selected
+          if (searchContainer) searchContainer.classList.remove("hide");
+          if (chatInputArea) chatInputArea.classList.remove("hide");
+          if (chatHeader) chatHeader.style.opacity = "1";
+
+          // Enable input if user is selected
+          if (activeUser) {
+            msgInput.disabled = false;
+            sendBtn.disabled = false;
+          }
+        } else {
+          // Hide elements when no chat is selected
+          if (searchContainer) searchContainer.classList.add("hide");
+          if (chatInputArea) chatInputArea.classList.add("hide");
+          if (chatHeader) chatHeader.style.opacity = "0.7";
+
+          // Disable input
+          msgInput.disabled = true;
+          sendBtn.disabled = true;
+        }
+      }
       /* ----------------------------
    OPEN CHAT
 ---------------------------- */
       async function openChat(user, el, role) {
         activeUser = user;
+        toggleChatElements(true);
         msgInput.disabled = false;
         sendBtn.disabled = false;
 
+        // Update chat header with user information
+        const currentChatAvatar = document.getElementById("currentChatAvatar");
+        const currentChatName = document.getElementById("currentChatName");
+        const currentChatStatus = document.getElementById("currentChatStatus");
+
+        if (currentChatAvatar) {
+          currentChatAvatar.textContent = user.name.charAt(0).toUpperCase();
+        }
+        if (currentChatName) {
+          currentChatName.textContent = user.name;
+        }
+        if (currentChatStatus) {
+          currentChatStatus.textContent =
+            user.role === "patient" ? "Patient" : "Doctor";
+        }
+
+        // Remove active class from all chat items and add to current
         document
           .querySelectorAll(".chat-item")
           .forEach((i) => i.classList.remove("active"));
@@ -1096,6 +1169,9 @@
         chatBox.innerHTML = "";
         lastRenderedDate = null;
         chats.forEach(addMessage);
+
+        // Scroll to bottom of messages
+        chatBox.scrollTop = chatBox.scrollHeight;
       }
 
       /* ----------------------------
@@ -1183,6 +1259,8 @@
 
       // Load both patient and doctor users into master cache
       async function initializeAllUsers() {
+        toggleChatElements(false);
+
         try {
           // Load patients
           const patientsRes = await fetch(
@@ -1218,10 +1296,19 @@
         currentRole = "patients";
         patientsBtn.classList.add("active");
         doctorsBtn.classList.remove("active");
+        toggleChatElements(false);
 
-        activeUser = null; // ✅ ADD THIS
-        msgInput.disabled = true; // ✅ ADD THIS
-        sendBtn.disabled = true; // ✅ ADD THIS
+        activeUser = null;
+        msgInput.disabled = true;
+        sendBtn.disabled = true;
+        const currentChatName = document.getElementById("currentChatName");
+        const currentChatStatus = document.getElementById("currentChatStatus");
+        const currentChatAvatar = document.getElementById("currentChatAvatar");
+
+        if (currentChatName) currentChatName.textContent = "Select a user";
+        if (currentChatStatus)
+          currentChatStatus.textContent = "Click on a user to start chatting";
+        if (currentChatAvatar) currentChatAvatar.textContent = "👤";
 
         chatBox.innerHTML = `
     <div class="empty-state">
@@ -1229,7 +1316,7 @@
       <h3>No messages yet</h3>
       <p>Select a conversation to start chatting</p>
     </div>
-  `; // ✅ ADD THIS
+  `;
 
         fetchUsers("patients");
       };
@@ -1238,10 +1325,19 @@
         currentRole = "doctors";
         doctorsBtn.classList.add("active");
         patientsBtn.classList.remove("active");
+        toggleChatElements(false);
 
-        activeUser = null; // ✅ ADD THIS
-        msgInput.disabled = true; // ✅ ADD THIS
-        sendBtn.disabled = true; // ✅ ADD THIS
+        activeUser = null;
+        msgInput.disabled = true;
+        sendBtn.disabled = true;
+        const currentChatName = document.getElementById("currentChatName");
+        const currentChatStatus = document.getElementById("currentChatStatus");
+        const currentChatAvatar = document.getElementById("currentChatAvatar");
+
+        if (currentChatName) currentChatName.textContent = "Select a user";
+        if (currentChatStatus)
+          currentChatStatus.textContent = "Click on a user to start chatting";
+        if (currentChatAvatar) currentChatAvatar.textContent = "👤";
 
         chatBox.innerHTML = `
     <div class="empty-state">
@@ -1249,7 +1345,7 @@
       <h3>No messages yet</h3>
       <p>Select a conversation to start chatting</p>
     </div>
-  `; // ✅ ADD THIS
+  `;
 
         fetchUsers("doctors");
       };

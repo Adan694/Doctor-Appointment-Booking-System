@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -82,7 +82,9 @@
         display: block;
         border-radius: 6px;
         padding: 10px 15px;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
       }
 
       .sidebar ul li a:hover,
@@ -136,7 +138,9 @@
         padding: 10px 22px;
         font-size: 16px;
         cursor: pointer;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease;
         box-shadow: 0 2px 6px rgba(40, 167, 69, 0.4);
       }
 
@@ -192,7 +196,9 @@
         border: 1.5px solid #ccc;
         border-radius: 6px;
         background-color: #fdfdfd;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease,
+        transition:
+          border-color 0.3s ease,
+          box-shadow 0.3s ease,
           background-color 0.3s ease;
         box-sizing: border-box;
       }
@@ -221,7 +227,9 @@
         border: 2px dashed rgb(9, 102, 102);
         border-radius: 6px;
         cursor: pointer;
-        transition: background-color 0.3s ease, border-color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          border-color 0.3s ease;
       }
 
       .upload-button:hover {
@@ -250,7 +258,9 @@
         font-size: 16px;
         font-weight: bold;
         cursor: pointer;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease,
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease,
           transform 0.2s ease;
         box-shadow: 0 4px 10px rgba(9, 102, 102, 0.3);
       }
@@ -748,7 +758,7 @@
           });
 
           console.log(
-            `Updated degree dropdown for ${speciality} with ${degrees.length} options`
+            `Updated degree dropdown for ${speciality} with ${degrees.length} options`,
           );
         }
 
@@ -762,8 +772,17 @@
 
         // Validation rules
         const validators = {
-          name: (value) =>
-            value.trim().length >= 3 || "Name must be at least 3 characters.",
+          name: (value) => {
+            const trimmed = value.trim();
+            // Check minimum length
+            if (trimmed.length < 3)
+              return "Name must be at least 3 characters long.";
+            // Check only alphabets (no numbers, spaces, or special characters)
+            const onlyAlphabets = /^[A-Za-z]+$/;
+            if (!onlyAlphabets.test(trimmed))
+              return "Name must contain only alphabets (A-Z, a-z).";
+            return true;
+          },
 
           email: (value) => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -801,10 +820,15 @@
             );
           },
 
-          about: (value) =>
-            value.trim().length >= 10 ||
-            "About section must be at least 10 characters long.",
-
+          "about-doctor": (value) => {
+            const trimmed = value.trim();
+            // Count only alphabetic characters (a-z, A-Z)
+            const alphabetsOnly = trimmed.replace(/[^A-Za-z]/g, "");
+            if (alphabetsOnly.length < 10) {
+              return "About section must contain at least 10 alphabetic characters (letters only). Spaces, numbers, and punctuation don't count.";
+            }
+            return true;
+          },
           available: (value) =>
             ["true", "false"].includes(value) ||
             "Availability must be selected.",
@@ -838,7 +862,7 @@
 
             input.addEventListener(
               input.tagName === "SELECT" ? "change" : "input",
-              validateField
+              validateField,
             );
           }
         });
@@ -893,7 +917,7 @@
             const domain = email.split("@")[1];
             if (!allowedDomains.includes(domain)) {
               alert(
-                "Only Gmail, Yahoo, Hotmail, or Outlook emails are allowed."
+                "Only Gmail, Yahoo, Hotmail, or Outlook emails are allowed.",
               );
               return;
             }
@@ -901,7 +925,7 @@
             // Append the role to the formData
             formData.append(
               "role",
-              document.getElementById("doctor-role").value
+              document.getElementById("doctor-role").value,
             );
 
             submitBtn.disabled = true;
@@ -918,7 +942,7 @@
                 {
                   method: "POST",
                   body: formData,
-                }
+                },
               );
 
               const data = await response.json();
@@ -933,7 +957,7 @@
             } catch (err) {
               console.error("Error:", err);
               showError(
-                err.message || "Failed to add doctor. Please try again."
+                err.message || "Failed to add doctor. Please try again.",
               );
             } finally {
               submitBtn.disabled = false;

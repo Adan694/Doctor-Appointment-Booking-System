@@ -405,6 +405,69 @@
           margin-right: 200px;
         }
       }
+      /* Pagination Styles */
+      .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .pagination-btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        background: white;
+        color: #0b2b3b;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+      }
+
+      .pagination-btn:hover:not(:disabled) {
+        background: #0b2b3b;
+        color: white;
+        border-color: #0b2b3b;
+      }
+
+      .pagination-btn.active {
+        background: #0b2b3b;
+        color: white;
+        border-color: #0b2b3b;
+      }
+
+      .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .page-info {
+        padding: 0.5rem 1rem;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .items-per-page {
+        margin-left: 1rem;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      tr {
+        transition: opacity 0.3s ease;
+      }
+
+      tr.appear {
+        opacity: 1 !important;
+      }
+
+      .top-feedback {
+        background: #fff9e6;
+        border-left: 4px solid #f39c12;
+      }
     </style>
   </head>
 
@@ -460,6 +523,26 @@
       </table>
 
       <p id="noFeedback">No feedback available.</p>
+      <!-- Pagination Container -->
+      <div
+        id="paginationContainer"
+        class="pagination-container"
+        style="display: none"
+      >
+        <button id="prevPageBtn" class="pagination-btn">← Previous</button>
+        <div id="pageNumbers" class="page-numbers"></div>
+        <button id="nextPageBtn" class="pagination-btn">Next →</button>
+        <div class="page-info">
+          Showing <span id="startRange">0</span> -
+          <span id="endRange">0</span> of <span id="totalItems">0</span>
+        </div>
+        <select id="itemsPerPage" class="items-per-page">
+          <option value="5" selected>5 per page</option>
+          <option value="10">10 per page</option>
+          <option value="20">20 per page</option>
+          <option value="50">50 per page</option>
+        </select>
+      </div>
     </main>
 
     <script>
@@ -480,115 +563,59 @@
         menu.classList.toggle("active");
       });
 
-      function loadDoctorFeedback(doctorId, token) {
-        fetch(`http://localhost:3000/api/doctors/${doctorId}/feedback`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((res) => {
-            if (!res.ok) {
-              throw new Error("Failed to fetch feedback");
-            }
-            return res.json();
-          })
-          .then((feedbacks) => {
-            const table = document.getElementById("feedbackTable");
-            const tableBody = table.querySelector("tbody");
-            const noFeedback = document.getElementById("noFeedback");
+      // Pagination variables
+      let currentPage = 1;
+      let itemsPerPage = 5;
+      let currentFeedbacks = [];
+      let currentSortValue = "dateDesc";
 
-            tableBody.innerHTML = "";
-
-            if (!feedbacks.length) {
-              noFeedback.style.display = "block";
-              return;
-            }
-
-            table.style.display = "table";
-            noFeedback.style.display = "none";
-
-            feedbacks.forEach((feedback, index) => {
-              // Added index here
-              const row = document.createElement("tr");
-
-              // Patient name
-              const patientNameCell = document.createElement("td");
-              patientNameCell.textContent = feedback.userName || "Unknown";
-              patientNameCell.setAttribute("data-label", "Patient Name");
-
-              // Rating
-              const ratingCell = document.createElement("td");
-              ratingCell.classList.add("rating");
-              ratingCell.innerHTML =
-                "★".repeat(feedback.rating) + "☆".repeat(5 - feedback.rating);
-              ratingCell.setAttribute("data-label", "Rating");
-
-              // Feedback text
-              const feedbackCell = document.createElement("td");
-              feedbackCell.textContent = feedback.comment || "No comment";
-              feedbackCell.setAttribute("data-label", "Feedback");
-
-              // Date
-              const dateCell = document.createElement("td");
-              dateCell.textContent = new Date(
-                feedback.timestamp,
-              ).toLocaleDateString();
-              dateCell.setAttribute("data-label", "Date");
-
-              row.appendChild(patientNameCell);
-              row.appendChild(ratingCell);
-              row.appendChild(feedbackCell);
-              row.appendChild(dateCell);
-
-              // Start hidden
-              row.style.opacity = "0";
-
-              // Append first
-              tableBody.appendChild(row);
-
-              // Animate later
-              setTimeout(() => {
-                row.classList.add("appear");
-              }, index * 150); //  Stagger each row by 150ms
-            });
-          })
-          .catch((err) => {
-            console.error("Error loading feedback:", err);
-            alert("Error loading feedback.");
-          });
-      }
-      // Store feedbacks globally so sorting can reuse
-      let doctorFeedbacks = [];
-
-      function renderFeedbackTable(feedbacks) {
+      function renderFeedbackTable(feedbacks, page = 1) {
         const table = document.getElementById("feedbackTable");
         const tableBody = table.querySelector("tbody");
         const noFeedback = document.getElementById("noFeedback");
-
-        tableBody.innerHTML = "";
+        const paginationContainer = document.getElementById(
+          "paginationContainer",
+        );
 
         if (!feedbacks.length) {
           noFeedback.style.display = "block";
           table.style.display = "none";
+          paginationContainer.style.display = "none";
           return;
         }
 
         table.style.display = "table";
         noFeedback.style.display = "none";
+        paginationContainer.style.display = "flex";
+
+        // Calculate pagination
+        const totalItems = feedbacks.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+        const paginatedFeedbacks = feedbacks.slice(startIndex, endIndex);
 
         // Calculate and show average rating
         const avgRating =
           feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length;
-        document.getElementById("avgStars").textContent =
+        document.getElementById("avgStars").innerHTML =
           "★".repeat(Math.round(avgRating)) +
           "☆".repeat(5 - Math.round(avgRating));
 
+        // Update page info
+        document.getElementById("startRange").textContent = startIndex + 1;
+        document.getElementById("endRange").textContent = endIndex;
+        document.getElementById("totalItems").textContent = totalItems;
+
+        // Clear table
+        tableBody.innerHTML = "";
+
         const maxRating = Math.max(...feedbacks.map((f) => f.rating));
 
-        feedbacks.forEach((feedback, index) => {
+        // Render paginated feedbacks
+        paginatedFeedbacks.forEach((feedback, index) => {
           const row = document.createElement("tr");
 
-          // Highlight top feedback
           if (feedback.rating === maxRating) row.classList.add("top-feedback");
 
           const patientNameCell = document.createElement("td");
@@ -619,11 +646,55 @@
           row.style.opacity = "0";
           tableBody.appendChild(row);
 
-          // Animate each row
           setTimeout(() => {
             row.classList.add("appear");
-          }, index * 150);
+          }, index * 100);
         });
+
+        // Update pagination buttons
+        updatePaginationButtons(totalPages, page);
+      }
+
+      function updatePaginationButtons(totalPages, currentPage) {
+        const prevBtn = document.getElementById("prevPageBtn");
+        const nextBtn = document.getElementById("nextPageBtn");
+        const pageNumbersDiv = document.getElementById("pageNumbers");
+
+        // Update prev/next buttons state
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+
+        // Generate page numbers
+        pageNumbersDiv.innerHTML = "";
+
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+
+        if (endPage - startPage < 4 && startPage > 1) {
+          startPage = Math.max(1, endPage - 4);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+          const pageBtn = document.createElement("button");
+          pageBtn.textContent = i;
+          pageBtn.classList.add("pagination-btn");
+          if (i === currentPage) {
+            pageBtn.classList.add("active");
+          }
+          pageBtn.onclick = () => goToPage(i);
+          pageNumbersDiv.appendChild(pageBtn);
+        }
+      }
+
+      function goToPage(page) {
+        currentPage = page;
+        renderFeedbackTable(currentFeedbacks, currentPage);
+      }
+
+      function changeItemsPerPage() {
+        itemsPerPage = parseInt(document.getElementById("itemsPerPage").value);
+        currentPage = 1;
+        renderFeedbackTable(currentFeedbacks, currentPage);
       }
 
       // Load feedback and save globally
@@ -636,8 +707,23 @@
         )
           .then((res) => res.json())
           .then((feedbacks) => {
-            doctorFeedbacks = feedbacks;
-            renderFeedbackTable(doctorFeedbacks);
+            // Apply current sort
+            let sorted = [...feedbacks];
+            if (currentSortValue === "dateDesc")
+              sorted.sort(
+                (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
+              );
+            if (currentSortValue === "dateAsc")
+              sorted.sort(
+                (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
+              );
+            if (currentSortValue === "ratingDesc")
+              sorted.sort((a, b) => b.rating - a.rating);
+            if (currentSortValue === "ratingAsc")
+              sorted.sort((a, b) => a.rating - b.rating);
+
+            currentFeedbacks = sorted;
+            renderFeedbackTable(currentFeedbacks, currentPage);
           })
           .catch((err) => {
             console.error("Error loading feedback:", err);
@@ -649,38 +735,44 @@
       document
         .getElementById("sortFeedback")
         .addEventListener("change", (e) => {
-          let sorted = [...doctorFeedbacks];
-          const value = e.target.value;
+          currentSortValue = e.target.value;
+          let sorted = [...currentFeedbacks];
 
-          if (value === "dateDesc")
+          if (currentSortValue === "dateDesc")
             sorted.sort(
               (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
             );
-          if (value === "dateAsc")
+          if (currentSortValue === "dateAsc")
             sorted.sort(
               (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
             );
-          if (value === "ratingDesc")
+          if (currentSortValue === "ratingDesc")
             sorted.sort((a, b) => b.rating - a.rating);
-          if (value === "ratingAsc") sorted.sort((a, b) => a.rating - b.rating);
+          if (currentSortValue === "ratingAsc")
+            sorted.sort((a, b) => a.rating - b.rating);
 
-          renderFeedbackTable(sorted);
+          currentFeedbacks = sorted;
+          currentPage = 1;
+          renderFeedbackTable(currentFeedbacks, currentPage);
         });
-    </script>
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
 
-    <script>
-      const socket = io("http://localhost:3000");
-
-      document.addEventListener("DOMContentLoaded", () => {
-        const userId = localStorage.getItem("userId");
-        const role = localStorage.getItem("userRole");
-
-        if (userId && role) {
-          console.log("🟢 Reconnecting user:", userId, role);
-          socket.emit("join_user", { userId, role });
+      // Pagination event listeners
+      document.getElementById("prevPageBtn").addEventListener("click", () => {
+        if (currentPage > 1) {
+          goToPage(currentPage - 1);
         }
       });
+
+      document.getElementById("nextPageBtn").addEventListener("click", () => {
+        const totalPages = Math.ceil(currentFeedbacks.length / itemsPerPage);
+        if (currentPage < totalPages) {
+          goToPage(currentPage + 1);
+        }
+      });
+
+      document
+        .getElementById("itemsPerPage")
+        .addEventListener("change", changeItemsPerPage);
     </script>
   </body>
 </html>
