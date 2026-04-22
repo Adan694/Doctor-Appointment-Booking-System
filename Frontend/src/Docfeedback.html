@@ -317,6 +317,69 @@
         display: none;
       }
 
+      /* SIMPLE PAGINATION STYLES - Matching Theme */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 30px;
+        padding: 15px 0;
+      }
+
+      .pagination button {
+        background-color: #166e6b;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(22, 110, 107, 0.3);
+      }
+
+      .pagination button:hover:not(:disabled) {
+        background-color: #0f504e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(22, 110, 107, 0.4);
+      }
+
+      .pagination button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .pagination .page-info {
+        font-size: 14px;
+        color: #166e6b;
+        font-weight: 600;
+        background: white;
+        padding: 8px 15px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .items-per-page {
+        margin-left: 15px;
+        padding: 8px 12px;
+        border: 1px solid #166e6b;
+        border-radius: 8px;
+        background: white;
+        color: #166e6b;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .items-per-page:hover {
+        background-color: #166e6b;
+        color: white;
+      }
+
       /* Responsive */
       @media (max-width: 600px) {
         table,
@@ -359,6 +422,15 @@
         td span {
           flex: 1;
           text-align: left;
+        }
+
+        .pagination {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .items-per-page {
+          margin-left: 0;
         }
       }
 
@@ -405,57 +477,7 @@
           margin-right: 200px;
         }
       }
-      /* Pagination Styles */
-      .pagination-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 0.5rem;
-        margin-top: 2rem;
-        flex-wrap: wrap;
-      }
 
-      .pagination-btn {
-        padding: 0.5rem 1rem;
-        border: 1px solid #ddd;
-        background: white;
-        color: #0b2b3b;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 0.9rem;
-      }
-
-      .pagination-btn:hover:not(:disabled) {
-        background: #0b2b3b;
-        color: white;
-        border-color: #0b2b3b;
-      }
-
-      .pagination-btn.active {
-        background: #0b2b3b;
-        color: white;
-        border-color: #0b2b3b;
-      }
-
-      .pagination-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      .page-info {
-        padding: 0.5rem 1rem;
-        color: #666;
-        font-size: 0.9rem;
-      }
-
-      .items-per-page {
-        margin-left: 1rem;
-        padding: 0.5rem;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        cursor: pointer;
-      }
       tr {
         transition: opacity 0.3s ease;
       }
@@ -523,25 +545,18 @@
       </table>
 
       <p id="noFeedback">No feedback available.</p>
-      <!-- Pagination Container -->
-      <div
-        id="paginationContainer"
-        class="pagination-container"
-        style="display: none"
-      >
-        <button id="prevPageBtn" class="pagination-btn">← Previous</button>
-        <div id="pageNumbers" class="page-numbers"></div>
-        <button id="nextPageBtn" class="pagination-btn">Next →</button>
-        <div class="page-info">
-          Showing <span id="startRange">0</span> -
-          <span id="endRange">0</span> of <span id="totalItems">0</span>
-        </div>
-        <select id="itemsPerPage" class="items-per-page">
+
+      <!-- SIMPLE PAGINATION -->
+      <div id="pagination" class="pagination" style="display: none">
+        <button id="prevPageBtn" class="prev-btn">Previous</button>
+        <span id="pageInfo" class="page-info">Page 1 of 1</span>
+        <button id="nextPageBtn" class="next-btn">Next</button>
+        <!-- <select id="itemsPerPage" class="items-per-page">
           <option value="5" selected>5 per page</option>
           <option value="10">10 per page</option>
           <option value="20">20 per page</option>
           <option value="50">50 per page</option>
-        </select>
+        </select> -->
       </div>
     </main>
 
@@ -573,20 +588,18 @@
         const table = document.getElementById("feedbackTable");
         const tableBody = table.querySelector("tbody");
         const noFeedback = document.getElementById("noFeedback");
-        const paginationContainer = document.getElementById(
-          "paginationContainer",
-        );
+        const paginationDiv = document.getElementById("pagination");
 
         if (!feedbacks.length) {
           noFeedback.style.display = "block";
           table.style.display = "none";
-          paginationContainer.style.display = "none";
+          paginationDiv.style.display = "none";
           return;
         }
 
         table.style.display = "table";
         noFeedback.style.display = "none";
-        paginationContainer.style.display = "flex";
+        paginationDiv.style.display = "flex";
 
         // Calculate pagination
         const totalItems = feedbacks.length;
@@ -603,9 +616,8 @@
           "☆".repeat(5 - Math.round(avgRating));
 
         // Update page info
-        document.getElementById("startRange").textContent = startIndex + 1;
-        document.getElementById("endRange").textContent = endIndex;
-        document.getElementById("totalItems").textContent = totalItems;
+        document.getElementById("pageInfo").textContent =
+          `Page ${page} of ${totalPages}`;
 
         // Clear table
         tableBody.innerHTML = "";
@@ -658,32 +670,10 @@
       function updatePaginationButtons(totalPages, currentPage) {
         const prevBtn = document.getElementById("prevPageBtn");
         const nextBtn = document.getElementById("nextPageBtn");
-        const pageNumbersDiv = document.getElementById("pageNumbers");
 
         // Update prev/next buttons state
         prevBtn.disabled = currentPage === 1;
         nextBtn.disabled = currentPage === totalPages;
-
-        // Generate page numbers
-        pageNumbersDiv.innerHTML = "";
-
-        let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(totalPages, startPage + 4);
-
-        if (endPage - startPage < 4 && startPage > 1) {
-          startPage = Math.max(1, endPage - 4);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-          const pageBtn = document.createElement("button");
-          pageBtn.textContent = i;
-          pageBtn.classList.add("pagination-btn");
-          if (i === currentPage) {
-            pageBtn.classList.add("active");
-          }
-          pageBtn.onclick = () => goToPage(i);
-          pageNumbersDiv.appendChild(pageBtn);
-        }
       }
 
       function goToPage(page) {
@@ -770,9 +760,9 @@
         }
       });
 
-      document
-        .getElementById("itemsPerPage")
-        .addEventListener("change", changeItemsPerPage);
+      // document
+      //   .getElementById("itemsPerPage")
+      //   .addEventListener("change", changeItemsPerPage);
     </script>
   </body>
 </html>

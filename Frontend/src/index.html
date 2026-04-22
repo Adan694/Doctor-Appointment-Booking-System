@@ -510,80 +510,150 @@
                 }, 1500);
             }    
     </script>
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
-  const socket = io("http://localhost:3000");
+console.log("🏠 HOME PAGE LOADED");
+console.log("Socket.io available?", typeof io !== 'undefined');
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const userId = localStorage.getItem("userId");
-    const role = localStorage.getItem("userRole");
-
-    if (userId && role) {
-      console.log("🟢 Reconnecting user:", userId, role);
-      socket.emit("join_user", { userId, role });
-    }
-  });
-</script>
-<script src="http://localhost:3000/socket.io/socket.io.js"></script>
-<script>
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("📄 DOM Content Loaded");
+    
     const token = localStorage.getItem('authToken');
     const userId = localStorage.getItem('userId');
     const role = localStorage.getItem('userRole');
     const chatBtn = document.getElementById('chatFloatingBtn');
     const unreadBadge = document.getElementById('unreadCount');
 
+    console.log("Token exists?", !!token);
+    console.log("UserId:", userId);
+    console.log("Role:", role);
+
     if (!token) {
-        chatBtn.style.display = 'none'; // hide button if not logged in
+        console.log("❌ No token, hiding chat button");
+        if (chatBtn) chatBtn.style.display = 'none';
         return;
     }
 
-    chatBtn.style.display = 'flex'; // show button for logged-in users
+    if (chatBtn) chatBtn.style.display = 'flex';
+    console.log("✅ Chat button visible");
 
-    // Connect socket
-    const socket = io("http://localhost:3000");
-    if (userId && role) {
-        socket.emit("join_user", { userId, role });
-    }
-
-    socket.on("new_message", () => {
-        let current = parseInt(unreadBadge.innerText) || 0;
-        current++;
-        unreadBadge.innerText = current;
-        unreadBadge.style.display = "flex";
-    });
-
-    // Fetch initial unread count
+    // Define updateUnreadCount function FIRST
     async function updateUnreadCount() {
+        console.log("🔄 updateUnreadCount called");
         try {
+            console.log("📡 Fetching unread count from server...");
             const res = await fetch('http://localhost:3000/user/chat/unread-count', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
             const count = data.unreadCount || 0;
-            unreadBadge.innerText = count > 0 ? count : '';
-            unreadBadge.style.display = count > 0 ? 'flex' : 'none';
+            console.log("📊 Server returned unread count:", count);
+            
+            if (unreadBadge) {
+                unreadBadge.innerText = count > 0 ? count : '';
+                unreadBadge.style.display = count > 0 ? 'flex' : 'none';
+                console.log("🔴 Badge updated to:", count > 0 ? count : 'hidden');
+            }
         } catch (err) {
-            console.error('Error fetching unread count:', err);
+            console.error('❌ Error fetching unread count:', err);
         }
     }
+
+    // Connect socket
+    console.log("🔌 Connecting to socket...");
+    const socket = io("http://localhost:3000");
+    
+    socket.on('connect', () => {
+        console.log("✅ Socket connected successfully!");
+    });
+
+    socket.on('connect_error', (error) => {
+        console.error("❌ Socket connection error:", error);
+    });
+    
+    if (userId && role) {
+        console.log("📡 Emitting join_user with:", { userId, role });
+        socket.emit("join_user", { userId, role });
+    }
+
+    // Socket event listeners
+    socket.on("new_message", (message) => {
+        console.log("📨 new_message event received:", message);
+        console.log("Message receiverId:", message.receiverId);
+        console.log("Current userId:", userId);
+        
+        if (message.receiverId === userId) {
+            console.log("✅ Message is for this user, updating count");
+            updateUnreadCount();
+        } else {
+            console.log("⏭️ Message not for this user, ignoring");
+        }
+    });
+
+    socket.on("messages_read", (data) => {
+        console.log("📖 messages_read event received:", data);
+        console.log("Data userId:", data.userId);
+        console.log("Current userId:", userId);
+        
+        if (data.userId === userId) {
+            console.log("✅ Messages marked as read for this user, updating count");
+            updateUnreadCount();
+        } else {
+            console.log("⏭️ messages_read not for this user, ignoring");
+        }
+    });
+
+    // Refresh count when page becomes visible
+    document.addEventListener('visibilitychange', () => {
+        console.log("👁️ visibilitychange event, hidden:", document.hidden);
+        if (!document.hidden) {
+            console.log("📱 Page became visible, updating count");
+            updateUnreadCount();
+        }
+    });
+
+    // Initial fetch
+    console.log("📞 Calling initial updateUnreadCount");
     updateUnreadCount();
 
-    // Click event to go to chat and mark messages read
-    chatBtn.addEventListener('click', async () => {
-        try {
-            await fetch('http://localhost:3000/user/chat/mark-read', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            unreadBadge.innerText = "";
-            unreadBadge.style.display = "none";
-        } catch (err) {
-            console.error("Error clearing unread:", err);
-        }
-        window.location.href = "Patientchat.html";
-    });
+    // Click event to go to chat
+    if (chatBtn) {
+        chatBtn.addEventListener('click', async () => {
+            console.log("🖱️ Chat button clicked");
+            try {
+                console.log("📡 Marking messages as read...");
+                await fetch('http://localhost:3000/user/chat/mark-read', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                console.log("✅ Messages marked as read via API");
+                if (unreadBadge) {
+                    unreadBadge.innerText = "";
+                    unreadBadge.style.display = "none";
+                    console.log("🔴 Badge cleared");
+                }
+            } catch (err) {
+                console.error("❌ Error clearing unread:", err);
+            }
+            console.log("🚀 Navigating to Patientchat.html");
+            window.location.href = "Patientchat.html";
+        });
+    }
+});
+
+// Logout function
+function logout() {
+    console.log("🚪 Logout called, clearing localStorage");
+    localStorage.clear();
+    window.location.href = 'login.html';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 });
 </script>
 </body>

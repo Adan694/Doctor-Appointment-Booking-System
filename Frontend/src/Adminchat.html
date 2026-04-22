@@ -848,6 +848,17 @@
    SOCKET MESSAGE HANDLER
 ---------------------------- */
       function handleNewMessage(msg) {
+        if (!window.processedMessages) window.processedMessages = new Set();
+
+        const messageKey = `${msg.senderId}_${msg.message}_${msg.timestamp}`;
+        if (window.processedMessages.has(messageKey)) {
+          console.log("Duplicate message ignored");
+          return;
+        }
+        window.processedMessages.add(messageKey);
+        setTimeout(() => window.processedMessages.delete(messageKey), 2000);
+
+        // Rest of your existing code below...
         const adminId = "689f5be6e5432f608d4b3a54";
 
         console.log("---- NEW MESSAGE RECEIVED ----");
@@ -959,7 +970,7 @@
       function updateUnreadBadge(userId, count) {
         console.log("Updating unread badge for:", userId, "Count:", count);
 
-        const item = document.querySelector(
+        let item = document.querySelector(
           `.chat-item[data-userid="${userId}"]`,
         );
 
@@ -971,8 +982,16 @@
         let badge = item.querySelector(".unread-badge");
 
         if (!badge) {
-          console.warn("Unread badge element missing for:", userId);
-          return;
+          // Create the badge if it doesn't exist
+          badge = document.createElement("div");
+          badge.className = "unread-badge";
+          const infoDiv = item.querySelector(".chat-item-info");
+          if (infoDiv) {
+            infoDiv.appendChild(badge);
+          } else {
+            console.warn("Could not find chat-item-info for badge creation");
+            return;
+          }
         }
 
         if (count > 0) {
@@ -1095,7 +1114,7 @@
         <div class="user-name">${user.name} <span class="user-online-dot"></span></div>
         <div class="last-message">${lastMsg}</div>
       </div>
-      <div class="unread-badge" style="${unread ? "" : "display:none"}">${unread}</div>
+      <div class="unread-badge" style="${unread > 0 ? "" : "display:none"}">${unread > 0 ? unread : ""}</div>
     </div>
   `;
 
@@ -1103,13 +1122,11 @@
         return li;
       }
       function toggleChatElements(show) {
-        const searchContainer = document.getElementById("searchContainer");
         const chatInputArea = document.getElementById("chatInputArea");
         const chatHeader = document.getElementById("chatHeader");
 
         if (show) {
           // Show elements when chat is selected
-          if (searchContainer) searchContainer.classList.remove("hide");
           if (chatInputArea) chatInputArea.classList.remove("hide");
           if (chatHeader) chatHeader.style.opacity = "1";
 
@@ -1120,7 +1137,6 @@
           }
         } else {
           // Hide elements when no chat is selected
-          if (searchContainer) searchContainer.classList.add("hide");
           if (chatInputArea) chatInputArea.classList.add("hide");
           if (chatHeader) chatHeader.style.opacity = "0.7";
 

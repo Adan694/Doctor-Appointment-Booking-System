@@ -413,6 +413,10 @@
         if (e.key === "Enter") sendMessage();
       });
 
+      document.getElementById("backBtn").addEventListener("click", function () {
+        window.location.href = "docpanel.html";
+      });
+
       // Initial load
       loadChats();
     </script>

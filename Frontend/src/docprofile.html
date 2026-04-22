@@ -151,6 +151,115 @@
         color: #096666;
       }
 
+      /* Multi-select specialization styling */
+      .specialty-multiselect {
+        position: relative;
+        width: 100%;
+        margin-top: 8px;
+      }
+
+      .multiselect-btn {
+        width: 100%;
+        padding: 10px 12px;
+        background: #fff;
+        border: 1.5px solid #ccc;
+        border-radius: 8px;
+        text-align: left;
+        cursor: pointer;
+        font-size: 14px;
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: border 0.3s;
+      }
+
+      .multiselect-btn:hover {
+        border-color: #096666;
+      }
+
+      .multiselect-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        max-height: 250px;
+        overflow-y: auto;
+        z-index: 100;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .multiselect-dropdown.show {
+        display: block;
+      }
+
+      .multiselect-option {
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .multiselect-option:hover {
+        background: #f0f7f7;
+      }
+
+      .multiselect-option input {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        margin: 0;
+      }
+
+      .multiselect-option label {
+        cursor: pointer;
+        font-size: 14px;
+        color: #004d4d;
+        flex: 1;
+      }
+
+      .selected-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .specialty-badge {
+        background: #e0f2f2;
+        color: #004d4d;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .specialty-badge i {
+        cursor: pointer;
+        font-size: 10px;
+        color: #096666;
+      }
+
+      .specialty-badge i:hover {
+        color: #cc0000;
+      }
+
+      #specialization {
+        display: none;
+      }
+
+      .profile-info {
+        flex: 1;
+      }
+
       .tabs {
         display: flex;
         gap: 10px;
@@ -365,28 +474,7 @@
         border-bottom: 2px solid #096666;
       }
 
-      #specialization {
-        font-size: 18px;
-        font-weight: 500;
-        color: #096666;
-        border: none;
-        background: transparent;
-        width: 100%;
-        outline: none;
-        padding: 2px 0;
-        margin-top: 4px;
-        transition: border-bottom 0.3s;
-        border-bottom: 1.5px solid transparent;
-      }
-
-      #specialization:focus {
-        border-bottom: 1.5px solid #096666;
-      }
-
-      #doctorName:hover,
-      #specialization:hover {
-        border-bottom-color: #009999;
-      }
+      /* hide original select, use multiselect */
       .error-message {
         color: red;
         font-size: 12px;
@@ -434,6 +522,18 @@
         margin-top: 2px;
         display: block;
       }
+
+      /* for read-only state styling */
+      .multiselect-btn.disabled {
+        background: #f9f9f9;
+        color: #666;
+        cursor: default;
+        border-color: #e0e0e0;
+      }
+
+      .multiselect-btn.disabled:hover {
+        border-color: #e0e0e0;
+      }
     </style>
   </head>
 
@@ -476,61 +576,19 @@
           <div class="profile-info">
             <input type="text" id="doctorName" placeholder="Doctor Name" />
 
-            <select id="specialization" title="specialization">
-              <option value="" disabled selected>Select Specialization</option>
-
-              <optgroup label="Primary Care">
-                <option value="general">General Physician</option>
-                <option value="pediatrician">Pediatrician</option>
-              </optgroup>
-
-              <optgroup label="Internal Medicine Subspecialties">
-                <option value="cardiologist">Cardiologist</option>
-                <option value="gastroenterologist">Gastroenterologist</option>
-                <option value="nephrologist">Nephrologist</option>
-                <option value="oncologist">Oncologist</option>
-                <option value="pulmonologist">Pulmonologist</option>
-              </optgroup>
-
-              <optgroup label="Surgical Specialties">
-                <option value="orthopedist">Orthopedist</option>
-                <option value="plastic-surgeon">Plastic Surgeon</option>
-                <option value="surgeon">General Surgeon</option>
-                <option value="vascular-surgeon">Vascular Surgeon</option>
-              </optgroup>
-
-              <optgroup label="Specialty Care">
-                <option value="allergist">Allergist / Immunologist</option>
-                <option value="dermatologist">Dermatologist</option>
-                <option value="neurologist">Neurologist</option>
-                <option value="ophthalmologist">Ophthalmologist</option>
-                <option value="rheumatologist">Rheumatologist</option>
-                <option value="psychiatrist">Psychiatrist</option>
-                <option value="urologist">Urologist</option>
-              </optgroup>
-
-              <optgroup label="Diagnostic & Technical">
-                <option value="ent Specialist">ENT Specialist</option>
-                <option value="emergency-medicine">Emergency Medicine</option>
-                <option value="radiologist">Radiologist</option>
-                <option value="infectious">
-                  Infectious Disease Specialist
-                </option>
-                <option value="sports-medicine">
-                  Sports Medicine Specialist
-                </option>
-              </optgroup>
-
-              <optgroup label="Women’s Health">
-                <option value="gynecologist">Gynecologist</option>
-                <option value="obstetrician">Obstetrician</option>
-              </optgroup>
-
-              <optgroup label="Other Specialties">
-                <option value="hematologist">Hematologist</option>
-                <option value="dentist">Dentist</option>
-              </optgroup>
-            </select>
+            <!-- Multi-select specialization component -->
+            <div class="specialty-multiselect" id="specialtyMultiselect">
+              <div class="multiselect-btn" id="multiselectBtn">
+                <span id="selectedSpecialtiesText">Select Specializations</span>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="multiselect-dropdown" id="multiselectDropdown">
+                <!-- Options will be populated from original select structure -->
+              </div>
+              <div id="selectedBadgesContainer" class="selected-badges"></div>
+            </div>
+            <!-- Hidden original select to maintain data consistency -->
+            <select id="specialization" multiple style="display: none"></select>
           </div>
         </div>
 
@@ -638,8 +696,233 @@
     <script>
       const doctorId = localStorage.getItem("doctorId");
       let isEditing = false;
+      let selectedSpecialties = []; // store selected values
+      let allSpecialtyOptions = []; // store {value, label}
+
+      // Initialize multi-select from existing select options structure
+      function buildSpecialtyOptions() {
+        const originalSelect = document.getElementById("specialization");
+        // Define all specialty options as per original design
+        const specialtyGroups = [
+          {
+            label: "Primary Care",
+            options: [
+              { value: "general", label: "General Physician" },
+              { value: "pediatrician", label: "Pediatrician" },
+            ],
+          },
+          {
+            label: "Internal Medicine Subspecialties",
+            options: [
+              { value: "cardiologist", label: "Cardiologist" },
+              { value: "gastroenterologist", label: "Gastroenterologist" },
+              { value: "nephrologist", label: "Nephrologist" },
+              { value: "oncologist", label: "Oncologist" },
+              { value: "pulmonologist", label: "Pulmonologist" },
+            ],
+          },
+          {
+            label: "Surgical Specialties",
+            options: [
+              { value: "orthopedist", label: "Orthopedist" },
+              { value: "plastic-surgeon", label: "Plastic Surgeon" },
+              { value: "surgeon", label: "General Surgeon" },
+              { value: "vascular-surgeon", label: "Vascular Surgeon" },
+            ],
+          },
+          {
+            label: "Specialty Care",
+            options: [
+              { value: "allergist", label: "Allergist / Immunologist" },
+              { value: "dermatologist", label: "Dermatologist" },
+              { value: "neurologist", label: "Neurologist" },
+              { value: "ophthalmologist", label: "Ophthalmologist" },
+              { value: "rheumatologist", label: "Rheumatologist" },
+              { value: "psychiatrist", label: "Psychiatrist" },
+              { value: "urologist", label: "Urologist" },
+            ],
+          },
+          {
+            label: "Diagnostic & Technical",
+            options: [
+              { value: "ent Specialist", label: "ENT Specialist" },
+              { value: "emergency-medicine", label: "Emergency Medicine" },
+              { value: "radiologist", label: "Radiologist" },
+              { value: "infectious", label: "Infectious Disease Specialist" },
+              { value: "sports-medicine", label: "Sports Medicine Specialist" },
+            ],
+          },
+          {
+            label: "Women’s Health",
+            options: [
+              { value: "gynecologist", label: "Gynecologist" },
+              { value: "obstetrician", label: "Obstetrician" },
+            ],
+          },
+          {
+            label: "Other Specialties",
+            options: [
+              { value: "hematologist", label: "Hematologist" },
+              { value: "dentist", label: "Dentist" },
+            ],
+          },
+        ];
+
+        allSpecialtyOptions = [];
+        const dropdownContainer = document.getElementById(
+          "multiselectDropdown",
+        );
+        dropdownContainer.innerHTML = "";
+
+        specialtyGroups.forEach((group) => {
+          const groupDiv = document.createElement("div");
+          groupDiv.style.fontWeight = "600";
+          groupDiv.style.padding = "8px 12px 4px 12px";
+          groupDiv.style.fontSize = "12px";
+          groupDiv.style.color = "#096666";
+          groupDiv.style.backgroundColor = "#f9f9f9";
+          groupDiv.innerText = group.label;
+          dropdownContainer.appendChild(groupDiv);
+
+          group.options.forEach((opt) => {
+            const optionDiv = document.createElement("div");
+            optionDiv.className = "multiselect-option";
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.value = opt.value;
+            cb.id = `spec_${opt.value}`;
+            const label = document.createElement("label");
+            label.htmlFor = `spec_${opt.value}`;
+            label.innerText = opt.label;
+            optionDiv.appendChild(cb);
+            optionDiv.appendChild(label);
+            optionDiv.addEventListener("click", (e) => {
+              if (e.target.tagName !== "INPUT") {
+                cb.checked = !cb.checked;
+              }
+              updateSelection();
+            });
+            cb.addEventListener("change", updateSelection);
+            dropdownContainer.appendChild(optionDiv);
+            allSpecialtyOptions.push({
+              value: opt.value,
+              label: opt.label,
+              element: cb,
+            });
+          });
+        });
+
+        // update hidden select for form compatibility
+        syncHiddenSelect();
+      }
+
+      function updateSelection() {
+        selectedSpecialties = [];
+        allSpecialtyOptions.forEach((opt) => {
+          if (opt.element.checked) {
+            selectedSpecialties.push({ value: opt.value, label: opt.label });
+          }
+        });
+        updateUIFromSelection();
+        syncHiddenSelect();
+      }
+
+      function updateUIFromSelection() {
+        const textSpan = document.getElementById("selectedSpecialtiesText");
+        if (selectedSpecialties.length === 0) {
+          textSpan.innerText = "Select Specializations";
+        } else {
+          textSpan.innerText = selectedSpecialties
+            .map((s) => s.label)
+            .join(", ");
+        }
+
+        const badgesContainer = document.getElementById(
+          "selectedBadgesContainer",
+        );
+        badgesContainer.innerHTML = "";
+        selectedSpecialties.forEach((spec) => {
+          const badge = document.createElement("span");
+          badge.className = "specialty-badge";
+          badge.innerHTML = `${spec.label} <i class="fas fa-times-circle" data-value="${spec.value}"></i>`;
+          const removeIcon = badge.querySelector("i");
+          removeIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const opt = allSpecialtyOptions.find((o) => o.value === spec.value);
+            if (opt) opt.element.checked = false;
+            updateSelection();
+          });
+          badgesContainer.appendChild(badge);
+        });
+      }
+
+      function syncHiddenSelect() {
+        const hiddenSelect = document.getElementById("specialization");
+        hiddenSelect.innerHTML = "";
+        selectedSpecialties.forEach((spec) => {
+          const option = document.createElement("option");
+          option.value = spec.value;
+          option.selected = true;
+          option.text = spec.label;
+          hiddenSelect.appendChild(option);
+        });
+      }
+
+      function setSelectedSpecialtiesFromValues(valuesArray) {
+        if (!valuesArray || valuesArray.length === 0) {
+          allSpecialtyOptions.forEach((opt) => (opt.element.checked = false));
+        } else {
+          allSpecialtyOptions.forEach((opt) => {
+            opt.element.checked = valuesArray.includes(opt.value);
+          });
+        }
+        updateSelection();
+      }
+
+      function getSelectedSpecialtyValues() {
+        return selectedSpecialties.map((s) => s.value);
+      }
+
+      function getSelectedSpecialtyLabels() {
+        return selectedSpecialties.map((s) => s.label).join(",");
+      }
+
+      // Toggle dropdown visibility
+      function setupMultiselectEvents() {
+        const btn = document.getElementById("multiselectBtn");
+        const dropdown = document.getElementById("multiselectDropdown");
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (!isEditing) return; // only when editing mode
+          dropdown.classList.toggle("show");
+        });
+        document.addEventListener("click", (e) => {
+          if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove("show");
+          }
+        });
+      }
+
+      function setMultiselectEnabled(enabled) {
+        const btn = document.getElementById("multiselectBtn");
+        const dropdown = document.getElementById("multiselectDropdown");
+        if (enabled) {
+          btn.classList.remove("disabled");
+          btn.style.cursor = "pointer";
+        } else {
+          btn.classList.add("disabled");
+          btn.style.cursor = "default";
+          dropdown.classList.remove("show");
+        }
+        // disable checkboxes interaction when not editing
+        allSpecialtyOptions.forEach((opt) => {
+          opt.element.disabled = !enabled;
+        });
+      }
 
       document.addEventListener("DOMContentLoaded", () => {
+        buildSpecialtyOptions();
+        setupMultiselectEvents();
         loadDoctorProfile();
 
         const bar = document.getElementById("bar");
@@ -704,6 +987,7 @@
       function enableEditing() {
         isEditing = true;
         toggleEditFields(true);
+        setMultiselectEnabled(true);
         const btn = document.querySelector(".action-buttons .btn");
         btn.textContent = "Save Profile";
         btn.onclick = saveProfile;
@@ -712,7 +996,6 @@
       function toggleEditFields(enabled) {
         const fields = [
           "doctorName",
-          "specialization",
           "qualifications",
           "services",
           "conditions",
@@ -747,8 +1030,45 @@
           .then((res) => res.json())
           .then((data) => {
             document.getElementById("doctorName").value = data.name || "";
-            document.getElementById("specialization").value =
-              data.speciality || "";
+            // Handle speciality: could be string or array from backend
+            // Handle speciality: could be string or array from backend
+            // Handle speciality from database - specifically for your format
+            let specialtyValue = data.speciality;
+            let selectedSpecs = [];
+
+            if (specialtyValue) {
+              // If it's already an array
+              if (Array.isArray(specialtyValue)) {
+                selectedSpecs = specialtyValue;
+              }
+              // If it's a JSON string like "["general","pediatrician","cardiologist"]"
+              else if (typeof specialtyValue === "string") {
+                // Try to parse as JSON
+                try {
+                  const parsed = JSON.parse(specialtyValue);
+                  if (Array.isArray(parsed)) {
+                    selectedSpecs = parsed;
+                  } else {
+                    selectedSpecs = [specialtyValue];
+                  }
+                } catch (e) {
+                  // If JSON parsing fails, check if it's comma-separated
+                  if (specialtyValue.includes(",")) {
+                    selectedSpecs = specialtyValue
+                      .split(",")
+                      .map((s) => s.trim());
+                  } else {
+                    selectedSpecs = [specialtyValue];
+                  }
+                }
+              }
+            }
+
+            console.log("Parsed specialties:", selectedSpecs); // Should show ["general", "pediatrician", "cardiologist"]
+            // Small delay to ensure dropdown options are built before setting selections
+            setTimeout(() => {
+              setSelectedSpecialtiesFromValues(selectedSpecs);
+            }, 100);
             document.getElementById("qualifications").value =
               data.qualifications || "";
             document.getElementById("services").value = data.services || "";
@@ -765,6 +1085,7 @@
             document.getElementById("about").value = data.about || "";
             document.getElementById("change-password-btn").disabled = false;
             toggleEditFields(false);
+            setMultiselectEnabled(false);
           })
           .catch((err) => {
             console.error(err);
@@ -787,10 +1108,10 @@
 
         const profile = new FormData();
         profile.append("name", document.getElementById("doctorName").value);
-        profile.append(
-          "speciality",
-          document.getElementById("specialization").value,
-        );
+        // save specialties as JSON string
+        const selectedSpecialtyValues = getSelectedSpecialtyValues();
+        profile.append("speciality", JSON.stringify(selectedSpecialtyValues));
+
         profile.append(
           "qualifications",
           document.getElementById("qualifications").value,
@@ -854,7 +1175,33 @@
 
             if (data.success || data._id || data.doctor) {
               showToast("Profile saved successfully!");
+
+              // Refresh the specialties from the response data
+              if (data.speciality || (data.doctor && data.doctor.speciality)) {
+                const savedSpecialty =
+                  data.speciality || data.doctor.speciality;
+                let selectedSpecs = [];
+                if (savedSpecialty) {
+                  if (Array.isArray(savedSpecialty)) {
+                    selectedSpecs = savedSpecialty;
+                  } else if (
+                    typeof savedSpecialty === "string" &&
+                    savedSpecialty.startsWith("[")
+                  ) {
+                    try {
+                      selectedSpecs = JSON.parse(savedSpecialty);
+                    } catch (e) {
+                      selectedSpecs = [savedSpecialty];
+                    }
+                  } else if (typeof savedSpecialty === "string") {
+                    selectedSpecs = [savedSpecialty];
+                  }
+                }
+                setSelectedSpecialtiesFromValues(selectedSpecs);
+              }
+
               toggleEditFields(false);
+              setMultiselectEnabled(false);
               isEditing = false;
               const btn = document.querySelector(".action-buttons .btn");
               btn.textContent = "Edit Profile";
@@ -883,14 +1230,11 @@
       }
     </script>
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
-
     <script>
       const socket = io("http://localhost:3000");
-
       document.addEventListener("DOMContentLoaded", () => {
         const userId = localStorage.getItem("userId");
         const role = localStorage.getItem("userRole");
-
         if (userId && role) {
           console.log("🟢 Reconnecting user:", userId, role);
           socket.emit("join_user", { userId, role });

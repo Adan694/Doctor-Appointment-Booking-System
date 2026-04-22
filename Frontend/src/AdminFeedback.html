@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -65,7 +65,9 @@
         color: white;
         font-size: 16px;
         display: block;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
         border-radius: 6px;
         padding: 10px 15px;
       }
@@ -107,7 +109,9 @@
         align-items: center;
         box-sizing: border-box;
         border-bottom: 3px solid white;
-        transition: background-color 0.3s ease, border-color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          border-color 0.3s ease;
         margin-right: 40px;
       }
 
@@ -124,7 +128,9 @@
         font-size: 16px;
         border-radius: 8px;
         cursor: pointer;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease;
         box-shadow: 0 3px 6px rgba(40, 167, 69, 0.4);
         margin-right: 20px;
       }
@@ -201,7 +207,9 @@
         background-color: #fff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         border-radius: 10px;
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        transition:
+          box-shadow 0.3s ease,
+          transform 0.3s ease;
       }
 
       table tbody tr:hover {
@@ -225,7 +233,9 @@
         border-radius: 6px;
         cursor: pointer;
         font-weight: 700;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease,
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease,
           transform 0.2s ease;
         box-shadow: 0 3px 8px rgba(231, 76, 60, 0.4);
       }
@@ -265,7 +275,9 @@
           padding: 15px 20px;
           border-radius: 10px;
           box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
-          transition: box-shadow 0.3s ease, transform 0.3s ease;
+          transition:
+            box-shadow 0.3s ease,
+            transform 0.3s ease;
         }
 
         tr:hover {
@@ -370,6 +382,31 @@
           padding: 12px;
         }
       }
+      /* Pagination Styles */
+      #pagination button {
+        background-color: #166e6b;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 8px rgba(22, 110, 107, 0.4);
+      }
+
+      #pagination button:hover:not(:disabled) {
+        background-color: #0f504e;
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(22, 110, 107, 0.6);
+      }
+
+      #pagination button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
     </style>
   </head>
 
@@ -448,14 +485,14 @@
             "http://localhost:3000/api/feedback/admin/all",
             {
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
           if (!res.ok) throw new Error("Failed to fetch feedback");
           allFeedbacks = await res.json();
 
           // Sort newest first
           allFeedbacks.sort(
-            (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+            (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
           );
 
           renderPage(currentPage);
@@ -583,11 +620,11 @@
 
         try {
           const res = await fetch(
-            `http://localhost:3000/api/feedback/${feedbackId}`,
+            `http://localhost:3000/api/feedback/feedback/${feedbackId}`,
             {
               method: "DELETE",
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
           if (!res.ok) throw new Error("Failed to delete feedback");
 

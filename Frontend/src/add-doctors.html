@@ -25,7 +25,6 @@
       }
 
       /* Sidebar */
-      /* Sidebar */
       .sidebar {
         width: 250px;
         background-color: rgb(9, 102, 102);
@@ -34,24 +33,21 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        position: fixed; /* Make it fixed */
+        position: fixed;
         top: 0;
         left: 0;
-        height: 100vh; /* Full viewport height */
-        overflow-y: auto; /* Allow scrolling only for sidebar if needed */
-        z-index: 1000; /* Ensure it's above other content */
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
       }
 
-      /* Main layout */
       .main-content {
         flex: 1;
         padding: 20px;
         background-color: #e6f2ff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         overflow-y: auto;
         border-radius: 12px;
-        transition: background-color 0.3s ease;
-        margin-left: 250px; /* Add margin to account for fixed sidebar */
+        margin-left: 250px;
         min-height: 100vh;
       }
 
@@ -94,18 +90,6 @@
         font-weight: bold;
       }
 
-      /* Main layout */
-      .main-content {
-        flex: 1;
-        padding: 20px;
-        background-color: #e6f2ff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow-y: auto;
-        border-radius: 12px; /* subtle rounding */
-        transition: background-color 0.3s ease;
-      }
-
-      /* Header */
       .header {
         background-color: rgb(9, 102, 102);
         color: white;
@@ -117,7 +101,6 @@
         align-items: center;
         gap: 12px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        transition: background-color 0.3s ease;
       }
 
       .header:hover {
@@ -129,7 +112,6 @@
         font-size: 24px;
       }
 
-      /* Logout button */
       .logout-btn {
         background-color: #28a745;
         color: white;
@@ -149,7 +131,6 @@
         box-shadow: 0 4px 12px rgba(200, 35, 51, 0.6);
       }
 
-      /* Menu bar icon */
       #bar {
         display: none;
         font-size: 30px;
@@ -161,7 +142,6 @@
         color: #28a745;
       }
 
-      /* Form */
       .form-container {
         background-color: white;
         max-width: 700px;
@@ -169,11 +149,6 @@
         padding: 30px;
         border-radius: 12px;
         box-shadow: 0 6px 18px rgba(9, 102, 102, 0.1);
-        transition: box-shadow 0.3s ease;
-      }
-
-      .form-container:hover {
-        box-shadow: 0 8px 24px rgba(9, 102, 102, 0.25);
       }
 
       .form-group {
@@ -198,17 +173,8 @@
         background-color: #fdfdfd;
         transition:
           border-color 0.3s ease,
-          box-shadow 0.3s ease,
-          background-color 0.3s ease;
+          box-shadow 0.3s ease;
         box-sizing: border-box;
-      }
-
-      input:hover,
-      select:hover,
-      textarea:hover {
-        border-color: rgb(9, 102, 102);
-        box-shadow: 0 0 6px rgba(9, 102, 102, 0.4);
-        background-color: #f0fafb;
       }
 
       input:focus,
@@ -217,38 +183,109 @@
         border-color: rgb(9, 102, 102);
         outline: none;
         box-shadow: 0 0 8px rgba(9, 102, 102, 0.6);
-        background-color: #f7fcfc;
       }
 
-      .upload-button {
-        padding: 20px;
-        text-align: center;
-        background-color: #eaf6f6;
-        border: 2px dashed rgb(9, 102, 102);
+      /* Multi-select specialization styling */
+      .specialty-multiselect {
+        position: relative;
+        width: 100%;
+      }
+
+      .multiselect-btn {
+        width: 100%;
+        padding: 12px;
+        background: #fff;
+        border: 1.5px solid #ccc;
         border-radius: 6px;
+        text-align: left;
         cursor: pointer;
-        transition:
-          background-color 0.3s ease,
-          border-color 0.3s ease;
+        font-size: 15px;
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: border 0.3s;
       }
 
-      .upload-button:hover {
-        background-color: #d3eeee;
-        border-color: #0b7878;
+      .multiselect-btn:hover {
+        border-color: rgb(9, 102, 102);
       }
 
-      .upload-button label {
-        color: rgb(9, 102, 102);
-        font-weight: bold;
+      .multiselect-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        max-height: 250px;
+        overflow-y: auto;
+        z-index: 100;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .multiselect-dropdown.show {
+        display: block;
+      }
+
+      .multiselect-option {
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
         cursor: pointer;
-        transition: color 0.3s ease;
+        transition: background 0.2s;
       }
 
-      .upload-button label:hover {
-        color: #075b5b;
+      .multiselect-option:hover {
+        background: #f0f7f7;
       }
 
-      /* Submit button */
+      .multiselect-option input {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        margin: 0;
+      }
+
+      .multiselect-option label {
+        cursor: pointer;
+        font-size: 14px;
+        color: #004d4d;
+        flex: 1;
+        margin: 0;
+      }
+
+      .selected-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .specialty-badge {
+        background: #e0f2f2;
+        color: #004d4d;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .specialty-badge i {
+        cursor: pointer;
+        font-size: 10px;
+        color: #096666;
+      }
+
+      .specialty-badge i:hover {
+        color: #cc0000;
+      }
+
       .btn {
         background-color: rgb(9, 102, 102);
         color: white;
@@ -260,14 +297,11 @@
         cursor: pointer;
         transition:
           background-color 0.3s ease,
-          box-shadow 0.3s ease,
           transform 0.2s ease;
-        box-shadow: 0 4px 10px rgba(9, 102, 102, 0.3);
       }
 
       .btn:hover {
         background-color: #075b5b;
-        box-shadow: 0 6px 16px rgba(7, 91, 91, 0.6);
         transform: scale(1.05);
       }
 
@@ -276,7 +310,13 @@
         color: #28a745;
         font-weight: bold;
         text-align: center;
-        transition: opacity 0.3s ease;
+      }
+
+      .error-text {
+        color: red;
+        font-size: 12px;
+        display: block;
+        margin-top: 4px;
       }
 
       #overlay {
@@ -288,23 +328,10 @@
         background: rgba(0, 0, 0, 0.4);
         z-index: 900;
         display: none;
-        transition: opacity 0.3s ease;
       }
 
       #overlay.active {
         display: block;
-        opacity: 1;
-      }
-
-      @media (max-width: 1024px) {
-        .sidebar {
-          width: 220px;
-        }
-
-        .form-container {
-          padding: 25px;
-          max-width: 90%;
-        }
       }
 
       @media (max-width: 768px) {
@@ -313,7 +340,7 @@
         }
 
         .main-content {
-          padding: 20px;
+          margin-left: 0;
         }
 
         .sidebar {
@@ -333,54 +360,10 @@
 
         #bar {
           display: block;
-          background: none;
-          border: none;
-          color: white;
-          font-size: 26px;
-          cursor: pointer;
-        }
-
-        #bar:focus {
-          outline: none;
         }
 
         .logout-btn {
           margin-left: auto;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .form-container {
-          padding: 15px;
-        }
-
-        .header {
-          flex-direction: column;
-          gap: 10px;
-          font-size: 22px;
-          align-items: flex-start;
-        }
-
-        input,
-        select,
-        textarea {
-          font-size: 14px;
-          padding: 10px;
-        }
-
-        .btn,
-        .logout-btn {
-          font-size: 14px;
-          padding: 10px 14px;
-        }
-
-        label {
-          font-size: 14px;
-        }
-
-        .sidebar ul li a {
-          font-size: 14px;
-          padding: 8px 12px;
         }
       }
     </style>
@@ -411,7 +394,7 @@
       <div class="form-container">
         <form id="doctor-form" enctype="multipart/form-data">
           <div class="form-group">
-            <label for="name">Your Name</label>
+            <label for="name">Doctor Name</label>
             <input
               type="text"
               id="name"
@@ -447,60 +430,16 @@
           </div>
 
           <div class="form-group">
-            <label for="speciality">Speciality</label>
-            <select id="speciality" name="speciality" required>
-              <optgroup label="Primary Care">
-                <option value="general">General Physician</option>
-                <option value="pediatrician">Pediatrician</option>
-              </optgroup>
-
-              <optgroup label="Internal Medicine Subspecialties">
-                <option value="cardiologist">Cardiologist</option>
-                <option value="gastroenterologist">Gastroenterologist</option>
-                <option value="nephrologist">Nephrologist</option>
-                <option value="oncologist">Oncologist</option>
-                <option value="pulmonologist">Pulmonologist</option>
-              </optgroup>
-
-              <optgroup label="Surgical Specialties">
-                <option value="orthopedist">Orthopedist</option>
-                <option value="plastic-surgeon">Plastic Surgeon</option>
-                <option value="surgeon">General Surgeon</option>
-                <option value="vascular-surgeon">Vascular Surgeon</option>
-              </optgroup>
-
-              <optgroup label="Specialty Care">
-                <option value="allergist">Allergist / Immunologist</option>
-                <option value="dermatologist">Dermatologist</option>
-                <option value="neurologist">Neurologist</option>
-                <option value="ophthalmologist">Ophthalmologist</option>
-                <option value="rheumatologist">Rheumatologist</option>
-                <option value="psychiatrist">Psychiatrist</option>
-                <option value="urologist">Urologist</option>
-              </optgroup>
-
-              <optgroup label="Diagnostic & Technical">
-                <option value="ent Specialist">ENT Specialist</option>
-                <option value="emergency-medicine">Emergency Medicine</option>
-                <option value="radiologist">Radiologist</option>
-                <option value="infectious">
-                  Infectious Disease Specialist
-                </option>
-                <option value="sports-medicine">
-                  Sports Medicine Specialist
-                </option>
-              </optgroup>
-
-              <optgroup label="Women's Health">
-                <option value="gynecologist">Gynecologist</option>
-                <option value="obstetrician">Obstetrician</option>
-              </optgroup>
-
-              <optgroup label="Other Specialties">
-                <option value="hematologist">Hematologist</option>
-                <option value="dentist">Dentist</option>
-              </optgroup>
-            </select>
+            <label>Specialities (Select Multiple)</label>
+            <div class="specialty-multiselect" id="specialtyMultiselect">
+              <div class="multiselect-btn" id="multiselectBtn">
+                <span id="selectedSpecialtiesText">Select Specializations</span>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="multiselect-dropdown" id="multiselectDropdown"></div>
+              <div id="selectedBadgesContainer" class="selected-badges"></div>
+            </div>
+            <input type="hidden" id="speciality" name="speciality" />
           </div>
 
           <div class="form-group">
@@ -516,7 +455,7 @@
               type="text"
               id="experience"
               name="experience"
-              placeholder="e.g., 1 Year"
+              placeholder="e.g., 5"
               required
             />
             <small id="experience-error" class="error-text"></small>
@@ -548,9 +487,187 @@
     </div>
 
     <script>
-      // DOM Content Loaded to ensure all elements are ready
+      // Multi-select variables
+      let selectedSpecialties = [];
+      let allSpecialtyOptions = [];
+
+      // Build specialty options
+      function buildSpecialtyOptions() {
+        const specialtyGroups = [
+          {
+            label: "Primary Care",
+            options: [
+              { value: "general", label: "General Physician" },
+              { value: "pediatrician", label: "Pediatrician" },
+            ],
+          },
+          {
+            label: "Internal Medicine Subspecialties",
+            options: [
+              { value: "cardiologist", label: "Cardiologist" },
+              { value: "gastroenterologist", label: "Gastroenterologist" },
+              { value: "nephrologist", label: "Nephrologist" },
+              { value: "oncologist", label: "Oncologist" },
+              { value: "pulmonologist", label: "Pulmonologist" },
+            ],
+          },
+          {
+            label: "Surgical Specialties",
+            options: [
+              { value: "orthopedist", label: "Orthopedist" },
+              { value: "plastic-surgeon", label: "Plastic Surgeon" },
+              { value: "surgeon", label: "General Surgeon" },
+              { value: "vascular-surgeon", label: "Vascular Surgeon" },
+            ],
+          },
+          {
+            label: "Specialty Care",
+            options: [
+              { value: "allergist", label: "Allergist / Immunologist" },
+              { value: "dermatologist", label: "Dermatologist" },
+              { value: "neurologist", label: "Neurologist" },
+              { value: "ophthalmologist", label: "Ophthalmologist" },
+              { value: "rheumatologist", label: "Rheumatologist" },
+              { value: "psychiatrist", label: "Psychiatrist" },
+              { value: "urologist", label: "Urologist" },
+            ],
+          },
+          {
+            label: "Diagnostic & Technical",
+            options: [
+              { value: "ent Specialist", label: "ENT Specialist" },
+              { value: "emergency-medicine", label: "Emergency Medicine" },
+              { value: "radiologist", label: "Radiologist" },
+              { value: "infectious", label: "Infectious Disease Specialist" },
+              { value: "sports-medicine", label: "Sports Medicine Specialist" },
+            ],
+          },
+          {
+            label: "Women's Health",
+            options: [
+              { value: "gynecologist", label: "Gynecologist" },
+              { value: "obstetrician", label: "Obstetrician" },
+            ],
+          },
+          {
+            label: "Other Specialties",
+            options: [
+              { value: "hematologist", label: "Hematologist" },
+              { value: "dentist", label: "Dentist" },
+            ],
+          },
+        ];
+
+        allSpecialtyOptions = [];
+        const dropdownContainer = document.getElementById(
+          "multiselectDropdown",
+        );
+        dropdownContainer.innerHTML = "";
+
+        specialtyGroups.forEach((group) => {
+          const groupDiv = document.createElement("div");
+          groupDiv.style.fontWeight = "600";
+          groupDiv.style.padding = "8px 12px 4px 12px";
+          groupDiv.style.fontSize = "12px";
+          groupDiv.style.color = "#096666";
+          groupDiv.style.backgroundColor = "#f9f9f9";
+          groupDiv.innerText = group.label;
+          dropdownContainer.appendChild(groupDiv);
+
+          group.options.forEach((opt) => {
+            const optionDiv = document.createElement("div");
+            optionDiv.className = "multiselect-option";
+            const cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.value = opt.value;
+            cb.id = `spec_${opt.value}`;
+            const label = document.createElement("label");
+            label.htmlFor = `spec_${opt.value}`;
+            label.innerText = opt.label;
+            optionDiv.appendChild(cb);
+            optionDiv.appendChild(label);
+            optionDiv.addEventListener("click", (e) => {
+              if (e.target.tagName !== "INPUT") {
+                cb.checked = !cb.checked;
+              }
+              updateSelection();
+            });
+            cb.addEventListener("change", updateSelection);
+            dropdownContainer.appendChild(optionDiv);
+            allSpecialtyOptions.push({
+              value: opt.value,
+              label: opt.label,
+              element: cb,
+            });
+          });
+        });
+      }
+
+      function updateSelection() {
+        selectedSpecialties = [];
+        allSpecialtyOptions.forEach((opt) => {
+          if (opt.element.checked) {
+            selectedSpecialties.push({ value: opt.value, label: opt.label });
+          }
+        });
+        updateUIFromSelection();
+        updateHiddenInput();
+      }
+
+      function updateUIFromSelection() {
+        const textSpan = document.getElementById("selectedSpecialtiesText");
+        if (selectedSpecialties.length === 0) {
+          textSpan.innerText = "Select Specializations";
+        } else {
+          textSpan.innerText = selectedSpecialties
+            .map((s) => s.label)
+            .join(", ");
+        }
+
+        const badgesContainer = document.getElementById(
+          "selectedBadgesContainer",
+        );
+        badgesContainer.innerHTML = "";
+        selectedSpecialties.forEach((spec) => {
+          const badge = document.createElement("span");
+          badge.className = "specialty-badge";
+          badge.innerHTML = `${spec.label} <i class="fas fa-times-circle" data-value="${spec.value}"></i>`;
+          const removeIcon = badge.querySelector("i");
+          removeIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const opt = allSpecialtyOptions.find((o) => o.value === spec.value);
+            if (opt) opt.element.checked = false;
+            updateSelection();
+          });
+          badgesContainer.appendChild(badge);
+        });
+      }
+
+      function updateHiddenInput() {
+        const hiddenInput = document.getElementById("speciality");
+        hiddenInput.value = JSON.stringify(
+          selectedSpecialties.map((s) => s.value),
+        );
+      }
+
+      function setupMultiselectEvents() {
+        const btn = document.getElementById("multiselectBtn");
+        const dropdown = document.getElementById("multiselectDropdown");
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle("show");
+        });
+        document.addEventListener("click", (e) => {
+          if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove("show");
+          }
+        });
+      }
+
       document.addEventListener("DOMContentLoaded", function () {
-        // Sidebar functionality
+        buildSpecialtyOptions();
+        setupMultiselectEvents();
+
         const bar = document.getElementById("bar");
         const sidebar = document.querySelector(".sidebar");
         const overlay = document.getElementById("overlay");
@@ -569,18 +686,14 @@
           });
         }
 
-        // Logout functionality
         document.querySelector(".logout-btn")?.addEventListener("click", () => {
           localStorage.removeItem("authToken");
           localStorage.removeItem("userRole");
           window.location.href = "login.html";
         });
 
-        // Get form elements
-        const specialityDropdown = document.getElementById("speciality");
         const degreeDropdown = document.getElementById("degree");
 
-        // Enhanced degrees by specialty with more options
         const degreesBySpeciality = {
           general: ["MBBS", "MD", "DNB", "MS", "MSc", "BAMS", "BHMS"],
           pediatrician: [
@@ -739,66 +852,35 @@
           dentist: ["BDS", "MDS", "FDS", "MFDS", "MOS", "PhD"],
         };
 
-        // Function to update degree dropdown
         function updateDegreeDropdown() {
-          if (!specialityDropdown || !degreeDropdown) return;
-
-          const speciality = specialityDropdown.value;
-          const degrees = degreesBySpeciality[speciality] || ["MBBS", "MD"];
-
-          // Clear current options
+          if (!degreeDropdown) return;
           degreeDropdown.innerHTML = '<option value="">Select Degree</option>';
-
-          // Add new options
-          degrees.forEach((degree) => {
+          const defaultDegrees = ["MBBS", "MD", "DNB", "MS"];
+          defaultDegrees.forEach((degree) => {
             const option = document.createElement("option");
             option.value = degree;
             option.textContent = degree;
             degreeDropdown.appendChild(option);
           });
-
-          console.log(
-            `Updated degree dropdown for ${speciality} with ${degrees.length} options`,
-          );
         }
 
-        // Attach event listener for specialty change
-        if (specialityDropdown) {
-          specialityDropdown.addEventListener("change", updateDegreeDropdown);
+        updateDegreeDropdown();
 
-          // Initialize degree dropdown on page load
-          setTimeout(updateDegreeDropdown, 100);
-        }
-
-        // Validation rules
         const validators = {
           name: (value) => {
             const trimmed = value.trim();
-            // Check minimum length
             if (trimmed.length < 3)
               return "Name must be at least 3 characters long.";
-            // Check only alphabets (no numbers, spaces, or special characters)
             const onlyAlphabets = /^[A-Za-z]+$/;
             if (!onlyAlphabets.test(trimmed))
-              return "Name must contain only alphabets (A-Z, a-z).";
+              return "Name must contain only alphabets.";
             return true;
           },
-
           email: (value) => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(value)) return "Invalid email format.";
-            const allowedDomains = [
-              "gmail.com",
-              "yahoo.com",
-              "hotmail.com",
-              "outlook.com",
-            ];
-            const domain = value.split("@")[1];
-            if (!allowedDomains.includes(domain))
-              return "Only Gmail, Yahoo, Hotmail, or Outlook allowed.";
             return true;
           },
-
           password: (value) => {
             const passwordRegex =
               /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&]).{6,}$/;
@@ -807,26 +889,16 @@
               "Password must be at least 6 characters, include 1 letter, 1 number, and 1 special character."
             );
           },
-
-          speciality: (value) =>
-            value.trim() !== "" || "Speciality selection is required.",
-
-          degree: (value) => value.trim() !== "" || "Please select a degree.",
-
           experience: (value) => {
-            const expRegex = /^\d+(\s?(year|years))?$/i;
+            const expRegex = /^\d+$/;
             return (
               expRegex.test(value) || "Experience must be a number (e.g., 5)."
             );
           },
-
           "about-doctor": (value) => {
             const trimmed = value.trim();
-            // Count only alphabetic characters (a-z, A-Z)
-            const alphabetsOnly = trimmed.replace(/[^A-Za-z]/g, "");
-            if (alphabetsOnly.length < 10) {
-              return "About section must contain at least 10 alphabetic characters (letters only). Spaces, numbers, and punctuation don't count.";
-            }
+            if (trimmed.length < 10)
+              return "About section must contain at least 10 characters.";
             return true;
           },
           available: (value) =>
@@ -834,21 +906,15 @@
             "Availability must be selected.",
         };
 
-        // Attach live validation
         Object.keys(validators).forEach((field) => {
           const input = document.getElementById(field);
           if (input) {
-            // Create error span if it doesn't exist
             let errorSpan = input.nextElementSibling;
             if (!errorSpan || !errorSpan.classList.contains("error-text")) {
               errorSpan = document.createElement("small");
               errorSpan.className = "error-text";
-              errorSpan.style.color = "red";
-              errorSpan.style.fontSize = "12px";
-              errorSpan.style.display = "block";
               input.insertAdjacentElement("afterend", errorSpan);
             }
-
             const validateField = () => {
               const result = validators[field](input.value);
               if (result !== true) {
@@ -859,7 +925,6 @@
                 input.style.borderColor = "";
               }
             };
-
             input.addEventListener(
               input.tagName === "SELECT" ? "change" : "input",
               validateField,
@@ -867,17 +932,11 @@
           }
         });
 
-        // Form submission
         document
           .getElementById("doctor-form")
           .addEventListener("submit", async function (event) {
             event.preventDefault();
 
-            const form = document.getElementById("doctor-form");
-            const formData = new FormData(form);
-            const submitBtn = form.querySelector('button[type="submit"]');
-
-            // Validate all fields before submission
             let isValid = true;
             Object.keys(validators).forEach((field) => {
               const input = document.getElementById(field);
@@ -894,49 +953,33 @@
               }
             });
 
+            if (selectedSpecialties.length === 0) {
+              isValid = false;
+              alert("Please select at least one specialty.");
+            }
+
             if (!isValid) {
               alert("Please fix the errors before submitting.");
               return;
             }
 
-            // Email domain validation
-            const email = formData.get("email").trim();
-            const allowedDomains = [
-              "gmail.com",
-              "yahoo.com",
-              "hotmail.com",
-              "outlook.com",
-            ];
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (!emailRegex.test(email)) {
-              alert("Invalid email format.");
-              return;
-            }
-
-            const domain = email.split("@")[1];
-            if (!allowedDomains.includes(domain)) {
-              alert(
-                "Only Gmail, Yahoo, Hotmail, or Outlook emails are allowed.",
-              );
-              return;
-            }
-
-            // Append the role to the formData
+            const formData = new FormData(
+              document.getElementById("doctor-form"),
+            );
             formData.append(
               "role",
               document.getElementById("doctor-role").value,
             );
+            formData.set(
+              "speciality",
+              JSON.stringify(selectedSpecialties.map((s) => s.value)),
+            );
 
+            const submitBtn = document.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.textContent = "Submitting...";
 
             try {
-              // Check if backend is responding
-              const ping = await fetch("http://localhost:3000");
-              if (!ping.ok) throw new Error("Backend not responding");
-
-              // Submit form data
               const response = await fetch(
                 "http://localhost:3000/api/doctors/add",
                 {
@@ -951,60 +994,23 @@
                 throw new Error(data.message || "Server error");
               }
 
-              showSuccess("Doctor added successfully!");
-              form.reset();
-              updateDegreeDropdown(); // Reset degree dropdown
+              const successElement = document.createElement("div");
+              successElement.className = "success-message";
+              successElement.textContent = "Doctor added successfully!";
+              document
+                .querySelector(".form-container")
+                .appendChild(successElement);
+
+              setTimeout(() => {
+                window.location.href = "admindoclist.html";
+              }, 2000);
             } catch (err) {
-              console.error("Error:", err);
-              showError(
-                err.message || "Failed to add doctor. Please try again.",
-              );
+              alert(err.message || "Failed to add doctor. Please try again.");
             } finally {
               submitBtn.disabled = false;
               submitBtn.textContent = "Add Doctor";
             }
           });
-
-        function showSuccess(message) {
-          const successElement = document.createElement("div");
-          successElement.className = "success-message";
-          successElement.textContent = message;
-          successElement.style.color = "green";
-          successElement.style.marginTop = "10px";
-          successElement.style.textAlign = "center";
-
-          const formContainer = document.querySelector(".form-container");
-          const existingSuccess =
-            formContainer.querySelector(".success-message");
-          if (existingSuccess) existingSuccess.remove();
-
-          formContainer.appendChild(successElement);
-
-          setTimeout(() => {
-            successElement.remove();
-            window.location.href = "admindoclist.html";
-          }, 3000);
-        }
-
-        function showError(message) {
-          const errorElement = document.createElement("div");
-          errorElement.className = "error-message";
-          errorElement.textContent = message;
-          errorElement.style.color = "red";
-          errorElement.style.marginTop = "10px";
-          errorElement.style.textAlign = "center";
-
-          const formContainer = document.querySelector(".form-container");
-
-          const existingError = formContainer.querySelector(".error-message");
-          if (existingError) existingError.remove();
-
-          formContainer.appendChild(errorElement);
-
-          setTimeout(() => {
-            errorElement.remove();
-          }, 3000);
-        }
       });
     </script>
   </body>

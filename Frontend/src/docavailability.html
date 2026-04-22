@@ -560,7 +560,119 @@ textarea:focus {
     border-radius: 4px;
     border: 1px solid #ccc;
 }
+tr.error-highlight {
+    background-color: #ffe0e0;
+    border-left: 3px solid red;
+}
+.date-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.frequency-selector {
+    margin: 15px 20px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
 
+.frequency-selector label {
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+#weeksSelection {
+    margin: 15px 20px;
+    padding: 10px;
+    background: #e8f5e9;
+    border-radius: 8px;
+}
+
+#weeksSelection label {
+    margin-right: 15px;
+    cursor: pointer;
+}
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    background: #166e6b;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.modal-close {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    margin-top: -3px;
+}
+
+.modal-close:hover {
+    color: #ddd;
+}
+
+.modal-footer {
+    background: #f8f9fa;
+}
+
+.frequency-selector label {
+    font-size: 14px;
+}
+
+#weeklyView label, #monthlyView label, #specificView label {
+    font-size: 13px;
+}
+
+.time-range label {
+    font-size: 13px;
+}
+/* Limit table height and enable scroll */
+#availabilityTable {
+    display: block;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+#availabilityTable thead,
+#availabilityTable tbody {
+    display: block;
+}
+
+#availabilityTable tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Keep header fixed while scrolling */
+#availabilityTable thead {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1;
+}
 </style>
 
 </head>
@@ -582,6 +694,11 @@ textarea:focus {
         </ul>
     </nav>
     <div class="availability-section">
+        <div style="margin: 15px 20px; display: flex; gap: 10px; align-items: center;">
+    <input type="text" id="searchDate" placeholder="🔍 Search by date (e.g., 2026-05-15)" 
+           style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+    <button onclick="clearSearch()" style="padding: 8px 16px; background: #166e6b; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear</button>
+</div>
 <h2 class="section-title">
     Availability
 </h2>
@@ -601,6 +718,8 @@ textarea:focus {
                 <button onclick="openQuickAddPopup()" class="btn add-slot-btn">Quick Add</button>
 
         </div>
+        <!-- Search Bar -->
+
     </div>
     <div id="loadingOverlay">
         <div>
@@ -617,32 +736,52 @@ textarea:focus {
     <button class="btn" onclick="enableEditing()">Edit Profile</button>
 </div>
 <div id="quickAddModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 550px; width: 90%;">
         <span class="modal-close" onclick="closeQuickAddPopup()">&times;</span>
-        <div class="modal-header">Quick Add Availability</div>
+        <div class="modal-header" style="padding: 15px 20px;">📅 Quick Add Availability</div>
 
-      <div class="day-checkboxes">
-    <label><input type="checkbox" class="dayCheckbox" value="Mon"> Mon</label>
-    <label><input type="checkbox" class="dayCheckbox" value="Tue"> Tue</label>
-    <label><input type="checkbox" class="dayCheckbox" value="Wed"> Wed</label>
-    <label><input type="checkbox" class="dayCheckbox" value="Thu"> Thu</label>
-    <label><input type="checkbox" class="dayCheckbox" value="Fri"> Fri</label>
-    <label><input type="checkbox" class="dayCheckbox" value="Sat"> Sat</label>
-    <label><input type="checkbox" class="dayCheckbox" value="Sun"> Sun</label>
+        <!-- Simple: Just select dates -->
+        <div style="margin: 15px 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Select Dates:</label>
+            <input type="date" id="quickDateFrom" style="padding: 8px; width: 48%; margin-right: 4%;">
+            <input type="date" id="quickDateTo" style="padding: 8px; width: 48%;">
+            <small style="display: block; margin-top: 5px; color: #666;">From date to To date (all dates in between)</small>
+        </div>
+
+        <!-- Select which days of the week -->
+        <div style="margin: 10px 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">Apply to these days:</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                <label><input type="checkbox" class="quickDayCheckbox" value="1" checked> Mon</label>
+                <label><input type="checkbox" class="quickDayCheckbox" value="2" checked> Tue</label>
+                <label><input type="checkbox" class="quickDayCheckbox" value="3" checked> Wed</label>
+                <label><input type="checkbox" class="quickDayCheckbox" value="4" checked> Thu</label>
+                <label><input type="checkbox" class="quickDayCheckbox" value="5" checked> Fri</label>
+                <label><input type="checkbox" class="quickDayCheckbox" value="6"> Sat</label>
+                <label><input type="checkbox" class="quickDayCheckbox" value="0"> Sun</label>
+            </div>
+            <div style="margin-top: 8px;">
+                <button type="button" onclick="selectAllWeekdays()" style="font-size: 12px; padding: 3px 8px;">Select Weekdays</button>
+                <button type="button" onclick="selectAllWeekends()" style="font-size: 12px; padding: 3px 8px;">Select Weekends</button>
+            </div>
+        </div>
+
+        <!-- Time Range -->
+        <div style="margin: 10px 20px; padding-top: 10px; border-top: 1px solid #eee;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500;">⏰ Time Slots:</label>
+            <div style="display: flex; gap: 15px;">
+                <label style="flex: 1;">From: <input type="time" id="quickStart" value="09:00" style="padding: 6px; width: 100%;"></label>
+                <label style="flex: 1;">To: <input type="time" id="quickEnd" value="17:00" style="padding: 6px; width: 100%;"></label>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer" style="padding: 12px 20px; display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid #eee;">
+            <button class="btn" onclick="applySimpleQuickAdd()" style="padding: 8px 20px; background: #166e6b; color: white; border: none; border-radius: 4px;">✅ Add Slots</button>
+            <button class="btn" onclick="closeQuickAddPopup()" style="padding: 8px 20px; background: #6c757d; color: white; border: none; border-radius: 4px;">Cancel</button>
+        </div>
+    </div>
 </div>
-
-<div class="time-range">
-    <label>From: <input type="time" id="quickStart" value="09:00"></label>
-    <label>To: <input type="time" id="quickEnd" value="17:00"></label>
-</div>
-
-        <div class="modal-footer">
-            <button class="btn" onclick="applyQuickAvailability()">Save Availability</button>
-            <button class="btn" onclick="closeQuickAddPopup()">Cancel</button>
-        </div>
-        <div class="availability-buttons">
-        </div>
-        </div>
     </div>
 </div>
 
@@ -693,6 +832,67 @@ textarea:focus {
         let isEditing = false;
         let draggedRow = null;
 
+        // Safe error logger (won't break anything)
+function safeLog(msg, isError = false) {
+    if (isError) {
+        console.error(msg);
+        const toast = document.getElementById('toast');
+        if (toast) {
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { if(toast) toast.style.display = 'none'; }, 3000);
+        }
+    } else {
+        console.log(msg);
+    }
+}
+// Search functionality
+function searchDates() {
+    const searchTerm = document.getElementById('searchDate').value.toLowerCase().trim();
+    const rows = document.querySelectorAll('#availabilityTable tbody tr');
+    let hasVisible = false;
+    
+    rows.forEach(row => {
+        const dateInput = row.querySelector('td:first-child input[type="date"]');
+        if (!dateInput) return;
+        
+        const dateValue = dateInput.value;
+        
+        if (searchTerm === '' || dateValue.includes(searchTerm)) {
+            row.style.display = '';
+            hasVisible = true;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // Show/hide no results message
+    let noResultMsg = document.getElementById('noResultMsg');
+    if (!hasVisible && searchTerm !== '') {
+        if (!noResultMsg) {
+            noResultMsg = document.createElement('tr');
+            noResultMsg.id = 'noResultMsg';
+            noResultMsg.innerHTML = `<td colspan="3" style="text-align: center; padding: 20px; color: #999;">🔍 No dates found matching "${searchTerm}"</td>`;
+            document.querySelector('#availabilityTable tbody').appendChild(noResultMsg);
+        }
+    } else if (noResultMsg) {
+        noResultMsg.remove();
+    }
+}
+
+function clearSearch() {
+    document.getElementById('searchDate').value = '';
+    searchDates();
+}
+
+// Add event listener when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchDate');
+    if (searchInput) {
+        searchInput.addEventListener('input', searchDates);
+    }
+}); 
+
         function toggleAvailability(newStatus) {
                 const token = localStorage.getItem('authToken');
                 fetch(`http://localhost:3000/api/doctors/${doctorId}/status`, {
@@ -730,8 +930,12 @@ textarea:focus {
                     // Group slots by date before rendering
                     const grouped = {};
                     data.availabilitySlots.forEach(slot => {
-                        const slotDateKey = new Date(slot.date).toISOString().split("T")[0];
-                        if (!grouped[slotDateKey]) grouped[slotDateKey] = [];
+// Fix timezone issue in loadAvailability
+const slotDateObj = new Date(slot.date);
+const year = slotDateObj.getFullYear();
+const month = String(slotDateObj.getMonth() + 1).padStart(2, '0');
+const day = String(slotDateObj.getDate()).padStart(2, '0');
+const slotDateKey = `${year}-${month}-${day}`;                        if (!grouped[slotDateKey]) grouped[slotDateKey] = [];
                         grouped[slotDateKey].push(...slot.slots);
                     });
 
@@ -795,7 +999,10 @@ textarea:focus {
         }
       
 function addSlot() {
+    
     const tbody = document.querySelector("#availabilityTable tbody");
+        if (!tbody) { safeLog("❌ Error: Table not found!", true); return; }
+
     const tr = document.createElement("tr");
 
     // Date input
@@ -803,6 +1010,9 @@ function addSlot() {
     const dateInput = document.createElement("input");
     dateInput.type = "date";
     dateInput.min = getTodayDate();
+     dateInput.addEventListener('change', function() {
+        if(this.value) safeLog(`✓ Date selected: ${this.value}`);
+    });
     dateCell.appendChild(dateInput);
 
     // Slots cell with toggle
@@ -898,85 +1108,456 @@ function addSlot() {
     tr.appendChild(removeCell);
     tbody.appendChild(tr);
 }
-
-        function applyQuickAvailability() {
-            const days = Array.from(document.querySelectorAll('.dayCheckbox:checked')).map(cb => cb.value);
-            const start = document.getElementById('quickStart').value;
-            const end = document.getElementById('quickEnd').value;
-
-            if (!days.length) return alert("Please select at least one day.");
-            if (!start || !end) return alert("Please select start and end times.");
-
-            const startTime = new Date(`1970-01-01T${start}:00`);
-            const endTime = new Date(`1970-01-01T${end}:00`);
-            if (endTime <= startTime) return alert("End time must be after start time.");
-
-            const slotList = [];
-            let current = new Date(startTime);
-            while (current < endTime) {
-                let h = current.getHours();
-                let m = current.getMinutes();
-                let ampm = h >= 12 ? "PM" : "AM";
-                let displayH = h % 12 || 12;
-                let displayM = m.toString().padStart(2, '0');
-                slotList.push(`${displayH}:${displayM} ${ampm}`);
-                current.setMinutes(current.getMinutes() + 30);
-            }
-
-            if (slotList.length > MAX_SLOTS_PER_DAY) return alert(`Cannot add more than ${MAX_SLOTS_PER_DAY} slots per day.`);
-
-            const tbody = document.querySelector("#availabilityTable tbody");
-            const today = new Date();
-
-            days.forEach(day => {
-                const dayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(day);
-                const diff = (dayIndex - today.getDay() + 7) % 7;
-                const targetDate = new Date(today);
-                targetDate.setDate(today.getDate() + diff);
-                const formattedDate = targetDate.toISOString().split("T")[0];
-
-                const existingRow = Array.from(tbody.querySelectorAll("tr")).find(row => row.querySelector("input[type='date']").value === formattedDate);
-                if (existingRow) return; 
-
-                const tr = document.createElement("tr");
-                const dateCell = document.createElement("td");
-                const dateInput = document.createElement("input");
-                dateInput.type = "date";
-                dateInput.value = formattedDate;
-                dateInput.min = getTodayDate();
-                dateCell.appendChild(dateInput);
-                tr.appendChild(dateCell);
-
-                const slotsCell = document.createElement("td");
-                const slotsContainer = document.createElement("div");
-                slotsContainer.classList.add("slots-container");
-
-                slotList.forEach(slot => {
-                    const label = document.createElement("label");
-                    const checkbox = document.createElement("input");
-                    checkbox.type = "checkbox";
-                    checkbox.checked = true;
-                    checkbox.value = slot;
-
-                    label.appendChild(checkbox);
-                    label.append(` ${slot}`);
-                    slotsContainer.appendChild(label);
-                });
-
-                slotsCell.appendChild(slotsContainer);
-                tr.appendChild(slotsCell);
-
-                const removeCell = document.createElement("td");
-                removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
-                tr.appendChild(removeCell);
-
-                tbody.appendChild(tr);
-            });
-
-            closeQuickAddPopup();
-            showToast("Availability added!");
+function validateAllSlots() {
+    const rows = document.querySelectorAll("#availabilityTable tbody tr");
+    let hasError = false;
+    
+    rows.forEach((row, index) => {
+        const dateInput = row.querySelector("td:nth-child(1) input[type='date']");
+        const date = dateInput ? dateInput.value : null;
+        
+        // Check if date is selected
+        if (!date) {
+            safeLog(`❌ Row ${index + 1}: No date selected! Please pick a date.`, true);
+            hasError = true;
         }
+        
+        // Check if any time slots are selected
+        const checkboxes = row.querySelectorAll("td:nth-child(2) input[type='checkbox']");
+        let hasCheckedSlot = false;
+        
+        if (checkboxes.length > 0) {
+            hasCheckedSlot = Array.from(checkboxes).some(cb => cb.checked);
+        } else {
+            // If no checkboxes, check if there's text (from loaded data)
+            const slotText = row.querySelector("td:nth-child(2) .slot-text");
+            if (slotText && slotText.textContent.trim()) {
+                hasCheckedSlot = true;
+            }
+        }
+        
+        if (!hasCheckedSlot) {
+            safeLog(`❌ Row ${index + 1} (${date || "No date"}) : No time slots selected! Please select at least one time slot.`, true);
+            hasError = true;
+        }
+    });
+    
+    return !hasError;
+}
+// Optional: Auto-set specific date min value on modal open
+function openQuickAddPopup() {
+    document.getElementById("quickAddModal").style.display = "flex";
+    // Set default specific date to tomorrow
+    const specificDateInput = document.getElementById('specificDate');
+    if (specificDateInput) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        specificDateInput.min = getTodayDate();
+        specificDateInput.value = getTodayDate();
+    }
+}
 
+    function toggleFrequencyMode() {
+    const frequency = document.querySelector('input[name="frequency"]:checked').value;
+    
+    document.getElementById('weeklyView').style.display = frequency === 'weekly' ? 'flex' : 'none';
+    document.getElementById('monthlyView').style.display = frequency === 'monthly' ? 'block' : 'none';
+    document.getElementById('specificView').style.display = frequency === 'specific' ? 'block' : 'none';
+    // document.getElementById('weeksSelection').style.display = frequency === 'weekly' ? 'block' : 'none';
+}
+
+function applyQuickAvailability() {
+    // Remove any existing error message
+    const existingError = document.getElementById('quickAddError');
+    if (existingError) existingError.remove();
+    
+    const frequency = document.querySelector('input[name="frequency"]:checked').value;
+    const start = document.getElementById('quickStart').value;
+    const end = document.getElementById('quickEnd').value;
+    
+    // Collect all errors
+    let errors = [];
+    
+    if (!start || !end) errors.push("Please select both start and end times");
+    
+    if (start && end) {
+        const startTime = new Date(`1970-01-01T${start}:00`);
+        const endTime = new Date(`1970-01-01T${end}:00`);
+        if (endTime <= startTime) errors.push("End time must be after start time");
+    }
+    
+    // Validate based on frequency
+    let datesToAdd = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (frequency === 'weekly') {
+        const days = Array.from(document.querySelectorAll('.dayCheckbox:checked')).map(cb => cb.value);
+        const selectedWeeks = Array.from(document.querySelectorAll('.weekCheckbox:checked')).map(cb => parseInt(cb.value));
+        
+        if (!days.length) errors.push("Please select at least one day");
+        if (!selectedWeeks.length) errors.push("Please select at least one week");
+        
+        if (errors.length === 0) {
+            selectedWeeks.forEach(weekNum => {
+                days.forEach(day => {
+                    const date = getDateForDayInWeek(day, weekNum, today);
+                    if (date && date >= today) {
+                        datesToAdd.push(date);
+                    }
+                });
+            });
+        }
+    } 
+    else if (frequency === 'monthly') {
+        const monthlyDate = parseInt(document.getElementById('monthlyDate').value);
+        const monthlyMonths = parseInt(document.getElementById('monthlyMonths').value);
+        
+        if (isNaN(monthlyDate) || monthlyDate < 1 || monthlyDate > 31) {
+            errors.push("Please enter a valid date (1-31)");
+        }
+        if (isNaN(monthlyMonths) || monthlyMonths < 1 || monthlyMonths > 12) {
+            errors.push("Please enter valid number of months (1-12)");
+        }
+        
+        if (errors.length === 0) {
+            // Clear datesToAdd array
+            datesToAdd = [];
+            
+            // Get current date components
+            let currentYear = today.getFullYear();
+            let currentMonth = today.getMonth();
+            
+            for (let i = 1; i <= monthlyMonths; i++) {
+                // Calculate target month and year
+                let targetMonth = currentMonth + i;
+                let targetYear = currentYear;
+                
+                if (targetMonth >= 12) {
+                    targetYear += Math.floor(targetMonth / 12);
+                    targetMonth = targetMonth % 12;
+                }
+                
+                // Get the last day of the target month
+                const lastDayOfMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+                const dayToSet = Math.min(monthlyDate, lastDayOfMonth);
+                
+                // Create the date (note: month is 0-indexed)
+                const targetDate = new Date(targetYear, targetMonth, dayToSet);
+                
+                console.log(`Month ${i}: ${targetDate.toDateString()}`);
+                
+                // Only add if date is today or future
+                if (targetDate >= today) {
+                    datesToAdd.push(targetDate);
+                }
+            }
+        }
+    }
+    else if (frequency === 'specific') {
+        const specificDate = document.getElementById('specificDate').value;
+        if (!specificDate) {
+            errors.push("Please select a specific date");
+        } else {
+            const dateObj = new Date(specificDate);
+            if (dateObj >= today) {
+                datesToAdd.push(dateObj);
+            } else {
+                errors.push("Selected date cannot be in the past");
+            }
+        }
+    }
+    
+    // Show all errors above modal if any
+    if (errors.length > 0) {
+        const modalContent = document.querySelector('#quickAddModal .modal-content');
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'quickAddError';
+        errorDiv.style.cssText = 'background:#ffebee; color:#c62828; padding:12px; margin:0 20px 15px 20px; border-radius:8px; border-left:4px solid #c62828;';
+        errorDiv.innerHTML = '<ul style="margin:0; padding-left:20px;">' + errors.map(e => `❌ ${e}</li>`).join('') + '</ul>';
+        
+        const modalHeader = modalContent.querySelector('.modal-header');
+        modalHeader.insertAdjacentElement('afterend', errorDiv);
+        
+        errors.forEach(e => safeLog("❌ " + e, true));
+        return;
+    }
+    
+    // Log what dates we're adding
+    console.log("Dates to add:", datesToAdd.map(d => d.toDateString()));
+    
+    // Generate time slots
+    const startTime = new Date(`1970-01-01T${start}:00`);
+    const endTime = new Date(`1970-01-01T${end}:00`);
+    
+    const slotList = [];
+    let current = new Date(startTime);
+    while (current < endTime) {
+        let h = current.getHours();
+        let m = current.getMinutes();
+        let ampm = h >= 12 ? "PM" : "AM";
+        let displayH = h % 12 || 12;
+        let displayM = m.toString().padStart(2, '0');
+        slotList.push(`${displayH}:${displayM} ${ampm}`);
+        current.setMinutes(current.getMinutes() + 30);
+    }
+    
+    if (slotList.length > MAX_SLOTS_PER_DAY) {
+        const modalContent = document.querySelector('#quickAddModal .modal-content');
+        const errorDiv = document.createElement('div');
+        errorDiv.id = 'quickAddError';
+        errorDiv.style.cssText = 'background:#ffebee; color:#c62828; padding:12px; margin:0 20px 15px 20px; border-radius:8px; border-left:4px solid #c62828;';
+        errorDiv.innerHTML = `❌ Cannot add more than ${MAX_SLOTS_PER_DAY} slots per day.`;
+        const modalHeader = modalContent.querySelector('.modal-header');
+        modalHeader.insertAdjacentElement('afterend', errorDiv);
+        return;
+    }
+    
+    // Remove duplicate dates
+    const uniqueDates = [...new Map(datesToAdd.map(d => [d.toISOString().split('T')[0], d])).values()];
+    
+    const tbody = document.querySelector("#availabilityTable tbody");
+    let addedCount = 0;
+    let skippedCount = 0;
+    
+   uniqueDates.forEach(dateObj => {
+    // Fix timezone issue - format date without UTC conversion
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    const displayDayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
+        // Check if this date already exists
+        const existingRow = Array.from(tbody.querySelectorAll("tr")).find(row => {
+            const dateInput = row.querySelector("td:nth-child(1) input[type='date']");
+            return dateInput && dateInput.value === formattedDate;
+        });
+        
+        if (!existingRow) {
+            // Add new row for this date
+            const tr = document.createElement("tr");
+            const dateCell = document.createElement("td");
+            const dateInput = document.createElement("input");
+            dateInput.type = "date";
+            dateInput.value = formattedDate;
+            dateInput.min = getTodayDate();
+            dateCell.appendChild(dateInput);
+            
+            const daySpan = document.createElement("span");
+            daySpan.style.cssText = "font-size:12px; color:#166e6b; margin-left:8px;";
+            daySpan.textContent = `(${displayDayName})`;
+            dateCell.appendChild(daySpan);
+            tr.appendChild(dateCell);
+            
+            const slotsCell = document.createElement("td");
+            const slotsContainer = document.createElement("div");
+            slotsContainer.classList.add("slots-container");
+            
+            slotList.forEach(slot => {
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = true;
+                checkbox.value = slot;
+                label.appendChild(checkbox);
+                label.append(` ${slot}`);
+                slotsContainer.appendChild(label);
+            });
+            
+            slotsCell.appendChild(slotsContainer);
+            tr.appendChild(slotsCell);
+            
+            const removeCell = document.createElement("td");
+            removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
+            tr.appendChild(removeCell);
+            
+            tbody.appendChild(tr);
+            addedCount++;
+            console.log(`✅ Added: ${formattedDate} (${displayDayName})`);
+        } else {
+            console.log(`⚠️ ${formattedDate} already has availability`);
+            skippedCount++;
+        }
+    });
+    
+    closeQuickAddPopup();
+    if (addedCount > 0) {
+        showToast(`✅ Added ${addedCount} new slot${addedCount > 1 ? 's' : ''}!`);
+        if (skippedCount > 0) {
+            showToast(`⚠️ ${skippedCount} date(s) already had availability and were skipped`, 4000);
+        }
+    } else if (skippedCount > 0) {
+        showToast(`⚠️ All selected dates already have availability.`);
+    }
+}
+
+function selectAllWeekdays() {
+    // Monday to Friday (1-5)
+    for(let i = 1; i <= 5; i++) {
+        const cb = document.querySelector(`.quickDayCheckbox[value="${i}"]`);
+        if(cb) cb.checked = true;
+    }
+}
+
+function selectAllWeekends() {
+    // Saturday (6) and Sunday (0)
+    const sat = document.querySelector('.quickDayCheckbox[value="6"]');
+    const sun = document.querySelector('.quickDayCheckbox[value="0"]');
+    if(sat) sat.checked = true;
+    if(sun) sun.checked = true;
+}
+
+function applySimpleQuickAdd() {
+    const dateFrom = document.getElementById('quickDateFrom').value;
+    const dateTo = document.getElementById('quickDateTo').value;
+    const selectedDays = Array.from(document.querySelectorAll('.quickDayCheckbox:checked')).map(cb => parseInt(cb.value));
+    const start = document.getElementById('quickStart').value;
+    const end = document.getElementById('quickEnd').value;
+    
+    if(!dateFrom || !dateTo) {
+        showToast("Please select both From and To dates", true);
+        return;
+    }
+    
+    if(selectedDays.length === 0) {
+        showToast("Please select at least one day of the week", true);
+        return;
+    }
+    
+    // Generate all dates in range
+    const datesToAdd = [];
+    const currentDate = new Date(dateFrom);
+    const endDate = new Date(dateTo);
+    
+    while(currentDate <= endDate) {
+        const dayOfWeek = currentDate.getDay(); // 0 = Sunday
+        if(selectedDays.includes(dayOfWeek)) {
+            datesToAdd.push(new Date(currentDate));
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    // Generate time slots
+    const startTime = new Date(`1970-01-01T${start}:00`);
+    const endTime = new Date(`1970-01-01T${end}:00`);
+    const slotList = [];
+    let current = new Date(startTime);
+    
+    while(current < endTime) {
+        let h = current.getHours();
+        let m = current.getMinutes();
+        let ampm = h >= 12 ? "PM" : "AM";
+        let displayH = h % 12 || 12;
+        let displayM = m.toString().padStart(2, '0');
+        slotList.push(`${displayH}:${displayM} ${ampm}`);
+        current.setMinutes(current.getMinutes() + 30);
+    }
+    
+    // Add to table (using local date format to avoid timezone issues)
+    const tbody = document.querySelector("#availabilityTable tbody");
+    let addedCount = 0;
+    
+    datesToAdd.forEach(dateObj => {
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        
+        // Check if already exists
+        const existingRow = Array.from(tbody.querySelectorAll("tr")).find(row => {
+            const dateInput = row.querySelector("td:nth-child(1) input[type='date']");
+            return dateInput && dateInput.value === formattedDate;
+        });
+        
+        if(!existingRow) {
+            const tr = document.createElement("tr");
+            const dateCell = document.createElement("td");
+            const dateInput = document.createElement("input");
+            dateInput.type = "date";
+            dateInput.value = formattedDate;
+            dateInput.min = getTodayDate();
+            dateCell.appendChild(dateInput);
+            tr.appendChild(dateCell);
+            
+            const slotsCell = document.createElement("td");
+            const slotsContainer = document.createElement("div");
+            slotsContainer.classList.add("slots-container");
+            
+            slotList.forEach(slot => {
+                const label = document.createElement("label");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = true;
+                checkbox.value = slot;
+                label.appendChild(checkbox);
+                label.append(` ${slot}`);
+                slotsContainer.appendChild(label);
+            });
+            
+            slotsCell.appendChild(slotsContainer);
+            tr.appendChild(slotsCell);
+            
+            const removeCell = document.createElement("td");
+            removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
+            tr.appendChild(removeCell);
+            
+            tbody.appendChild(tr);
+            addedCount++;
+        }
+    });
+    
+    closeQuickAddPopup();
+    showToast(`✅ Added ${addedCount} new date${addedCount !== 1 ? 's' : ''}!`);
+}
+
+function getDateForDayInWeek(dayShort, weekNumber, fromDate) {
+    const daysMap = {
+        'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6, 'Sun': 0
+    };
+    
+    const targetDay = daysMap[dayShort];
+    const currentDay = fromDate.getDay();
+    
+    // Calculate days to add to reach the target day in the specified week
+    let daysToAdd = (targetDay - currentDay + 7) % 7;
+    
+    // Add weeks
+    daysToAdd += (weekNumber - 1) * 7;
+    
+    const targetDate = new Date(fromDate);
+    targetDate.setDate(fromDate.getDate() + daysToAdd);
+    
+    return targetDate;
+}
+
+// Initialize the specific date picker min date
+document.addEventListener('DOMContentLoaded', () => {
+    const specificDateInput = document.getElementById('specificDate');
+    if (specificDateInput) {
+        specificDateInput.min = getTodayDate();
+    }
+});
+function formatDateWithDay(dateString) {
+    const date = new Date(dateString);
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+    const formattedDate = date.toISOString().split("T")[0];
+    return `${dayName}, ${formattedDate}`;
+}
+function highlightErrorRows() {
+    const rows = document.querySelectorAll("#availabilityTable tbody tr");
+    rows.forEach(row => {
+        row.classList.remove('error-highlight');
+        const dateInput = row.querySelector("td:nth-child(1) input[type='date']");
+        const date = dateInput ? dateInput.value : null;
+        
+        const checkboxes = row.querySelectorAll("td:nth-child(2) input[type='checkbox']");
+        let hasCheckedSlot = checkboxes.length > 0 ? Array.from(checkboxes).some(cb => cb.checked) : false;
+        
+        if (!date || !hasCheckedSlot) {
+            row.classList.add('error-highlight');
+        }
+    });
+}
 
        function removeRow(button) {
             const row = button.closest("tr");
@@ -1010,49 +1591,59 @@ function addSlot() {
                 });
         }
 
-      function saveProfile() {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                alert("You are not logged in. Redirecting to login page.");
-                window.location.href = 'login.html';
-                return;
-            }
+     function saveProfile() {
+    // First validate all slots
+    if (!validateAllSlots()) {
+        safeLog("❌ Cannot save: Please Select both Date and Day", true);
+        return;
+    }
+    
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        alert("You are not logged in. Redirecting to login page.");
+        window.location.href = 'login.html';
+        return;
+    }
 
-            const newSlots = getCurrentAvailabilitySlots();
-            console.log("Saving payload:", newSlots);
+    const newSlots = getCurrentAvailabilitySlots();
+    console.log("Saving payload:", newSlots);
+    
+    if (newSlots.length === 0) {
+        safeLog("❌ No valid slots to save!", true);
+        return;
+    }
 
-            fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ availabilitySlots: newSlots })
-            })
-                .then(res => {
-                    if (!res.ok) throw new Error("Update failed");
-                    return res.json();
-                })
-                .then(() => {
-                    hideLoadingOverlay();
-                    showToast("Profile updated successfully!");
+    fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ availabilitySlots: newSlots })
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Update failed");
+            return res.json();
+        })
+        .then(() => {
+            hideLoadingOverlay();
+            showToast("Profile updated successfully!");
 
-                    isEditing = false;
-                    toggleEditFields(false);
-                    loadAvailability();
+            isEditing = false;
+            toggleEditFields(false);
+            loadAvailability();
 
-                    document.getElementById("buttonGroup").innerHTML =
-                        `<button class="btn" onclick="enableEditing()">Edit Profile</button>`;
-                })
-                .catch(err => {
-                    hideLoadingOverlay();
-                    showToast("An error occurred while saving.");
-                    console.error("Update error:", err);
-                });
+            document.getElementById("buttonGroup").innerHTML =
+                `<button class="btn" onclick="enableEditing()">Edit Profile</button>`;
+        })
+        .catch(err => {
+            hideLoadingOverlay();
+            showToast("An error occurred while saving.");
+            console.error("Update error:", err);
+        });
 
-            saveAvailabilityOrder();
-        }
-
+    saveAvailabilityOrder();
+}
         function getCurrentAvailabilitySlots() {
                 const availabilitySlots = [];
                 const rows = document.querySelectorAll("#availabilityTable tbody tr");
@@ -1085,6 +1676,8 @@ function addSlot() {
             }
 
     function enableEditing() {
+            safeLog("✏️ Edit mode enabled - select dates and time slots");
+
         isEditing = true;
         toggleEditFields(true);
         const buttonGroup = document.getElementById("buttonGroup");
@@ -1230,9 +1823,7 @@ function addSlot() {
                     <button class="btn" onclick="enableEditing()">Edit Profile</button>
                 `;
         };
-       function openQuickAddPopup() {
-            document.getElementById("quickAddModal").style.display = "flex";
-        }
+      
 
         function closeQuickAddPopup() {
             document.getElementById("quickAddModal").style.display = "none";

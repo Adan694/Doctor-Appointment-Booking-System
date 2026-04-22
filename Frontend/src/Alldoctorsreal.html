@@ -686,6 +686,39 @@ nav ul li a:hover {
             const searchBtn = document.getElementById("search-btn");
             const bar = document.getElementById("bar");
             const menu = document.querySelector("nav ul");
+            // Helper function to capitalize first letter
+function capitalizeFirstLetter(str) {
+    if (!str) return "";
+    return str.split(' ').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+}
+
+// Helper function to format specialties for display
+function formatSpecialties(speciality) {
+    if (!speciality) return "Not specified";
+    
+    // If it's a string that looks like JSON array
+    if (typeof speciality === 'string') {
+        try {
+            const parsed = JSON.parse(speciality);
+            if (Array.isArray(parsed)) {
+                return parsed.map(s => capitalizeFirstLetter(s)).join(", ");
+            }
+        } catch(e) {
+            // Not JSON, treat as regular string
+            return capitalizeFirstLetter(speciality);
+        }
+    }
+    
+    // If it's already an array
+    if (Array.isArray(speciality)) {
+        return speciality.map(s => capitalizeFirstLetter(s)).join(", ");
+    }
+    
+    // Regular string
+    return capitalizeFirstLetter(speciality);
+}
 
          function updateNavbar() {
                 const profileMenu = document.getElementById("profileMenu");  
@@ -809,7 +842,7 @@ if (todaySlot) {
         <div class="card-content">
             <img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" class="doctor-img" />
             <h3 class="doctor-name">Dr. ${doctor.name}</h3>
-            <p class="specialty"><strong>Specialty:</strong> ${doctor.speciality}</p>
+<p class="specialty"><strong>Specialty:</strong> ${formatSpecialties(doctor.speciality)}</p>
             <p><strong>Experience:</strong> ${doctor.experience} years</p>
             <p class="availability ${isAvailable ? "available" : "unavailable"}">
    ${isAvailable ? "Available" : "Not Available"}

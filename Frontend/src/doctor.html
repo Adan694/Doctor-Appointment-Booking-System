@@ -640,6 +640,79 @@
           border-right: none;
         }
       }
+      /* Pagination Styles for Feedback */
+      .feedback-pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 30px;
+        padding: 20px 0;
+      }
+
+      .feedback-pagination button {
+        background-color: #166e6b;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(22, 110, 107, 0.3);
+      }
+
+      .feedback-pagination button:hover:not(:disabled) {
+        background-color: #0f504e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(22, 110, 107, 0.4);
+      }
+
+      .feedback-pagination button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .feedback-pagination .page-info {
+        font-size: 14px;
+        color: #166e6b;
+        font-weight: 600;
+        background: white;
+        padding: 8px 15px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      .feedback-per-page {
+        margin-left: 15px;
+        padding: 8px 12px;
+        border: 1px solid #166e6b;
+        border-radius: 8px;
+        background: white;
+        color: #166e6b;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .feedback-per-page:hover {
+        background-color: #166e6b;
+        color: white;
+      }
+
+      @media (max-width: 600px) {
+        .feedback-pagination {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        .feedback-per-page {
+          margin-left: 0;
+        }
+      }
     </style>
   </head>
 
@@ -872,9 +945,7 @@
 </p>
 
 
-                            <p><strong>Specialty:</strong> ${
-                              doctor.speciality
-                            }</p>
+                          <p><strong>Specialty:</strong> ${formatSpecialties(doctor.speciality)}</p>
                             <p><strong>Experience:</strong> ${
                               doctor.experience
                             } years</p>
@@ -938,6 +1009,9 @@
             profileDiv.innerHTML = `<p>Error loading profile: ${err.message}</p>`;
           });
       })();
+      let currentFeedbackPage = 1;
+      let feedbacksPerPage = 5;
+      let allFeedbacks = [];
 
       function fetchFeedbackForDoctor(doctorId) {
         fetch(`http://localhost:3000/api/feedback/doctors/${doctorId}/feedback`)
@@ -946,77 +1020,138 @@
             return response.json();
           })
           .then((feedbackList) => {
-            const feedbackDiv = document.getElementById("feedback-list");
-            feedbackDiv.innerHTML = "";
-            const loggedInPatientId = localStorage.getItem("patientId");
-
-            feedbackList.forEach((feedback) => {
-              const feedbackElem = document.createElement("div");
-              feedbackElem.className = "feedback-item";
-              feedbackElem.dataset.feedbackId = feedback._id;
-              console.log(
-                "From feedback:",
-                feedback.patientId,
-                typeof feedback.patientId,
-              );
-              console.log(
-                "From storage:",
-                loggedInPatientId,
-                typeof loggedInPatientId,
-              );
-
-              let initials = (feedback.userName || "A")
-                .split(" ")
-                .map((w) => w[0])
-                .join("")
-                .toUpperCase();
-              let stars =
-                "★".repeat(feedback.rating) + "☆".repeat(5 - feedback.rating);
-
-              let feedbackHTML = `
-    <div class="feedback-avatar">${initials}</div>
-    <div class="feedback-content">
-        <h4>${feedback.userName || "Anonymous"}</h4>
-        <div class="star-rating">${stars}</div>
-        <p>${feedback.comment}</p>
-<p><small><strong>Submitted:</strong> ${dayjs(
-                feedback.timestamp,
-              ).fromNow()}</small></p>
-    
-`;
-              const userRole = localStorage.getItem("userRole");
-              if (
-                String(feedback.patientId) === String(loggedInPatientId) ||
-                userRole === "admin"
-              ) {
-                feedbackHTML += `
-        <div class="feedback-actions">
-            ${
-              String(feedback.patientId) === String(loggedInPatientId)
-                ? `<button onclick="editFeedback('${feedback._id}', '${
-                    feedback.rating
-                  }', '${encodeURIComponent(feedback.comment)}')">Edit</button>`
-                : ""
-            }
-            <button class="delete" onclick="deleteFeedback('${
-              feedback._id
-            }')">Delete</button>
-        </div>
-    `;
-              }
-
-              feedbackHTML += `</div>`;
-
-              feedbackElem.innerHTML = feedbackHTML;
-
-              feedbackDiv.appendChild(feedbackElem);
-            });
+            allFeedbacks = feedbackList;
+            currentFeedbackPage = 1;
+            renderFeedbackPage();
+            renderFeedbackPagination();
           })
           .catch((err) => {
             console.error("Error fetching feedback:", err);
           });
       }
 
+      function renderFeedbackPage() {
+        const feedbackDiv = document.getElementById("feedback-list");
+        const loggedInPatientId = localStorage.getItem("patientId");
+
+        const startIndex = (currentFeedbackPage - 1) * feedbacksPerPage;
+        const endIndex = Math.min(
+          startIndex + feedbacksPerPage,
+          allFeedbacks.length,
+        );
+        const paginatedFeedbacks = allFeedbacks.slice(startIndex, endIndex);
+
+        if (paginatedFeedbacks.length === 0) {
+          feedbackDiv.innerHTML =
+            "<p style='text-align:center; padding:40px;'>No feedback available.</p>";
+          return;
+        }
+
+        feedbackDiv.innerHTML = "";
+
+        paginatedFeedbacks.forEach((feedback) => {
+          const feedbackElem = document.createElement("div");
+          feedbackElem.className = "feedback-item";
+          feedbackElem.dataset.feedbackId = feedback._id;
+
+          let initials = (feedback.userName || "A")
+            .split(" ")
+            .map((w) => w[0])
+            .join("")
+            .toUpperCase();
+          let stars =
+            "★".repeat(feedback.rating) + "☆".repeat(5 - feedback.rating);
+
+          let feedbackHTML = `
+      <div class="feedback-avatar">${initials}</div>
+      <div class="feedback-content">
+        <h4>${feedback.userName || "Anonymous"}</h4>
+        <div class="star-rating">${stars}</div>
+        <p>${feedback.comment}</p>
+        <p><small><strong>Submitted:</strong> ${dayjs(feedback.timestamp).fromNow()}</small></p>
+    `;
+
+          const userRole = localStorage.getItem("userRole");
+          if (
+            String(feedback.patientId) === String(loggedInPatientId) ||
+            userRole === "admin"
+          ) {
+            feedbackHTML += `
+        <div class="feedback-actions">
+          ${String(feedback.patientId) === String(loggedInPatientId) ? `<button onclick="editFeedback('${feedback._id}', '${feedback.rating}', '${encodeURIComponent(feedback.comment)}')">Edit</button>` : ""}
+          <button class="delete" onclick="deleteFeedback('${feedback._id}')">Delete</button>
+        </div>
+      `;
+          }
+
+          feedbackHTML += `</div>`;
+          feedbackElem.innerHTML = feedbackHTML;
+          feedbackDiv.appendChild(feedbackElem);
+        });
+      }
+
+      function renderFeedbackPagination() {
+        const totalPages = Math.ceil(allFeedbacks.length / feedbacksPerPage);
+
+        const existingPagination =
+          document.getElementById("feedbackPagination");
+        if (existingPagination) existingPagination.remove();
+
+        if (totalPages <= 1) return;
+
+        const paginationDiv = document.createElement("div");
+        paginationDiv.id = "feedbackPagination";
+        paginationDiv.className = "feedback-pagination";
+
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "Previous";
+        prevBtn.disabled = currentFeedbackPage === 1;
+        prevBtn.onclick = () => {
+          if (currentFeedbackPage > 1) {
+            currentFeedbackPage--;
+            renderFeedbackPage();
+            renderFeedbackPagination();
+          }
+        };
+
+        const pageInfo = document.createElement("span");
+        pageInfo.className = "page-info";
+        pageInfo.textContent = `Page ${currentFeedbackPage} of ${totalPages}`;
+
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "Next";
+        nextBtn.disabled = currentFeedbackPage === totalPages;
+        nextBtn.onclick = () => {
+          if (currentFeedbackPage < totalPages) {
+            currentFeedbackPage++;
+            renderFeedbackPage();
+            renderFeedbackPagination();
+          }
+        };
+
+        const perPageSelect = document.createElement("select");
+        perPageSelect.className = "feedback-per-page";
+        perPageSelect.innerHTML = `
+    <option value="5" ${feedbacksPerPage === 5 ? "selected" : ""}>5 per page</option>
+    <option value="10" ${feedbacksPerPage === 10 ? "selected" : ""}>10 per page</option>
+    <option value="20" ${feedbacksPerPage === 20 ? "selected" : ""}>20 per page</option>
+  `;
+        perPageSelect.onchange = (e) => {
+          feedbacksPerPage = parseInt(e.target.value);
+          currentFeedbackPage = 1;
+          renderFeedbackPage();
+          renderFeedbackPagination();
+        };
+
+        paginationDiv.appendChild(prevBtn);
+        paginationDiv.appendChild(pageInfo);
+        paginationDiv.appendChild(nextBtn);
+        paginationDiv.appendChild(perPageSelect);
+
+        document
+          .getElementById("feedback-list")
+          .insertAdjacentElement("afterend", paginationDiv);
+      }
       function editFeedback(feedbackId, currentRating, encodedComment) {
         const currentComment = decodeURIComponent(encodedComment);
 
@@ -1084,7 +1219,7 @@
         const doctorId = new URLSearchParams(window.location.search).get("id");
         console.log("Token in deleteFeedback:", token);
 
-        fetch(`http://localhost:3000/api/feedback/${feedbackId}`, {
+        fetch(`http://localhost:3000/api/feedback/feedback/${feedbackId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -1108,9 +1243,7 @@
           doctor.name
         }">
         <h2><input type="text" id="edit-name" value="${doctor.name}" /></h2>
-        <p><strong>Specialty:</strong> <input type="text" id="edit-speciality" value="${
-          doctor.speciality
-        }" /></p>
+        <p><strong>Specialty:</strong> <input type="text" id="edit-speciality" value="${Array.isArray(doctor.speciality) ? doctor.speciality.join(", ") : doctor.speciality}" /></p>
         <p><strong>Experience:</strong> <input type="number" id="edit-experience" value="${
           doctor.experience
         }" /> years</p>
@@ -1165,6 +1298,44 @@
             console.error("Error updating profile:", err);
             alert("Error saving profile");
           });
+      }
+      // Helper function to format specialty values for display
+      function formatSpecialties(speciality) {
+        if (!speciality) return "Not specified";
+
+        // If it's a string that looks like JSON array
+        if (typeof speciality === "string") {
+          try {
+            const parsed = JSON.parse(speciality);
+            if (Array.isArray(parsed)) {
+              return parsed.map((s) => capitalizeFirstLetter(s)).join(", ");
+            }
+          } catch (e) {
+            // Not JSON, treat as regular string
+            return capitalizeFirstLetter(speciality);
+          }
+        }
+
+        // If it's already an array
+        if (Array.isArray(speciality)) {
+          return speciality.map((s) => capitalizeFirstLetter(s)).join(", ");
+        }
+
+        // Regular string
+        return capitalizeFirstLetter(speciality);
+      }
+
+      // Helper function to capitalize first letter of each word
+      function capitalizeFirstLetter(str) {
+        if (!str) return "";
+        // Handle multi-word specialties like "ent Specialist"
+        return str
+          .split(" ")
+          .map(
+            (word) =>
+              word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+          )
+          .join(" ");
       }
     </script>
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>

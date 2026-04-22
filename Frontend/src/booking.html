@@ -746,6 +746,166 @@ body {
     display: none;
 }
 
+/* Carousel Styles */
+.dates-carousel-container {
+    position: relative;
+    margin: 20px 0;
+    padding: 0 40px;
+}
+
+.dates-carousel {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    white-space: nowrap;
+    padding: 10px 0;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.dates-carousel::-webkit-scrollbar {
+    height: 6px;
+}
+
+.dates-carousel::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.dates-carousel::-webkit-scrollbar-thumb {
+    background: #009999;
+    border-radius: 10px;
+}
+
+.dates-carousel .time-slot {
+    display: inline-flex;
+    margin: 0 8px;
+    white-space: nowrap;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #009999;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+    background: #007d7d;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.carousel-btn.left {
+    left: 0;
+}
+
+.carousel-btn.right {
+    right: 0;
+}
+
+.carousel-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: translateY(-50%);
+}
+
+/* Date count badge */
+.date-count-badge {
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .dates-carousel-container {
+        padding: 0 30px;
+    }
+    
+    .carousel-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+    }
+    
+    .dates-carousel .time-slot {
+        min-width: 85px;
+        font-size: 12px;
+        padding: 10px 12px;
+    }
+}
+/* Search Bar Styles */
+.search-container {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-container input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.search-container input:focus {
+    border-color: #009999;
+    box-shadow: 0 0 5px rgba(0, 153, 153, 0.3);
+}
+
+.search-container button {
+    padding: 10px 20px;
+    background: #009999;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.search-container button:hover {
+    background: #007d7d;
+    transform: translateY(-2px);
+}
+
+.search-container .clear-btn {
+    background: #6c757d;
+}
+
+.search-container .clear-btn:hover {
+    background: #5a6268;
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 16px;
+}
+
+.hidden-date {
+    display: none !important;
+}
     </style>
 </head>
 
@@ -945,133 +1105,370 @@ body {
         const params = new URLSearchParams(window.location.search);
         const doctorId = params.get("doctorId"); 
     
-    function loadAvailability() {
-        fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`)
-            .then(res => res.json())
-            .then(data => {
-                console.log("Raw availability slots from DB:", JSON.stringify(data.availabilitySlots, null, 2));
+   function loadAvailability() {
+    fetch(`http://localhost:3000/api/doctors/${doctorId}/availability`)
+        .then(res => res.json())
+        .then(data => {
+            console.log("Raw availability slots from DB:", JSON.stringify(data.availabilitySlots, null, 2));
 
-                const bookingInfoDiv = document.getElementById('booking-info');
-                bookingInfoDiv.innerHTML = '';
+            const bookingInfoDiv = document.getElementById('booking-info');
+            bookingInfoDiv.innerHTML = '';
+            // Add this inside loadAvailability function after bookingInfoDiv.innerHTML = '';
+// Create search bar
+// Create search bar
+const searchContainer = document.createElement('div');
+searchContainer.className = 'search-container';
+searchContainer.innerHTML = `
+    <input type="text" id="dateSearchInput" placeholder="🔍 Search any date, month, year or day (e.g., May, 15, 2026, Monday, 05-15)" autocomplete="off">
+    <button id="searchBtn">Search</button>
+    <button id="clearSearchBtn" class="clear-btn">Clear</button>
+`;
+bookingInfoDiv.appendChild(searchContainer);
 
-                if (!data.availabilitySlots || !data.availabilitySlots.length) {
-                    bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
-                    return;
+            if (!data.availabilitySlots || !data.availabilitySlots.length) {
+                bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
+                return;
+            }
+
+            const mergedSlots = data.availabilitySlots.reduce((acc, slot) => {
+                const existing = acc.find(s => s.date === slot.date);
+                if (existing) {
+                    existing.slots = [...new Set([...existing.slots, ...slot.slots])];
+                } else {
+                    acc.push({ ...slot });
                 }
+                return acc;
+            }, []);
 
-                const mergedSlots = data.availabilitySlots.reduce((acc, slot) => {
-                    const existing = acc.find(s => s.date === slot.date);
-                    if (existing) {
-                        existing.slots = [...new Set([...existing.slots, ...slot.slots])];
-                    } else {
-                        acc.push({ ...slot });
-                    }
-                    return acc;
-                }, []);
+            // Sort dates ascending
+            mergedSlots.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-                // Sort dates ascending
-                mergedSlots.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                // Create date buttons container
-                const datesContainer = document.createElement('div');
-                datesContainer.className = 'dates-container';
-
-                // Filter only dates that have at least one future slot
-                const futureDates = mergedSlots.filter(slot => {
-                    return slot.slots.some(time => {
-                        const slotDateTime = new Date(`${slot.date} ${time}`);
-                        return slotDateTime > new Date(); 
-                    });
+            // Filter only dates that have at least one future slot
+            const futureDates = mergedSlots.filter(slot => {
+                return slot.slots.some(time => {
+                    const slotDateTime = new Date(`${slot.date} ${time}`);
+                    return slotDateTime > new Date();
                 });
-
-                if (!futureDates.length) {
-                    bookingInfoDiv.innerHTML = '<p>No future availability slots.</p>';
-                    return;
-                }
-
-                // create buttons only for future dates
-                futureDates.forEach((slot, index) => {
-                    const dateBtn = document.createElement('button');
-                    dateBtn.textContent = slot.date;
-                    dateBtn.className = 'time-slot';
-                    if (index === 0) dateBtn.classList.add('selected');
-                    dateBtn.addEventListener('click', () => {
-                        document.querySelectorAll('.dates-container .time-slot').forEach(b => b.classList.remove('selected'));
-                        dateBtn.classList.add('selected');
-                        renderSlots(slot);
-                    });
-                    datesContainer.appendChild(dateBtn);
-                });
-
-                bookingInfoDiv.appendChild(datesContainer);
-
-                const slotsContainer = document.createElement('div');
-                slotsContainer.id = 'slots-container';
-                bookingInfoDiv.appendChild(slotsContainer);
-
-                renderSlots(futureDates[0]);
-
-                function renderSlots(slot) {
-                    const slotsDiv = document.getElementById('slots-container');
-                    slotsDiv.innerHTML = '';
-                    const bookBtn = document.querySelector('.book-btn:not([onclick])');
-                    if (bookBtn) bookBtn.disabled = true;
-
-                    const timesContainer = document.createElement('div');
-                    let hasFutureSlot = false;
-
-                    slot.slots.sort((a, b) => {
-                        const parseTime = s => {
-                            const [time, ampm] = s.split(" ");
-                            let [h, m] = time.split(":").map(Number);
-                            if (ampm === "PM" && h !== 12) h += 12;
-                            if (ampm === "AM" && h === 12) h = 0;
-                            return h * 60 + m;
-                        };
-                        return parseTime(a) - parseTime(b);
-                    });
-
-                    slot.slots.forEach(time => {
-                        const dateTimeString = `${slot.date} ${time}`;
-                        const slotDateTime = new Date(dateTimeString);
-                        const now = new Date();
-
-                        // Skip past slots
-                        if (slotDateTime < now) {
-                            return;
-                        }
-
-                        hasFutureSlot = true;
-
-                        const timeSlot = document.createElement('span');
-                        timeSlot.className = 'time-slot';
-                        timeSlot.textContent = time;
-                        timeSlot.dataset.date = slot.date;
-                        timeSlot.dataset.time = time;
-
-                        timeSlot.addEventListener('click', function () {
-                            document.querySelectorAll('#slots-container .time-slot').forEach(t => t.classList.remove('selected'));
-                            this.classList.add('selected');
-                        });
-
-                        timesContainer.appendChild(timeSlot);
-                    });
-
-                    if (hasFutureSlot) {
-                        slotsDiv.appendChild(timesContainer);
-                    } else {
-                        slotsDiv.innerHTML = '<p>No future slots available.</p>';
-                    }
-                }
-
-                addBookButtonIfMissing();
-            })
-            .catch(err => {
-                document.getElementById('booking-info').innerHTML =
-                    `<p>Error fetching availability: ${err.message}</p>`;
             });
-    }
+            window.futureDates = futureDates;  // <--- ADD THIS LINE
 
+
+            if (!futureDates.length) {
+                bookingInfoDiv.innerHTML = '<p>No future availability slots.</p>';
+                return;
+            }
+
+            // Create carousel container
+            const carouselContainer = document.createElement('div');
+            carouselContainer.className = 'dates-carousel-container';
+            
+            // Add left button
+            const leftBtn = document.createElement('button');
+            leftBtn.innerHTML = '‹';
+            leftBtn.className = 'carousel-btn left';
+            leftBtn.disabled = true;
+            
+            // Add right button
+            const rightBtn = document.createElement('button');
+            rightBtn.innerHTML = '›';
+            rightBtn.className = 'carousel-btn right';
+            
+            // Create carousel
+            const carousel = document.createElement('div');
+            carousel.className = 'dates-carousel';
+            
+            // Add date count badge
+            const countBadge = document.createElement('div');
+            countBadge.className = 'date-count-badge';
+            countBadge.innerHTML = `📅 ${futureDates.length} available date${futureDates.length !== 1 ? 's' : ''}`;
+            bookingInfoDiv.appendChild(countBadge);
+            // Create date buttons inside carousel
+const dateButtons = []; // Store buttons for search
+
+futureDates.forEach((slot, index) => {
+    const dateBtn = document.createElement('button');
+    const dateObj = new Date(slot.date);
+    const formattedDate = dateObj.toLocaleDateString('en-US', { 
+        weekday: 'short', 
+        month: 'short', 
+        day: 'numeric' 
+    });
+    dateBtn.textContent = formattedDate;
+    dateBtn.title = slot.date; // Store full date for searching
+    dateBtn.className = 'time-slot';
+    if (index === 0) dateBtn.classList.add('selected');
+    dateBtn.addEventListener('click', () => {
+        document.querySelectorAll('.dates-carousel .time-slot').forEach(b => b.classList.remove('selected'));
+        dateBtn.classList.add('selected');
+        renderSlots(slot);
+    });
+    carousel.appendChild(dateBtn);
+    dateButtons.push(dateBtn); // Store for search
+});
+
+// Initialize search after carousel is populated
+initDateSearch(dateButtons);
+            
+            // Create date buttons inside carousel
+            futureDates.forEach((slot, index) => {
+                const dateBtn = document.createElement('button');
+                const dateObj = new Date(slot.date);
+                const formattedDate = dateObj.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                dateBtn.textContent = formattedDate;
+                dateBtn.title = slot.date;
+                dateBtn.className = 'time-slot';
+                if (index === 0) dateBtn.classList.add('selected');
+                dateBtn.addEventListener('click', () => {
+                    document.querySelectorAll('.dates-carousel .time-slot').forEach(b => b.classList.remove('selected'));
+                    dateBtn.classList.add('selected');
+                    renderSlots(slot);
+                });
+                carousel.appendChild(dateBtn);
+            });
+            
+            carouselContainer.appendChild(leftBtn);
+            carouselContainer.appendChild(carousel);
+            carouselContainer.appendChild(rightBtn);
+            bookingInfoDiv.appendChild(carouselContainer);
+            
+            // Carousel scroll functionality
+            let scrollAmount = 0;
+            const scrollStep = 200;
+            
+            leftBtn.addEventListener('click', () => {
+                carousel.scrollBy({ left: -scrollStep, behavior: 'smooth' });
+            });
+            
+            rightBtn.addEventListener('click', () => {
+                carousel.scrollBy({ left: scrollStep, behavior: 'smooth' });
+            });
+            
+            // Update button states on scroll
+            carousel.addEventListener('scroll', () => {
+                const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+                leftBtn.disabled = carousel.scrollLeft <= 0;
+                rightBtn.disabled = carousel.scrollLeft >= maxScroll - 1;
+            });
+            
+            // Initial button state
+            setTimeout(() => {
+                const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+                rightBtn.disabled = maxScroll <= 0;
+            }, 100);
+            
+            // Slots container
+            const slotsContainer = document.createElement('div');
+            slotsContainer.id = 'slots-container';
+            bookingInfoDiv.appendChild(slotsContainer);
+            
+            renderSlots(futureDates[0]);
+            
+            function renderSlots(slot) {
+                const slotsDiv = document.getElementById('slots-container');
+                slotsDiv.innerHTML = '';
+                const bookBtn = document.querySelector('.book-btn:not([onclick])');
+                if (bookBtn) bookBtn.disabled = true;
+                
+                // Add date header for slots
+                const dateHeader = document.createElement('div');
+                const selectedDateObj = new Date(slot.date);
+                dateHeader.style.cssText = 'font-size: 14px; color: #009999; margin-bottom: 12px; font-weight: 600;';
+                dateHeader.innerHTML = `⏰ Available time slots for ${selectedDateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}:`;
+                slotsDiv.appendChild(dateHeader);
+                
+                const timesContainer = document.createElement('div');
+                timesContainer.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px;';
+                let hasFutureSlot = false;
+                
+                slot.slots.sort((a, b) => {
+                    const parseTime = s => {
+                        const [time, ampm] = s.split(" ");
+                        let [h, m] = time.split(":").map(Number);
+                        if (ampm === "PM" && h !== 12) h += 12;
+                        if (ampm === "AM" && h === 12) h = 0;
+                        return h * 60 + m;
+                    };
+                    return parseTime(a) - parseTime(b);
+                });
+                
+                slot.slots.forEach(time => {
+                    const dateTimeString = `${slot.date} ${time}`;
+                    const slotDateTime = new Date(dateTimeString);
+                    const now = new Date();
+                    
+                    if (slotDateTime < now) {
+                        return;
+                    }
+                    
+                    hasFutureSlot = true;
+                    
+                    const timeSlot = document.createElement('span');
+                    timeSlot.className = 'time-slot';
+                    timeSlot.textContent = time;
+                    timeSlot.dataset.date = slot.date;
+                    timeSlot.dataset.time = time;
+                    
+                    timeSlot.addEventListener('click', function () {
+                        document.querySelectorAll('#slots-container .time-slot').forEach(t => t.classList.remove('selected'));
+                        this.classList.add('selected');
+                    });
+                    
+                    timesContainer.appendChild(timeSlot);
+                });
+                
+                if (hasFutureSlot) {
+                    slotsDiv.appendChild(timesContainer);
+                } else {
+                    slotsDiv.innerHTML = '<p style="color: #999;">No future slots available for this date.</p>';
+                }
+            }
+            
+            addBookButtonIfMissing();
+        })
+        .catch(err => {
+            document.getElementById('booking-info').innerHTML =
+                `<p>Error fetching availability: ${err.message}</p>`;
+        });
+}
+
+// Search functionality for dates
+// Search functionality for dates - searches any value
+// Search functionality for dates - searches any value
+function initDateSearch(dateButtons) {
+    const searchInput = document.getElementById('dateSearchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const clearBtn = document.getElementById('clearSearchBtn');
+    
+    if (!searchInput || !searchBtn || !clearBtn) return;
+    
+    function performSearch() {
+        // Get futureDates from global variable
+        const futureDatesData = window.futureDates || [];
+        
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        
+        if (!searchTerm) {
+            dateButtons.forEach(btn => {
+                btn.classList.remove('hidden-date');
+            });
+            removeNoResultsMessage();
+            
+            const firstDate = dateButtons[0];
+            if (firstDate && !firstDate.classList.contains('selected')) {
+                document.querySelectorAll('.dates-carousel .time-slot').forEach(b => b.classList.remove('selected'));
+                firstDate.classList.add('selected');
+                if (futureDatesData.length > 0) {
+                    const matchingSlot = futureDatesData.find(slot => slot.date === firstDate.title);
+                    if (matchingSlot && typeof renderSlots === 'function') {
+                        renderSlots(matchingSlot);
+                    }
+                }
+            }
+            return;
+        }
+        
+        let hasVisible = false;
+        let firstVisibleButton = null;
+        
+        dateButtons.forEach(btn => {
+            const dateValue = btn.title;
+            const displayText = btn.textContent;
+            const dateObj = new Date(btn.title);
+            const fullMonth = dateObj.toLocaleDateString('en-US', { month: 'long' }).toLowerCase();
+            const fullDay = dateObj.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+            const year = dateObj.getFullYear().toString();
+            const month = (dateObj.getMonth() + 1).toString();
+            const day = dateObj.getDate().toString();
+            
+            const matches = 
+                dateValue.includes(searchTerm) ||
+                displayText.toLowerCase().includes(searchTerm) ||
+                fullMonth.includes(searchTerm) ||
+                fullDay.includes(searchTerm) ||
+                year.includes(searchTerm) ||
+                month.includes(searchTerm) ||
+                day.includes(searchTerm) ||
+                `${fullMonth} ${day}`.includes(searchTerm) ||
+                `${day} ${fullMonth}`.includes(searchTerm);
+            
+            if (matches) {
+                btn.classList.remove('hidden-date');
+                hasVisible = true;
+                if (!firstVisibleButton) {
+                    firstVisibleButton = btn;
+                }
+            } else {
+                btn.classList.add('hidden-date');
+            }
+        });
+        
+        if (!hasVisible) {
+            showNoResultsMessage(searchTerm);
+        } else {
+            removeNoResultsMessage();
+        }
+        
+        if (firstVisibleButton) {
+            document.querySelectorAll('.dates-carousel .time-slot').forEach(b => b.classList.remove('selected'));
+            firstVisibleButton.classList.add('selected');
+            if (futureDatesData.length > 0) {
+                const matchingSlot = futureDatesData.find(slot => slot.date === firstVisibleButton.title);
+                if (matchingSlot && typeof renderSlots === 'function') {
+                    renderSlots(matchingSlot);
+                }
+            }
+            firstVisibleButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+    
+    function showNoResultsMessage(searchTerm) {
+        removeNoResultsMessage();
+        const carousel = document.querySelector('.dates-carousel');
+        if (carousel) {
+            const noResultMsg = document.createElement('div');
+            noResultMsg.id = 'noSearchResults';
+            noResultMsg.className = 'no-results';
+            noResultMsg.innerHTML = `🔍 No dates found matching "${searchTerm}"<br><small>Try searching by: date (2026-05-15), month (May), day (Monday), or year (2026)</small>`;
+            carousel.parentElement.appendChild(noResultMsg);
+        }
+    }
+    
+    function removeNoResultsMessage() {
+        const existingMsg = document.getElementById('noSearchResults');
+        if (existingMsg) existingMsg.remove();
+    }
+    
+    searchBtn.addEventListener('click', performSearch);
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        dateButtons.forEach(btn => {
+            btn.classList.remove('hidden-date');
+        });
+        removeNoResultsMessage();
+        const firstDate = dateButtons[0];
+        if (firstDate) {
+            document.querySelectorAll('.dates-carousel .time-slot').forEach(b => b.classList.remove('selected'));
+            firstDate.classList.add('selected');
+            const futureDatesData = window.futureDates || [];
+            if (futureDatesData.length > 0) {
+                const matchingSlot = futureDatesData.find(slot => slot.date === firstDate.title);
+                if (matchingSlot && typeof renderSlots === 'function') {
+                    renderSlots(matchingSlot);
+                }
+            }
+        }
+    });
+    
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+}
             function addBookButtonIfMissing() {
                 
                 const patientId = localStorage.getItem('patientId'); 
