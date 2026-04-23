@@ -695,8 +695,8 @@ tr.error-highlight {
     </nav>
     <div class="availability-section">
         <div style="margin: 15px 20px; display: flex; gap: 10px; align-items: center;">
-    <input type="text" id="searchDate" placeholder="🔍 Search by date (e.g., 2026-05-15)" 
-           style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+   <input type="text" id="searchDate" placeholder="🔍 Search in any format - e.g., May 15, 15 May, Monday, 15-05-2026, 05/15/2026" 
+       style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
     <button onclick="clearSearch()" style="padding: 8px 16px; background: #166e6b; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear</button>
 </div>
 <h2 class="section-title">
@@ -847,20 +847,102 @@ function safeLog(msg, isError = false) {
     }
 }
 // Search functionality
+// Enhanced search functionality - supports ANY date format
 function searchDates() {
     const searchTerm = document.getElementById('searchDate').value.toLowerCase().trim();
     const rows = document.querySelectorAll('#availabilityTable tbody tr');
     let hasVisible = false;
+    let bestMatchRow = null;
+    let bestMatchScore = 0;
     
     rows.forEach(row => {
         const dateInput = row.querySelector('td:first-child input[type="date"]');
         if (!dateInput) return;
         
         const dateValue = dateInput.value;
+        const dateObj = new Date(dateValue);
         
-        if (searchTerm === '' || dateValue.includes(searchTerm)) {
+        // Create all possible searchable formats for this date
+        const searchableFormats = [
+            // Original date (YYYY-MM-DD)
+            dateValue,
+            // Display date in different formats
+            dateObj.toLocaleDateString('en-US'), // MM/DD/YYYY
+            dateObj.toLocaleDateString('en-GB'), // DD/MM/YYYY
+            // Full month name
+            dateObj.toLocaleDateString('en-US', { month: 'long' }).toLowerCase(),
+            // Short month name
+            dateObj.toLocaleDateString('en-US', { month: 'short' }).toLowerCase(),
+            // Full day name
+            dateObj.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+            // Short day name
+            dateObj.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase(),
+            // Day of month
+            dateObj.getDate().toString(),
+            // Month number
+            (dateObj.getMonth() + 1).toString(),
+            // Month with leading zero
+            String(dateObj.getMonth() + 1).padStart(2, '0'),
+            // Year
+            dateObj.getFullYear().toString(),
+            // Two-digit year
+            dateObj.getFullYear().toString().slice(-2),
+            // DD/MM/YYYY format
+            `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`,
+            // MM/DD/YYYY format
+            `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`,
+            // DD-MM-YYYY format
+            `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`,
+            // MM-DD-YYYY format
+            `${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}-${dateObj.getFullYear()}`,
+            // Format like "15 May"
+            `${dateObj.getDate()} ${dateObj.toLocaleDateString('en-US', { month: 'long' })}`.toLowerCase(),
+            // Format like "May 15"
+            `${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getDate()}`.toLowerCase(),
+            // Format like "15 May 2026"
+            `${dateObj.getDate()} ${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getFullYear()}`.toLowerCase(),
+            // Format like "May 15, 2026"
+            `${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getDate()}, ${dateObj.getFullYear()}`.toLowerCase()
+        ];
+        
+        let matches = false;
+        let matchScore = 0;
+        
+        if (searchTerm === '') {
+            matches = true;
+            matchScore = 1;
+        } else {
+            // Check if search term matches any format
+            for (const format of searchableFormats) {
+                if (format.includes(searchTerm)) {
+                    matches = true;
+                    // Calculate match score (more precise matches score higher)
+                    const score = searchTerm.length / format.length;
+                    if (score > matchScore) {
+                        matchScore = score;
+                    }
+                    break;
+                }
+            }
+            
+            // Special handling for numeric searches (e.g., "15" for day 15)
+            if (!matches && !isNaN(searchTerm) && searchTerm.length <= 2) {
+                const dayNum = dateObj.getDate().toString();
+                const monthNum = (dateObj.getMonth() + 1).toString();
+                if (dayNum === searchTerm || monthNum === searchTerm) {
+                    matches = true;
+                    matchScore = 0.9;
+                }
+            }
+        }
+        
+        if (matches) {
             row.style.display = '';
             hasVisible = true;
+            if (matchScore > bestMatchScore) {
+                bestMatchScore = matchScore;
+                bestMatchRow = row;
+            }
         } else {
             row.style.display = 'none';
         }
@@ -872,14 +954,23 @@ function searchDates() {
         if (!noResultMsg) {
             noResultMsg = document.createElement('tr');
             noResultMsg.id = 'noResultMsg';
-            noResultMsg.innerHTML = `<td colspan="3" style="text-align: center; padding: 20px; color: #999;">🔍 No dates found matching "${searchTerm}"</td>`;
+            noResultMsg.innerHTML = `<td colspan="3" style="text-align: center; padding: 20px; color: #999;">🔍 No dates found matching "${searchTerm}"<br><small>Try: May 15, 15 May, Monday, 15-05-2026, 05/15/2026, or just "May" or "15"</small>`;
             document.querySelector('#availabilityTable tbody').appendChild(noResultMsg);
         }
     } else if (noResultMsg) {
         noResultMsg.remove();
     }
+    
+    // Auto-scroll to and highlight the best matching row if found
+    if (bestMatchRow && searchTerm !== '') {
+        bestMatchRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        bestMatchRow.style.transition = 'background-color 0.5s';
+        bestMatchRow.style.backgroundColor = '#fff3cd';
+        setTimeout(() => {
+            bestMatchRow.style.backgroundColor = '';
+        }, 2000);
+    }
 }
-
 function clearSearch() {
     document.getElementById('searchDate').value = '';
     searchDates();
@@ -1106,8 +1197,8 @@ function addSlot() {
     tr.appendChild(dateCell);
     tr.appendChild(slotsCell);
     tr.appendChild(removeCell);
-    tbody.appendChild(tr);
-}
+    // tbody.appendChild(tr);
+tbody.insertBefore(tr, tbody.firstChild);}
 function validateAllSlots() {
     const rows = document.querySelectorAll("#availabilityTable tbody tr");
     let hasError = false;

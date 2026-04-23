@@ -1119,7 +1119,7 @@ body {
 const searchContainer = document.createElement('div');
 searchContainer.className = 'search-container';
 searchContainer.innerHTML = `
-    <input type="text" id="dateSearchInput" placeholder="🔍 Search any date, month, year or day (e.g., May, 15, 2026, Monday, 05-15)" autocomplete="off">
+    <input type="text" id="dateSearchInput" placeholder="🔍 Search in any format - e.g., May 15, 15 May, Monday, 15-05-2026, 05/15/2026" autocomplete="off">
     <button id="searchBtn">Search</button>
     <button id="clearSearchBtn" class="clear-btn">Clear</button>
 `;
@@ -1336,8 +1336,7 @@ initDateSearch(dateButtons);
 }
 
 // Search functionality for dates
-// Search functionality for dates - searches any value
-// Search functionality for dates - searches any value
+// Search functionality for dates - supports ANY date format
 function initDateSearch(dateButtons) {
     const searchInput = document.getElementById('dateSearchInput');
     const searchBtn = document.getElementById('searchBtn');
@@ -1345,10 +1344,58 @@ function initDateSearch(dateButtons) {
     
     if (!searchInput || !searchBtn || !clearBtn) return;
     
+    function parseSearchTerm(searchTerm) {
+        // Create a comprehensive set of searchable strings for each date
+        return function(dateObj, displayText, dateValue) {
+            const formats = [
+                // Original date string (YYYY-MM-DD)
+                dateValue,
+                // Display text (e.g., "Mon, May 15")
+                displayText.toLowerCase(),
+                // Full month name
+                dateObj.toLocaleDateString('en-US', { month: 'long' }).toLowerCase(),
+                // Short month name
+                dateObj.toLocaleDateString('en-US', { month: 'short' }).toLowerCase(),
+                // Full day name
+                dateObj.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
+                // Short day name
+                dateObj.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase(),
+                // Day of month (1-31)
+                dateObj.getDate().toString(),
+                // Month number (1-12)
+                (dateObj.getMonth() + 1).toString(),
+                // Month with leading zero (01-12)
+                String(dateObj.getMonth() + 1).padStart(2, '0'),
+                // Year
+                dateObj.getFullYear().toString(),
+                // Two-digit year
+                dateObj.getFullYear().toString().slice(-2),
+                // DD/MM/YYYY
+                `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`,
+                // MM/DD/YYYY
+                `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`,
+                // DD-MM-YYYY
+                `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`,
+                // MM-DD-YYYY
+                `${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}-${dateObj.getFullYear()}`,
+                // DD.MM.YYYY
+                `${String(dateObj.getDate()).padStart(2, '0')}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${dateObj.getFullYear()}`,
+                // Format like "15 May"
+                `${dateObj.getDate()} ${dateObj.toLocaleDateString('en-US', { month: 'long' })}`.toLowerCase(),
+                // Format like "May 15"
+                `${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getDate()}`.toLowerCase(),
+                // Format like "15 May 2026"
+                `${dateObj.getDate()} ${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getFullYear()}`.toLowerCase(),
+                // Format like "May 15, 2026"
+                `${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getDate()}, ${dateObj.getFullYear()}`.toLowerCase()
+            ];
+            
+            return formats;
+        };
+    }
+    
     function performSearch() {
-        // Get futureDates from global variable
         const futureDatesData = window.futureDates || [];
-        
         const searchTerm = searchInput.value.toLowerCase().trim();
         
         if (!searchTerm) {
@@ -1373,33 +1420,52 @@ function initDateSearch(dateButtons) {
         
         let hasVisible = false;
         let firstVisibleButton = null;
+        let bestMatchButton = null;
+        let bestMatchScore = 0;
         
         dateButtons.forEach(btn => {
             const dateValue = btn.title;
             const displayText = btn.textContent;
             const dateObj = new Date(btn.title);
-            const fullMonth = dateObj.toLocaleDateString('en-US', { month: 'long' }).toLowerCase();
-            const fullDay = dateObj.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
-            const year = dateObj.getFullYear().toString();
-            const month = (dateObj.getMonth() + 1).toString();
-            const day = dateObj.getDate().toString();
             
-            const matches = 
-                dateValue.includes(searchTerm) ||
-                displayText.toLowerCase().includes(searchTerm) ||
-                fullMonth.includes(searchTerm) ||
-                fullDay.includes(searchTerm) ||
-                year.includes(searchTerm) ||
-                month.includes(searchTerm) ||
-                day.includes(searchTerm) ||
-                `${fullMonth} ${day}`.includes(searchTerm) ||
-                `${day} ${fullMonth}`.includes(searchTerm);
+            // Get all searchable formats for this date
+            const getFormats = parseSearchTerm(searchTerm);
+            const formats = getFormats(dateObj, displayText, dateValue);
+            
+            let matches = false;
+            let matchScore = 0;
+            
+            // Check if search term matches any format
+            for (const format of formats) {
+                if (format.includes(searchTerm)) {
+                    matches = true;
+                    // Calculate match score (longer matches are better)
+                    const score = searchTerm.length / format.length;
+                    if (score > matchScore) {
+                        matchScore = score;
+                    }
+                }
+            }
+            
+            // Also check if search term is a number that matches day or month
+            if (!isNaN(searchTerm) && searchTerm.length <= 2) {
+                const dayNum = dateObj.getDate().toString();
+                const monthNum = (dateObj.getMonth() + 1).toString();
+                if (dayNum === searchTerm || monthNum === searchTerm) {
+                    matches = true;
+                    matchScore = Math.max(matchScore, 0.9);
+                }
+            }
             
             if (matches) {
                 btn.classList.remove('hidden-date');
                 hasVisible = true;
                 if (!firstVisibleButton) {
                     firstVisibleButton = btn;
+                }
+                if (matchScore > bestMatchScore) {
+                    bestMatchScore = matchScore;
+                    bestMatchButton = btn;
                 }
             } else {
                 btn.classList.add('hidden-date');
@@ -1412,16 +1478,18 @@ function initDateSearch(dateButtons) {
             removeNoResultsMessage();
         }
         
-        if (firstVisibleButton) {
+        // Select the best matching date or first visible
+        const buttonToSelect = bestMatchButton || firstVisibleButton;
+        if (buttonToSelect) {
             document.querySelectorAll('.dates-carousel .time-slot').forEach(b => b.classList.remove('selected'));
-            firstVisibleButton.classList.add('selected');
+            buttonToSelect.classList.add('selected');
             if (futureDatesData.length > 0) {
-                const matchingSlot = futureDatesData.find(slot => slot.date === firstVisibleButton.title);
+                const matchingSlot = futureDatesData.find(slot => slot.date === buttonToSelect.title);
                 if (matchingSlot && typeof renderSlots === 'function') {
                     renderSlots(matchingSlot);
                 }
             }
-            firstVisibleButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            buttonToSelect.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
     }
     
@@ -1432,7 +1500,7 @@ function initDateSearch(dateButtons) {
             const noResultMsg = document.createElement('div');
             noResultMsg.id = 'noSearchResults';
             noResultMsg.className = 'no-results';
-            noResultMsg.innerHTML = `🔍 No dates found matching "${searchTerm}"<br><small>Try searching by: date (2026-05-15), month (May), day (Monday), or year (2026)</small>`;
+            noResultMsg.innerHTML = `🔍 No dates found matching "${searchTerm}"<br><small>Try: May 15, 15 May, Monday, 15-05-2026, 05/15/2026, or just "May" or "15"</small>`;
             carousel.parentElement.appendChild(noResultMsg);
         }
     }
@@ -1628,7 +1696,34 @@ function initDateSearch(dateButtons) {
                            const issue = document.getElementById('modalIssue').value.trim();
                            const age = document.getElementById('modalAge').value.trim();
                            const ageError = document.getElementById("ageError");
+// Name validation - only alphabets, minimum 3 characters
+const nameRegex = /^[A-Za-z]{3,}$/;
+if (!name) {
+    showToast("Please enter your name.");
+    return;
+}
+if (!nameRegex.test(name)) {
+    showToast("Name must contain only alphabets and be at least 3 characters long.");
+    return;
+}
 
+// Email validation - allowed domains
+const allowedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com'];
+const emailRegex = /^[^\s@]+@([^\s@]+)$/;
+if (!email) {
+    showToast("Please enter your email.");
+    return;
+}
+const match = emailRegex.exec(email);
+if (!match) {
+    showToast("Please enter a valid email address.");
+    return;
+}
+const domain = match[1].toLowerCase();
+if (!allowedDomains.includes(domain)) {
+    showToast("Email must be from: gmail.com, yahoo.com, outlook.com, or hotmail.com");
+    return;
+}
                             if (!/^\d+$/.test(age)) {
                             ageError.textContent = " Age must be a number.";
                             ageError.style.display = "block";
@@ -1703,49 +1798,119 @@ const normalizedTime = normalizeTime(selectedTime);
                                 });
                         }
 
-                        document.addEventListener("DOMContentLoaded", () => {
-                                const phoneInput = document.getElementById("modalPhone");
-                                const phoneError = document.createElement("div");
-                                phoneError.id = "phoneError";
-                                phoneError.style.color = "red";
-                                phoneError.style.fontSize = "0.9em";
-                                phoneError.style.marginTop = "4px";
-                                phoneError.style.display = "none";
+                       document.addEventListener("DOMContentLoaded", () => {
+    // Phone validation
+    const phoneInput = document.getElementById("modalPhone");
+    const phoneError = document.createElement("small");
+    phoneError.className = 'error-message';
+    phoneError.style.color = "red";
+    phoneError.style.fontSize = "0.9em";
+    phoneError.style.marginTop = "4px";
+    phoneError.style.display = "none";
+    phoneInput.parentNode.appendChild(phoneError);
+    const pkPhoneRegex = /^(03[0-9]{9}|0[1-9][0-9]{8,9})$/;
 
-                                phoneInput.parentNode.appendChild(phoneError);
-                                const pkPhoneRegex = /^(03[0-9]{9}|0[1-9][0-9]{8,9})$/;
+    phoneInput.addEventListener("input", () => {
+        const phone = phoneInput.value.trim();
+        if (phone === "") {
+            phoneError.style.display = "none";
+            phoneInput.style.borderColor = "";
+        } else if (!pkPhoneRegex.test(phone)) {
+            phoneError.textContent = "Invalid Pakistani phone number (e.g., 03001234567 or 0421234567)";
+            phoneError.style.display = "block";
+            phoneInput.style.borderColor = "red";
+        } else {
+            phoneError.style.display = "none";
+            phoneInput.style.borderColor = "";
+        }
+    });
 
-                                // Live validation while typing
-                                phoneInput.addEventListener("input", () => {
-                                    const phone = phoneInput.value.trim();
-                                    if (phone === "") {
-                                        phoneError.style.display = "none"; 
-                                    } else if (!pkPhoneRegex.test(phone)) {
-                                        phoneError.textContent = "Invalid Pakistani phone number (e.g., 03001234567 or 0421234567)";
-                                        phoneError.style.display = "block";
-                                    } else {
-                                        phoneError.style.display = "none"; 
-                                    }
-                                });
-                            });
-                            document.addEventListener("DOMContentLoaded", () => {
-                            const ageInput = document.getElementById("modalAge");
-                            const ageError = document.getElementById("ageError");
-                            ageInput.addEventListener("input", () => {
-                                const ageValue = ageInput.value.trim();
-                                if (ageValue === "") {
-                                    ageError.style.display = "none"; 
-                                    } else if (!/^\d+$/.test(ageValue)) {
-                                        ageError.textContent = "Age must be a number.";
-                                        ageError.style.display = "block";
-                                    } else if (parseInt(ageValue) > 150) {
-                                        ageError.textContent = "Age cannot be greater than 150.";
-                                        ageError.style.display = "block";
-                                    } else {
-                                        ageError.style.display = "none"; 
-                                        }
-                                        });
-                                    });
+    // Name validation
+    const nameInput = document.getElementById('modalName');
+    const nameError = document.createElement('small');
+    nameError.className = 'error-message';
+    nameError.style.color = 'red';
+    nameError.style.fontSize = '0.9em';
+    nameError.style.marginTop = '4px';
+    nameError.style.display = 'none';
+    nameInput.parentNode.appendChild(nameError);
+    const nameRegex = /^[A-Za-z]{3,}$/;
+
+    nameInput.addEventListener('input', () => {
+        const name = nameInput.value.trim();
+        if (name === '') {
+            nameError.style.display = 'none';
+            nameInput.style.borderColor = '';
+        } else if (!nameRegex.test(name)) {
+            nameError.textContent = 'Name must contain only alphabets and be at least 3 characters long';
+            nameError.style.display = 'block';
+            nameInput.style.borderColor = 'red';
+        } else {
+            nameError.style.display = 'none';
+            nameInput.style.borderColor = '';
+        }
+    });
+
+    // Email validation
+    const emailInput = document.getElementById('modalEmail');
+    const emailError = document.createElement('small');
+    emailError.className = 'error-message';
+    emailError.style.color = 'red';
+    emailError.style.fontSize = '0.9em';
+    emailError.style.marginTop = '4px';
+    emailError.style.display = 'none';
+    emailInput.parentNode.appendChild(emailError);
+    const allowedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com'];
+    const emailRegex = /^[^\s@]+@([^\s@]+)$/;
+
+    emailInput.addEventListener('input', () => {
+        const email = emailInput.value.trim();
+        if (email === '') {
+            emailError.style.display = 'none';
+            emailInput.style.borderColor = '';
+        } else {
+            const match = emailRegex.exec(email);
+            if (!match) {
+                emailError.textContent = 'Please enter a valid email address';
+                emailError.style.display = 'block';
+                emailInput.style.borderColor = 'red';
+            } else {
+                const domain = match[1].toLowerCase();
+                if (!allowedDomains.includes(domain)) {
+                    emailError.textContent = 'Email must be from: gmail.com, yahoo.com, outlook.com, or hotmail.com';
+                    emailError.style.display = 'block';
+                    emailInput.style.borderColor = 'red';
+                } else {
+                    emailError.style.display = 'none';
+                    emailInput.style.borderColor = '';
+                }
+            }
+        }
+    });
+
+    // Age validation
+    const ageInput = document.getElementById("modalAge");
+    const ageError = document.getElementById("ageError");
+    
+    ageInput.addEventListener("input", () => {
+        const ageValue = ageInput.value.trim();
+        if (ageValue === "") {
+            ageError.style.display = "none";
+            ageInput.style.borderColor = "";
+        } else if (!/^\d+$/.test(ageValue)) {
+            ageError.textContent = "Age must be a number.";
+            ageError.style.display = "block";
+            ageInput.style.borderColor = "red";
+        } else if (parseInt(ageValue) > 150) {
+            ageError.textContent = "Age cannot be greater than 150.";
+            ageError.style.display = "block";
+            ageInput.style.borderColor = "red";
+        } else {
+            ageError.style.display = "none";
+            ageInput.style.borderColor = "";
+        }
+    });
+});
     </script>
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
 

@@ -490,6 +490,154 @@
       // Multi-select variables
       let selectedSpecialties = [];
       let allSpecialtyOptions = [];
+      let degreeDropdown = null;
+
+      // Degrees by speciality mapping
+      const degreesBySpeciality = {
+        general: ["MBBS", "MD", "DNB", "MS", "MSc", "BAMS", "BHMS"],
+        pediatrician: [
+          "MBBS",
+          "MD Pediatrics",
+          "DCH",
+          "DNB Pediatrics",
+          "MRCPCH",
+        ],
+        cardiologist: [
+          "MBBS",
+          "MD",
+          "DM Cardiology",
+          "DNB Cardiology",
+          "MRCP",
+          "FACC",
+        ],
+        gastroenterologist: [
+          "MBBS",
+          "MD",
+          "DM Gastroenterology",
+          "DNB Gastroenterology",
+          "MRCP",
+        ],
+        nephrologist: ["MBBS", "MD", "DM Nephrology", "DNB Nephrology", "FRCP"],
+        oncologist: [
+          "MBBS",
+          "MD",
+          "DM Oncology",
+          "DNB Oncology",
+          "MRCP",
+          "FRCR",
+        ],
+        pulmonologist: [
+          "MBBS",
+          "MD",
+          "DM Pulmonology",
+          "DNB Pulmonology",
+          "MRCP",
+        ],
+        orthopedist: [
+          "MBBS",
+          "MS Orthopedics",
+          "DNB Orthopedics",
+          "MCh Ortho",
+          "FRCS",
+        ],
+        "plastic-surgeon": [
+          "MBBS",
+          "MS",
+          "MCh Plastic Surgery",
+          "DNB Plastic Surgery",
+          "FRCS",
+        ],
+        surgeon: ["MBBS", "MS General Surgery", "DNB Surgery", "FRCS", "MCh"],
+        "vascular-surgeon": [
+          "MBBS",
+          "MS",
+          "MCh Vascular Surgery",
+          "DNB Vascular Surgery",
+          "FRCS",
+        ],
+        allergist: ["MBBS", "MD Immunology", "DNB Allergy", "MRCP"],
+        dermatologist: [
+          "MBBS",
+          "MD Dermatology",
+          "DNB Dermatology",
+          "DDVL",
+          "MRCP",
+        ],
+        neurologist: [
+          "MBBS",
+          "MD / DM Neurology",
+          "DNB Neurology",
+          "MRCP",
+          "FRCP",
+        ],
+        ophthalmologist: [
+          "MBBS",
+          "MD Ophthalmology",
+          "MS Ophthalmology",
+          "DNB Ophthalmology",
+          "FRCS",
+        ],
+        rheumatologist: [
+          "MBBS",
+          "MD",
+          "DM Rheumatology",
+          "DNB Rheumatology",
+          "MRCP",
+        ],
+        psychiatrist: [
+          "MBBS",
+          "MD Psychiatry",
+          "DNB Psychiatry",
+          "MRCPsych",
+          "DPM",
+        ],
+        urologist: ["MBBS", "MS", "MCh Urology", "DNB Urology", "FRCS"],
+        "ent Specialist": ["MBBS", "MS ENT", "DNB ENT", "DLO", "FRCS"],
+        "emergency-medicine": [
+          "MBBS",
+          "MD Emergency Medicine",
+          "DNB Emergency Medicine",
+          "MRCP",
+          "FRCEM",
+        ],
+        radiologist: ["MBBS", "MD Radiology", "DNB Radiology", "DMRD", "FRCR"],
+        infectious: [
+          "MBBS",
+          "MD Infectious Diseases",
+          "DNB Infectious Diseases",
+          "MRCP",
+          "FRCP",
+        ],
+        "sports-medicine": [
+          "MBBS",
+          "MD Sports Medicine",
+          "DNB Sports Medicine",
+          "MSc Sports Medicine",
+          "FRCP",
+        ],
+        gynecologist: [
+          "MBBS",
+          "MD Gynecology",
+          "MS Gynecology",
+          "DNB Gynecology",
+          "MRCOG",
+        ],
+        obstetrician: [
+          "MBBS",
+          "MD Obstetrics",
+          "MS Obstetrics",
+          "DNB Obstetrics",
+          "MRCOG",
+        ],
+        hematologist: [
+          "MBBS",
+          "MD Hematology",
+          "DM Hematology",
+          "DNB Hematology",
+          "FRCPath",
+        ],
+        dentist: ["BDS", "MDS", "FDS", "MFDS", "MOS", "PhD"],
+      };
 
       // Build specialty options
       function buildSpecialtyOptions() {
@@ -612,6 +760,7 @@
         });
         updateUIFromSelection();
         updateHiddenInput();
+        updateDegreeDropdown(); // Update degrees when specialty changes
       }
 
       function updateUIFromSelection() {
@@ -664,9 +813,47 @@
         });
       }
 
+      // Update degree dropdown based on selected specialties
+      function updateDegreeDropdown() {
+        if (!degreeDropdown) return;
+
+        const selectedSpecialtiesValues = selectedSpecialties.map(
+          (s) => s.value,
+        );
+        let relevantDegrees = new Set();
+
+        if (selectedSpecialtiesValues.length === 0) {
+          const defaultDegrees = ["MBBS", "MD", "DNB", "MS"];
+          defaultDegrees.forEach((degree) => relevantDegrees.add(degree));
+        } else {
+          selectedSpecialtiesValues.forEach((specialty) => {
+            const degrees = degreesBySpeciality[specialty];
+            if (degrees && degrees.length) {
+              degrees.forEach((degree) => relevantDegrees.add(degree));
+            }
+          });
+
+          if (relevantDegrees.size === 0) {
+            const defaultDegrees = ["MBBS", "MD", "DNB", "MS"];
+            defaultDegrees.forEach((degree) => relevantDegrees.add(degree));
+          }
+        }
+
+        const sortedDegrees = Array.from(relevantDegrees).sort();
+        degreeDropdown.innerHTML = '<option value="">Select Degree</option>';
+        sortedDegrees.forEach((degree) => {
+          const option = document.createElement("option");
+          option.value = degree;
+          option.textContent = degree;
+          degreeDropdown.appendChild(option);
+        });
+      }
+
       document.addEventListener("DOMContentLoaded", function () {
         buildSpecialtyOptions();
         setupMultiselectEvents();
+        degreeDropdown = document.getElementById("degree");
+        updateDegreeDropdown(); // Initial call
 
         const bar = document.getElementById("bar");
         const sidebar = document.querySelector(".sidebar");
@@ -692,186 +879,12 @@
           window.location.href = "login.html";
         });
 
-        const degreeDropdown = document.getElementById("degree");
-
-        const degreesBySpeciality = {
-          general: ["MBBS", "MD", "DNB", "MS", "MSc", "BAMS", "BHMS"],
-          pediatrician: [
-            "MBBS",
-            "MD Pediatrics",
-            "DCH",
-            "DNB Pediatrics",
-            "MRCPCH",
-          ],
-          cardiologist: [
-            "MBBS",
-            "MD",
-            "DM Cardiology",
-            "DNB Cardiology",
-            "MRCP",
-            "FACC",
-          ],
-          gastroenterologist: [
-            "MBBS",
-            "MD",
-            "DM Gastroenterology",
-            "DNB Gastroenterology",
-            "MRCP",
-          ],
-          nephrologist: [
-            "MBBS",
-            "MD",
-            "DM Nephrology",
-            "DNB Nephrology",
-            "FRCP",
-          ],
-          oncologist: [
-            "MBBS",
-            "MD",
-            "DM Oncology",
-            "DNB Oncology",
-            "MRCP",
-            "FRCR",
-          ],
-          pulmonologist: [
-            "MBBS",
-            "MD",
-            "DM Pulmonology",
-            "DNB Pulmonology",
-            "MRCP",
-          ],
-          orthopedist: [
-            "MBBS",
-            "MS Orthopedics",
-            "DNB Orthopedics",
-            "MCh Ortho",
-            "FRCS",
-          ],
-          "plastic-surgeon": [
-            "MBBS",
-            "MS",
-            "MCh Plastic Surgery",
-            "DNB Plastic Surgery",
-            "FRCS",
-          ],
-          surgeon: ["MBBS", "MS General Surgery", "DNB Surgery", "FRCS", "MCh"],
-          "vascular-surgeon": [
-            "MBBS",
-            "MS",
-            "MCh Vascular Surgery",
-            "DNB Vascular Surgery",
-            "FRCS",
-          ],
-          allergist: ["MBBS", "MD Immunology", "DNB Allergy", "MRCP"],
-          dermatologist: [
-            "MBBS",
-            "MD Dermatology",
-            "DNB Dermatology",
-            "DDVL",
-            "MRCP",
-          ],
-          neurologist: [
-            "MBBS",
-            "MD / DM Neurology",
-            "DNB Neurology",
-            "MRCP",
-            "FRCP",
-          ],
-          ophthalmologist: [
-            "MBBS",
-            "MD Ophthalmology",
-            "MS Ophthalmology",
-            "DNB Ophthalmology",
-            "FRCS",
-          ],
-          rheumatologist: [
-            "MBBS",
-            "MD",
-            "DM Rheumatology",
-            "DNB Rheumatology",
-            "MRCP",
-          ],
-          psychiatrist: [
-            "MBBS",
-            "MD Psychiatry",
-            "DNB Psychiatry",
-            "MRCPsych",
-            "DPM",
-          ],
-          urologist: ["MBBS", "MS", "MCh Urology", "DNB Urology", "FRCS"],
-          "ent Specialist": ["MBBS", "MS ENT", "DNB ENT", "DLO", "FRCS"],
-          "emergency-medicine": [
-            "MBBS",
-            "MD Emergency Medicine",
-            "DNB Emergency Medicine",
-            "MRCP",
-            "FRCEM",
-          ],
-          radiologist: [
-            "MBBS",
-            "MD Radiology",
-            "DNB Radiology",
-            "DMRD",
-            "FRCR",
-          ],
-          infectious: [
-            "MBBS",
-            "MD Infectious Diseases",
-            "DNB Infectious Diseases",
-            "MRCP",
-            "FRCP",
-          ],
-          "sports-medicine": [
-            "MBBS",
-            "MD Sports Medicine",
-            "DNB Sports Medicine",
-            "MSc Sports Medicine",
-            "FRCP",
-          ],
-          gynecologist: [
-            "MBBS",
-            "MD Gynecology",
-            "MS Gynecology",
-            "DNB Gynecology",
-            "MRCOG",
-          ],
-          obstetrician: [
-            "MBBS",
-            "MD Obstetrics",
-            "MS Obstetrics",
-            "DNB Obstetrics",
-            "MRCOG",
-          ],
-          hematologist: [
-            "MBBS",
-            "MD Hematology",
-            "DM Hematology",
-            "DNB Hematology",
-            "FRCPath",
-          ],
-          dentist: ["BDS", "MDS", "FDS", "MFDS", "MOS", "PhD"],
-        };
-
-        function updateDegreeDropdown() {
-          if (!degreeDropdown) return;
-          degreeDropdown.innerHTML = '<option value="">Select Degree</option>';
-          const defaultDegrees = ["MBBS", "MD", "DNB", "MS"];
-          defaultDegrees.forEach((degree) => {
-            const option = document.createElement("option");
-            option.value = degree;
-            option.textContent = degree;
-            degreeDropdown.appendChild(option);
-          });
-        }
-
-        updateDegreeDropdown();
-
         const validators = {
           name: (value) => {
             const trimmed = value.trim();
             if (trimmed.length < 3)
               return "Name must be at least 3 characters long.";
-            const onlyAlphabets = /^[A-Za-z]+$/;
+            const onlyAlphabets = /^[A-Za-z\s]+$/;
             if (!onlyAlphabets.test(trimmed))
               return "Name must contain only alphabets.";
             return true;
