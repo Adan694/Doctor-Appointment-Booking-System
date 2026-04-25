@@ -2,7 +2,7 @@ const express = require('express');
 const { User } = require('../models/users');
 const Doctor = require('../models/doctors');
 const Chat = require('../models/chat'); // adjust path to your Chat model
-
+const sendEmail = require('../Utils/sendEmail');
 const {
   deactivatePatient,
   activatePatient,
@@ -206,6 +206,7 @@ router.post('/chats/mark-read', async (req, res) => {
   res.json({ success: true });
 });
 // Unblock patient route
+// Unblock patient route
 router.put('/patients/:id/unblock', authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const { id } = req.params;
@@ -239,14 +240,44 @@ router.put('/patients/:id/unblock', authenticateToken, authorizeAdmin, async (re
     // Unblock the patient
     patient.isBlocked = false;
     patient.blockedUntil = null;
-        patient.missedAppointments = 0;  // 👈 ADD THIS LINE HERE
-
+    patient.missedAppointments = 0;
     
     await patient.save();
     
+    // ✅ SEND UNBLOCK EMAIL NOTIFICATION
+    try {
+      
+      const unblockMessage = `
+Dear ${patient.name},
+
+Your account has been **unblocked** by the administrator.
+
+You can now:
+✅ Book new appointments
+✅ Access all features of DocAssist
+
+If you continue to miss appointments, your account may be blocked again in the future.
+
+Thank you for your cooperation.
+
+Best regards,
+DocAssist Team
+      `;
+      
+       await sendEmail(
+        patient.email,                          // 1st: to (string)
+        'Account Unblocked - DocAssist',        // 2nd: subject (string)
+        unblockMessage                          // 3rd: message (string)
+      );
+      
+      console.log(`Unblock email sent to ${patient.email}`);
+    } catch (emailError) {
+      console.error('Failed to send unblock email:', emailError.message);
+    }
+    
     res.status(200).json({
       success: true,
-      message: 'Patient unblocked successfully',
+      message: 'Patient unblocked successfully and notification email sent',
       patient: {
         id: patient._id,
         name: patient.name,
@@ -264,8 +295,5 @@ router.put('/patients/:id/unblock', authenticateToken, authorizeAdmin, async (re
     });
   }
 });
-// Simple endpoint to get admin's total unread messages
-// Add this endpoint for admin's total unread messages
-
 module.exports = router;
 
