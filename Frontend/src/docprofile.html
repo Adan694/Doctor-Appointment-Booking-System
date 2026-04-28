@@ -602,16 +602,20 @@
           <div class="input-group">
             <input type="text" id="qualifications" placeholder=" " />
             <label for="qualifications">Qualifications</label>
+                <span id="qualificationsError" class="error-message"></span>
+
           </div>
 
           <div class="input-group">
             <input type="text" id="services" placeholder=" " />
             <label for="services">Services</label>
+            <span id="servicesError" class="error-message"></span>
           </div>
 
           <div class="input-group">
             <input type="text" id="conditions" placeholder=" " />
             <label for="conditions">Conditions Treated</label>
+            <span id="conditionsError" class="error-message"></span>
           </div>
 
           <div class="input-group">
@@ -623,6 +627,7 @@
           <div class="input-group">
             <input type="text" id="memberships" placeholder=" " />
             <label for="memberships">Memberships</label>
+            <span id="membershipsError" class="error-message"></span>
           </div>
 
           <div class="input-group">
@@ -634,6 +639,7 @@
           <div class="input-group">
             <input type="text" id="locations" placeholder=" " />
             <label for="locations">Practice Locations</label>
+            <span id="locationsError" class="error-message"></span>
           </div>
         </div>
 
@@ -641,10 +647,14 @@
           <div class="input-group">
             <input type="text" id="degree" placeholder=" " />
             <label>Degree</label>
+                <span id="degreeError" class="error-message"></span>
+
           </div>
           <div class="input-group">
             <textarea id="about" placeholder=" "></textarea>
             <label>About</label>
+                <span id="aboutError" class="error-message"></span>
+
           </div>
         </div>
 
@@ -968,8 +978,103 @@ function validateLocations(value) {
           opt.element.disabled = !enabled;
         });
       }
+  function validateServicesLive() {
+    console.log("validateServicesLive called");
+    const value = document.getElementById("services").value;
+    const errorSpan = document.getElementById("servicesError");
+    console.log("Value:", value, "Length:", value.length);
+    if (!errorSpan) {
+        console.log("servicesError span not found!");
+        return;
+    }
+    if (!value || value.length < 5) {
+        errorSpan.textContent = !value ? "Services are required" : "Services must be at least 5 characters";
+        errorSpan.style.display = "block";
+        errorSpan.style.color = "red";
+        console.log("Error shown");
+    } else {
+        errorSpan.style.display = "none";
+        errorSpan.textContent = "";
+        console.log("Error hidden");
+    }
+}
 
+function validateConditionsLive() {
+    console.log("validateConditionsLive called");
+    const value = document.getElementById("conditions").value;
+    const errorSpan = document.getElementById("conditionsError");
+    if (!errorSpan) return;
+    if (!value || value.length < 5) {
+        errorSpan.textContent = !value ? "Conditions Treated are required" : "Conditions must be at least 5 characters";
+        errorSpan.style.display = "block";
+    } else {
+        errorSpan.style.display = "none";
+    }
+}
+
+function validateMembershipsLive() {
+    console.log("validateMembershipsLive called");
+    const value = document.getElementById("memberships").value;
+    const errorSpan = document.getElementById("membershipsError");
+    if (!errorSpan) return;
+    if (!value || value.length < 3) {
+        errorSpan.textContent = !value ? "Memberships are required" : "Memberships must be at least 3 characters";
+        errorSpan.style.display = "block";
+    } else {
+        errorSpan.style.display = "none";
+    }
+}
+
+function validateLocationsLive() {
+    console.log("validateLocationsLive called");
+    const value = document.getElementById("locations").value;
+    const errorSpan = document.getElementById("locationsError");
+    if (!errorSpan) return;
+    if (!value || value.length < 5) {
+        errorSpan.textContent = !value ? "Practice Locations are required" : "Practice Locations must be at least 5 characters";
+        errorSpan.style.display = "block";
+    } else {
+        errorSpan.style.display = "none";
+    }
+}
+function validateQualificationsLive() {
+    const value = document.getElementById("qualifications").value;
+    const errorSpan = document.getElementById("qualificationsError");
+    if (!errorSpan) return;
+    if (!value || value.length < 5) {
+        errorSpan.textContent = !value ? "Qualifications are required" : "Qualifications must be at least 5 characters";
+        errorSpan.style.display = "block";
+    } else {
+        errorSpan.style.display = "none";
+    }
+}
+
+function validateDegreeLive() {
+    const value = document.getElementById("degree").value;
+    const errorSpan = document.getElementById("degreeError");
+    if (!errorSpan) return;
+    if (!value || value.length < 3) {
+        errorSpan.textContent = !value ? "Degree is required" : "Degree must be at least 3 characters";
+        errorSpan.style.display = "block";
+    } else {
+        errorSpan.style.display = "none";
+    }
+}
+
+function validateAboutLive() {
+    const value = document.getElementById("about").value;
+    const errorSpan = document.getElementById("aboutError");
+    if (!errorSpan) return;
+    if (!value || value.length < 20) {
+        errorSpan.textContent = !value ? "About section is required" : "About must be at least 20 characters";
+        errorSpan.style.display = "block";
+    } else {
+        errorSpan.style.display = "none";
+    }
+}
       document.addEventListener("DOMContentLoaded", () => {
+            console.log("DOM loaded - setting up validations");
+
         buildSpecialtyOptions();
         setupMultiselectEvents();
         loadDoctorProfile();
@@ -981,7 +1086,13 @@ function validateLocations(value) {
           .getElementById("experience")
           .addEventListener("input", validateExperience);
         document.getElementById("fees").addEventListener("input", validateFees);
-
+        document.getElementById("services").addEventListener("input", validateServicesLive);
+document.getElementById("conditions").addEventListener("input", validateConditionsLive);
+document.getElementById("memberships").addEventListener("input", validateMembershipsLive);
+document.getElementById("locations").addEventListener("input", validateLocationsLive);
+document.getElementById("qualifications").addEventListener("input", validateQualificationsLive);
+document.getElementById("degree").addEventListener("input", validateDegreeLive);
+document.getElementById("about").addEventListener("input", validateAboutLive);
         const tabButtons = document.querySelectorAll(".tab-btn");
         const tabContents = document.querySelectorAll(".tab-content");
         tabButtons.forEach((btn) => {
@@ -1018,6 +1129,7 @@ function validateLocations(value) {
         error.style.display = "none";
         return true;
       }
+    
 
       function togglePasswordFields() {
         const fields = document.getElementById("password-fields");
