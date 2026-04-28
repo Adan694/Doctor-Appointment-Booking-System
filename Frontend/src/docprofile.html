@@ -474,7 +474,6 @@
         border-bottom: 2px solid #096666;
       }
 
-      /* hide original select, use multiselect */
       .error-message {
         color: red;
         font-size: 12px;
@@ -523,7 +522,6 @@
         display: block;
       }
 
-      /* for read-only state styling */
       .multiselect-btn.disabled {
         background: #f9f9f9;
         color: #666;
@@ -696,13 +694,11 @@
     <script>
       const doctorId = localStorage.getItem("doctorId");
       let isEditing = false;
-      let selectedSpecialties = []; // store selected values
-      let allSpecialtyOptions = []; // store {value, label}
+      let selectedSpecialties = [];
+      let allSpecialtyOptions = [];
 
-      // Initialize multi-select from existing select options structure
       function buildSpecialtyOptions() {
         const originalSelect = document.getElementById("specialization");
-        // Define all specialty options as per original design
         const specialtyGroups = [
           {
             label: "Primary Care",
@@ -812,7 +808,6 @@
           });
         });
 
-        // update hidden select for form compatibility
         syncHiddenSelect();
       }
 
@@ -887,13 +882,12 @@
         return selectedSpecialties.map((s) => s.label).join(",");
       }
 
-      // Toggle dropdown visibility
       function setupMultiselectEvents() {
         const btn = document.getElementById("multiselectBtn");
         const dropdown = document.getElementById("multiselectDropdown");
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
-          if (!isEditing) return; // only when editing mode
+          if (!isEditing) return;
           dropdown.classList.toggle("show");
         });
         document.addEventListener("click", (e) => {
@@ -914,7 +908,6 @@
           btn.style.cursor = "default";
           dropdown.classList.remove("show");
         }
-        // disable checkboxes interaction when not editing
         allSpecialtyOptions.forEach((opt) => {
           opt.element.disabled = !enabled;
         });
@@ -1030,20 +1023,13 @@
           .then((res) => res.json())
           .then((data) => {
             document.getElementById("doctorName").value = data.name || "";
-            // Handle speciality: could be string or array from backend
-            // Handle speciality: could be string or array from backend
-            // Handle speciality from database - specifically for your format
             let specialtyValue = data.speciality;
             let selectedSpecs = [];
 
             if (specialtyValue) {
-              // If it's already an array
               if (Array.isArray(specialtyValue)) {
                 selectedSpecs = specialtyValue;
-              }
-              // If it's a JSON string like "["general","pediatrician","cardiologist"]"
-              else if (typeof specialtyValue === "string") {
-                // Try to parse as JSON
+              } else if (typeof specialtyValue === "string") {
                 try {
                   const parsed = JSON.parse(specialtyValue);
                   if (Array.isArray(parsed)) {
@@ -1052,7 +1038,6 @@
                     selectedSpecs = [specialtyValue];
                   }
                 } catch (e) {
-                  // If JSON parsing fails, check if it's comma-separated
                   if (specialtyValue.includes(",")) {
                     selectedSpecs = specialtyValue
                       .split(",")
@@ -1064,8 +1049,7 @@
               }
             }
 
-            console.log("Parsed specialties:", selectedSpecs); // Should show ["general", "pediatrician", "cardiologist"]
-            // Small delay to ensure dropdown options are built before setting selections
+            console.log("Parsed specialties:", selectedSpecs);
             setTimeout(() => {
               setSelectedSpecialtiesFromValues(selectedSpecs);
             }, 100);
@@ -1108,7 +1092,6 @@
 
         const profile = new FormData();
         profile.append("name", document.getElementById("doctorName").value);
-        // save specialties as JSON string
         const selectedSpecialtyValues = getSelectedSpecialtyValues();
         profile.append("speciality", JSON.stringify(selectedSpecialtyValues));
 
@@ -1176,7 +1159,6 @@
             if (data.success || data._id || data.doctor) {
               showToast("Profile saved successfully!");
 
-              // Refresh the specialties from the response data
               if (data.speciality || (data.doctor && data.doctor.speciality)) {
                 const savedSpecialty =
                   data.speciality || data.doctor.speciality;
@@ -1236,7 +1218,7 @@
         const userId = localStorage.getItem("userId");
         const role = localStorage.getItem("userRole");
         if (userId && role) {
-          console.log("🟢 Reconnecting user:", userId, role);
+          console.log(" Reconnecting user:", userId, role);
           socket.emit("join_user", { userId, role });
         }
       });

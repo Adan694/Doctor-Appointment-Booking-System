@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let card = document.querySelectorAll(".card");
     let count = 0;
     const doctorContainer = document.getElementById("doctorContainer");
-// Update navigation bar based on user role
 function updateNavbar() {
     const profileMenu = document.getElementById('profileMenu');
     const authButton = document.getElementById('authButton');

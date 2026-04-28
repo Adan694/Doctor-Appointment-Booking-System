@@ -1,5 +1,6 @@
 const { User } = require('../models/users');
 const bcrypt = require('bcrypt');
+const Chat = require('../models/chat'); 
 
 async function insertUser(userData) {
   const user = new User(userData); 
@@ -79,19 +80,7 @@ const submitFeedback = async (req, res) => {
         res.status(500).json({ message: 'Error submitting feedback' });
     }
 };
-const Chat = require('../models/chat'); // make sure this is imported
 
-// const getUnreadCount = async (req, res) => {
-//     try {
-//         const receiverId = req.user.email; // match what you store in Chat.receiverId
-//         const count = await Chat.countDocuments({ receiverId, read: false });
-
-//         res.status(200).json({ unreadCount: count });
-//     } catch (error) {
-//         console.error('Error getting unread messages count:', error);
-//         res.status(500).json({ unreadCount: 0 });
-//     }
-// };
 const getUnreadCount = async (req, res) => {
     try {
         // Get the user from the database to get their ID
@@ -100,9 +89,8 @@ const getUnreadCount = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
         
-        // Use the user's _id (MongoDB ID) as a string to match the chat schema
         const count = await Chat.countDocuments({ 
-            receiverId: user._id.toString(), // Convert ObjectId to string
+            receiverId: user._id.toString(), // Converts ObjectId to string
             read: false 
         });
 
@@ -115,7 +103,6 @@ const getUnreadCount = async (req, res) => {
 };
 const markMessagesAsRead = async (req, res) => {
     try {
-        // find the logged-in user
         const user = await User.findOne({ email: req.user.email });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
@@ -146,6 +133,6 @@ module.exports = {
   insertUser,
   getUsers,
   getUnreadCount,
-      markMessagesAsRead
+  markMessagesAsRead
 
 };

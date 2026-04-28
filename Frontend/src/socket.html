@@ -22,7 +22,7 @@
       }
 
       function connect() {
-        log("🔄 Connecting...");
+        log(" Connecting...");
         socket = io("http://localhost:3000", {
           auth: {
             userId: "test-user",
@@ -32,24 +32,24 @@
         });
 
         socket.on("connect", () => {
-          log(`✅ Connected! ID: ${socket.id}`);
+          log(` Connected! ID: ${socket.id}`);
         });
 
         socket.onAny((eventName, ...args) => {
-          log(`📥 Event: "${eventName}" - ${JSON.stringify(args[0])}`);
+          log(` Event: "${eventName}" - ${JSON.stringify(args[0])}`);
         });
 
         socket.on("error", (err) => {
-          log(`❌ Error: ${JSON.stringify(err)}`);
+          log(` Error: ${JSON.stringify(err)}`);
         });
       }
 
       function test() {
         if (!socket) {
-          log("❌ Not connected!");
+          log(" Not connected!");
           return;
         }
-        log("📤 Sending test...");
+        log(" Sending test...");
         socket.emit("requestOnlineUsers");
         socket.emit("test_message", { message: "Hello" });
       }

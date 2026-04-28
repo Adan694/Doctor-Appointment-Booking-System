@@ -4,10 +4,10 @@ const Chat = require("../models/chat");
 let onlineUsers = {};
 
 function initializeSocket(io) {
-  console.log("🔌 Socket.IO is running...");
+  console.log(" Socket.IO is running...");
 
   io.on("connection", (socket) => {
-    console.log("🔗 User connected:", socket.id);
+    console.log(" User connected:", socket.id);
 
     /* ---------------------------------------
        USER LOGIN -> mark online + join room
@@ -17,11 +17,11 @@ function initializeSocket(io) {
       socket.join(userId);
 
       onlineUsers[userId] = { socketId: socket.id, role };
-      console.log(`🟢 ${role} ${userId} is ONLINE`);
+      console.log(` ${role} ${userId} is ONLINE`);
 
       io.emit("online_users", onlineUsers);
     });
-console.log("🟢 Current online users:", onlineUsers);
+console.log(" Current online users:", onlineUsers);
     /* ---------------------------------------
        ADMIN opened dashboard -> send list
     ---------------------------------------- */
@@ -35,7 +35,7 @@ console.log("🟢 Current online users:", onlineUsers);
     socket.on("admin_join", ({ userId }) => {
       if (!userId) return;
       socket.join(userId);
-      console.log(`📌 Admin joined room ${userId}`);
+      console.log(` Admin joined room ${userId}`);
     });
 
     /* ---------------------------------------
@@ -52,7 +52,7 @@ console.log("🟢 Current online users:", onlineUsers);
       const recipients = new Set([senderId, receiverId]);
       recipients.forEach((id) => io.to(id).emit("new_message", chat));
 
-      console.log(`💬 Message from ${senderId} -> ${receiverId}`);
+      console.log(` Message from ${senderId} -> ${receiverId}`);
     });
 /* ---------------------------------------
    USER LOGOUT -> mark offline
@@ -60,7 +60,7 @@ console.log("🟢 Current online users:", onlineUsers);
 socket.on("user_logout", ({ userId }) => {
   if (!userId) return;
 
-  console.log(`🔴 ${userId} logged out`);
+  console.log(` ${userId} logged out`);
 
   delete onlineUsers[userId];
 
@@ -79,12 +79,12 @@ socket.on("user_logout", ({ userId }) => {
       });
 
       if (removedUser) {
-        console.log(`🔴 User ${removedUser} went OFFLINE`);
+        console.log(` User ${removedUser} went OFFLINE`);
         delete onlineUsers[removedUser];
         io.emit("online_users", onlineUsers);
       }
 
-      console.log("❌ Socket disconnected:", socket.id);
+      console.log(" Socket disconnected:", socket.id);
     });
   });
 }

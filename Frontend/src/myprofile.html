@@ -513,7 +513,6 @@ nav ul li a:hover {
         margin: 5px 0;
     }
 }
-/* Password fields styling matches profile fields */
 #password-fields input {
     width: 100%;
     padding: 10px 15px;
@@ -534,7 +533,6 @@ nav ul li a:hover {
     color: #333;
 }
 
-/* Password field labels styling matches profile labels */
 #password-fields label {
     display: block;
     margin-top: 10px;
@@ -542,7 +540,6 @@ nav ul li a:hover {
     color: var(--primary-color);
 }
 
-/* Change Password button styling matches Edit Profile button */
 #change-password-btn {
     background-color: var(--primary-color);
     color: white;
@@ -721,18 +718,14 @@ margin-top:15px
 </div>
 
 </div>
-<!-- Floating Chat Button -->
 
-    <!-- Floating Chat Button -->
 <div id="chatFloatingBtn">
     <i class="fa-solid fa-comments"></i>
    <span id="unreadCount" class="unread-badge">0</span>
 </div>
 
  <script>
-// document.getElementById("chatFloatingBtn").addEventListener("click", () => {
-//     window.location.href = "Patientchat.html";
-// });
+
 document.getElementById("chatFloatingBtn").addEventListener("click", async () => {
 
     const token = localStorage.getItem('authToken');
@@ -761,7 +754,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const bar = document.getElementById('bar');
     const menu = document.querySelector('nav ul');
 
-    // Toggle password fields only if Edit Profile is active
     changePasswordBtn.addEventListener('click', () => {
         const btn = document.querySelector('.edit-button');
         if (btn.innerText === 'Update') {
@@ -861,7 +853,6 @@ function toggleEditForm() {
             }
         });
 
-        // --- Live Validation Divs ---
         // Name
         const nameInput = document.getElementById('edit-name');
         if (nameInput) {
@@ -900,7 +891,6 @@ function toggleEditForm() {
             });
         }
 
-        // Phone
         const phoneInput = document.getElementById('edit-phone');
         if (phoneInput) {
             const phoneError = document.createElement('div');
@@ -916,7 +906,6 @@ function toggleEditForm() {
             });
         }
 
-        // CNIC
         const cnicInput = document.getElementById('edit-cnic');
         if (cnicInput) {
             const cnicError = document.createElement('div');
@@ -932,7 +921,6 @@ function toggleEditForm() {
             });
         }
 
-        // Password live validation
         ['edit-new-password', 'edit-password-confirm'].forEach(id => {
             const input = document.getElementById(id);
             if (!input) return;
@@ -990,11 +978,8 @@ function updateProfile() {
         age: calculatedAge
     };
 
-    // Validate phone
     const phoneRegex = /^(03\d{9}|0\d{2,3}\d{7})$/;
     if (!phoneRegex.test(updatedData.phone)) return alert("Invalid Pakistani phone number");
-
-    // Include password if changing
     const passwordFields = document.getElementById('password-fields');
     if (passwordFields.style.display === 'block') {
         const currentPassword = getInput('edit-current-password');
@@ -1028,7 +1013,6 @@ function updateProfile() {
     .then(data => {
         alert(data.message);
 
-        // Replace inputs back to <p>
         ['name','email','phone','dob','gender','age','cnic'].forEach(key => {
             const input = document.getElementById('edit-' + key);
             if (!input) return;
@@ -1038,7 +1022,6 @@ function updateProfile() {
             input.replaceWith(p);
         });
 
-        // Reset password fields
         ['edit-current-password','edit-new-password','edit-password-confirm'].forEach(id => {
             const input = document.getElementById(id);
             if (input) input.remove();
@@ -1075,11 +1058,9 @@ async function updateUnreadCount() {
         console.error('Error fetching unread count:', err);
     }
 }
-// initial load
 updateUnreadCount();
 
-// optionally, refresh every 10 seconds
-// setInterval(updateUnreadCount, 10000);
+
 </script>
 <script src="http://localhost:3000/socket.io/socket.io.js"></script>
 
@@ -1100,7 +1081,7 @@ updateUnreadCount();
     const role = localStorage.getItem("userRole");
 
     if (userId && role) {
-      console.log("🟢 Reconnecting user:", userId, role);
+      console.log(" Reconnecting user:", userId, role);
       socket.emit("join_user", { userId, role });
     }
   });

@@ -259,7 +259,6 @@
         z-index: 2;
       }
 
-      /* Chat window */
       .chat-window {
         flex: 1;
         display: flex;
@@ -568,7 +567,6 @@
         font-weight: bold;
       }
 
-      /* Loading text */
       .loading-text {
         text-align: center;
         color: gray;
@@ -587,13 +585,11 @@
         color: white;
         margin-right: 15px;
       }
-      /* Hide search container and chat input area by default */
       .search-container.hide,
       .chat-input-area.hide {
         display: none;
       }
 
-      /* Optional: Add smooth transition */
       .search-container,
       .chat-input-area {
         transition: all 0.3s ease;
@@ -629,7 +625,6 @@
           </button>
         </div>
 
-        <!-- Search bar - hidden when no chat selected -->
         <div class="search-container" id="searchContainer">
           <input
             type="text"
@@ -672,7 +667,6 @@
           </div>
         </div>
 
-        <!-- Chat input area - hidden when no chat selected -->
         <div class="chat-input-area" id="chatInputArea">
           <input
             id="msgInput"
@@ -686,11 +680,10 @@
         </div>
       </div>
     </div>
-
     <script>
       const socket = io("http://localhost:3000");
       let allUsersCache = [];
-      let allUsersMasterCache = []; // NEW: Master cache for ALL users
+      let allUsersMasterCache = [];
       let latestOnlineUsers = {};
       let patientsUnreadTotal = 0;
       let doctorsUnreadTotal = 0;
@@ -768,22 +761,15 @@
         });
       }
 
-      /* ----------------------------
-   UPDATE TYPE UNREAD BADGES - NOW USING MASTER CACHE
----------------------------- */
       function updateTypeUnreadBadges() {
-        // Calculate totals for patients and doctors from cache
         patientsUnreadTotal = 0;
         doctorsUnreadTotal = 0;
 
-        // Iterate through all unread counts in cache
         Object.keys(unreadCountsCache).forEach((key) => {
-          // Skip keys that end with "_lastMsg" as they're not user IDs
           if (key.endsWith("_lastMsg")) return;
 
           const unread = unreadCountsCache[key] || 0;
           if (unread > 0) {
-            // Find the user in MASTER CACHE to determine their role
             const user = allUsersMasterCache.find((u) => u._id === key);
             if (user) {
               if (user.role === "patient") {
@@ -795,7 +781,6 @@
           }
         });
 
-        // Update patients badge - ALWAYS SHOW if count > 0
         if (patientsUnreadTotal > 0) {
           patientsUnreadBadge.textContent =
             patientsUnreadTotal > 99 ? "99+" : patientsUnreadTotal;
@@ -804,7 +789,6 @@
           patientsUnreadBadge.style.display = "none";
         }
 
-        // Update doctors badge - ALWAYS SHOW if count > 0
         if (doctorsUnreadTotal > 0) {
           doctorsUnreadBadge.textContent =
             doctorsUnreadTotal > 99 ? "99+" : doctorsUnreadTotal;
@@ -819,6 +803,53 @@
           "Doctors:",
           doctorsUnreadTotal,
         );
+      }
+
+      function refreshCurrentChatList() {
+        if (!currentRole) return;
+
+        const searchQuery = searchInput.value.toLowerCase();
+
+        document.querySelectorAll(".chat-item").forEach((item) => {
+          const userId = item.dataset.userid;
+          const unreadCount = unreadCountsCache[userId] || 0;
+          let badge = item.querySelector(".unread-badge");
+
+          if (unreadCount > 0) {
+            if (!badge) {
+              badge = document.createElement("div");
+              badge.className = "unread-badge";
+              const infoDiv = item.querySelector(".chat-item-info");
+              if (infoDiv) {
+                infoDiv.appendChild(badge);
+              }
+            }
+            badge.textContent = unreadCount;
+            badge.style.display = "flex";
+          } else if (badge) {
+            badge.style.display = "none";
+          }
+
+          const lastMsg = unreadCountsCache[userId + "_lastMsg"];
+          if (lastMsg) {
+            const lastMsgEl = item.querySelector(".last-message");
+            if (lastMsgEl) lastMsgEl.textContent = lastMsg;
+          }
+        });
+
+        // Re-apply search filter
+        if (searchQuery) {
+          document.querySelectorAll(".chat-item").forEach((item) => {
+            const name = item
+              .querySelector(".user-name")
+              .textContent.toLowerCase();
+            if (name.includes(searchQuery)) {
+              item.style.display = "flex";
+            } else {
+              item.style.display = "none";
+            }
+          });
+        }
       }
 
       /* ----------------------------
@@ -858,7 +889,6 @@
         window.processedMessages.add(messageKey);
         setTimeout(() => window.processedMessages.delete(messageKey), 2000);
 
-        // Rest of your existing code below...
         const adminId = "689f5be6e5432f608d4b3a54";
 
         console.log("---- NEW MESSAGE RECEIVED ----");
@@ -871,7 +901,6 @@
         console.log("Is From Admin:", isFromAdmin);
         console.log("Chat User ID determined as:", chatUserId);
 
-        // 🔍 Check if chat item exists in DOM
         const chatItem = document.querySelector(
           `.chat-item[data-userid="${chatUserId}"]`,
         );
@@ -879,30 +908,36 @@
         console.log("Chat item found in DOM?", !!chatItem);
 
         if (!chatItem) {
-          console.warn("⚠️ Chat item NOT FOUND in DOM for user:", chatUserId);
+          console.warn(" Chat item NOT FOUND in DOM for user:", chatUserId);
         }
 
         // ----------------------------
         // UNREAD COUNT DEBUG
         // ----------------------------
         if (!isFromAdmin && !msg.read) {
-          console.log("Message is unread and from user");
-
           if (!activeUser || activeUser._id !== chatUserId) {
-            // Make sure the cache is initialized to 0 if undefined
             if (unreadCountsCache[chatUserId] === undefined) {
               unreadCountsCache[chatUserId] = 0;
             }
-
             unreadCountsCache[chatUserId] += 1;
-
-            console.log("New unread count:", unreadCountsCache[chatUserId]);
-
             saveUnreadCounts();
-            updateUnreadBadge(chatUserId, unreadCountsCache[chatUserId]);
-            updateTypeUnreadBadges(); // Update the type badges
-          } else {
-            console.log("Chat already open — not increasing unread");
+
+            const chatItemExists = document.querySelector(
+              `.chat-item[data-userid="${chatUserId}"]`,
+            );
+            if (chatItemExists) {
+              updateUnreadBadge(chatUserId, unreadCountsCache[chatUserId]);
+            }
+
+            updateTypeUnreadBadges();
+            const userInMasterCache = allUsersMasterCache.find(
+              (u) => u._id === chatUserId,
+            );
+            if (userInMasterCache) {
+              userInMasterCache.lastMessage = msg.message;
+            }
+            unreadCountsCache[chatUserId + "_lastMsg"] = msg.message;
+            saveUnreadCounts();
           }
         }
 
@@ -913,7 +948,6 @@
         updateLastMessage(chatUserId, msg.message);
         unreadCountsCache[chatUserId + "_lastMsg"] = msg.message;
         saveUnreadCounts();
-        // ✅ UPDATE CACHE ALSO
         const userInCache = allUsersCache.find((u) => u._id === chatUserId);
         if (userInCache) {
           userInCache.lastMessage = msg.message;
@@ -927,7 +961,6 @@
           userInMasterCache.lastMessage = msg.message;
         }
 
-        // ✅ MOVE USER TO TOP IN CACHE
         if (userInCache) {
           allUsersCache = [
             userInCache,
@@ -982,7 +1015,6 @@
         let badge = item.querySelector(".unread-badge");
 
         if (!badge) {
-          // Create the badge if it doesn't exist
           badge = document.createElement("div");
           badge.className = "unread-badge";
           const infoDiv = item.querySelector(".chat-item-info");
@@ -1023,7 +1055,7 @@
         unreadCountsCache = JSON.parse(
           localStorage.getItem("admin_unread_counts") || "{}",
         );
-        updateTypeUnreadBadges(); // Update type badges after loading
+        updateTypeUnreadBadges();
       }
 
       function saveUnreadCounts() {
@@ -1055,7 +1087,7 @@
 
         // Add role to each user object
         users.forEach((user) => {
-          user.role = role.slice(0, -1); // Remove 's' from end (patients -> patient)
+          user.role = role.slice(0, -1);
         });
 
         allUsersCache = users;
@@ -1066,9 +1098,9 @@
             (u) => u._id === user._id,
           );
           if (existingIndex !== -1) {
-            allUsersMasterCache[existingIndex] = user; // Update existing
+            allUsersMasterCache[existingIndex] = user;
           } else {
-            allUsersMasterCache.push(user); // Add new
+            allUsersMasterCache.push(user);
           }
         });
 
@@ -1096,7 +1128,8 @@
         });
 
         updateOnlineStatus(latestOnlineUsers);
-        updateTypeUnreadBadges(); // Update type badges after loading users
+        updateTypeUnreadBadges();
+        refreshCurrentChatList();
       }
 
       /* ----------------------------
@@ -1154,7 +1187,7 @@
         msgInput.disabled = false;
         sendBtn.disabled = false;
 
-        // Update chat header with user information
+        // chat header with user information
         const currentChatAvatar = document.getElementById("currentChatAvatar");
         const currentChatName = document.getElementById("currentChatName");
         const currentChatStatus = document.getElementById("currentChatStatus");
@@ -1170,7 +1203,6 @@
             user.role === "patient" ? "Patient" : "Doctor";
         }
 
-        // Remove active class from all chat items and add to current
         document
           .querySelectorAll(".chat-item")
           .forEach((i) => i.classList.remove("active"));
@@ -1185,8 +1217,6 @@
         chatBox.innerHTML = "";
         lastRenderedDate = null;
         chats.forEach(addMessage);
-
-        // Scroll to bottom of messages
         chatBox.scrollTop = chatBox.scrollHeight;
       }
 
@@ -1206,7 +1236,8 @@
         unreadCountsCache[userId] = 0;
         saveUnreadCounts();
         updateUnreadBadge(userId, 0);
-        updateTypeUnreadBadges(); // Update type badges after marking as read
+        updateTypeUnreadBadges();
+        refreshCurrentChatList();
       }
 
       /* ----------------------------
@@ -1258,20 +1289,25 @@
           timestamp: new Date().toISOString(),
         };
 
-        // send to server
         socket.emit("send_message", messageData);
-
-        // show instantly in admin chat
         addMessage(messageData);
         updateLastMessage(activeUser._id, msg);
         msgInput.value = "";
       }
 
       /* ----------------------------
-   INIT - UPDATED TO LOAD BOTH USER TYPES
+   INIT -LOAD BOTH USER TYPES
 ---------------------------- */
       initializeSocketListeners();
       loadUnreadCounts();
+      async function initAdminPanel() {
+        loadUnreadCounts();
+        await fetchUnreadCountsFromServer();
+        await initializeAllUsers();
+
+        // Auto-refresh unread counts every 30 seconds
+        setInterval(() => fetchUnreadCountsFromServer(), 30000);
+      }
 
       // Load both patient and doctor users into master cache
       async function initializeAllUsers() {
@@ -1279,8 +1315,14 @@
 
         try {
           // Load patients
+          const token = localStorage.getItem("authToken");
           const patientsRes = await fetch(
             `http://localhost:3000/api/admin/users/patients`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
           );
           const patients = await patientsRes.json();
           patients.forEach((user) => {
@@ -1291,6 +1333,11 @@
           // Load doctors
           const doctorsRes = await fetch(
             `http://localhost:3000/api/admin/users/doctors`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
           );
           const doctors = await doctorsRes.json();
           doctors.forEach((user) => {
@@ -1298,16 +1345,16 @@
             allUsersMasterCache.push(user);
           });
 
-          // Now load the default tab (patients)
-          fetchUsers("patients");
+          await fetchUsers("patients");
+          updateTypeUnreadBadges();
+          refreshCurrentChatList();
         } catch (error) {
           console.error("Error loading initial users:", error);
-          fetchUsers("patients"); // Fallback to just loading patients
+          await fetchUsers("patients");
+          refreshCurrentChatList();
         }
       }
-
-      initializeAllUsers();
-
+      initAdminPanel();
       patientsBtn.onclick = () => {
         currentRole = "patients";
         patientsBtn.classList.add("active");
@@ -1334,7 +1381,9 @@
     </div>
   `;
 
-        fetchUsers("patients");
+        fetchUsers("patients").then(() => {
+          refreshCurrentChatList();
+        });
       };
 
       doctorsBtn.onclick = () => {
@@ -1363,7 +1412,9 @@
     </div>
   `;
 
-        fetchUsers("doctors");
+        fetchUsers("doctors").then(() => {
+          refreshCurrentChatList();
+        });
       };
 
       msgInput.addEventListener("keypress", (e) => {
@@ -1386,6 +1437,40 @@
           }
         });
       });
+
+      async function fetchUnreadCountsFromServer() {
+        try {
+          const token = localStorage.getItem("authToken");
+          if (!token) {
+            console.log("No token found, skipping unread counts fetch");
+            return false;
+          }
+
+          const response = await fetch(
+            "http://localhost:3000/api/admin/unread-counts/689f5be6e5432f608d4b3a54",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          if (response.ok) {
+            const serverUnreadCounts = await response.json();
+            Object.keys(serverUnreadCounts).forEach((key) => {
+              unreadCountsCache[key] = serverUnreadCounts[key];
+            });
+            saveUnreadCounts();
+            updateTypeUnreadBadges();
+            refreshCurrentChatList();
+          } else if (response.status === 403) {
+            console.log("Auth failed, but continuing with local data");
+          }
+        } catch (error) {
+          console.error("Error fetching unread counts:", error);
+        }
+        return false;
+      }
     </script>
   </body>
 </html>

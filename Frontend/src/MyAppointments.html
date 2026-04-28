@@ -700,7 +700,7 @@
       }
       @media (max-width: 768px) {
         .appointments table thead {
-          display: none; /* hide table header */
+          display: none;
         }
 
         .appointments table tr {
@@ -1743,7 +1743,7 @@
         const role = localStorage.getItem("userRole");
 
         if (userId && role) {
-          console.log("🟢 Reconnecting user:", userId, role);
+          console.log(" Reconnecting user:", userId, role);
           socket.emit("join_user", { userId, role });
         }
       });

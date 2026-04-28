@@ -1113,9 +1113,7 @@ body {
 
             const bookingInfoDiv = document.getElementById('booking-info');
             bookingInfoDiv.innerHTML = '';
-            // Add this inside loadAvailability function after bookingInfoDiv.innerHTML = '';
-// Create search bar
-// Create search bar
+  
 const searchContainer = document.createElement('div');
 searchContainer.className = 'search-container';
 searchContainer.innerHTML = `
@@ -1150,7 +1148,7 @@ bookingInfoDiv.appendChild(searchContainer);
                     return slotDateTime > new Date();
                 });
             });
-            window.futureDates = futureDates;  // <--- ADD THIS LINE
+            window.futureDates = futureDates;  
 
 
             if (!futureDates.length) {
@@ -1180,10 +1178,9 @@ bookingInfoDiv.appendChild(searchContainer);
             // Add date count badge
             const countBadge = document.createElement('div');
             countBadge.className = 'date-count-badge';
-            countBadge.innerHTML = `📅 ${futureDates.length} available date${futureDates.length !== 1 ? 's' : ''}`;
+            countBadge.innerHTML = ` ${futureDates.length} available date${futureDates.length !== 1 ? 's' : ''}`;
             bookingInfoDiv.appendChild(countBadge);
-            // Create date buttons inside carousel
-const dateButtons = []; // Store buttons for search
+const dateButtons = [];
 
 futureDates.forEach((slot, index) => {
     const dateBtn = document.createElement('button');
@@ -1194,7 +1191,7 @@ futureDates.forEach((slot, index) => {
         day: 'numeric' 
     });
     dateBtn.textContent = formattedDate;
-    dateBtn.title = slot.date; // Store full date for searching
+    dateBtn.title = slot.date; 
     dateBtn.className = 'time-slot';
     if (index === 0) dateBtn.classList.add('selected');
     dateBtn.addEventListener('click', () => {
@@ -1203,13 +1200,11 @@ futureDates.forEach((slot, index) => {
         renderSlots(slot);
     });
     carousel.appendChild(dateBtn);
-    dateButtons.push(dateBtn); // Store for search
+    dateButtons.push(dateBtn); 
 });
 
-// Initialize search after carousel is populated
 initDateSearch(dateButtons);
             
-            // Create date buttons inside carousel
             futureDates.forEach((slot, index) => {
                 const dateBtn = document.createElement('button');
                 const dateObj = new Date(slot.date);
@@ -1336,7 +1331,7 @@ initDateSearch(dateButtons);
 }
 
 // Search functionality for dates
-// Search functionality for dates - supports ANY date format
+
 function initDateSearch(dateButtons) {
     const searchInput = document.getElementById('dateSearchInput');
     const searchBtn = document.getElementById('searchBtn');
@@ -1345,48 +1340,27 @@ function initDateSearch(dateButtons) {
     if (!searchInput || !searchBtn || !clearBtn) return;
     
     function parseSearchTerm(searchTerm) {
-        // Create a comprehensive set of searchable strings for each date
         return function(dateObj, displayText, dateValue) {
             const formats = [
-                // Original date string (YYYY-MM-DD)
                 dateValue,
-                // Display text (e.g., "Mon, May 15")
                 displayText.toLowerCase(),
-                // Full month name
                 dateObj.toLocaleDateString('en-US', { month: 'long' }).toLowerCase(),
-                // Short month name
                 dateObj.toLocaleDateString('en-US', { month: 'short' }).toLowerCase(),
-                // Full day name
                 dateObj.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
-                // Short day name
                 dateObj.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase(),
-                // Day of month (1-31)
                 dateObj.getDate().toString(),
-                // Month number (1-12)
                 (dateObj.getMonth() + 1).toString(),
-                // Month with leading zero (01-12)
                 String(dateObj.getMonth() + 1).padStart(2, '0'),
-                // Year
                 dateObj.getFullYear().toString(),
-                // Two-digit year
                 dateObj.getFullYear().toString().slice(-2),
-                // DD/MM/YYYY
                 `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`,
-                // MM/DD/YYYY
                 `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`,
-                // DD-MM-YYYY
                 `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`,
-                // MM-DD-YYYY
                 `${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}-${dateObj.getFullYear()}`,
-                // DD.MM.YYYY
                 `${String(dateObj.getDate()).padStart(2, '0')}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${dateObj.getFullYear()}`,
-                // Format like "15 May"
                 `${dateObj.getDate()} ${dateObj.toLocaleDateString('en-US', { month: 'long' })}`.toLowerCase(),
-                // Format like "May 15"
                 `${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getDate()}`.toLowerCase(),
-                // Format like "15 May 2026"
                 `${dateObj.getDate()} ${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getFullYear()}`.toLowerCase(),
-                // Format like "May 15, 2026"
                 `${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getDate()}, ${dateObj.getFullYear()}`.toLowerCase()
             ];
             
@@ -1428,18 +1402,15 @@ function initDateSearch(dateButtons) {
             const displayText = btn.textContent;
             const dateObj = new Date(btn.title);
             
-            // Get all searchable formats for this date
             const getFormats = parseSearchTerm(searchTerm);
             const formats = getFormats(dateObj, displayText, dateValue);
             
             let matches = false;
             let matchScore = 0;
             
-            // Check if search term matches any format
             for (const format of formats) {
                 if (format.includes(searchTerm)) {
                     matches = true;
-                    // Calculate match score (longer matches are better)
                     const score = searchTerm.length / format.length;
                     if (score > matchScore) {
                         matchScore = score;
@@ -1696,7 +1667,7 @@ function initDateSearch(dateButtons) {
                            const issue = document.getElementById('modalIssue').value.trim();
                            const age = document.getElementById('modalAge').value.trim();
                            const ageError = document.getElementById("ageError");
-// Name validation - only alphabets, minimum 3 characters
+// Name validation 
 const nameRegex = /^[A-Za-z]{3,}$/;
 if (!name) {
     showToast("Please enter your name.");
@@ -1754,7 +1725,6 @@ if (!allowedDomains.includes(domain)) {
                             showLoadingOverlay();
                             const formattedDate = new Date(selectedDate).toISOString().split("T")[0];
 
-// normalize time to consistent format (e.g., "hh:mm A")
 function normalizeTime(timeStr) {
   const [time, modifier] = timeStr.split(" ");
   let [hours, minutes] = time.split(":").map(Number);
@@ -1922,7 +1892,7 @@ const normalizedTime = normalizeTime(selectedTime);
     const role = localStorage.getItem("userRole");
 
     if (userId && role) {
-      console.log("🟢 Reconnecting user:", userId, role);
+      console.log(" Reconnecting user:", userId, role);
       socket.emit("join_user", { userId, role });
     }
   });

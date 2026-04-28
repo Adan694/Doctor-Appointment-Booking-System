@@ -17,7 +17,6 @@
             height: 100vh;
             background-color: #e6f2ff;
         }
- /* Sidebar */
         .sidebar {
             width: 250px;
             background-color: rgb(9, 102, 102);
@@ -66,7 +65,6 @@
         }
 
 
-       /* Content */
 .content {
     flex: 1;
     padding: 20px;
@@ -81,7 +79,6 @@
     background-color: #d8eaf8;
 }
 
-/* Header */
 .header {
     display: flex;
     justify-content: space-between;
@@ -103,7 +100,6 @@
     margin: 0;
 }
 
-/* Menu Bar Icon */
 #bar {
     display: none;
     font-size: 30px;
@@ -115,7 +111,6 @@
     color: #28a745;
 }
 
-/* Logout Button */
 .logout-button {
     background-color: #28a745;
     color: #fff;
@@ -134,10 +129,9 @@
 }
 
 
-/* ==== APPOINTMENTS LIST ==== */
 #appointmentsList {
   width: 100%;
-  max-width: 1000px; /* wider container */
+  max-width: 1000px; 
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -145,7 +139,6 @@
   padding: 10px;
 }
 
-/* ==== THEME HOVER EFFECTS (TEAL FOCUS) ==== */
 .appointment-card {
   position: relative;
   border: 1px solid #e0e6f1;
@@ -153,12 +146,11 @@
 }
 
 .appointment-card:hover {
-  border-color: #096666; /* teal highlight */
-  background-color: #f2fbfa; /* very light teal wash */
+  border-color: #096666; 
+  background-color: #f2fbfa; 
   box-shadow: 0 12px 24px rgba(9, 102, 102, 0.15);
 }
 
-/* subtle left accent bar */
 .appointment-card::before {
   content: "";
   position: absolute;
@@ -176,14 +168,12 @@
   transform: scaleY(1);
 }
 
-/* status pill hover */
 .status:hover {
-  box-shadow: 0 0 10px rgba(9, 102, 102, 0.3); /* teal glow */
+  box-shadow: 0 0 10px rgba(9, 102, 102, 0.3); 
   transform: scale(1.05);
   transition: all 0.25s ease;
 }
 
-/* Header bar */
 .appointment-card .header {
   background: linear-gradient(135deg, #4da6ff, #096666);
   color: #fff;
@@ -233,7 +223,6 @@
   font-size: 1.2rem;
 }
 
-/* ==== STATUS PILL ==== */
 .status {
   font-weight: 600;
   padding: 6px 16px;

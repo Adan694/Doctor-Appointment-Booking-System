@@ -6,7 +6,7 @@ const { User } = require('../models/users');
 const Doctor = require('../models/doctors');
 const mongoose = require('mongoose');
 
-// 🟢 Mark messages as read for doctor (from admin)
+//  Mark messages as read for doctor (from admin)
 router.post("/mark-read", authenticateToken, async (req, res) => {
   try {
     const doctorId = req.query.doctorId || req.user.id;
@@ -34,7 +34,7 @@ router.post("/mark-read", authenticateToken, async (req, res) => {
   }
 });
 
-// 🟢 Get message count for badge
+//  Get message count for badge
 router.get("/unread-count/:doctorId", async (req, res) => {
   try {
     const { doctorId } = req.params;

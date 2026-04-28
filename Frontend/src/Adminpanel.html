@@ -537,21 +537,15 @@
 
       <section class="todays-appointments">
         <h3>Today's Appointments</h3>
-        <div id="todaysAppointmentsList">
-          <!-- Appointment items will be inserted here -->
-        </div>
+        <div id="todaysAppointmentsList"></div>
       </section>
-      <!-- Floating Chat Button -->
       <a href="Adminchat.html" title="h" class="chat-float-link">
         <button class="chat-float-btn" id="chatBtn" title="Open Messages">
           <i class="fa-solid fa-comments"></i>
 
-          <!-- Unread Notification -->
           <span id="chatNotification" class="chat-notification">0</span>
         </button>
       </a>
-
-      <!-- FontAwesome for chat icon -->
     </main>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
@@ -570,14 +564,6 @@
         overlay.classList.remove("active");
       });
 
-      // document
-      //   .getElementById("logoutBtn")
-      //   .addEventListener("click", function () {
-      //     localStorage.removeItem("authToken");
-      //     localStorage.removeItem("userRole");
-      //     localStorage.removeItem("patientId");
-      //     window.location.href = "login.html";
-      //   });
       document
         .getElementById("logoutBtn")
         .addEventListener("click", function () {
@@ -611,7 +597,6 @@
       async function fetchDashboardStats() {
         const token = localStorage.getItem("authToken");
         try {
-          // Fetch patients and doctors counts
           const countsRes = await fetch(
             "http://localhost:3000/api/admin/dashboard/user-counts",
             {
@@ -735,7 +720,6 @@
           const doctorsData = await doctorsRes.json();
           console.log("Doctors Data:", doctorsData);
 
-          // Helper function to process data into labels and counts for last 7 days
           function processTimeSeriesData(data) {
             const labels = [];
             const counts = [];
@@ -868,18 +852,14 @@
         }
       }
 
-      // 🔔 Update badge instantly when admin reads messages in chat page
       socket.on("messages_read", fetchUnreadCount);
 
-      // 🔔 Update badge instantly when user sends new message
       socket.on("new_message", fetchUnreadCount);
 
-      // Redirect to chat
       chatBtn.addEventListener("click", () => {
         window.location.href = "Adminchat.html";
       });
 
-      // Initial load + periodic refresh
       fetchUnreadCount();
       setInterval(fetchUnreadCount, 10000);
     </script>

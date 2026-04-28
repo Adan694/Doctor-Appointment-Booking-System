@@ -368,7 +368,7 @@
         }
       }
       #overlay {
-        display: none; /* hidden by default */
+        display: none;
         position: fixed;
         top: 0;
         left: 0;
@@ -381,7 +381,7 @@
       }
 
       #overlay.active {
-        display: flex; /* only show when active */
+        display: flex;
       }
 
       .loader {
@@ -747,60 +747,6 @@
         }
       }
 
-      //       function renderDoctors(doctors) {
-      //         const doctorList = document.getElementById("doctorList");
-      //         doctorList.innerHTML = "";
-      //         const searchInput = document.getElementById("search-input");
-      //         const filterText = searchInput ? searchInput.value.toLowerCase() : "";
-
-      //         const filteredDoctors = doctors.filter((doctor) => {
-      //           const nameMatch =
-      //             doctor.name && doctor.name.toLowerCase().includes(filterText);
-      //           const specialityMatch =
-      //             doctor.speciality &&
-      //             doctor.speciality.toLowerCase().includes(filterText);
-      //           return nameMatch || specialityMatch;
-      //         });
-
-      //         filteredDoctors.forEach((doctor) => {
-      //           const card = document.createElement("div");
-      //           card.className = "card";
-      //           card.dataset.id = doctor._id;
-
-      //           let buttonsHtml = "";
-      //           if (userRole === "admin") {
-      //             buttonsHtml = `
-      //                             <div class="btn-group">
-      //                             <button class="btn btn-delete" onclick="deleteDoctor('${doctor._id}')">Delete</button>
-      //                             <button class="btn btn-appointments" onclick="seeAppointments('${doctor._id}')">See Appointments</button>
-
-      //                             </div>`;
-      //           } else {
-      //             buttonsHtml = "";
-      //           }
-
-      //           card.innerHTML = `
-      //     <a href="doctor.html?id=${
-      //       doctor._id
-      //     }" style="text-decoration: none; color: inherit;">
-      //         ${
-      //           doctor.photo
-      //             ? `<img src="http://localhost:3000/uploads/${doctor.photo}" alt="${doctor.name}" />`
-      //             : ""
-      //         }
-      //         <div class="doctor-info">
-      //             <p class="doctor-name">${doctor.name}</p>
-      // <p class="specialty">${formatSpecialties(doctor.speciality)}</p>
-      //             <p class="experience">Experience: ${doctor.experience} Years</p>
-      //             <p class="about">${doctor.about || ""}</p>
-      //         </div>
-      //     </a>
-      //     ${buttonsHtml}
-      // `;
-
-      //           doctorList.appendChild(card);
-      //         });
-      //       }
       function renderDoctors(doctors) {
         const doctorList = document.getElementById("doctorList");
         doctorList.innerHTML = "";
@@ -953,7 +899,6 @@
         btn.addEventListener("click", () => {
           const tabName = btn.dataset.tab;
 
-          // Remove active class from all tabs and contents
           document
             .querySelectorAll(".tab-btn")
             .forEach((b) => b.classList.remove("active"));
@@ -961,7 +906,6 @@
             .querySelectorAll(".tab-content")
             .forEach((c) => c.classList.remove("active"));
 
-          // Add active class to clicked tab and corresponding content
           btn.classList.add("active");
           if (tabName === "details") {
             document.getElementById("detailsTab").classList.add("active");
@@ -978,11 +922,6 @@
         window.location.href = `doctor-appointments.html?doctorId=${doctorId}`;
       }
 
-      // function goToDoctorProfile(doctorId) {
-      //   if (!doctorId) return alert("Invalid doctor ID");
-      //   window.location.href = `doctor.html?id=${doctorId}`;
-      // }
-      // Helper function to capitalize first letter
       function capitalizeFirstLetter(str) {
         if (!str) return "";
         return str
@@ -994,11 +933,9 @@
           .join(" ");
       }
 
-      // Helper function to format specialties for display
       function formatSpecialties(speciality) {
         if (!speciality) return "Not specified";
 
-        // If it's a string that looks like JSON array
         if (typeof speciality === "string") {
           try {
             const parsed = JSON.parse(speciality);
@@ -1006,17 +943,14 @@
               return parsed.map((s) => capitalizeFirstLetter(s)).join(", ");
             }
           } catch (e) {
-            // Not JSON, treat as regular string
             return capitalizeFirstLetter(speciality);
           }
         }
 
-        // If it's already an array
         if (Array.isArray(speciality)) {
           return speciality.map((s) => capitalizeFirstLetter(s)).join(", ");
         }
 
-        // Regular string
         return capitalizeFirstLetter(speciality);
       }
       async function deleteDoctor(doctorId) {
@@ -1025,7 +959,7 @@
         const overlay = document.getElementById("overlay");
 
         try {
-          overlay.classList.add("active"); // show loader
+          overlay.classList.add("active");
 
           const token = localStorage.getItem("authToken");
           if (!token) {

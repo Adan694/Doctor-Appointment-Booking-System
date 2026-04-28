@@ -394,43 +394,6 @@
             console.error("Feedback submit error:", error);
           }
         });
-
-      // async function loadFeedback(doctorId) {
-      //   const feedbackContainer = document.getElementById("feedbackContainer");
-
-      //   try {
-      //     const res = await fetch(
-      //       `http://localhost:3000/api/feedback/doctors/${doctorId}/feedback`,
-      //     );
-      //     const feedbacks = await res.json();
-
-      //     if (!res.ok) throw new Error("Failed to load feedback");
-
-      //     if (feedbacks.length === 0) {
-      //       feedbackContainer.innerHTML = "<p>No feedback yet.</p>";
-      //       return;
-      //     }
-
-      //     feedbackContainer.innerHTML = feedbacks
-      //       .map(
-      //         (fb) => `
-      //               <div class="feedback-item">
-      //                   <strong>${
-      //                     fb.userName || "Anonymous"
-      //                   }</strong> rated <strong>${fb.rating}/5</strong>
-      //                   <p>${fb.comment}</p>
-      //                   <small>${new Date(
-      //                     fb.timestamp,
-      //                   ).toLocaleString()}</small>
-      //               </div>
-      //           `,
-      //       )
-      //       .join("");
-      //   } catch (err) {
-      //     console.error("Error loading feedback:", err);
-      //     feedbackContainer.innerHTML = "<p></p>";
-      //   }
-      // }
     </script>
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
 
@@ -442,7 +405,7 @@
         const role = localStorage.getItem("userRole");
 
         if (userId && role) {
-          console.log("🟢 Reconnecting user:", userId, role);
+          console.log(" Reconnecting user:", userId, role);
           socket.emit("join_user", { userId, role });
         }
       });

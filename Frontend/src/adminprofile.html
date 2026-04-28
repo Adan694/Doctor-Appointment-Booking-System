@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -27,12 +27,12 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        position: fixed; /* Make it fixed */
+        position: fixed;
         top: 0;
         left: 0;
-        height: 100vh; /* Full viewport height */
-        overflow-y: auto; /* Allow scrolling only for sidebar if needed */
-        z-index: 1000; /* Ensure it's above other content */
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 1000;
       }
 
       .sidebar h2 {
@@ -62,7 +62,9 @@
         display: block;
         border-radius: 6px;
         padding: 10px 15px;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
       }
 
       .sidebar ul li a:hover,
@@ -242,7 +244,6 @@
       const adminId = localStorage.getItem("adminId");
       const token = localStorage.getItem("authToken");
 
-      // Validation functions
       function validateName(name) {
         if (!name) return "Name is required.";
         if (name.length < 3) return "Name must be at least 3 characters long.";
@@ -283,14 +284,13 @@
         return "";
       }
 
-      // Fetch profile
       async function fetchProfile() {
         try {
           const response = await fetch(
             `http://localhost:3000/api/admin/${adminId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
-            }
+            },
           );
           if (!response.ok) throw new Error("Failed to fetch profile");
           const data = await response.json();
@@ -355,7 +355,7 @@
                   Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ name, email, phone }),
-              }
+              },
             );
             const data = await response.json();
             if (!response.ok)
@@ -403,7 +403,7 @@
                   Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ oldPassword, newPassword }),
-              }
+              },
             );
             const data = await response.json();
             if (!response.ok)

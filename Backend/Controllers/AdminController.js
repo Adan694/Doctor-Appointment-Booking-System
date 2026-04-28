@@ -356,7 +356,7 @@ const activatePatient = async (req, res) => {
 
 const updateAdminProfile = async (req, res) => {
   try {
-    const { email: tokenEmail } = req.user; // get email from token
+    const { email: tokenEmail } = req.user; 
     const { name, email, phone } = req.body;
 
     // Validation
@@ -364,11 +364,8 @@ const updateAdminProfile = async (req, res) => {
       return res.status(400).json({ message: 'Name and email are required' });
     }
 
-    // Find the admin in DB using the email from token
     const admin = await User.findOne({ email: tokenEmail, role: 'admin' });
     if (!admin) return res.status(404).json({ message: 'Admin not found' });
-
-    // Check if email is used by another user
     const existingUser = await User.findOne({ email, _id: { $ne: admin._id } });
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use' });

@@ -1016,7 +1016,7 @@
               (app) =>
                 app.doctorId?._id === doctorId &&
                 app.status !== "cancelled" &&
-                app._id !== appointmentId, // Don't block current appointment
+                app._id !== appointmentId,
             )
             .map((app) => `${app.date}|${app.time}`);
 
@@ -1120,10 +1120,10 @@
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({
-                newDate: newDate, // Send as is (should be YYYY-MM-DD)
-                newTime: newTime, // Send as is (e.g., "3:00 PM")
+                newDate: newDate,
+                newTime: newTime,
                 rescheduledBy: "admin",
-                doctorId: doctorId, // Add doctorId if backend needs it
+                doctorId: doctorId,
               }),
             },
           );

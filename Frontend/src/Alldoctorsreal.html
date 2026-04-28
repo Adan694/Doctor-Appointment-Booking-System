@@ -578,7 +578,6 @@ nav ul li a:hover {
     font-size: 18px;
 }
 
-/* No doctors message */
 .no-doctors-message {
     display: none;
 }
@@ -686,7 +685,6 @@ nav ul li a:hover {
             const searchBtn = document.getElementById("search-btn");
             const bar = document.getElementById("bar");
             const menu = document.querySelector("nav ul");
-            // Helper function to capitalize first letter
 function capitalizeFirstLetter(str) {
     if (!str) return "";
     return str.split(' ').map(word => 
@@ -694,11 +692,9 @@ function capitalizeFirstLetter(str) {
     ).join(' ');
 }
 
-// Helper function to format specialties for display
 function formatSpecialties(speciality) {
     if (!speciality) return "Not specified";
     
-    // If it's a string that looks like JSON array
     if (typeof speciality === 'string') {
         try {
             const parsed = JSON.parse(speciality);
@@ -706,17 +702,14 @@ function formatSpecialties(speciality) {
                 return parsed.map(s => capitalizeFirstLetter(s)).join(", ");
             }
         } catch(e) {
-            // Not JSON, treat as regular string
             return capitalizeFirstLetter(speciality);
         }
     }
     
-    // If it's already an array
     if (Array.isArray(speciality)) {
         return speciality.map(s => capitalizeFirstLetter(s)).join(", ");
     }
     
-    // Regular string
     return capitalizeFirstLetter(speciality);
 }
 
@@ -917,7 +910,7 @@ if (todaySlot) {
     const role = localStorage.getItem("userRole");
 
     if (userId && role) {
-      console.log("🟢 Reconnecting user:", userId, role);
+      console.log(" Reconnecting user:", userId, role);
       socket.emit("join_user", { userId, role });
     }
   });

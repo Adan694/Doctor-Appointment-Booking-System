@@ -254,13 +254,12 @@
           max-height: 400px;
         }
       }
-      /* loading.css */
       .loading-container {
         text-align: center;
         padding: 20px;
         color: #666;
-        font-family: Arial, sans-serif; /* optional for consistency */
-        font-size: 16px; /* optional */
+        font-family: Arial, sans-serif;
+        font-size: 16px;
       }
     </style>
   </head>
@@ -284,15 +283,9 @@
     <div class="chat-container">
       <div class="chat-header">
         <button class="back-btn" id="backBtn">← Back</button>
-        <div>
-          Chat with Admin
-          <!-- <span id="connectionStatus" class="status-indicator"
-            >● Connecting...</span
-          > -->
-        </div>
+        <div>Chat with Admin</div>
       </div>
       <div class="chat-messages" id="chatMessages">
-        <!-- loading.html -->
         <div class="loading-container">Loading messages...</div>
       </div>
       <div class="chat-input">
@@ -303,16 +296,14 @@
     <script>
       const socket = io("http://localhost:3000");
 
-      // Doctor info
       const userId = localStorage.getItem("doctorId");
-      const role = "doctor"; // you can also store in localStorage
+      const role = "doctor";
 
-      const adminId = "689f5be6e5432f608d4b3a54"; // replace with real admin ID
+      const adminId = "689f5be6e5432f608d4b3a54";
       const chatBox = document.getElementById("chatMessages");
       const msgInput = document.getElementById("msgInput");
       const sendBtn = document.getElementById("sendBtn");
 
-      // Join doctor room
       socket.emit("join_user", { userId });
 
       // Load chat history
@@ -345,8 +336,7 @@
         msgInput.value = "";
       }
 
-      // Render message
-      let lastRenderedDate = null; // keep track of last rendered date
+      let lastRenderedDate = null;
 
       function formatChatDate(date) {
         const d = new Date(date);
@@ -367,7 +357,6 @@
       function renderMessage(msg) {
         const msgDate = formatChatDate(msg.createdAt || msg.updatedAt);
 
-        // Add date separator if the day has changed
         if (msgDate !== lastRenderedDate) {
           lastRenderedDate = msgDate;
           const sep = document.createElement("div");
@@ -379,7 +368,6 @@
           chatBox.appendChild(sep);
         }
 
-        // Create message bubble
         const div = document.createElement("div");
         div.classList.add("message");
         div.classList.add(msg.senderRole === "doctor" ? "sent" : "received");
@@ -400,14 +388,12 @@
         chatBox.scrollTop = chatBox.scrollHeight;
       }
 
-      // Receive real-time messages
       socket.on("new_message", (msg) => {
         if (msg.senderId === userId || msg.receiverId === userId) {
           renderMessage(msg);
         }
       });
 
-      // Event listeners
       sendBtn.addEventListener("click", sendMessage);
       msgInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") sendMessage();
@@ -417,268 +403,7 @@
         window.location.href = "docpanel.html";
       });
 
-      // Initial load
       loadChats();
     </script>
-
-    <!-- <script>
-      const backendURL = "http://localhost:3000";
-      const doctorId = localStorage.getItem("doctorId");
-      const adminId = "689f5be6e5432f608d4b3a54";
-      const token = localStorage.getItem("authToken");
-
-      const chatMessagesEl = document.getElementById("chatMessages");
-      const msgInput = document.getElementById("msgInput");
-      const sendBtn = document.getElementById("sendBtn");
-      const backBtn = document.getElementById("backBtn");
-      const connectionStatus = document.getElementById("connectionStatus");
-
-      let messages = [];
-      let socket = null;
-
-      if (!doctorId || !token) {
-        alert("You must be logged in as a doctor to chat.");
-        window.location.href = "login.html";
-      }
-
-      // Initialize Socket.io
-      function initSocket() {
-        console.log("🩺 DOCTOR SOCKET INITIALIZING...", doctorId);
-
-        if (socket) {
-          socket.disconnect();
-          socket = null;
-        }
-
-        socket = io(backendURL, {
-          auth: {
-            token,
-            role: "doctor",
-            userId: doctorId,
-            email: localStorage.getItem("doctorEmail") || "doctor@example.com",
-            name: localStorage.getItem("doctorName") || "Doctor",
-          },
-          transports: ["websocket", "polling"],
-        });
-
-        socket.on("connect", () => {
-          console.log("✅ DOCTOR SOCKET CONNECTED:", socket.id);
-          connectionStatus.textContent = "● Connected";
-          connectionStatus.style.color = "#2ecc71";
-        });
-
-        // Real-time message
-        socket.on("receive_message", (messageData) => {
-          if (
-            messageData.receiverId === doctorId ||
-            messageData.senderId === doctorId
-          ) {
-            const exists = messages.some((m) => m._id === messageData._id);
-            if (!exists) {
-              messages.push(messageData);
-              renderMessages();
-              markAsRead();
-
-              if (document.hidden) {
-                showNotification(
-                  `New message from ${
-                    messageData.senderRole === "admin" ? "Admin" : "You"
-                  }`,
-                  messageData.message
-                );
-              }
-            }
-          }
-        });
-
-        socket.on("disconnect", () => {
-          console.log("🔌 Socket disconnected");
-          connectionStatus.textContent = "● Disconnected";
-          connectionStatus.style.color = "#e74c3c";
-        });
-
-        socket.on("connect_error", (err) => {
-          console.error("❌ Socket connection error:", err);
-          connectionStatus.textContent = "● Connection Error";
-          connectionStatus.style.color = "#e74c3c";
-        });
-
-        socket.on("error", (data) => console.error("❌ Socket error:", data));
-      }
-
-      // Load messages from backend
-      async function loadMessages() {
-        try {
-          console.log("📨 Loading messages...");
-          const res = await fetch(
-            `${backendURL}/api/doctor-chats/${doctorId}/${adminId}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          if (!res.ok) throw new Error(`Error ${res.status}`);
-
-          messages = await res.json();
-          renderMessages();
-          await markAsRead();
-        } catch (err) {
-          console.error("Error loading messages:", err);
-          chatMessagesEl.innerHTML = `<div style="text-align:center; padding:20px; color:#e74c3c;">Error loading messages: ${err.message}</div>`;
-        }
-      }
-
-      // Render messages
-      function renderMessages() {
-        chatMessagesEl.innerHTML = "";
-        if (messages.length === 0) {
-          chatMessagesEl.innerHTML = `<div style="text-align:center; padding:40px; color:#666;">
-      <i class="fas fa-comments" style="font-size:48px; margin-bottom:20px; opacity:0.5;"></i>
-      <h3>No messages yet</h3>
-      <p>Start a conversation with Admin</p>
-    </div>`;
-          return;
-        }
-
-        messages.sort(
-          (a, b) =>
-            new Date(a.timestamp || a.createdAt) -
-            new Date(b.timestamp || b.createdAt)
-        );
-
-        messages.forEach((msg) => {
-          const div = document.createElement("div");
-          div.className =
-            "message " + (msg.senderId === doctorId ? "sent" : "received");
-
-          const senderLabel = document.createElement("div");
-          senderLabel.className = "sender-label";
-          senderLabel.textContent = msg.senderId === doctorId ? "You" : "Admin";
-
-          const messageText = document.createElement("div");
-          messageText.textContent = msg.message;
-
-          const timestamp = document.createElement("div");
-          timestamp.className = "timestamp";
-          timestamp.textContent = new Date(
-            msg.timestamp || msg.createdAt
-          ).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-
-          div.appendChild(senderLabel);
-          div.appendChild(messageText);
-          div.appendChild(timestamp);
-
-          chatMessagesEl.appendChild(div);
-        });
-
-        chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-      }
-
-      // Send message
-      async function sendMessage() {
-        const text = msgInput.value.trim();
-        if (!text || !socket || !socket.connected) return;
-
-        const messageData = {
-          senderId: doctorId,
-          receiverId: adminId,
-          message: text,
-          senderRole: "doctor",
-          timestamp: new Date(),
-        };
-
-        // Show immediately
-        messages.push({
-          ...messageData,
-          _id: "temp_" + Date.now(),
-          isTemp: true,
-        });
-        renderMessages();
-        msgInput.value = "";
-
-        try {
-          socket.emit("send_message", messageData);
-
-          const res = await fetch(`${backendURL}/api/doctor-chats/send`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(messageData),
-          });
-
-          if (!res.ok) throw new Error(`Error ${res.status}`);
-
-          const saved = await res.json();
-          // Replace temp message with real message
-          const tempIndex = messages.findIndex(
-            (m) => m.isTemp && m.message === text
-          );
-          if (tempIndex !== -1) messages.splice(tempIndex, 1);
-
-          messages.push(
-            saved.chat || { ...messageData, _id: Date.now().toString() }
-          );
-          renderMessages();
-        } catch (err) {
-          console.error("Send message failed:", err);
-          alert("Failed to send message");
-
-          const tempIndex = messages.findIndex(
-            (m) => m.isTemp && m.message === text
-          );
-          if (tempIndex !== -1) messages.splice(tempIndex, 1);
-          renderMessages();
-        }
-      }
-
-      // Mark messages as read
-      async function markAsRead() {
-        try {
-          await fetch(`${backendURL}/api/doctor-chats/mark-read/${adminId}`, {
-            method: "POST",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          console.log("✅ Messages marked as read");
-        } catch (err) {
-          console.error("Error marking messages as read:", err);
-        }
-      }
-
-      // Desktop notifications
-      function showNotification(title, body) {
-        if ("Notification" in window && Notification.permission === "granted") {
-          new Notification(title, { body, icon: "/images/Da.png" });
-        }
-      }
-      function requestNotificationPermission() {
-        if ("Notification" in window && Notification.permission === "default")
-          Notification.requestPermission();
-      }
-
-      // Event listeners
-      sendBtn.addEventListener("click", sendMessage);
-      msgInput.addEventListener("keyup", (e) => {
-        if (e.key === "Enter") sendMessage();
-      });
-      backBtn.addEventListener(
-        "click",
-        () => (window.location.href = "docpanel.html")
-      );
-
-      // Initialize
-      async function initializeChat() {
-        console.log("🩺 Initializing doctor chat...", doctorId);
-        requestNotificationPermission();
-        initSocket();
-        await loadMessages();
-        msgInput.focus();
-      }
-
-      document.addEventListener("DOMContentLoaded", initializeChat);
-    </script> -->
   </body>
 </html>

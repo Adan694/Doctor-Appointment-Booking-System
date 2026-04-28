@@ -179,7 +179,6 @@
         margin-bottom: 14px;
       }
 
-      /* Hide the default file input */
       .upload-button input[type="file"] {
         position: absolute;
         opacity: 0;
@@ -188,7 +187,6 @@
         overflow: hidden;
       }
 
-      /* Style the visible label as a button */
       .upload-label {
         display: inline-block;
         padding: 10px 16px;
@@ -457,7 +455,6 @@
           }
         });
 
-      // On page load, fetch doctor data
       document.addEventListener("DOMContentLoaded", () => {
         const doctorId = getDoctorIdFromUrl();
         if (doctorId) {

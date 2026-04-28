@@ -262,7 +262,6 @@
           display: block;
         }
       }
-      /* 📱 Responsive Appointments Table (no HTML changes) */
       @media (max-width: 768px) {
         #appointments table,
         #appointments thead,
@@ -592,7 +591,6 @@
 
       async function fetchPatientDetails() {
         try {
-          // Fetch patient info
           const res = await fetch(
             `http://localhost:3000/api/admin/patients/${patientId}`,
             {
@@ -601,7 +599,6 @@
           );
           currentPatient = await res.json();
 
-          // Show full profile data with unblock button if blocked
           let unblockButtonHtml = "";
           if (currentPatient.isBlocked) {
             unblockButtonHtml = `
@@ -633,8 +630,8 @@
       <p><strong>Status:</strong> 
         ${
           currentPatient.isBlocked
-            ? '<span class="blocked-badge">🔴 BLOCKED</span>'
-            : '<span class="blocked-badge active-badge">🟢 ACTIVE</span>'
+            ? '<span class="blocked-badge"> BLOCKED</span>'
+            : '<span class="blocked-badge active-badge"> ACTIVE</span>'
         }
       </p>
       ${blockedUntilInfo}

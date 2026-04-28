@@ -640,7 +640,6 @@
           border-right: none;
         }
       }
-      /* Pagination Styles for Feedback */
       .feedback-pagination {
         display: flex;
         justify-content: center;
@@ -885,7 +884,6 @@
             return response.json();
           })
           .then((doctor) => {
-            // Determine today's and tomorrow's date
             const now = new Date();
             const todayStr = now.toISOString().split("T")[0];
             const tomorrow = new Date();
@@ -912,7 +910,6 @@
               "Doctor availabilitySlots:",
               JSON.stringify(doctor.availabilitySlots, null, 2),
             );
-            // Check today's slots and only mark as available if some are still upcoming
             const todaySlot = doctor.availabilitySlots?.find(
               (slot) => slot.date === todayStr,
             );
@@ -1299,11 +1296,9 @@
             alert("Error saving profile");
           });
       }
-      // Helper function to format specialty values for display
       function formatSpecialties(speciality) {
         if (!speciality) return "Not specified";
 
-        // If it's a string that looks like JSON array
         if (typeof speciality === "string") {
           try {
             const parsed = JSON.parse(speciality);
@@ -1311,24 +1306,19 @@
               return parsed.map((s) => capitalizeFirstLetter(s)).join(", ");
             }
           } catch (e) {
-            // Not JSON, treat as regular string
             return capitalizeFirstLetter(speciality);
           }
         }
 
-        // If it's already an array
         if (Array.isArray(speciality)) {
           return speciality.map((s) => capitalizeFirstLetter(s)).join(", ");
         }
 
-        // Regular string
         return capitalizeFirstLetter(speciality);
       }
 
-      // Helper function to capitalize first letter of each word
       function capitalizeFirstLetter(str) {
         if (!str) return "";
-        // Handle multi-word specialties like "ent Specialist"
         return str
           .split(" ")
           .map(
@@ -1348,7 +1338,7 @@
         const role = localStorage.getItem("userRole");
 
         if (userId && role) {
-          console.log("🟢 Reconnecting user:", userId, role);
+          console.log(" Reconnecting user:", userId, role);
           socket.emit("join_user", { userId, role });
         }
       });

@@ -574,7 +574,7 @@ nav ul li a:hover {
     const role = localStorage.getItem("userRole");
 
     if (userId && role) {
-      console.log("🟢 Reconnecting user:", userId, role);
+      console.log(" Reconnecting user:", userId, role);
       socket.emit("join_user", { userId, role });
     }
   });

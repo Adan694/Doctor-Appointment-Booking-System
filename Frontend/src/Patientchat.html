@@ -6,8 +6,6 @@
     <title>Patient Chat</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
-      /* Your existing CSS styles remain the same */
-      /* 🌐 Page layout */
       .chat-wrapper {
         display: flex;
         justify-content: center;
@@ -16,7 +14,6 @@
         padding: 40px 15px;
       }
 
-      /* 💬 Chat box container */
       .chat-container {
         width: 100%;
         max-width: 600px;
@@ -31,7 +28,6 @@
         margin-top: 60px;
       }
 
-      /* 🧭 Header */
       .chat-header {
         background: linear-gradient(135deg, #166e6b, #0e4745);
         color: #fff;
@@ -53,7 +49,6 @@
         color: #c0f1ee;
       }
 
-      /* 💬 Message area */
       .chat-messages {
         flex: 1;
         overflow-y: auto;
@@ -62,7 +57,6 @@
         flex-direction: column;
       }
 
-      /* 💬 Message row */
       .message-row {
         display: flex;
         align-items: flex-end;
@@ -107,7 +101,6 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       }
 
-      /* 👤 Avatar */
       .chat-avatar {
         width: 32px;
         height: 32px;
@@ -124,7 +117,6 @@
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
       }
 
-      /* 🧍 Sender label */
       .sender-label {
         font-size: 12px;
         font-weight: 600;
@@ -141,7 +133,6 @@
         color: #166e6b;
       }
 
-      /* ✏️ Input area */
       .chat-input {
         display: flex;
         padding: 12px;
@@ -313,7 +304,7 @@
       <div class="chat-container">
         <div class="chat-header">
           <i class="fa-solid fa-arrow-left" onclick="goBack()"></i>
-          💬 Chat with Admin
+          Chat with Admin
         </div>
 
         <div id="messages" class="chat-messages"></div>
@@ -328,17 +319,17 @@
     <div id="footer"></div>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
-      console.log("💬 PATIENT CHAT PAGE LOADED");
+      console.log(" PATIENT CHAT PAGE LOADED");
       console.log("Socket.io available?", typeof io !== "undefined");
 
       const socket = io("http://localhost:3000");
 
       socket.on("connect", () => {
-        console.log("✅ Patient chat socket connected!");
+        console.log(" Patient chat socket connected!");
       });
 
       async function clearUnreadMessages() {
-        console.log("🔄 clearUnreadMessages called");
+        console.log(" clearUnreadMessages called");
         const token = localStorage.getItem("authToken");
         const userId = localStorage.getItem("patientId");
 
@@ -346,12 +337,12 @@
         console.log("PatientId:", userId);
 
         if (!token || !userId) {
-          console.error("❌ Missing token or userId");
+          console.error(" Missing token or userId");
           return;
         }
 
         try {
-          console.log("📡 Calling mark-read API with userId:", userId);
+          console.log(" Calling mark-read API with userId:", userId);
           const response = await fetch(
             "http://localhost:3000/user/chat/mark-read",
             {
@@ -365,29 +356,29 @@
           );
 
           if (response.ok) {
-            console.log("✅ Unread messages cleared successfully on server");
-            console.log("📡 Emitting messages_read event for userId:", userId);
+            console.log(" Unread messages cleared successfully on server");
+            console.log(" Emitting messages_read event for userId:", userId);
             socket.emit("messages_read", { userId: userId });
-            console.log("✅ messages_read event emitted");
+            console.log(" messages_read event emitted");
           } else {
             console.error(
-              "❌ Failed to clear unread messages:",
+              " Failed to clear unread messages:",
               await response.text(),
             );
           }
         } catch (err) {
-          console.error("❌ Error clearing unread:", err);
+          console.error(" Error clearing unread:", err);
         }
       }
 
       window.addEventListener("load", () => {
-        console.log("📄 Patient chat window loaded");
+        console.log("Patient chat window loaded");
         clearUnreadMessages();
       });
 
       const userId = localStorage.getItem("patientId");
       const role = localStorage.getItem("userRole") || "patient";
-      const receiverId = "689f5be6e5432f608d4b3a54"; // admin ID
+      const receiverId = "689f5be6e5432f608d4b3a54";
 
       console.log("Patient userId:", userId);
       console.log("Role:", role);
@@ -416,20 +407,20 @@
 
       // join room for live updates
       if (userId) {
-        console.log("📡 Emitting join_user for patient:", userId);
+        console.log(" Emitting join_user for patient:", userId);
         socket.emit("join_user", { userId, role });
       }
 
       // load previous chat
-      console.log("📡 Fetching previous chats for:", userId);
+      console.log("Fetching previous chats for:", userId);
       fetch(`http://localhost:3000/api/chats/${userId}`)
         .then((res) => res.json())
         .then((chats) => {
-          console.log("✅ Loaded", chats.length, "previous messages");
+          console.log(" Loaded", chats.length, "previous messages");
           chats.forEach(addMessage);
           if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
         })
-        .catch((err) => console.error("❌ Error loading chats:", err));
+        .catch((err) => console.error(" Error loading chats:", err));
 
       // send message
       function sendMessage() {
@@ -450,14 +441,14 @@
 
       // receive real-time messages
       socket.on("new_message", (msg) => {
-        console.log("📨 new_message received on patient page:", msg);
+        console.log(" new_message received on patient page:", msg);
         if (msg.senderId === userId || msg.receiverId === userId) {
-          console.log("✅ Message belongs to this user, adding to chat");
+          console.log("Message belongs to this user, adding to chat");
           addMessage(msg);
 
           // If this is a message from admin, clear unread count again
           if (msg.senderId === receiverId) {
-            console.log("📨 Message from admin, clearing unread count");
+            console.log(" Message from admin, clearing unread count");
             clearUnreadMessages();
           }
         }
@@ -465,9 +456,9 @@
 
       // Listen for read confirmation
       socket.on("messages_read", (data) => {
-        console.log("📖 messages_read received on patient page:", data);
+        console.log(" messages_read received on patient page:", data);
         if (data.userId === userId) {
-          console.log("✅ Messages confirmed read for this patient");
+          console.log(" Messages confirmed read for this patient");
         }
       });
 
@@ -475,7 +466,7 @@
       function addMessage(msg) {
         const div = chatBox;
         if (!div) {
-          console.error("❌ chatBox element not found");
+          console.error(" chatBox element not found");
           return;
         }
 
@@ -518,7 +509,6 @@
         });
       }
 
-      // Optional: send button
       const sendBtn = document.getElementById("sendBtn");
       if (sendBtn) {
         sendBtn.addEventListener("click", sendMessage);

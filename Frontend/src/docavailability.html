@@ -543,7 +543,7 @@ textarea:focus {
 }
 
 .day-checkboxes label {
-    margin-right: 10px; /* space between checkboxes */
+    margin-right: 10px; 
     cursor: pointer;
 }
 
@@ -648,7 +648,6 @@ tr.error-highlight {
 .time-range label {
     font-size: 13px;
 }
-/* Limit table height and enable scroll */
 #availabilityTable {
     display: block;
     max-height: 500px;
@@ -832,7 +831,6 @@ tr.error-highlight {
         let isEditing = false;
         let draggedRow = null;
 
-        // Safe error logger (won't break anything)
 function safeLog(msg, isError = false) {
     if (isError) {
         console.error(msg);
@@ -846,8 +844,6 @@ function safeLog(msg, isError = false) {
         console.log(msg);
     }
 }
-// Search functionality
-// Enhanced search functionality - supports ANY date format
 function searchDates() {
     const searchTerm = document.getElementById('searchDate').value.toLowerCase().trim();
     const rows = document.querySelectorAll('#availabilityTable tbody tr');
@@ -862,46 +858,26 @@ function searchDates() {
         const dateValue = dateInput.value;
         const dateObj = new Date(dateValue);
         
-        // Create all possible searchable formats for this date
         const searchableFormats = [
-            // Original date (YYYY-MM-DD)
             dateValue,
-            // Display date in different formats
-            dateObj.toLocaleDateString('en-US'), // MM/DD/YYYY
-            dateObj.toLocaleDateString('en-GB'), // DD/MM/YYYY
-            // Full month name
+            dateObj.toLocaleDateString('en-US'), 
+            dateObj.toLocaleDateString('en-GB'),
             dateObj.toLocaleDateString('en-US', { month: 'long' }).toLowerCase(),
-            // Short month name
             dateObj.toLocaleDateString('en-US', { month: 'short' }).toLowerCase(),
-            // Full day name
             dateObj.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase(),
-            // Short day name
             dateObj.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase(),
-            // Day of month
             dateObj.getDate().toString(),
-            // Month number
             (dateObj.getMonth() + 1).toString(),
-            // Month with leading zero
             String(dateObj.getMonth() + 1).padStart(2, '0'),
-            // Year
             dateObj.getFullYear().toString(),
-            // Two-digit year
             dateObj.getFullYear().toString().slice(-2),
-            // DD/MM/YYYY format
             `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`,
-            // MM/DD/YYYY format
             `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`,
-            // DD-MM-YYYY format
             `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`,
-            // MM-DD-YYYY format
             `${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}-${dateObj.getFullYear()}`,
-            // Format like "15 May"
             `${dateObj.getDate()} ${dateObj.toLocaleDateString('en-US', { month: 'long' })}`.toLowerCase(),
-            // Format like "May 15"
             `${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getDate()}`.toLowerCase(),
-            // Format like "15 May 2026"
             `${dateObj.getDate()} ${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getFullYear()}`.toLowerCase(),
-            // Format like "May 15, 2026"
             `${dateObj.toLocaleDateString('en-US', { month: 'long' })} ${dateObj.getDate()}, ${dateObj.getFullYear()}`.toLowerCase()
         ];
         
@@ -912,11 +888,9 @@ function searchDates() {
             matches = true;
             matchScore = 1;
         } else {
-            // Check if search term matches any format
             for (const format of searchableFormats) {
                 if (format.includes(searchTerm)) {
                     matches = true;
-                    // Calculate match score (more precise matches score higher)
                     const score = searchTerm.length / format.length;
                     if (score > matchScore) {
                         matchScore = score;
@@ -961,7 +935,6 @@ function searchDates() {
         noResultMsg.remove();
     }
     
-    // Auto-scroll to and highlight the best matching row if found
     if (bestMatchRow && searchTerm !== '') {
         bestMatchRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
         bestMatchRow.style.transition = 'background-color 0.5s';
@@ -976,7 +949,6 @@ function clearSearch() {
     searchDates();
 }
 
-// Add event listener when page loads
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchDate');
     if (searchInput) {
@@ -1018,10 +990,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const tbody = document.querySelector("#availabilityTable tbody");
                     tbody.innerHTML = "";
                     if (!data.availabilitySlots || !data.availabilitySlots.length) return;
-                    // Group slots by date before rendering
                     const grouped = {};
                     data.availabilitySlots.forEach(slot => {
-// Fix timezone issue in loadAvailability
 const slotDateObj = new Date(slot.date);
 const year = slotDateObj.getFullYear();
 const month = String(slotDateObj.getMonth() + 1).padStart(2, '0');
@@ -1030,12 +1000,10 @@ const slotDateKey = `${year}-${month}-${day}`;                        if (!group
                         grouped[slotDateKey].push(...slot.slots);
                     });
 
-                    //  Now render each grouped date only once
-                    // Sort dates in ascending order
+                   
                     const sortedDates = Object.keys(grouped).sort((a, b) => new Date(a) - new Date(b));
                     sortedDates.forEach(date => {
                         let slots = grouped[date];
-                        // Sort slots within each date
                         slots.sort((a, b) => {
                             const parseTime = s => {
                                 const [time, ampm] = s.split(" ");
@@ -1052,7 +1020,6 @@ const slotDateKey = `${year}-${month}-${day}`;                        if (!group
                         today.setHours(0, 0, 0, 0);
 
                         if (slotDate >= today) {
-                            // Filter out past time slots for today
                             let filteredSlots = slots;
                             if (slotDate.toDateString() === today.toDateString()) {
                                 const now = new Date();
@@ -1092,7 +1059,7 @@ const slotDateKey = `${year}-${month}-${day}`;                        if (!group
 function addSlot() {
     
     const tbody = document.querySelector("#availabilityTable tbody");
-        if (!tbody) { safeLog("❌ Error: Table not found!", true); return; }
+        if (!tbody) { safeLog(" Error: Table not found!", true); return; }
 
     const tr = document.createElement("tr");
 
@@ -1106,7 +1073,6 @@ function addSlot() {
     });
     dateCell.appendChild(dateInput);
 
-    // Slots cell with toggle
     const slotsCell = document.createElement("td");
 
     // Tabs for morning/evening
@@ -1133,9 +1099,7 @@ function addSlot() {
             const [time, meridian] = slot.split(" ");
             const hour = parseInt(time.split(":")[0], 10);
 
-            // All AM are morning
             if (meridian === "AM") return true;
-            // Exclude 12 PM (belongs to evening)
             if (meridian === "PM" && hour < 12) return false;
             return false;
         })
@@ -1149,7 +1113,6 @@ function addSlot() {
             morningContainer.appendChild(label);
         });
 
-    // Evening slots container
     const eveningContainer = document.createElement("div");
     eveningContainer.classList.add("slots-container", "hidden");
 
@@ -1158,7 +1121,6 @@ function addSlot() {
             const [time, meridian] = slot.split(" ");
             const hour = parseInt(time.split(":")[0], 10);
 
-            // All PM are evening (including 12 PM)
             if (meridian === "PM") return true;
             return false;
         })
@@ -1190,14 +1152,12 @@ function addSlot() {
     slotsCell.appendChild(morningContainer);
     slotsCell.appendChild(eveningContainer);
 
-    // Remove button
     const removeCell = document.createElement("td");
     removeCell.innerHTML = `<button onclick="removeRow(this)">❌</button>`;
 
     tr.appendChild(dateCell);
     tr.appendChild(slotsCell);
     tr.appendChild(removeCell);
-    // tbody.appendChild(tr);
 tbody.insertBefore(tr, tbody.firstChild);}
 function validateAllSlots() {
     const rows = document.querySelectorAll("#availabilityTable tbody tr");
@@ -1207,20 +1167,17 @@ function validateAllSlots() {
         const dateInput = row.querySelector("td:nth-child(1) input[type='date']");
         const date = dateInput ? dateInput.value : null;
         
-        // Check if date is selected
         if (!date) {
-            safeLog(`❌ Row ${index + 1}: No date selected! Please pick a date.`, true);
+            safeLog(` Row ${index + 1}: No date selected! Please pick a date.`, true);
             hasError = true;
         }
         
-        // Check if any time slots are selected
         const checkboxes = row.querySelectorAll("td:nth-child(2) input[type='checkbox']");
         let hasCheckedSlot = false;
         
         if (checkboxes.length > 0) {
             hasCheckedSlot = Array.from(checkboxes).some(cb => cb.checked);
         } else {
-            // If no checkboxes, check if there's text (from loaded data)
             const slotText = row.querySelector("td:nth-child(2) .slot-text");
             if (slotText && slotText.textContent.trim()) {
                 hasCheckedSlot = true;
@@ -1228,17 +1185,15 @@ function validateAllSlots() {
         }
         
         if (!hasCheckedSlot) {
-            safeLog(`❌ Row ${index + 1} (${date || "No date"}) : No time slots selected! Please select at least one time slot.`, true);
+            safeLog(` Row ${index + 1} (${date || "No date"}) : No time slots selected! Please select at least one time slot.`, true);
             hasError = true;
         }
     });
     
     return !hasError;
 }
-// Optional: Auto-set specific date min value on modal open
 function openQuickAddPopup() {
     document.getElementById("quickAddModal").style.display = "flex";
-    // Set default specific date to tomorrow
     const specificDateInput = document.getElementById('specificDate');
     if (specificDateInput) {
         const tomorrow = new Date();
@@ -1254,11 +1209,9 @@ function openQuickAddPopup() {
     document.getElementById('weeklyView').style.display = frequency === 'weekly' ? 'flex' : 'none';
     document.getElementById('monthlyView').style.display = frequency === 'monthly' ? 'block' : 'none';
     document.getElementById('specificView').style.display = frequency === 'specific' ? 'block' : 'none';
-    // document.getElementById('weeksSelection').style.display = frequency === 'weekly' ? 'block' : 'none';
 }
 
 function applyQuickAvailability() {
-    // Remove any existing error message
     const existingError = document.getElementById('quickAddError');
     if (existingError) existingError.remove();
     
@@ -1266,7 +1219,6 @@ function applyQuickAvailability() {
     const start = document.getElementById('quickStart').value;
     const end = document.getElementById('quickEnd').value;
     
-    // Collect all errors
     let errors = [];
     
     if (!start || !end) errors.push("Please select both start and end times");
@@ -1277,7 +1229,6 @@ function applyQuickAvailability() {
         if (endTime <= startTime) errors.push("End time must be after start time");
     }
     
-    // Validate based on frequency
     let datesToAdd = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -1312,15 +1263,12 @@ function applyQuickAvailability() {
         }
         
         if (errors.length === 0) {
-            // Clear datesToAdd array
             datesToAdd = [];
             
-            // Get current date components
             let currentYear = today.getFullYear();
             let currentMonth = today.getMonth();
             
             for (let i = 1; i <= monthlyMonths; i++) {
-                // Calculate target month and year
                 let targetMonth = currentMonth + i;
                 let targetYear = currentYear;
                 
@@ -1329,17 +1277,13 @@ function applyQuickAvailability() {
                     targetMonth = targetMonth % 12;
                 }
                 
-                // Get the last day of the target month
                 const lastDayOfMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
                 const dayToSet = Math.min(monthlyDate, lastDayOfMonth);
                 
-                // Create the date (note: month is 0-indexed)
                 const targetDate = new Date(targetYear, targetMonth, dayToSet);
                 
                 console.log(`Month ${i}: ${targetDate.toDateString()}`);
-                
-                // Only add if date is today or future
-                if (targetDate >= today) {
+                                if (targetDate >= today) {
                     datesToAdd.push(targetDate);
                 }
             }
@@ -1359,7 +1303,6 @@ function applyQuickAvailability() {
         }
     }
     
-    // Show all errors above modal if any
     if (errors.length > 0) {
         const modalContent = document.querySelector('#quickAddModal .modal-content');
         const errorDiv = document.createElement('div');
@@ -1374,10 +1317,8 @@ function applyQuickAvailability() {
         return;
     }
     
-    // Log what dates we're adding
     console.log("Dates to add:", datesToAdd.map(d => d.toDateString()));
     
-    // Generate time slots
     const startTime = new Date(`1970-01-01T${start}:00`);
     const endTime = new Date(`1970-01-01T${end}:00`);
     
@@ -1398,13 +1339,12 @@ function applyQuickAvailability() {
         const errorDiv = document.createElement('div');
         errorDiv.id = 'quickAddError';
         errorDiv.style.cssText = 'background:#ffebee; color:#c62828; padding:12px; margin:0 20px 15px 20px; border-radius:8px; border-left:4px solid #c62828;';
-        errorDiv.innerHTML = `❌ Cannot add more than ${MAX_SLOTS_PER_DAY} slots per day.`;
+        errorDiv.innerHTML = ` Cannot add more than ${MAX_SLOTS_PER_DAY} slots per day.`;
         const modalHeader = modalContent.querySelector('.modal-header');
         modalHeader.insertAdjacentElement('afterend', errorDiv);
         return;
     }
     
-    // Remove duplicate dates
     const uniqueDates = [...new Map(datesToAdd.map(d => [d.toISOString().split('T')[0], d])).values()];
     
     const tbody = document.querySelector("#availabilityTable tbody");
@@ -1412,13 +1352,11 @@ function applyQuickAvailability() {
     let skippedCount = 0;
     
    uniqueDates.forEach(dateObj => {
-    // Fix timezone issue - format date without UTC conversion
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
     const day = String(dateObj.getDate()).padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
     const displayDayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
-        // Check if this date already exists
         const existingRow = Array.from(tbody.querySelectorAll("tr")).find(row => {
             const dateInput = row.querySelector("td:nth-child(1) input[type='date']");
             return dateInput && dateInput.value === formattedDate;
@@ -1464,26 +1402,25 @@ function applyQuickAvailability() {
             
             tbody.appendChild(tr);
             addedCount++;
-            console.log(`✅ Added: ${formattedDate} (${displayDayName})`);
+            console.log(` Added: ${formattedDate} (${displayDayName})`);
         } else {
-            console.log(`⚠️ ${formattedDate} already has availability`);
+            console.log(` ${formattedDate} already has availability`);
             skippedCount++;
         }
     });
     
     closeQuickAddPopup();
     if (addedCount > 0) {
-        showToast(`✅ Added ${addedCount} new slot${addedCount > 1 ? 's' : ''}!`);
+        showToast(` Added ${addedCount} new slot${addedCount > 1 ? 's' : ''}!`);
         if (skippedCount > 0) {
-            showToast(`⚠️ ${skippedCount} date(s) already had availability and were skipped`, 4000);
+            showToast(` ${skippedCount} date(s) already had availability and were skipped`, 4000);
         }
     } else if (skippedCount > 0) {
-        showToast(`⚠️ All selected dates already have availability.`);
+        showToast(` All selected dates already have availability.`);
     }
 }
 
 function selectAllWeekdays() {
-    // Monday to Friday (1-5)
     for(let i = 1; i <= 5; i++) {
         const cb = document.querySelector(`.quickDayCheckbox[value="${i}"]`);
         if(cb) cb.checked = true;
@@ -1491,7 +1428,6 @@ function selectAllWeekdays() {
 }
 
 function selectAllWeekends() {
-    // Saturday (6) and Sunday (0)
     const sat = document.querySelector('.quickDayCheckbox[value="6"]');
     const sun = document.querySelector('.quickDayCheckbox[value="0"]');
     if(sat) sat.checked = true;
@@ -1515,20 +1451,18 @@ function applySimpleQuickAdd() {
         return;
     }
     
-    // Generate all dates in range
     const datesToAdd = [];
     const currentDate = new Date(dateFrom);
     const endDate = new Date(dateTo);
     
     while(currentDate <= endDate) {
-        const dayOfWeek = currentDate.getDay(); // 0 = Sunday
+        const dayOfWeek = currentDate.getDay(); 
         if(selectedDays.includes(dayOfWeek)) {
             datesToAdd.push(new Date(currentDate));
         }
         currentDate.setDate(currentDate.getDate() + 1);
     }
     
-    // Generate time slots
     const startTime = new Date(`1970-01-01T${start}:00`);
     const endTime = new Date(`1970-01-01T${end}:00`);
     const slotList = [];
@@ -1544,7 +1478,6 @@ function applySimpleQuickAdd() {
         current.setMinutes(current.getMinutes() + 30);
     }
     
-    // Add to table (using local date format to avoid timezone issues)
     const tbody = document.querySelector("#availabilityTable tbody");
     let addedCount = 0;
     
@@ -1553,9 +1486,7 @@ function applySimpleQuickAdd() {
         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
         const day = String(dateObj.getDate()).padStart(2, '0');
         const formattedDate = `${year}-${month}-${day}`;
-        
-        // Check if already exists
-        const existingRow = Array.from(tbody.querySelectorAll("tr")).find(row => {
+                const existingRow = Array.from(tbody.querySelectorAll("tr")).find(row => {
             const dateInput = row.querySelector("td:nth-child(1) input[type='date']");
             return dateInput && dateInput.value === formattedDate;
         });
@@ -1598,7 +1529,7 @@ function applySimpleQuickAdd() {
     });
     
     closeQuickAddPopup();
-    showToast(`✅ Added ${addedCount} new date${addedCount !== 1 ? 's' : ''}!`);
+    showToast(` Added ${addedCount} new date${addedCount !== 1 ? 's' : ''}!`);
 }
 
 function getDateForDayInWeek(dayShort, weekNumber, fromDate) {
@@ -1608,11 +1539,8 @@ function getDateForDayInWeek(dayShort, weekNumber, fromDate) {
     
     const targetDay = daysMap[dayShort];
     const currentDay = fromDate.getDay();
+        let daysToAdd = (targetDay - currentDay + 7) % 7;
     
-    // Calculate days to add to reach the target day in the specified week
-    let daysToAdd = (targetDay - currentDay + 7) % 7;
-    
-    // Add weeks
     daysToAdd += (weekNumber - 1) * 7;
     
     const targetDate = new Date(fromDate);
@@ -1683,9 +1611,8 @@ function highlightErrorRows() {
         }
 
      function saveProfile() {
-    // First validate all slots
     if (!validateAllSlots()) {
-        safeLog("❌ Cannot save: Please Select both Date and Day", true);
+        safeLog(" Cannot save: Please Select both Date and Day", true);
         return;
     }
     
@@ -1700,7 +1627,7 @@ function highlightErrorRows() {
     console.log("Saving payload:", newSlots);
     
     if (newSlots.length === 0) {
-        safeLog("❌ No valid slots to save!", true);
+        safeLog(" No valid slots to save!", true);
         return;
     }
 
@@ -1750,7 +1677,6 @@ function highlightErrorRows() {
                             if (cb.checked) checkedSlots.push(cb.value);
                         });
                     } else {
-                        // fallback: read from span when not in edit mode
                         const slotText = row.querySelector("td:nth-child(2) .slot-text")?.textContent || "";
                         if (slotText) {
                             checkedSlots.push(...slotText.split(",").map(s => s.trim()));
@@ -1767,7 +1693,7 @@ function highlightErrorRows() {
             }
 
     function enableEditing() {
-            safeLog("✏️ Edit mode enabled - select dates and time slots");
+            safeLog("Edit mode enabled - select dates and time slots");
 
         isEditing = true;
         toggleEditFields(true);
@@ -1785,16 +1711,13 @@ function highlightErrorRows() {
                 const removeBtn = row.querySelector("td:nth-child(3) button");
 
                 if (enabled) {
-                    // Enable date input
                     dateInput.disabled = false;
 
-                    // Get slot text (if exists)
                     const slotTextEl = slotsCell.querySelector(".slot-text");
-                    if (!slotTextEl) return; // nothing to convert
+                    if (!slotTextEl) return; 
                     const slotText = slotTextEl.textContent.trim();
                     const activeSlots = slotText ? slotText.split(",").map(s => s.trim()) : [];
 
-                    // Build checkboxes only for active slots
                     const slotsContainer = document.createElement("div");
                     slotsContainer.classList.add("slots-container");
 
@@ -1814,10 +1737,8 @@ function highlightErrorRows() {
 
                     removeBtn.style.display = "inline-block";
                 } else {
-                    // Disable date input
                     dateInput.disabled = true;
 
-                    // Convert checkboxes back to text
                     const checkboxes = slotsCell.querySelectorAll("input[type='checkbox']");
                     if (checkboxes.length) {
                         const checked = Array.from(checkboxes)
@@ -1831,7 +1752,6 @@ function highlightErrorRows() {
                 }
             });
 
-            // Toggle Add Slot & Quick Add buttons
             document.querySelectorAll(".add-slot-btn").forEach(btn => {
                 btn.style.display = enabled ? "inline-block" : "none";
             });
@@ -1852,7 +1772,6 @@ function highlightErrorRows() {
             if (draggedRow && draggedRow !== e.currentTarget) {
                 const tbody = draggedRow.parentNode;
                 tbody.insertBefore(draggedRow, e.currentTarget.nextSibling);
-                // autoSaveProfile();
             }
         }
 
@@ -1931,7 +1850,7 @@ function highlightErrorRows() {
     const role = localStorage.getItem("userRole");
 
     if (userId && role) {
-      console.log("🟢 Reconnecting user:", userId, role);
+      console.log("Reconnecting user:", userId, role);
       socket.emit("join_user", { userId, role });
     }
   });

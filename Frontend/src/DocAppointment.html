@@ -362,9 +362,6 @@
         color: #004d4d;
       }
 
-      /* Responsive Design tweaks kept as-is from your code */
-
-      /* Keyframes */
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -376,11 +373,11 @@
         }
       }
       .appointment-table td:last-child {
-        white-space: nowrap; /* keeps buttons on one line */
+        white-space: nowrap;
       }
 
       .appointment-table td:last-child button {
-        margin-right: 6px; /* small space between buttons */
+        margin-right: 6px;
       }
 
       @media screen and (max-width: 768px) {
@@ -662,7 +659,6 @@
         background: #f8f9fa;
         border-bottom: 2px solid #e9ecef;
         overflow-x: auto;
-        scrollbar-width: thin;
       }
 
       .tab-btn {
@@ -735,7 +731,6 @@
         }
       }
 
-      /* Adjust section-block for tabs */
       .section-block {
         background: white;
         border-radius: 12px;
@@ -811,7 +806,7 @@
         </div>
       </div>
 
-      <!-- Tab Content: New Appointments -->
+      <!-- New Appointments -->
       <div id="tab-new" class="tab-content active">
         <div class="section-block">
           <h2>New Appointments</h2>
@@ -835,7 +830,7 @@
         </div>
       </div>
 
-      <!-- Tab Content: Cancelled Appointments -->
+      <!--  Cancelled Appointments -->
       <div id="tab-cancelled" class="tab-content">
         <div class="section-block">
           <h2>Cancelled Appointments</h2>
@@ -858,7 +853,7 @@
         </div>
       </div>
 
-      <!-- Tab Content: Completed Appointments -->
+      <!--  Completed Appointments -->
       <div id="tab-completed" class="tab-content">
         <div class="section-block">
           <h2>Completed Appointments</h2>
@@ -881,7 +876,6 @@
         </div>
       </div>
 
-      <!-- Tab Content: Missed Appointments -->
       <div id="tab-missed" class="tab-content">
         <div class="section-block">
           <h2>Missed Appointments</h2>
@@ -915,7 +909,6 @@
 
         <input type="hidden" id="appointmentId" />
         <button onclick="confirmReschedule()">Confirm Reschedule</button>
-        <!-- <button class="btn btn-warning" onclick="rescheduleAppointment('{{appointment._id}}')">Reschedule</button> -->
       </div>
     </div>
 
@@ -935,7 +928,6 @@
         <button id="successOk">OK</button>
       </div>
     </div>
-    <!-- Adeed -->
     <!-- Missed Confirmation Modal -->
     <div id="missedConfirmModal" class="modal-overlay">
       <div class="modal-content">
@@ -985,9 +977,7 @@
           });
         }
 
-        // Initialize tabs
         initializeTabs();
-        // Update badges after loading
         setTimeout(updateTabBadges, 500);
       });
       function filterAppointments() {
@@ -996,9 +986,7 @@
           .value.toLowerCase();
         const statusValue = document.getElementById("statusFilter").value;
 
-        // Determine which tab to show based on filter
         if (statusValue !== "all") {
-          // Switch to the corresponding tab
           const tabBtn = document.querySelector(
             `.tab-btn[data-tab="${statusValue}"]`,
           );
@@ -1064,7 +1052,6 @@
           return;
         }
 
-        // Fetch both appointments and feedback
         Promise.all([
           fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -1214,7 +1201,6 @@
           });
       }
 
-      // Call this function on page load
       window.onload = function () {
         loadFromLocalStorage();
         loadPatientAppointments();
@@ -1235,7 +1221,7 @@
 
         paginationState.newAppointments.rows.push(rowHTML);
         paginateTable("newAppointments");
-        updateTabBadges(); // ADD THIS LINE
+        updateTabBadges();
       }
 
       function addCancelledAppointmentRow(appointment) {
@@ -1259,7 +1245,7 @@
     </tr>`;
         paginationState.cancelledAppointments.rows.push(rowHTML);
         paginateTable("cancelledAppointments");
-        updateTabBadges(); // ADD THIS LINE
+        updateTabBadges();
       }
 
       function addCompletedAppointmentRow(appointment) {
@@ -1288,17 +1274,14 @@
           btn.addEventListener("click", () => {
             const tabId = btn.getAttribute("data-tab");
 
-            // Remove active class from all buttons and contents
             tabBtns.forEach((b) => b.classList.remove("active"));
             tabContents.forEach((c) => c.classList.remove("active"));
 
-            // Add active class to current button and content
             btn.classList.add("active");
             document.getElementById(`tab-${tabId}`).classList.add("active");
           });
         });
       }
-      // Update tab badges with counts
       function updateTabBadges() {
         const newCount = document.querySelectorAll(
           "#newAppointments tr:not(.empty-row)",
@@ -1338,7 +1321,6 @@
 
         confirmModal.style.display = "flex";
 
-        // Removing any old listeners first
         confirmYesBtn.onclick = null;
         confirmNoBtn.onclick = null;
         successOkBtn.onclick = null;
@@ -1372,7 +1354,6 @@
               row.remove();
               updateLocalStorage();
 
-              // Show success modal
               successModal.style.display = "flex";
             })
             .catch((err) => {
@@ -1452,10 +1433,8 @@
 
               console.log("Parsed slotDateTime:", slotDateTime.toString());
 
-              // Skiping past slots
               if (slotDateTime <= now) return;
 
-              // Adding only valid slots
               const option = document.createElement("option");
               option.value = `${dateStr}|${timeTrimmed}`;
               option.textContent = `${dateStr} at ${timeTrimmed}`;
@@ -1490,7 +1469,6 @@
 
         const [newDate, newTime] = selectedSlot.split("|");
 
-        // Correctly geting appointment ID
         const appointmentId = document.getElementById("appointmentId").value;
         console.log("Using appointmentId in confirmReschedule:", appointmentId);
 
@@ -1678,7 +1656,6 @@
               addMissedAppointmentRow({ patientName, appointmentTime, phone });
               updateLocalStorage();
 
-              // Restore button after success
               button.disabled = false;
               button.innerHTML = originalText;
 
@@ -1687,8 +1664,6 @@
             .catch((err) => {
               console.error("Error marking as missed:", err);
               alert("Failed to mark appointment as missed.");
-
-              //  Restore button if error
               button.disabled = false;
               button.innerHTML = originalText;
             });
@@ -1713,7 +1688,7 @@
         paginationState.missedAppointments.rows.push(rowHTML);
 
         paginateTable("missedAppointments");
-        updateTabBadges(); // ADD THIS LINE
+        updateTabBadges();
       }
 
       const pageSize = 6;
@@ -1748,7 +1723,7 @@
 
         prevBtn.disabled = state.currentPage === 1;
         nextBtn.disabled = state.currentPage === totalPages;
-        updateTabBadges(); // ADD THIS LINE
+        updateTabBadges();
       }
 
       function nextPage(sectionId) {
@@ -1817,7 +1792,7 @@
         const role = localStorage.getItem("userRole");
 
         if (userId && role) {
-          console.log("🟢 Reconnecting user:", userId, role);
+          console.log(" Reconnecting user:", userId, role);
           socket.emit("join_user", { userId, role });
         }
       });

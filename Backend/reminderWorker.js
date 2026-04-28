@@ -3,7 +3,7 @@ const cron = require('node-cron');
 require('dotenv').config();
 
 const sendEmail = require('./Utils/sendEmail');
-const Booking = require('./models/booking'); // Adjust path if your file is named differently
+const Booking = require('./models/booking'); 
 const {User} = require('./models/users');
 const Doctor = require('./models/doctors');
 
@@ -74,7 +74,6 @@ if (
         const patientMsg = ` 30-Min Reminder: You have an appointment with Dr. ${doctor.name} on ${time}`;
         const doctorMsg = ` 30-Min Reminder: You have an appointment with ${patient.name} on ${time}`;
 
-        // await sendEmail(patient.email, 'Appointment Reminder - 30 Mins', patientMsg);
 const patientEmail = appt.email || patient.email;
 
 await sendEmail(patientEmail, 'Appointment Reminder - 30 Mins', patientMsg);
@@ -97,14 +96,13 @@ console.log(doctorConsoleMsg);
         await appt.save();
       }
 else if (
-  timeDiff > 23 * 60 * 60 * 1000 &&  // more than 23 hours away
-  timeDiff <= 24 * 60 * 60 * 1000 && // less than or equal to 24 hours away
+  timeDiff > 23 * 60 * 60 * 1000 &&  
+  timeDiff <= 24 * 60 * 60 * 1000 && 
   !appt.reminderSent24hr
 ) {
   const patientMsg = `24-Hour Reminder: You have an appointment with Dr. ${doctor.name} on ${time}`;
   const doctorMsg = ` 24-Hour Reminder: You have an appointment with ${patient.name} on ${time}`;
 
-  // await sendEmail(patient.email, 'Appointment Reminder - 24 Hours', patientMsg);
   const patientEmail = appt.email || patient.email;
 
 await sendEmail(patientEmail, 'Appointment Reminder - 24 Hours', patientMsg);

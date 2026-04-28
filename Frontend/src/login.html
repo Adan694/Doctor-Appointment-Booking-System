@@ -522,7 +522,7 @@
           passwordError;
 
         if (emailError || passwordError) {
-          console.log("🚫 Login blocked due to errors:", {
+          console.log(" Login blocked due to errors:", {
             emailError,
             passwordError,
           });
@@ -535,7 +535,7 @@
           return;
         }
 
-        console.log("🔑 Starting login process:", { email, role });
+        console.log(" Starting login process:", { email, role });
 
         fetch("http://localhost:3000/auth/login", {
           method: "POST",
@@ -545,17 +545,17 @@
           body: JSON.stringify({ email, password, role }),
         })
           .then((res) => {
-            console.log("📡 Login API Response Status:", res.status);
+            console.log(" Login API Response Status:", res.status);
             if (!res.ok) {
               return res.json().then((err) => {
-                console.error("❌ Login API Error:", err);
+                console.error(" Login API Error:", err);
                 throw new Error(err.message);
               });
             }
             return res.json();
           })
           .then((data) => {
-            console.log("✅ Login Successful! Response data:", data);
+            console.log(" Login Successful! Response data:", data);
 
             const { token, role, patientId } = data;
 
@@ -564,28 +564,27 @@
             localStorage.setItem("userRole", role);
             localStorage.setItem("userEmail", email);
 
-            console.log("💾 Local Storage Updated:", {
+            console.log("Local Storage Updated:", {
               authToken: token ? "✓" : "✗",
               userRole: role,
               userEmail: email,
             });
 
-            // Doctor login
             if (role === "doctor") {
               if (data.doctor && data.doctor._id) {
                 const doctorId = data.doctor._id;
                 localStorage.setItem("doctorId", doctorId);
                 localStorage.setItem("userId", doctorId);
-                socket.connect(); // ⭐ ADD THIS
+                socket.connect();
 
                 socket.emit("join_user", { userId: doctorId, role: "doctor" });
 
-                console.log("👨‍⚕️ Doctor Login Successful");
-                console.log("🔄 Redirecting to docpanel.html");
+                console.log(" Doctor Login Successful");
+                console.log(" Redirecting to docpanel.html");
                 window.location.href = "docpanel.html";
                 return;
               } else {
-                console.error("❌ Doctor ID not found in response:", data);
+                console.error(" Doctor ID not found in response:", data);
                 alert("Doctor ID not found in login response.");
                 return;
               }
@@ -596,41 +595,38 @@
               localStorage.setItem("adminId", patientId);
               localStorage.setItem("userId", patientId);
 
-              socket.connect(); // ⭐ ADD THIS
+              socket.connect();
 
               socket.emit("join_user", { userId: patientId, role: "admin" });
 
-              console.log("👑 Admin Login:", {
+              console.log(" Admin Login:", {
                 id: patientId,
                 email: email,
               });
 
-              console.log("🔄 Redirecting to Adminpanel.html");
+              console.log(" Redirecting to Adminpanel.html");
               window.location.href = "Adminpanel.html";
-            }
-            // Patient login
-            else if (role === "patient") {
+            } else if (role === "patient") {
               localStorage.setItem("patientId", patientId);
               localStorage.setItem("userId", patientId);
-              socket.connect(); // ⭐ ADD THIS
+              socket.connect();
 
               socket.emit("join_user", { userId: patientId, role: "patient" });
 
-              console.log("👤 Patient Login:", {
+              console.log(" Patient Login:", {
                 id: patientId,
                 email: email,
               });
 
-              // ❌ REMOVED socket connection
-              console.log("🔄 Redirecting to index.html");
+              console.log(" Redirecting to index.html");
               window.location.href = "index.html";
             } else {
-              console.error("🚫 Unrecognized role:", role);
+              console.error(" Unrecognized role:", role);
               alert("Unrecognized role.");
             }
           })
           .catch((err) => {
-            console.error("💥 Login Error:", err);
+            console.error(" Login Error:", err);
             alert(`Login failed: ${err.message}`);
             if (role === "patient") {
               document.getElementById("check").checked = true;
@@ -638,11 +634,8 @@
           });
       }
 
-      // ❌ REMOVED connectUserSocket function entirely
-
-      // Auto-reconnect on page load - SIMPLIFIED VERSION
       document.addEventListener("DOMContentLoaded", function () {
-        console.log("🌐 Page loaded - Checking for existing login");
+        console.log(" Page loaded - Checking for existing login");
 
         const token = localStorage.getItem("authToken");
         const userId = localStorage.getItem("userId");
@@ -651,13 +644,13 @@
 
         // Just check if user is logged in, no socket connection
         if (token && userId && role && email) {
-          console.log("✅ User is logged in:", {
+          console.log(" User is logged in:", {
             userId: userId,
             role: role,
             email: email,
           });
         } else {
-          console.log("🚫 No existing login found - Starting fresh");
+          console.log(" No existing login found - Starting fresh");
         }
       });
 
@@ -801,16 +794,6 @@
             (hasSpecial ? "✅" : "❌") +
             " At least one special character (@$!%*?&)";
         });
-
-      // document.addEventListener("DOMContentLoaded", function () {
-      //   const userId = localStorage.getItem("userId");
-      //   const role = localStorage.getItem("userRole");
-
-      //   if (userId && role) {
-      //     console.log("🟢 Reconnecting online:", userId, role);
-      //     socket.emit("join_user", { userId, role });
-      //   }
-      // });
     </script>
   </body>
 </html>

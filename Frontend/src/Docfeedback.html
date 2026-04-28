@@ -9,7 +9,6 @@
     />
     <title>Doctor Feedback</title>
     <style>
-      /* General Styles */
       body {
         font-family: "Arial", sans-serif;
         background-color: #e6f2ff;
@@ -317,7 +316,6 @@
         display: none;
       }
 
-      /* SIMPLE PAGINATION STYLES - Matching Theme */
       .pagination {
         display: flex;
         justify-content: center;
@@ -551,12 +549,6 @@
         <button id="prevPageBtn" class="prev-btn">Previous</button>
         <span id="pageInfo" class="page-info">Page 1 of 1</span>
         <button id="nextPageBtn" class="next-btn">Next</button>
-        <!-- <select id="itemsPerPage" class="items-per-page">
-          <option value="5" selected>5 per page</option>
-          <option value="10">10 per page</option>
-          <option value="20">20 per page</option>
-          <option value="50">50 per page</option>
-        </select> -->
       </div>
     </main>
 
@@ -578,7 +570,6 @@
         menu.classList.toggle("active");
       });
 
-      // Pagination variables
       let currentPage = 1;
       let itemsPerPage = 5;
       let currentFeedbacks = [];
@@ -608,23 +599,19 @@
         const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
         const paginatedFeedbacks = feedbacks.slice(startIndex, endIndex);
 
-        // Calculate and show average rating
         const avgRating =
           feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length;
         document.getElementById("avgStars").innerHTML =
           "★".repeat(Math.round(avgRating)) +
           "☆".repeat(5 - Math.round(avgRating));
 
-        // Update page info
         document.getElementById("pageInfo").textContent =
           `Page ${page} of ${totalPages}`;
 
-        // Clear table
         tableBody.innerHTML = "";
 
         const maxRating = Math.max(...feedbacks.map((f) => f.rating));
 
-        // Render paginated feedbacks
         paginatedFeedbacks.forEach((feedback, index) => {
           const row = document.createElement("tr");
 
@@ -663,7 +650,6 @@
           }, index * 100);
         });
 
-        // Update pagination buttons
         updatePaginationButtons(totalPages, page);
       }
 
@@ -671,7 +657,6 @@
         const prevBtn = document.getElementById("prevPageBtn");
         const nextBtn = document.getElementById("nextPageBtn");
 
-        // Update prev/next buttons state
         prevBtn.disabled = currentPage === 1;
         nextBtn.disabled = currentPage === totalPages;
       }
@@ -687,7 +672,6 @@
         renderFeedbackTable(currentFeedbacks, currentPage);
       }
 
-      // Load feedback and save globally
       function loadDoctorFeedback(doctorId, token) {
         fetch(
           `http://localhost:3000/api/feedback/doctors/${doctorId}/feedback`,
@@ -697,7 +681,6 @@
         )
           .then((res) => res.json())
           .then((feedbacks) => {
-            // Apply current sort
             let sorted = [...feedbacks];
             if (currentSortValue === "dateDesc")
               sorted.sort(
@@ -721,7 +704,6 @@
           });
       }
 
-      // Sort functionality
       document
         .getElementById("sortFeedback")
         .addEventListener("change", (e) => {
@@ -746,7 +728,6 @@
           renderFeedbackTable(currentFeedbacks, currentPage);
         });
 
-      // Pagination event listeners
       document.getElementById("prevPageBtn").addEventListener("click", () => {
         if (currentPage > 1) {
           goToPage(currentPage - 1);
@@ -759,10 +740,6 @@
           goToPage(currentPage + 1);
         }
       });
-
-      // document
-      //   .getElementById("itemsPerPage")
-      //   .addEventListener("change", changeItemsPerPage);
     </script>
   </body>
 </html>
