@@ -862,12 +862,14 @@ function toggleEditForm() {
             nameError.style.marginTop = '2px';
             nameInput.after(nameError);
 
-            nameInput.addEventListener('input', () => {
-                const val = nameInput.value.trim();
-                if (!val) nameError.innerText = "Name cannot be empty";
-                else if (val.length < 3) nameError.innerText = "Name must be at least 3 characters";
-                else nameError.innerText = '';
-            });
+          nameInput.addEventListener('input', () => {
+    const val = nameInput.value.trim();
+    const nameRegex = /^[A-Za-z\s]{3,}$/;
+    if (!val) nameError.innerText = "Name cannot be empty";
+    else if (val.length < 3) nameError.innerText = "Name must be at least 3 characters";
+    else if (!nameRegex.test(val)) nameError.innerText = "Only letters and spaces allowed";
+    else nameError.innerText = '';
+});
         }
 
         // Email
@@ -882,11 +884,11 @@ function toggleEditForm() {
             emailInput.addEventListener('input', () => {
                 const val = emailInput.value.trim();
                 const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                const allowedDomains = ["gmail.com","yahoo.com","hotmail.com","outlook.com"];
-                let errorMsg = '';
-                if (!val) errorMsg = "Email is required";
-                else if (!regex.test(val)) errorMsg = "Invalid email";
-                else if (!allowedDomains.includes(val.split("@")[1].toLowerCase())) errorMsg = "Domain not allowed";
+               const allowedDomains = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com"];
+let errorMsg = '';
+if (!val) errorMsg = "Email is required";
+else if (!regex.test(val)) errorMsg = "Invalid email format";
+else if (!allowedDomains.includes(val.split("@")[1].toLowerCase())) errorMsg = "Only gmail, yahoo, hotmail, outlook allowed";
                 emailError.innerText = errorMsg;
             });
         }
@@ -900,10 +902,12 @@ function toggleEditForm() {
             phoneInput.after(phoneError);
 
             phoneInput.addEventListener('input', () => {
-                const val = phoneInput.value.trim();
-                const phoneRegex = /^(03\d{9}|0\d{2,3}\d{7})$/;
-                phoneError.innerText = !phoneRegex.test(val) ? "Invalid Pakistani phone" : '';
-            });
+    const val = phoneInput.value.trim();
+    const phoneRegex = /^03[0-9]{9}$/;
+    if (!val) phoneError.innerText = "Phone number required";
+    else if (!phoneRegex.test(val)) phoneError.innerText = "Use 03XXXXXXXXX format";
+    else phoneError.innerText = '';
+});
         }
 
         const cnicInput = document.getElementById('edit-cnic');
@@ -915,10 +919,12 @@ function toggleEditForm() {
             cnicInput.after(cnicError);
 
             cnicInput.addEventListener('input', () => {
-                const val = cnicInput.value.trim();
-                const regex = /^(\d{13}|\d{5}-\d{7}-\d{1})$/;
-                cnicError.innerText = regex.test(val) ? '' : "Invalid CNIC (13 digits or 12345-1234567-1)";
-            });
+    const val = cnicInput.value.trim();
+    const regex = /^[0-9]{13}$|^[0-9]{5}-[0-9]{7}-[0-9]{1}$/;
+    if (!val) cnicError.innerText = "CNIC required";
+    else if (!regex.test(val)) cnicError.innerText = "Use 13 digits or 12345-1234567-1";
+    else cnicError.innerText = '';
+});
         }
 
         ['edit-new-password', 'edit-password-confirm'].forEach(id => {
@@ -968,18 +974,37 @@ function updateProfile() {
         return age;
     })() : '';
 
-    const updatedData = {
-        name: getInput('edit-name'),
-        email: getInput('edit-email'),
-        phone: getInput('edit-phone'),
-        dob: dobValue,
-        cnic: getInput('edit-cnic'),
-        gender: getInput('edit-gender'),
-        age: calculatedAge
-    };
+const updatedData = {
+    name: getInput('edit-name'),
+    email: getInput('edit-email'),
+    phone: getInput('edit-phone'),
+    dob: dobValue,
+    cnic: getInput('edit-cnic'),  
+    gender: getInput('edit-gender'),
+    age: calculatedAge  
+};
 
-    const phoneRegex = /^(03\d{9}|0\d{2,3}\d{7})$/;
-    if (!phoneRegex.test(updatedData.phone)) return alert("Invalid Pakistani phone number");
+if (!/^[A-Za-z\s]{3,}$/.test(updatedData.name)) {
+    alert("Name must be letters only, min 3 characters");
+    return;
+}
+if (!/^03[0-9]{9}$/.test(updatedData.phone)) {
+    alert("Invalid phone number (use 03XXXXXXXXX)");
+    return;
+}
+if (!/^[0-9]{13}$|^[0-9]{5}-[0-9]{7}-[0-9]{1}$/.test(updatedData.cnic)) {
+    alert("Invalid CNIC format");
+    return;
+}
+if (updatedData.age < 18 || updatedData.age > 120) {
+    alert("Age must be between 18 and 120");
+    return;
+}
+
+// Continue with existing code...
+showLoader();
+
+  
     const passwordFields = document.getElementById('password-fields');
     if (passwordFields.style.display === 'block') {
         const currentPassword = getInput('edit-current-password');

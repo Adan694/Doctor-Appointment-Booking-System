@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -68,7 +68,9 @@
         color: white;
         font-size: 16px;
         display: block;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease;
         border-radius: 6px;
         padding: 10px 15px;
       }
@@ -498,7 +500,7 @@
         <li><a href="admindoclist.html">Doctors List</a></li>
         <li><a href="patients-list.html">Patients List</a></li>
         <li><a href="AdminFeedback.html">Feedback</a></li>
-        <li><a href="settings.html">Profile</a></li>
+        <li><a href="adminprofile.html">Profile</a></li>
       </ul>
     </div>
     <div id="overlay"></div>
@@ -541,7 +543,7 @@
       let allPatients = [];
       let filteredPatients = [];
       let currentPage = 1;
-      const rowsPerPage = 5;
+      const rowsPerPage = 6;
 
       bar.addEventListener("click", function () {
         sidebar.classList.toggle("active");
@@ -615,7 +617,7 @@
 
           if (highlightId) {
             const rowToHighlight = document.querySelector(
-              `tr[data-id="${highlightId}"]`
+              `tr[data-id="${highlightId}"]`,
             );
             if (rowToHighlight) {
               rowToHighlight.style.backgroundColor = "#fff3cd"; // light yellow
@@ -666,7 +668,7 @@
             {
               method: "DELETE",
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
           hideLoader();
 
@@ -677,7 +679,7 @@
             const errorData = await res.json();
             alert(
               "Failed to delete patient: " +
-                (errorData.message || "Unknown error")
+                (errorData.message || "Unknown error"),
             );
           }
         } catch (error) {
@@ -697,7 +699,7 @@
             {
               method: "PATCH",
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
           hideLoader();
 
@@ -725,7 +727,7 @@
             {
               method: "PATCH",
               headers: { Authorization: "Bearer " + token },
-            }
+            },
           );
           if (res.ok) {
             hideLoader();
@@ -806,7 +808,7 @@
       document.getElementById("searchInput").addEventListener("input", (e) => {
         const query = e.target.value.toLowerCase();
         filteredPatients = allPatients.filter((p) =>
-          (p.name || "").toLowerCase().includes(query)
+          (p.name || "").toLowerCase().includes(query),
         );
         currentPage = 1;
         displayPatients();

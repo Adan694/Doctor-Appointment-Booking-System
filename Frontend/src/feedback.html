@@ -337,7 +337,7 @@
           doctorNameEl.innerText = `Doctor: ${doctor.name}`;
           doctorIdInput.value = doctorId;
           document.getElementById("feedbackForm").classList.remove("hidden");
-          loadFeedback(doctorId);
+          // loadFeedback(doctorId);
         } catch (error) {
           console.error("Doctor fetch failed:", error);
           doctorNameEl.innerText = "Error fetching doctor details.";

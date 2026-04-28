@@ -691,11 +691,67 @@
 
     <div id="toast"></div>
 
-    <script>
+   <script>
       const doctorId = localStorage.getItem("doctorId");
       let isEditing = false;
       let selectedSpecialties = [];
       let allSpecialtyOptions = [];
+
+      // ========== VALIDATION FUNCTIONS ==========
+      function validateName(name) {
+          const nameRegex = /^[A-Za-z\s]{3,}$/;
+          if (!name) return "Name is required";
+          if (name.length < 3) return "Name must be at least 3 characters";
+          if (!nameRegex.test(name)) return "Name can only contain letters and spaces";
+          return "";
+      }
+
+      function validateQualifications(value) {
+          if (!value) return "Qualifications are required";
+          if (value.length < 5) return "Enter valid qualifications (min 5 characters)";
+          return "";
+      }
+
+      function validateDegree(value) {
+          if (!value) return "Degree is required";
+          if (value.length < 3) return "Enter valid degree name";
+          return "";
+      }
+
+      function validateAbout(value) {
+          if (!value) return "About section is required";
+          if (value.length < 20) return "About must be at least 20 characters";
+          return "";
+      }
+
+      function validateSpecializations() {
+          if (selectedSpecialties.length === 0) return "Please select at least one specialization";
+          return "";
+      }
+
+      function validateServices(value) {
+    if (!value) return "Services are required";
+    if (value.length < 5) return "Services must be at least 5 characters";
+    return "";
+}
+
+function validateConditions(value) {
+    if (!value) return "Conditions Treated are required";
+    if (value.length < 5) return "Conditions must be at least 5 characters";
+    return "";
+}
+
+function validateMemberships(value) {
+    if (!value) return "Memberships are required";
+    if (value.length < 3) return "Memberships must be at least 3 characters";
+    return "";
+}
+
+function validateLocations(value) {
+    if (!value) return "Practice Locations are required";
+    if (value.length < 5) return "Practice Locations must be at least 5 characters";
+    return "";
+}
 
       function buildSpecialtyOptions() {
         const originalSelect = document.getElementById("specialization");
@@ -979,34 +1035,42 @@
 
       function enableEditing() {
         isEditing = true;
-        toggleEditFields(true);
+        // Enable all input fields
+        const allInputs = document.querySelectorAll('.input-group input, .input-group textarea, #doctorName');
+        allInputs.forEach(input => {
+          input.disabled = false;
+          input.readOnly = false;
+          input.removeAttribute('readOnly');
+        });
+        // Enable file upload
+        const fileInput = document.getElementById("fileUpload");
+        if (fileInput) fileInput.disabled = false;
+        // Enable multiselect
         setMultiselectEnabled(true);
+        // Enable change password button
+        document.getElementById("change-password-btn").disabled = false;
+        
         const btn = document.querySelector(".action-buttons .btn");
         btn.textContent = "Save Profile";
         btn.onclick = saveProfile;
       }
 
       function toggleEditFields(enabled) {
-        const fields = [
-          "doctorName",
-          "qualifications",
-          "services",
-          "conditions",
-          "experience",
-          "memberships",
-          "fees",
-          "locations",
-          "fileUpload",
-          "degree",
-          "about",
-        ];
-        fields.forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) {
-            el.readOnly = !enabled;
-            el.disabled = !enabled;
+        const allInputs = document.querySelectorAll('.input-group input, .input-group textarea, #doctorName');
+        allInputs.forEach(input => {
+          if (enabled) {
+            input.disabled = false;
+            input.readOnly = false;
+            input.removeAttribute('readOnly');
+          } else {
+            input.disabled = true;
+            input.readOnly = true;
           }
         });
+        
+        const fileInput = document.getElementById("fileUpload");
+        if (fileInput) fileInput.disabled = !enabled;
+        
         document.getElementById("change-password-btn").disabled = !enabled;
       }
 
@@ -1049,17 +1113,14 @@
               }
             }
 
-            console.log("Parsed specialties:", selectedSpecs);
             setTimeout(() => {
               setSelectedSpecialtiesFromValues(selectedSpecs);
             }, 100);
-            document.getElementById("qualifications").value =
-              data.qualifications || "";
+            document.getElementById("qualifications").value = data.qualifications || "";
             document.getElementById("services").value = data.services || "";
             document.getElementById("conditions").value = data.conditions || "";
             document.getElementById("experience").value = data.experience || "";
-            document.getElementById("memberships").value =
-              data.memberships || "";
+            document.getElementById("memberships").value = data.memberships || "";
             document.getElementById("fees").value = data.fees || "";
             document.getElementById("locations").value = data.locations || "";
             document.getElementById("degree").value = data.degree || "";
@@ -1068,6 +1129,8 @@
               : "images/placeholder.png";
             document.getElementById("about").value = data.about || "";
             document.getElementById("change-password-btn").disabled = false;
+            
+            // Disable all fields after loading (view mode)
             toggleEditFields(false);
             setMultiselectEnabled(false);
           })
@@ -1080,6 +1143,49 @@
       function saveProfile() {
         const token = localStorage.getItem("authToken");
         if (!token) return alert("You are not logged in.");
+
+        // Validation checks
+        const nameValidation = validateName(document.getElementById("doctorName").value);
+        if (nameValidation) {
+            alert(nameValidation);
+            return;
+        }
+
+        const qualificationsValidation = validateQualifications(document.getElementById("qualifications").value);
+        if (qualificationsValidation) {
+            alert(qualificationsValidation);
+            return;
+        }
+
+        const degreeValidation = validateDegree(document.getElementById("degree").value);
+        if (degreeValidation) {
+            alert(degreeValidation);
+            return;
+        }
+
+        const aboutValidation = validateAbout(document.getElementById("about").value);
+        if (aboutValidation) {
+            alert(aboutValidation);
+            return;
+        }
+
+        const specializationsValidation = validateSpecializations();
+        if (specializationsValidation) {
+            alert(specializationsValidation);
+            return;
+        }
+
+        const servicesValidation = validateServices(document.getElementById("services").value);
+if (servicesValidation) { alert(servicesValidation); return; }
+
+const conditionsValidation = validateConditions(document.getElementById("conditions").value);
+if (conditionsValidation) { alert(conditionsValidation); return; }
+
+const membershipsValidation = validateMemberships(document.getElementById("memberships").value);
+if (membershipsValidation) { alert(membershipsValidation); return; }
+
+const locationsValidation = validateLocations(document.getElementById("locations").value);
+if (locationsValidation) { alert(locationsValidation); return; }
 
         const fileInput = document.getElementById("fileUpload");
         const file = fileInput.files[0];
@@ -1095,23 +1201,11 @@
         const selectedSpecialtyValues = getSelectedSpecialtyValues();
         profile.append("speciality", JSON.stringify(selectedSpecialtyValues));
 
-        profile.append(
-          "qualifications",
-          document.getElementById("qualifications").value,
-        );
+        profile.append("qualifications", document.getElementById("qualifications").value);
         profile.append("services", document.getElementById("services").value);
-        profile.append(
-          "conditions",
-          document.getElementById("conditions").value,
-        );
-        profile.append(
-          "experience",
-          document.getElementById("experience").value,
-        );
-        profile.append(
-          "memberships",
-          document.getElementById("memberships").value,
-        );
+        profile.append("conditions", document.getElementById("conditions").value);
+        profile.append("experience", document.getElementById("experience").value);
+        profile.append("memberships", document.getElementById("memberships").value);
         profile.append("fees", document.getElementById("fees").value);
         profile.append("locations", document.getElementById("locations").value);
         profile.append("degree", document.getElementById("degree").value);
@@ -1120,26 +1214,17 @@
 
         const passwordFields = document.getElementById("password-fields");
         if (passwordFields.style.display === "block") {
-          const currentPassword = document
-            .getElementById("current-password")
-            .value.trim();
-          const newPassword = document
-            .getElementById("new-password")
-            .value.trim();
-          const confirmPassword = document
-            .getElementById("confirm-password")
-            .value.trim();
+          const currentPassword = document.getElementById("current-password").value.trim();
+          const newPassword = document.getElementById("new-password").value.trim();
+          const confirmPassword = document.getElementById("confirm-password").value.trim();
           if (currentPassword || newPassword || confirmPassword) {
             if (!currentPassword || !newPassword || !confirmPassword)
               return alert("Fill all password fields.");
             if (newPassword !== confirmPassword)
               return alert("Passwords do not match.");
-            const passwordRegex =
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/;
             if (!passwordRegex.test(newPassword))
-              return alert(
-                "Password must include uppercase, lowercase, number, special char.",
-              );
+              return alert("Password must include uppercase, lowercase, number, special char.");
             profile.append("currentPassword", currentPassword);
             profile.append("newPassword", newPassword);
           }
@@ -1160,16 +1245,12 @@
               showToast("Profile saved successfully!");
 
               if (data.speciality || (data.doctor && data.doctor.speciality)) {
-                const savedSpecialty =
-                  data.speciality || data.doctor.speciality;
+                const savedSpecialty = data.speciality || data.doctor.speciality;
                 let selectedSpecs = [];
                 if (savedSpecialty) {
                   if (Array.isArray(savedSpecialty)) {
                     selectedSpecs = savedSpecialty;
-                  } else if (
-                    typeof savedSpecialty === "string" &&
-                    savedSpecialty.startsWith("[")
-                  ) {
+                  } else if (typeof savedSpecialty === "string" && savedSpecialty.startsWith("[")) {
                     try {
                       selectedSpecs = JSON.parse(savedSpecialty);
                     } catch (e) {
@@ -1211,17 +1292,4 @@
         setTimeout(() => (toast.style.display = "none"), 3000);
       }
     </script>
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
-    <script>
-      const socket = io("http://localhost:3000");
-      document.addEventListener("DOMContentLoaded", () => {
-        const userId = localStorage.getItem("userId");
-        const role = localStorage.getItem("userRole");
-        if (userId && role) {
-          console.log(" Reconnecting user:", userId, role);
-          socket.emit("join_user", { userId, role });
-        }
-      });
-    </script>
-  </body>
 </html>

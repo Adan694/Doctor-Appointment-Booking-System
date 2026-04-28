@@ -812,7 +812,6 @@ tr.error-highlight {
                 "11:00 PM", "11:30 PM"
             ];
 
-
           document.addEventListener('DOMContentLoaded', () => {
                 const bar = document.getElementById('bar');
                 const menu = document.querySelector('nav ul');
@@ -1194,12 +1193,22 @@ function validateAllSlots() {
 }
 function openQuickAddPopup() {
     document.getElementById("quickAddModal").style.display = "flex";
+    const today = getTodayDate();
+    const fromDateInput = document.getElementById('quickDateFrom');
+    const toDateInput = document.getElementById('quickDateTo');
+    
+    if (fromDateInput) {
+        fromDateInput.min = today;
+        fromDateInput.value = today;
+    }
+    if (toDateInput) {
+        toDateInput.min = today;
+    }
+    
     const specificDateInput = document.getElementById('specificDate');
     if (specificDateInput) {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        specificDateInput.min = getTodayDate();
-        specificDateInput.value = getTodayDate();
+        specificDateInput.min = today;
+        specificDateInput.value = today;
     }
 }
 
@@ -1441,30 +1450,56 @@ function applySimpleQuickAdd() {
     const start = document.getElementById('quickStart').value;
     const end = document.getElementById('quickEnd').value;
     
+    // Validate dates
     if(!dateFrom || !dateTo) {
-        showToast("Please select both From and To dates", true);
+        alert("Please select both From and To dates");
+        return;
+    }
+    
+    // Check if starting date is before ending date
+    const fromDateObj = new Date(dateFrom);
+    const toDateObj = new Date(dateTo);
+    if (fromDateObj > toDateObj) {
+        alert("Starting date must be before or equal to ending date");
         return;
     }
     
     if(selectedDays.length === 0) {
-        showToast("Please select at least one day of the week", true);
+        alert("Please select at least one day of the week");
+        return;
+    }
+    
+    // Check if start and end times are selected
+    if (!start || !end) {
+        alert("Please select both start and end times");
+        return;
+    }
+    
+    // Create time objects for validation
+    const startTime = new Date(`1970-01-01T${start}:00`);
+    const endTime = new Date(`1970-01-01T${end}:00`);
+    
+    // Check if end time is after start time
+    if (endTime <= startTime) {
+        alert("End time must be after start time");
         return;
     }
     
     const datesToAdd = [];
     const currentDate = new Date(dateFrom);
     const endDate = new Date(dateTo);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     
     while(currentDate <= endDate) {
         const dayOfWeek = currentDate.getDay(); 
-        if(selectedDays.includes(dayOfWeek)) {
+        if(selectedDays.includes(dayOfWeek) && currentDate >= today) {
             datesToAdd.push(new Date(currentDate));
         }
         currentDate.setDate(currentDate.getDate() + 1);
     }
     
-    const startTime = new Date(`1970-01-01T${start}:00`);
-    const endTime = new Date(`1970-01-01T${end}:00`);
+    // Generate slot list
     const slotList = [];
     let current = new Date(startTime);
     
@@ -1478,15 +1513,23 @@ function applySimpleQuickAdd() {
         current.setMinutes(current.getMinutes() + 30);
     }
     
+    // Check if adding more than 16 slots
+    if (slotList.length > MAX_SLOTS_PER_DAY) {
+        alert(`Cannot add more than ${MAX_SLOTS_PER_DAY} slots per day. Selected ${slotList.length} slots.`);
+        return;
+    }
+    
     const tbody = document.querySelector("#availabilityTable tbody");
     let addedCount = 0;
+    let skippedCount = 0;
     
     datesToAdd.forEach(dateObj => {
         const year = dateObj.getFullYear();
         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
         const day = String(dateObj.getDate()).padStart(2, '0');
         const formattedDate = `${year}-${month}-${day}`;
-                const existingRow = Array.from(tbody.querySelectorAll("tr")).find(row => {
+        
+        const existingRow = Array.from(tbody.querySelectorAll("tr")).find(row => {
             const dateInput = row.querySelector("td:nth-child(1) input[type='date']");
             return dateInput && dateInput.value === formattedDate;
         });
@@ -1525,13 +1568,23 @@ function applySimpleQuickAdd() {
             
             tbody.appendChild(tr);
             addedCount++;
+        } else {
+            skippedCount++;
         }
     });
     
     closeQuickAddPopup();
-    showToast(` Added ${addedCount} new date${addedCount !== 1 ? 's' : ''}!`);
+    if (addedCount > 0) {
+        alert(`Added ${addedCount} new date${addedCount !== 1 ? 's' : ''}!`);
+        if (skippedCount > 0) {
+            alert(`${skippedCount} date(s) already had availability and were skipped`);
+        }
+    } else if (skippedCount > 0) {
+        alert(`All selected dates already have availability.`);
+    } else {
+        alert("No new dates were added. All selected dates are either in the past or already exist.");
+    }
 }
-
 function getDateForDayInWeek(dayShort, weekNumber, fromDate) {
     const daysMap = {
         'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6, 'Sun': 0
