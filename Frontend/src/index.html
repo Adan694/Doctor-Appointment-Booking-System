@@ -447,22 +447,38 @@
             </div>
         </div>
 
-    <div id="contact">
-        <div class="head">
-            <h1>Contact <span>Us</span></h1>
-        </div>
-    
-        <div class="contact">
-            <h1>Connect With Us</h1>
-            <form id="contactForm">
-                <input type="email" placeholder="Enter Email" id="email" required>
-                 <input type="text" placeholder="Enter Full Name" id="name" required>
-                <input type="tel" placeholder="Enter Contact Number" id="phone" required>
-                <textarea id="message" placeholder="Your Message..." required></textarea>
-                <button type="submit" id="connectBtn">Contact</button>
-            </form>
-        </div>
+   <div id="contact">
+    <div class="head">
+        <h1>Contact <span>Us</span></h1>
     </div>
+
+    <div class="contact">
+        <h1>Connect With Us</h1>
+        <form id="contactForm">
+            <div class="form-group">
+                <input type="text" placeholder="Enter Full Name" id="contactName">
+                <small id="contactNameError" class="error-message"></small>
+            </div>
+            
+            <div class="form-group">
+                <input type="email" placeholder="Enter Email" id="contactEmail">
+                <small id="contactEmailError" class="error-message"></small>
+            </div>
+            
+            <div class="form-group">
+                <input type="tel" placeholder="Enter Contact Number" id="contactPhone">
+                <small id="contactPhoneError" class="error-message"></small>
+            </div>
+            
+            <div class="form-group">
+                <textarea id="contactMessage" placeholder="Your Message..."></textarea>
+                <small id="contactMessageError" class="error-message"></small>
+            </div>
+            
+            <button type="submit" id="connectBtn">Contact</button>
+        </form>
+    </div>
+</div>
         <div class="footer">
             <div class="contact-info">
                <h3>Contact Us</h3>

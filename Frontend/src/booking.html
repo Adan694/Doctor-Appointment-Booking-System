@@ -10,8 +10,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-                background-color: #e6f2ff;
-
+            background-color: #e6f2ff;
         }
 .heading {
     margin-top: 100px;
@@ -376,20 +375,6 @@ nav ul li a:hover {
         100% { transform: rotate(360deg); }
     }
 
-    #toast {
-        display: none;
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #009999;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 5px;
-        z-index: 3000;
-        font-size: 16px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
     .spinner {
     border: 4px solid #f3f3f3;
     border-top: 4px solid #009999;
@@ -584,15 +569,6 @@ body.modal-open {
 body {
     background: linear-gradient(to bottom, #f2fefe, #e6fafa);
 }
-
-/* .modal-content h2 {
-    margin-top: 0;
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: #009999;
-    text-align: center;
-} */
 
 .form-group {
     margin-bottom: 18px;
@@ -965,8 +941,6 @@ body {
             <div class="loading-text">Booking appointment...</div>
         </div>
     </div>
-        <div id="toast">
-        </div>
         <div id="bookingModal" class="modal-overlay">
             <div class="modal-content">
                 <h2>Confirm Appointment</h2>
@@ -1528,7 +1502,7 @@ function initDateSearch(dateButtons) {
 
                                 const patientId = localStorage.getItem('patientId');
                                 if (!patientId || patientId === "undefined" || patientId.trim() === "") {
-                                    showToast("You need to log in first.");
+                                    alert("⚠️ You need to log in first.");
                                     setTimeout(() => {
                                         window.location.href = 'login.html';
                                     }, 1500);
@@ -1561,14 +1535,6 @@ function initDateSearch(dateButtons) {
                         document.getElementById('loadingOverlay').style.display = 'none';
                     }
 
-                    function showToast(message, duration = 3000) {
-                        const toast = document.getElementById('toast');
-                        toast.textContent = message;
-                        toast.style.display = 'block';
-                        setTimeout(() => {
-                            toast.style.display = 'none';
-                        }, duration);
-                    }
                         let selectedDate = '';
                         let selectedTime = '';
 
@@ -1668,13 +1634,12 @@ function initDateSearch(dateButtons) {
                            const age = document.getElementById('modalAge').value.trim();
                            const ageError = document.getElementById("ageError");
 // Name validation 
-const nameRegex = /^[A-Za-z]{3,}$/;
-if (!name) {
-    showToast("Please enter your name.");
+const nameRegex = /^[A-Za-z\s]{3,}$/;if (!name) {
+    alert("❌ Please enter your name.");
     return;
 }
 if (!nameRegex.test(name)) {
-    showToast("Name must contain only alphabets and be at least 3 characters long.");
+    alert("❌ Name must contain only alphabets and be at least 3 characters long.");
     return;
 }
 
@@ -1682,17 +1647,17 @@ if (!nameRegex.test(name)) {
 const allowedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com'];
 const emailRegex = /^[^\s@]+@([^\s@]+)$/;
 if (!email) {
-    showToast("Please enter your email.");
+    alert("❌ Please enter your email.");
     return;
 }
 const match = emailRegex.exec(email);
 if (!match) {
-    showToast("Please enter a valid email address.");
+    alert("❌ Please enter a valid email address.");
     return;
 }
 const domain = match[1].toLowerCase();
 if (!allowedDomains.includes(domain)) {
-    showToast("Email must be from: gmail.com, yahoo.com, outlook.com, or hotmail.com");
+    alert("❌ Email must be from: gmail.com, yahoo.com, outlook.com, or hotmail.com");
     return;
 }
                             if (!/^\d+$/.test(age)) {
@@ -1712,7 +1677,7 @@ if (!allowedDomains.includes(domain)) {
                             phoneError.textContent = "";
 
                            if (!name || !phone || !email || !age || !issue) {
-                               showToast("Please enter all details.");
+                               alert("❌ Please enter all details.");
                                return;
                             }
 
@@ -1751,20 +1716,20 @@ const normalizedTime = normalizeTime(selectedTime);
                                         localStorage.setItem('patientName', name);
                                         localStorage.setItem('patientPhone', phone);
                                         localStorage.setItem('patientEmail', email);
-                                        showToast(`Appointment booked for ${selectedDate} at ${selectedTime}`);
+                                        alert(`✅ Appointment booked for ${selectedDate} at ${selectedTime}`);
                                     }
                                     else {
                                         if (data.message && data.message.includes("blocked")) {
-                                            showToast(` ${data.message}`, 5000);
+                                            alert(`⚠️ ${data.message}`);
                                         } else {
-                                            showToast(` Error: ${data.message || "Booking failed"}`);
+                                            alert(`❌ Error: ${data.message || "Booking failed"}`);
                                         }
                                     }
                                 })
                                 .catch(err => {
                                     hideLoadingOverlay();
                                     closeModal();
-                                    showToast('Network error: ' + err.message);
+                                    alert('❌ Network error: ' + err.message);
                                 });
                         }
 
@@ -1804,7 +1769,7 @@ const normalizedTime = normalizeTime(selectedTime);
     nameError.style.marginTop = '4px';
     nameError.style.display = 'none';
     nameInput.parentNode.appendChild(nameError);
-    const nameRegex = /^[A-Za-z]{3,}$/;
+const nameRegex = /^[A-Za-z\s\-']{3,}$/;
 
     nameInput.addEventListener('input', () => {
         const name = nameInput.value.trim();

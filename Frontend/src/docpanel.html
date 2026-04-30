@@ -583,7 +583,7 @@
       const doctorId = localStorage.getItem("doctorId");
       const chatNotificationEl = document.getElementById("chatNotification");
       const chatBtn = document.getElementById("chatBtn");
-      const statusIndicator = document.getElementById("doctorStatusIndicator");
+      // const statusIndicator = document.getElementById("doctorStatusIndicator");
 
       let unreadCount = 0;
       let socket = null;
@@ -604,12 +604,12 @@
           console.log(" Socket connected:", socket.id);
 
           socket.emit("join_user", { userId: doctorId, role: "doctor" });
-          updateStatusIndicator(true);
+          // updateStatusIndicator(true);
         });
 
         socket.on("disconnect", (reason) => {
           console.log(" Socket disconnected:", reason);
-          updateStatusIndicator(false);
+          // updateStatusIndicator(false);
         });
 
         // Receive messages
@@ -637,17 +637,17 @@
       }
 
       // ------------------- UI UPDATES -------------------
-      function updateStatusIndicator(isOnline) {
-        if (isOnline) {
-          statusIndicator.className = "doctor-status online";
-          statusIndicator.innerHTML =
-            '<span class="doctor-status-indicator"></span><span>Online</span>';
-        } else {
-          statusIndicator.className = "doctor-status offline";
-          statusIndicator.innerHTML =
-            '<span class="doctor-status-indicator"></span><span>Offline</span>';
-        }
-      }
+      // function updateStatusIndicator(isOnline) {
+      //   if (isOnline) {
+      //     statusIndicator.className = "doctor-status online";
+      //     statusIndicator.innerHTML =
+      //       '<span class="doctor-status-indicator"></span><span>Online</span>';
+      //   } else {
+      //     statusIndicator.className = "doctor-status offline";
+      //     statusIndicator.innerHTML =
+      //       '<span class="doctor-status-indicator"></span><span>Offline</span>';
+      //   }
+      // }
 
       function updateChatNotification() {
         console.log(
@@ -709,7 +709,7 @@
             (b) => b.doctorId?._id === doctorId,
           );
 
-          localStorage.setItem("bookings", JSON.stringify(bookings));
+          // localStorage.setItem("bookings", JSON.stringify(bookings));
           renderBookings(bookings);
         } catch (error) {
           console.error(" Failed to load bookings:", error);

@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Patient Chat</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
       .chat-wrapper {
@@ -265,6 +269,78 @@
       .message-sent {
         opacity: 1;
       }
+      /* Hamburger menu button - hidden on desktop */
+      .hamburger {
+        display: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: white;
+        background: none;
+        border: none;
+      }
+
+      /* Mobile navigation overlay */
+      .nav-menu {
+        display: flex;
+      }
+
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+
+        nav {
+          justify-content: space-between;
+          padding: 10px 20px;
+        }
+
+        .nav-menu {
+          display: none;
+          position: fixed;
+          top: 70px;
+          left: 0;
+          width: 100%;
+          background-color: rgb(9, 102, 102);
+          flex-direction: column;
+          padding: 20px 0;
+          z-index: 999;
+        }
+
+        .nav-menu.show {
+          display: flex;
+        }
+
+        nav ul li {
+          margin: 15px 0;
+          text-align: center;
+        }
+
+        nav ul li a {
+          font-size: 18px;
+        }
+
+        .chat-container {
+          margin-top: 80px;
+        }
+
+        .chat-header {
+          font-size: 16px;
+          padding: 12px 15px;
+        }
+
+        .message {
+          max-width: 85%;
+          font-size: 14px;
+        }
+
+        .chat-input input {
+          font-size: 14px;
+        }
+
+        .chat-input button {
+          padding: 8px 14px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -273,8 +349,10 @@
         <img src="images/Da.png" alt="DocAssist Logo" />
         <h1>DocAssist</h1>
       </div>
-      <i id="bar" class="fa-solid fa-bars"></i>
-      <ul>
+      <button class="hamburger" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul class="nav-menu" id="navMenu">
         <li>
           <a href="index.html"><i class="fas fa-home"></i> Home</a>
         </li>
@@ -327,7 +405,9 @@
       socket.on("connect", () => {
         console.log(" Patient chat socket connected!");
       });
-
+      function goBack() {
+        window.location.href = "myprofile.html";
+      }
       async function clearUnreadMessages() {
         console.log(" clearUnreadMessages called");
         const token = localStorage.getItem("authToken");
@@ -460,6 +540,33 @@
         if (data.userId === userId) {
           console.log(" Messages confirmed read for this patient");
         }
+      });
+
+      // Toggle mobile menu
+      function toggleMenu() {
+        const navMenu = document.getElementById("navMenu");
+        navMenu.classList.toggle("show");
+      }
+
+      // Close menu when clicking outside (optional but recommended)
+      document.addEventListener("click", function (event) {
+        const navMenu = document.getElementById("navMenu");
+        const hamburger = document.querySelector(".hamburger");
+        if (navMenu && navMenu.classList.contains("show")) {
+          if (
+            !hamburger.contains(event.target) &&
+            !navMenu.contains(event.target)
+          ) {
+            navMenu.classList.remove("show");
+          }
+        }
+      });
+
+      // Close menu when a link is clicked
+      document.querySelectorAll("#navMenu a").forEach((link) => {
+        link.addEventListener("click", () => {
+          document.getElementById("navMenu").classList.remove("show");
+        });
       });
 
       // render message
