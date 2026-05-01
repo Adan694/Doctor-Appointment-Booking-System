@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consultation Status - DocAssist</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #e6f2ff 0%, #cce0ff 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .waiting-container {
+        max-width: 500px;
+        width: 90%;
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #096666;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .doctor-name {
+        color: #096666;
+        font-weight: bold;
+      }
+      .accepted-icon {
+        font-size: 60px;
+        color: #4caf50;
+        margin-bottom: 20px;
+      }
+      .completed-icon {
+        font-size: 60px;
+        color: #2196f3;
+        margin-bottom: 20px;
+      }
+      .join-btn {
+        background: linear-gradient(135deg, #4caf50, #45a049);
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      .cancel-btn {
+        background: #ff4444;
+        margin-top: 15px;
+      }
+      .back-btn {
+        background: #096666;
+        margin-top: 15px;
+      }
+      .status-message {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 16px;
+      }
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .status-accepted {
+        background: #d4edda;
+        color: #155724;
+        border-left: 4px solid #4caf50;
+      }
+      .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .status-completed {
+        background: #cfe2ff;
+        color: #004085;
+        border-left: 4px solid #2196f3;
+      }
+      .waiting-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+      }
+      .back-link {
+        margin-top: 20px;
+        display: block;
+        color: #096666;
+        text-decoration: none;
+      }
+      .button-group {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="waiting-container">
+      <!-- Pending State -->
+      <div id="pendingState">
+        <div class="spinner"></div>
+        <h2 class="waiting-title">Waiting for Doctor...</h2>
+        <div class="status-message status-pending">
+          <i class="fas fa-clock"></i> Your request has been sent to
+          <span id="doctorName" class="doctor-name">Doctor</span>
+        </div>
+        <div class="button-group">
+          <button class="join-btn cancel-btn" onclick="cancelRequest()">
+            <i class="fas fa-times"></i> Cancel Request
+          </button>
+        </div>
+      </div>
+
+      <!-- Accepted State -->
+      <div id="acceptedState" style="display: none">
+        <div class="accepted-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 style="color: #4caf50">Doctor Accepted!</h2>
+        <div class="status-message status-accepted">
+          <i class="fas fa-video"></i> Dr.
+          <span id="acceptedDoctorName"></span> has accepted your consultation
+          request.<br />
+          Click below to start the video call.
+        </div>
+        <button class="join-btn" onclick="joinCall()">
+          <i class="fas fa-video"></i> Join Video Call Now
+        </button>
+        <button class="join-btn cancel-btn" onclick="goBack()">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+      </div>
+
+      <!-- Rejected State -->
+      <div id="rejectedState" style="display: none">
+        <div class="accepted-icon" style="color: #ff4444">
+          <i class="fas fa-times-circle"></i>
+        </div>
+        <h2 style="color: #ff4444">Request Declined</h2>
+        <div class="status-message status-rejected">
+          The doctor is not available at the moment. Please try another doctor.
+        </div>
+        <a href="Alldoctorsreal.html" class="back-link">
+          <i class="fas fa-arrow-left"></i> Back to Doctors
+        </a>
+      </div>
+
+      <!-- Completed State (Consultation already done) -->
+      <div id="completedState" style="display: none">
+        <div class="completed-icon">
+          <i class="fas fa-check-double"></i>
+        </div>
+        <h2 style="color: #2196f3">Consultation Completed</h2>
+        <div class="status-message status-completed">
+          <i class="fas fa-calendar-check"></i> Your consultation with Dr.
+          <span id="completedDoctorName"></span> has been completed.
+        </div>
+        <div class="button-group">
+          <button class="join-btn back-btn" onclick="goToConsultations()">
+            <i class="fas fa-history"></i> View My Consultations
+          </button>
+          <button class="join-btn cancel-btn" onclick="goBack()">
+            <i class="fas fa-home"></i> Go to Home
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const roomId = urlParams.get("roomId");
+      const doctorName = urlParams.get("doctorName");
+
+      let checkInterval = null;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("doctorName").textContent =
+          doctorName || "Doctor";
+        document.getElementById("acceptedDoctorName").textContent =
+          doctorName || "Doctor";
+        document.getElementById("completedDoctorName").textContent =
+          doctorName || "Doctor";
+        startPolling();
+      });
+
+      function startPolling() {
+        checkInterval = setInterval(checkStatus, 3000);
+      }
+
+      async function checkStatus() {
+        try {
+          const token = localStorage.getItem("authToken");
+          const response = await fetch(
+            `http://localhost:3000/api/consultation/room/${roomId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+          const data = await response.json();
+
+          if (data.success) {
+            const status = data.consultation.status;
+
+            // Handle different statuses
+            if (status === "pending") {
+              // Stay on pending state
+              document.getElementById("pendingState").style.display = "block";
+              document.getElementById("acceptedState").style.display = "none";
+              document.getElementById("rejectedState").style.display = "none";
+              document.getElementById("completedState").style.display = "none";
+            } else if (status === "accepted") {
+              clearInterval(checkInterval);
+              document.getElementById("pendingState").style.display = "none";
+              document.getElementById("acceptedState").style.display = "block";
+              document.getElementById("rejectedState").style.display = "none";
+              document.getElementById("completedState").style.display = "none";
+            } else if (status === "rejected") {
+              clearInterval(checkInterval);
+              document.getElementById("pendingState").style.display = "none";
+              document.getElementById("acceptedState").style.display = "none";
+              document.getElementById("rejectedState").style.display = "block";
+              document.getElementById("completedState").style.display = "none";
+            } else if (status === "completed" || status === "ended") {
+              clearInterval(checkInterval);
+              document.getElementById("pendingState").style.display = "none";
+              document.getElementById("acceptedState").style.display = "none";
+              document.getElementById("rejectedState").style.display = "none";
+              document.getElementById("completedState").style.display = "block";
+            } else if (status === "active") {
+              clearInterval(checkInterval);
+              joinCall(); // Auto-join if already active
+            }
+          }
+        } catch (error) {
+          console.error("Error checking status:", error);
+        }
+      }
+
+      function joinCall() {
+        window.location.href = `patient-call.html?roomId=${roomId}`;
+      }
+
+      function goToConsultations() {
+        window.location.href = "my-consultations.html";
+      }
+
+      function goBack() {
+        window.location.href = "index.html";
+      }
+
+      async function cancelRequest() {
+        if (!confirm("Cancel this consultation request?")) return;
+
+        try {
+          const token = localStorage.getItem("authToken");
+          await fetch(
+            `http://localhost:3000/api/consultation/${roomId}/cancel`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+          clearInterval(checkInterval);
+          window.location.href = "Alldoctorsreal.html";
+        } catch (error) {
+          console.error("Error cancelling:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Consultation - Doctor</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #1a1a2e;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .call-header {
+        background: #096666;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .end-call-btn {
+        background: #ff4444;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .video-container {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        padding: 20px;
+        gap: 20px;
+        background: #16213e;
+      }
+      .video-box {
+        flex: 1;
+        min-width: 300px;
+        background: #0f3460;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+      }
+      .video-box video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .video-label {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+      }
+      .controls {
+        background: #1a1a2e;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+      .control-btn {
+        background: #096666;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 50px;
+        cursor: pointer;
+      }
+      .waiting-message {
+        text-align: center;
+        padding: 50px;
+        color: white;
+      }
+    </style>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <div class="call-header">
+      <h2>Video Consultation with Patient</h2>
+      <button class="end-call-btn" onclick="endCall()">End Call</button>
+    </div>
+
+    <div class="video-container">
+      <div class="video-box">
+        <video id="localVideo" autoplay muted playsinline></video>
+        <div class="video-label">You (Doctor)</div>
+      </div>
+      <div class="video-box">
+        <video id="remoteVideo" autoplay playsinline></video>
+        <div class="video-label">Patient</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="control-btn" onclick="toggleMute()">🎤 Mute</button>
+      <button class="control-btn" onclick="toggleVideo()">📹 Stop Video</button>
+    </div>
+
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const roomId = urlParams.get("roomId");
+      const doctorId = localStorage.getItem("doctorId");
+
+      let localStream = null;
+      let peerConnection = null;
+      let socket = null;
+      let callStartTime = null;
+
+      const configuration = {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun1.l.google.com:19302" },
+        ],
+      };
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (!roomId) {
+          alert("Invalid consultation room");
+          window.close();
+          return;
+        }
+
+        await initSocket();
+        await initMedia();
+      });
+
+      function initSocket() {
+        socket = io("http://localhost:3000");
+
+        socket.on("connect", () => {
+          console.log("Socket connected");
+          socket.emit("join_consultation", {
+            roomId,
+            userId: doctorId,
+            role: "doctor",
+          });
+        });
+
+        socket.on("user_joined", async () => {
+          console.log("Patient joined, creating offer");
+          await createOffer();
+        });
+
+        socket.on("consultation_offer", async (data) => {
+          console.log("Received offer");
+          await handleOffer(data);
+        });
+
+        socket.on("consultation_answer", async (data) => {
+          console.log("Received answer");
+          await handleAnswer(data);
+        });
+
+        socket.on("consultation_ice", async (data) => {
+          if (peerConnection) {
+            await peerConnection.addIceCandidate(
+              new RTCIceCandidate(data.candidate),
+            );
+          }
+        });
+
+        socket.on("user_left", () => {
+          alert("Patient has left the consultation");
+          endCall();
+        });
+      }
+
+      async function initMedia() {
+        try {
+          localStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+          });
+          document.getElementById("localVideo").srcObject = localStream;
+          callStartTime = Date.now();
+        } catch (err) {
+          console.error("Error accessing media:", err);
+          alert("Cannot access camera/microphone. Please check permissions.");
+        }
+      }
+
+      async function createOffer() {
+        if (!localStream) return;
+
+        peerConnection = new RTCPeerConnection(configuration);
+
+        localStream.getTracks().forEach((track) => {
+          peerConnection.addTrack(track, localStream);
+        });
+
+        peerConnection.ontrack = (event) => {
+          console.log("Received remote track");
+          document.getElementById("remoteVideo").srcObject = event.streams[0];
+        };
+
+        peerConnection.onicecandidate = (event) => {
+          if (event.candidate) {
+            socket.emit("consultation_ice", {
+              roomId,
+              candidate: event.candidate,
+            });
+          }
+        };
+
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        socket.emit("consultation_offer", { roomId, offer });
+      }
+
+      async function handleOffer(data) {
+        if (!localStream) return;
+
+        peerConnection = new RTCPeerConnection(configuration);
+
+        localStream.getTracks().forEach((track) => {
+          peerConnection.addTrack(track, localStream);
+        });
+
+        peerConnection.ontrack = (event) => {
+          console.log("Received remote track");
+          document.getElementById("remoteVideo").srcObject = event.streams[0];
+        };
+
+        peerConnection.onicecandidate = (event) => {
+          if (event.candidate) {
+            socket.emit("consultation_ice", {
+              roomId,
+              candidate: event.candidate,
+            });
+          }
+        };
+
+        await peerConnection.setRemoteDescription(
+          new RTCSessionDescription(data.offer),
+        );
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        socket.emit("consultation_answer", { roomId, answer });
+      }
+
+      async function handleAnswer(data) {
+        if (peerConnection) {
+          await peerConnection.setRemoteDescription(
+            new RTCSessionDescription(data.answer),
+          );
+        }
+      }
+
+      function toggleMute() {
+        if (localStream) {
+          const audioTrack = localStream.getAudioTracks()[0];
+          if (audioTrack) {
+            audioTrack.enabled = !audioTrack.enabled;
+          }
+        }
+      }
+
+      function toggleVideo() {
+        if (localStream) {
+          const videoTrack = localStream.getVideoTracks()[0];
+          if (videoTrack) {
+            videoTrack.enabled = !videoTrack.enabled;
+          }
+        }
+      }
+
+      async function endCall() {
+        const duration = Math.floor((Date.now() - callStartTime) / 1000);
+
+        if (localStream) {
+          localStream.getTracks().forEach((track) => track.stop());
+        }
+        if (peerConnection) {
+          peerConnection.close();
+        }
+        if (socket) {
+          socket.emit("leave_consultation", { roomId, userId: doctorId });
+        }
+
+        await fetch(`http://localhost:3000/api/consultation/${roomId}/end`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ duration }),
+        });
+
+        window.close();
+      }
+
+      window.addEventListener("beforeunload", () => {
+        if (localStream)
+          localStream.getTracks().forEach((track) => track.stop());
+        if (peerConnection) peerConnection.close();
+        if (socket)
+          socket.emit("leave_consultation", { roomId, userId: doctorId });
+      });
+    </script>
+  </body>
+</html>

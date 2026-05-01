@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consultation Request - DocAssist</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #e6f2ff 0%, #cce0ff 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .form-container {
+        max-width: 550px;
+        margin: 80px auto 20px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background: linear-gradient(135deg, #096666, #0f8080);
+        color: white;
+        padding: 25px;
+        text-align: center;
+      }
+      .doctor-badge {
+        background: rgba(255, 255, 255, 0.2);
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+      .form-body {
+        padding: 25px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 14px;
+        outline: none;
+      }
+      .form-group input:focus,
+      .form-group textarea:focus {
+        border-color: #096666;
+      }
+      .submit-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #096666, #0f8080);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .submit-btn:hover {
+        transform: translateY(-2px);
+      }
+      .submit-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      .back-link {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .back-link a {
+        color: #096666;
+        text-decoration: none;
+      }
+      .error-text {
+        color: #ff4444;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <div class="header">
+        <h1><i class="fas fa-video"></i> Instant Consultation</h1>
+        <div class="doctor-badge" id="doctorInfo">Loading...</div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-group">
+          <label>Your Full Name *</label>
+          <input
+            type="text"
+            id="patientName"
+            placeholder="Enter your full name"
+          />
+          <div class="error-text" id="nameError">Name is required</div>
+        </div>
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" id="patientEmail" placeholder="you@example.com" />
+          <div class="error-text" id="emailError">Valid email is required</div>
+        </div>
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="tel" id="patientPhone" placeholder="03XXXXXXXXX" />
+          <div class="error-text" id="phoneError">
+            Valid Pakistani phone number required
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" id="patientAge" placeholder="Your age" />
+        </div>
+        <div class="form-group">
+          <label>Describe Your Symptoms *</label>
+          <textarea
+            id="symptoms"
+            rows="4"
+            placeholder="What symptoms are you experiencing? How long? Severity?"
+          ></textarea>
+          <div class="error-text" id="symptomsError">
+            Symptoms description required
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Consultation Type</label>
+          <select id="consultationType">
+            <option value="video">🎥 Video Consultation</option>
+          </select>
+        </div>
+        <button class="submit-btn" onclick="submitRequest()">
+          <i class="fas fa-paper-plane"></i> Send Consultation Request
+        </button>
+        <div class="back-link">
+          <a href="Alldoctorsreal.html">← Back to Doctors</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const doctorId = urlParams.get("doctorId");
+      const doctorName = urlParams.get("doctorName");
+      const specialty = urlParams.get("specialty");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("doctorInfo").innerHTML =
+          `Dr. ${doctorName} - ${specialty}`;
+
+        // Auto-fill from localStorage
+        const patientName = localStorage.getItem("patientName") || "";
+        const patientEmail = localStorage.getItem("patientEmail") || "";
+        const patientPhone = localStorage.getItem("patientPhone") || "";
+
+        if (patientName)
+          document.getElementById("patientName").value = patientName;
+        if (patientEmail)
+          document.getElementById("patientEmail").value = patientEmail;
+        if (patientPhone)
+          document.getElementById("patientPhone").value = patientPhone;
+      });
+
+      async function submitRequest() {
+        const patientName = document.getElementById("patientName").value.trim();
+        const patientEmail = document
+          .getElementById("patientEmail")
+          .value.trim();
+        const patientPhone = document
+          .getElementById("patientPhone")
+          .value.trim();
+        const patientAge = document.getElementById("patientAge").value;
+        const symptoms = document.getElementById("symptoms").value.trim();
+        const consultationType =
+          document.getElementById("consultationType").value;
+        const patientId = localStorage.getItem("patientId");
+        const token = localStorage.getItem("authToken");
+
+        // Validation
+        let isValid = true;
+
+        if (!patientName) {
+          document.getElementById("nameError").style.display = "block";
+          isValid = false;
+        } else {
+          document.getElementById("nameError").style.display = "none";
+        }
+
+        if (!patientEmail || !patientEmail.includes("@")) {
+          document.getElementById("emailError").style.display = "block";
+          isValid = false;
+        } else {
+          document.getElementById("emailError").style.display = "none";
+        }
+
+        const phoneRegex = /^(03[0-9]{9}|0[1-9][0-9]{8,9})$/;
+        if (!patientPhone || !phoneRegex.test(patientPhone)) {
+          document.getElementById("phoneError").style.display = "block";
+          isValid = false;
+        } else {
+          document.getElementById("phoneError").style.display = "none";
+        }
+
+        if (!symptoms) {
+          document.getElementById("symptomsError").style.display = "block";
+          isValid = false;
+        } else {
+          document.getElementById("symptomsError").style.display = "none";
+        }
+
+        if (!isValid) return;
+
+        if (!patientId || !token) {
+          alert("Please login first");
+          window.location.href = "login.html";
+          return;
+        }
+
+        const btn = document.querySelector(".submit-btn");
+        btn.disabled = true;
+        btn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Sending Request...';
+
+        try {
+          const response = await fetch(
+            "http://localhost:3000/api/consultation/request",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                patientId,
+                doctorId,
+                patientName,
+                patientEmail,
+                patientPhone,
+                patientAge: patientAge || null,
+                symptoms,
+                consultationType,
+              }),
+            },
+          );
+
+          const data = await response.json();
+
+          if (data.success) {
+            // Save to localStorage
+            localStorage.setItem("patientName", patientName);
+            localStorage.setItem("patientEmail", patientEmail);
+            localStorage.setItem("patientPhone", patientPhone);
+
+            // Go to waiting page
+            window.location.href = `patient-waiting.html?roomId=${data.roomId}&doctorName=${doctorName}`;
+          } else {
+            alert(data.message || "Failed to send request");
+            btn.disabled = false;
+            btn.innerHTML =
+              '<i class="fas fa-paper-plane"></i> Send Consultation Request';
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Network error. Please try again.");
+          btn.disabled = false;
+          btn.innerHTML =
+            '<i class="fas fa-paper-plane"></i> Send Consultation Request';
+        }
+      }
+    </script>
+  </body>
+</html>
