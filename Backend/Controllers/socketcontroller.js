@@ -2,6 +2,7 @@ const Chat = require("../models/chat");
 
 // Stores online users { userId : { socketId, role } }
 let onlineUsers = {};
+let consultationRooms = {};
 
 function initializeSocket(io) {
   console.log(" Socket.IO is running...");
@@ -21,7 +22,9 @@ function initializeSocket(io) {
 
       io.emit("online_users", onlineUsers);
     });
-console.log(" Current online users:", onlineUsers);
+    
+    console.log(" Current online users:", onlineUsers);
+    
     /* ---------------------------------------
        ADMIN opened dashboard -> send list
     ---------------------------------------- */
@@ -30,7 +33,7 @@ console.log(" Current online users:", onlineUsers);
     });
 
     /* ---------------------------------------
-         ADMIN opens a user's chat -> join room
+       ADMIN opens a user's chat -> join room
     ---------------------------------------- */
     socket.on("admin_join", ({ userId }) => {
       if (!userId) return;
@@ -39,65 +42,110 @@ console.log(" Current online users:", onlineUsers);
     });
 
     /* ---------------------------------------
-             SEND MESSAGE
-       saves DB + sends once to both users
+       SEND MESSAGE - Send to both users
     ---------------------------------------- */
-    // WITH THIS:
-/* ---------------------------------------
-   SEND MESSAGE - Send to receiver only
----------------------------------------- */
-socket.on("send_message", async (data) => {
-  const { senderId, senderRole, receiverId, receiverRole, message, timestamp, createdAt } = data;
-  
-  if (!senderId || !receiverId) return;
+    socket.on("send_message", async (data) => {
+      const { senderId, senderRole, receiverId, receiverRole, message, timestamp, createdAt } = data;
+      
+      if (!senderId || !receiverId) return;
 
-  try {
-    // Save to database
-    const chat = await Chat.create({
-      senderId,
-      senderRole,
-      receiverId,
-      receiverRole,
-      message,
-      timestamp: timestamp || new Date(),
-      createdAt: createdAt || new Date(),
-      read: false
+      try {
+        const chat = await Chat.create({
+          senderId,
+          senderRole,
+          receiverId,
+          receiverRole,
+          message,
+          timestamp: timestamp || new Date(),
+          createdAt: createdAt || new Date(),
+          read: false
+        });
+
+        io.to(senderId).emit("new_message", chat);
+        io.to(receiverId).emit("new_message", chat);
+        console.log(`📨 Message from ${senderId} to ${receiverId}`);
+      } catch (error) {
+        console.error("Error saving message:", error);
+      }
+    });
+    
+    /* ---------------------------------------
+       JOIN CONVERSATION ROOM
+    ---------------------------------------- */
+    socket.on("join_conversation", ({ userId, otherUserId }) => {
+      if (!userId || !otherUserId) return;
+      const roomId = [userId, otherUserId].sort().join("_");
+      socket.join(roomId);
+      console.log(`Joined conversation room: ${roomId}`);
     });
 
-    // ✅ Send to receiver ONLY (not to sender)
-        io.to(senderId).emit("new_message", chat);
-
-    io.to(receiverId).emit("new_message", chat);
-    
-    // ✅ Optionally send confirmation to sender (for read receipts)
-    // io.to(senderId).emit("message_sent", { success: true, messageId: chat._id });
-
-    console.log(`📨 Message from ${senderId} to ${receiverId}`);
-  } catch (error) {
-    console.error("Error saving message:", error);
-  }
-});
-    // ADD THIS (after the join_user block):
-socket.on("join_conversation", ({ userId, otherUserId }) => {
-  if (!userId || !otherUserId) return;
-  const roomId = [userId, otherUserId].sort().join("_");
-  socket.join(roomId);
-  console.log(`Joined conversation room: ${roomId}`);
-});
-/* ---------------------------------------
-   USER LOGOUT -> mark offline
----------------------------------------- */
-socket.on("user_logout", ({ userId }) => {
-  if (!userId) return;
-
-  console.log(` ${userId} logged out`);
-
-  delete onlineUsers[userId];
-
-  io.emit("online_users", onlineUsers);
-});
     /* ---------------------------------------
-         USER DISCONNECTED -> mark offline
+       ========== VIDEO CONSULTATION ==========
+    ---------------------------------------- */
+    
+    // Join consultation room - IMPORTANT: Both users join the SAME room
+    socket.on("join_consultation", ({ roomId, userId, role }) => {
+      if (!roomId || !userId) return;
+      socket.join(roomId);
+      
+      if (!consultationRooms[roomId]) {
+        consultationRooms[roomId] = { users: [] };
+      }
+      consultationRooms[roomId].users.push({ userId, role, socketId: socket.id });
+      
+      console.log(`${role} ${userId} joined consultation room ${roomId}`);
+      console.log(`Users in room ${roomId}:`, consultationRooms[roomId].users.map(u => u.userId));
+      
+      // Notify other users in the same room
+      socket.to(roomId).emit("user_joined", { userId, role });
+    });
+
+    // WebRTC Offer - Send to ALL other users in the room
+    socket.on("consultation_offer", ({ roomId, offer }) => {
+      if (!roomId) return;
+      console.log(`📤 Offer sent to room ${roomId}`);
+      socket.to(roomId).emit("consultation_offer", { offer });
+    });
+
+    // WebRTC Answer - Send to ALL other users in the room
+    socket.on("consultation_answer", ({ roomId, answer }) => {
+      if (!roomId) return;
+      console.log(`📤 Answer sent to room ${roomId}`);
+      socket.to(roomId).emit("consultation_answer", { answer });
+    });
+
+    // WebRTC ICE Candidate - Send to ALL other users in the room
+    socket.on("consultation_ice", ({ roomId, candidate }) => {
+      if (!roomId) return;
+      socket.to(roomId).emit("consultation_ice", { candidate });
+    });
+
+    // Leave consultation
+    socket.on("leave_consultation", ({ roomId, userId }) => {
+      if (!roomId) return;
+      
+      if (consultationRooms[roomId]) {
+        consultationRooms[roomId].users = consultationRooms[roomId].users.filter(u => u.userId !== userId);
+        if (consultationRooms[roomId].users.length === 0) {
+          delete consultationRooms[roomId];
+        }
+      }
+      socket.to(roomId).emit("user_left", { userId });
+      socket.leave(roomId);
+    });
+
+    /* ---------------------------------------
+       USER LOGOUT -> mark offline
+    ---------------------------------------- */
+    socket.on("user_logout", ({ userId }) => {
+      if (!userId) return;
+      console.log(` ${userId} logged out`);
+      delete onlineUsers[userId];
+      io.emit("online_users", onlineUsers);
+    });
+    
+    /* ---------------------------------------
+       USER DISCONNECTED -> mark offline
     ---------------------------------------- */
     socket.on("disconnect", () => {
       let removedUser = null;

@@ -22,6 +22,7 @@ const contactRoutes = require('./routes/contact');
 const { initSocket } = require('./Controllers/socketcontroller');
 const doctorChatRoutes = require('./routes/doctorchat'); 
 const waitingListRoutes = require('./routes/waitinglistroutes'); 
+const consultationRoutes = require('./routes/consultationRoutes');
 
 const chatRoutes = require('./routes/chatroutes');
 const session = require('express-session');
@@ -67,6 +68,7 @@ app.use('/api/chats', require('./routes/chatroutes'));
 app.use("/api/doctor-chats", require("./routes/doctorchat"));
 app.use('/api/admin', adminRoutes);
 app.use('/api/waitinglist', waitingListRoutes);  
+app.use('/api/consultation', consultationRoutes);
 
 app.use(express.static(path.join(__dirname, 'Frontend')));
 app.use(session({
