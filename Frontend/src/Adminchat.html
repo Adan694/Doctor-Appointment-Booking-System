@@ -881,7 +881,7 @@
       function handleNewMessage(msg) {
         if (!window.processedMessages) window.processedMessages = new Set();
 
-        const messageKey = `${msg.senderId}_${msg.message}_${msg.timestamp}`;
+        const messageKey = `${msg.senderId}_${msg.receiverId}_${msg.message}_${msg.timestamp || msg._id}`;
         if (window.processedMessages.has(messageKey)) {
           console.log("Duplicate message ignored");
           return;
@@ -981,7 +981,10 @@
         // ----------------------------
         // WITH THIS:
         if (activeUser && chatUserId === activeUser._id) {
-          addMessage(msg);
+          const isOwnMessage = msg.senderId === adminId;
+          if (!isOwnMessage) {
+            addMessage(msg);
+          }
           if (!isFromAdmin && !msg.read) {
             markMessagesAsRead(chatUserId);
           }
@@ -1064,6 +1067,8 @@
 ---------------------------- */
       async function fetchUsers(role) {
         console.log(" fetchUsers CALLED for role:", role, "Time:", Date.now());
+        const previousActiveUser = activeUser;
+        const wasActive = activeUser !== null;
         activeUser = null;
         msgInput.disabled = true;
         sendBtn.disabled = true;
@@ -1244,6 +1249,22 @@
    ADD MESSAGE (WITH DATE)
 ---------------------------- */
       function addMessage(msg) {
+        if (!window.renderedMessageIds) window.renderedMessageIds = new Set();
+
+        const msgId =
+          msg._id || `${msg.senderId}_${msg.timestamp}_${msg.message}`;
+        if (window.renderedMessageIds.has(msgId)) {
+          console.log("Message already rendered, skipping");
+          return;
+        }
+        window.renderedMessageIds.add(msgId);
+
+        // Clean up old IDs periodically (keep last 100)
+        if (window.renderedMessageIds.size > 100) {
+          const toDelete = Array.from(window.renderedMessageIds).slice(0, 50);
+          toDelete.forEach((id) => window.renderedMessageIds.delete(id));
+        }
+
         const date = msg.timestamp || msg.createdAt || Date.now();
         const label = formatChatDate(date);
 
@@ -1275,11 +1296,16 @@
       /* ----------------------------
    SEND MESSAGE
 ---------------------------- */
+      let isSending = false; // Add this at the top with other variables (around line 350)
+
       function sendMessage() {
         if (!activeUser) return;
+        if (isSending) return; // Prevent double sending
 
         const msg = msgInput.value.trim();
         if (!msg) return;
+
+        isSending = true;
 
         const messageData = {
           senderId: "689f5be6e5432f608d4b3a54",
@@ -1287,14 +1313,22 @@
           receiverId: activeUser._id,
           message: msg,
           timestamp: new Date().toISOString(),
+          _id: Date.now().toString(), // Add unique ID
         };
 
-        socket.emit("send_message", messageData);
+        // Add message locally FIRST
         addMessage(messageData);
         updateLastMessage(activeUser._id, msg);
         msgInput.value = "";
-      }
 
+        // Then send via socket
+        socket.emit("send_message", messageData);
+
+        // Reset sending flag after delay
+        setTimeout(() => {
+          isSending = false;
+        }, 500);
+      }
       /* ----------------------------
    INIT -LOAD BOTH USER TYPES
 ---------------------------- */

@@ -118,6 +118,7 @@
       let peerConnection = null;
       let socket = null;
       let callStartTime = null;
+      let iceCandidateQueue = [];
 
       const configuration = {
         iceServers: [
@@ -133,11 +134,17 @@
           return;
         }
 
-        await initSocket();
         await initMedia();
+        await initSocket();
       });
 
       function initSocket() {
+        if (typeof io === "undefined") {
+          console.error("Socket.IO not loaded! Retrying...");
+          setTimeout(initSocket, 500);
+          return;
+        }
+
         socket = io("http://localhost:3000");
 
         socket.on("connect", () => {
@@ -165,10 +172,17 @@
         });
 
         socket.on("consultation_ice", async (data) => {
-          if (peerConnection) {
-            await peerConnection.addIceCandidate(
-              new RTCIceCandidate(data.candidate),
-            );
+          if (peerConnection && peerConnection.remoteDescription) {
+            try {
+              await peerConnection.addIceCandidate(
+                new RTCIceCandidate(data.candidate),
+              );
+            } catch (err) {
+              console.error("Error adding ICE candidate:", err);
+            }
+          } else {
+            console.log("Queueing ICE candidate");
+            iceCandidateQueue.push(data.candidate);
           }
         });
 
@@ -194,6 +208,7 @@
 
       async function createOffer() {
         if (!localStream) return;
+        if (peerConnection) return;
 
         peerConnection = new RTCPeerConnection(configuration);
 
@@ -222,6 +237,7 @@
 
       async function handleOffer(data) {
         if (!localStream) return;
+        if (peerConnection) return;
 
         peerConnection = new RTCPeerConnection(configuration);
 
@@ -249,6 +265,8 @@
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
         socket.emit("consultation_answer", { roomId, answer });
+        
+        processIceQueue();
       }
 
       async function handleAnswer(data) {
@@ -256,6 +274,21 @@
           await peerConnection.setRemoteDescription(
             new RTCSessionDescription(data.answer),
           );
+          processIceQueue();
+        }
+      }
+
+      async function processIceQueue() {
+        console.log(`Processing ${iceCandidateQueue.length} queued ICE candidates`);
+        while (iceCandidateQueue.length > 0) {
+          const candidate = iceCandidateQueue.shift();
+          if (candidate) {
+            try {
+              await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            } catch (err) {
+              console.error("Error adding queued ICE candidate:", err);
+            }
+          }
         }
       }
 

@@ -506,21 +506,34 @@
         });
       }
 
-      // load previous chat
-      // load previous chat
+      // Replace your fetch call with this:
       console.log("Fetching previous chats for:", userId);
       fetch(`http://localhost:3000/api/chats/${userId}?role=patient`)
         .then((res) => res.json())
         .then((chats) => {
-          console.log(" Loaded", chats.length, "previous messages");
+          console.log("Loaded", chats.length, "total messages");
+
+          // ✅ FILTER: Only show messages between patient and THIS SPECIFIC ADMIN
+          const adminConversation = chats.filter(
+            (chat) =>
+              (chat.senderId === userId && chat.receiverId === receiverId) || // Patient sent to admin
+              (chat.senderId === receiverId && chat.receiverId === userId), // Admin sent to patient
+          );
+
+          console.log(
+            "Filtered to",
+            adminConversation.length,
+            "messages with admin",
+          );
           renderedMessageKeys.clear();
-          chats.forEach(addMessage);
+          adminConversation.forEach(addMessage);
+
           if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
 
-          // Calculate ONLY ADMIN unread messages
-          const adminUnreadCount = chats.filter(
+          // Calculate ONLY ADMIN unread messages from THIS ADMIN
+          const adminUnreadCount = adminConversation.filter(
             (chat) =>
-              chat.senderId === "689f5be6e5432f608d4b3a54" && // Admin ID
+              chat.senderId === receiverId && // Only this specific admin
               chat.read === false &&
               chat.senderRole === "admin",
           ).length;
@@ -528,7 +541,32 @@
           // Update the message badge on homepage
           updateMessageBadge(adminUnreadCount);
         })
-        .catch((err) => console.error(" Error loading chats:", err));
+        .catch((err) => console.error("Error loading chats:", err));
+
+      // Replace your socket listener with this:
+      socket.on("new_message", (msg) => {
+        // ✅ ONLY show messages from this specific admin OR messages patient sent to this admin
+        const isWithThisAdmin =
+          (msg.senderId === userId && msg.receiverId === receiverId) || // Patient sent to this admin
+          (msg.senderId === receiverId && msg.receiverId === userId); // This admin sent to patient
+
+        // Also ensure it's not a message from doctors
+        const isFromDoctor =
+          msg.senderRole === "doctor" || msg.receiverRole === "doctor";
+
+        if (isWithThisAdmin && !isFromDoctor) {
+          console.log("✅ Showing admin message");
+          addMessage(msg);
+          if (msg.senderId === receiverId) {
+            clearUnreadMessages();
+          }
+        } else {
+          console.log(
+            "❌ Skipping message - not from this admin or from doctor:",
+            msg,
+          );
+        }
+      });
 
       // Function to update the badge on homepage
       function updateMessageBadge(count) {

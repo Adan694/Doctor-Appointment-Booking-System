@@ -698,9 +698,18 @@
 
     <script>
       function openConsultForm(doctorId, doctorName, specialty) {
+        const token = localStorage.getItem("authToken");
+        const userRole = localStorage.getItem("userRole");
+
+        // Check if user is logged in AND is a patient
+        if (!token || !userRole || userRole !== "patient") {
+          alert("⚠️ Please login as patient to book a consultation.");
+          window.location.href = "login.html";
+          return;
+        }
+
         window.location.href = `consult-form.html?doctorId=${doctorId}&doctorName=${doctorName}&specialty=${specialty}`;
       }
-
       document.addEventListener("DOMContentLoaded", () => {
         const profileMenu = document.getElementById("profileMenu");
         const profileIcon = profileMenu.querySelector(".profile-icon");

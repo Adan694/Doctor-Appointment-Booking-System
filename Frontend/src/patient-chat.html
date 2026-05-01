@@ -29,48 +29,96 @@
         position: fixed;
         top: 0;
         width: 100%;
+        background: rgba(9, 102, 102, 0.75);
+        -webkit-backdrop-filter: blur(10);
+        backdrop-filter: blur(10px);
+        color: white;
+        z-index: 1000;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        animation: navSlideDown 0.8s ease-out;
+      }
+
+      @keyframes navSlideDown {
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 20px;
+        position: fixed;
+        top: 0%;
+        width: 100%;
         background-color: rgb(9, 102, 102);
         color: white;
         z-index: 1000;
-        flex-wrap: wrap;
-      }
-
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .logo img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-
-      .logo h1 {
-        font-size: 24px;
-        background: linear-gradient(45deg, #ffffff, #cceeff);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
+        padding: 10px 20px;
       }
 
       nav ul {
         display: flex;
+      }
+
+      nav ul li {
         list-style: none;
-        gap: 20px;
       }
 
       nav ul li a {
         text-decoration: none;
         color: white;
-        font-size: 16px;
-        transition: color 0.3s;
+        font-size: 20px;
+        margin-inline: 20px;
       }
 
       nav ul li a:hover {
-        color: #cceeff;
+        color: black;
+        border-bottom: 2px solid black;
+      }
+
+      #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+      }
+      /* Logo */
+      .logo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        margin: 0;
+      }
+
+      .logo img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+
+      .logo h1 {
+        font-size: 30px;
+        margin: 0;
+      }
+
+      .logo img:hover {
+        transform: scale(1.1) rotate(-5deg);
+      }
+
+      .logo h1 {
+        font-size: 28px;
+        background: linear-gradient(45deg, #ffffff, #cceeff);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
 
       #bar {
@@ -81,7 +129,7 @@
 
       .chat-container {
         max-width: 1200px;
-        margin: 80px auto 20px;
+        margin: 100px auto 20px;
         background: white;
         border-radius: 16px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
@@ -186,6 +234,19 @@
 
       .online-status.offline {
         background: #95a5a6;
+      }
+
+      .unread-badge {
+        background: red;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        margin-left: 10px;
       }
 
       /* Chat Area */
@@ -443,6 +504,7 @@
       let userId = null;
       let userRole = null;
       let onlineDoctors = {};
+      let unreadCounts = {};
       let isSending = false; // Prevent double sending
 
       // Initialize
@@ -486,22 +548,22 @@
           updateCurrentDoctorStatus();
         });
 
-        // Remove any existing listeners to prevent duplicates
         socket.off("new_message");
         socket.on("new_message", (message) => {
-          if (!currentDoctor) return;
+          // Check if message is for me
+          if (message.receiverId !== userId && message.senderId !== userId)
+            return;
 
-          const isMyConversation =
-            (message.senderId === userId &&
-              message.receiverId === currentDoctor.doctorId) ||
-            (message.senderId === currentDoctor.doctorId &&
-              message.receiverId === userId);
+          const isFromCurrentDoctor =
+            currentDoctor &&
+            ((message.senderId === currentDoctor.doctorId &&
+              message.receiverId === userId) ||
+              (message.senderId === userId &&
+                message.receiverId === currentDoctor.doctorId));
 
-          if (isMyConversation) {
-            // Only display if message is not already in DOM (check by timestamp and content)
+          if (isFromCurrentDoctor) {
             const existingMessages = document.querySelectorAll(".message");
             let isDuplicate = false;
-
             existingMessages.forEach((msg) => {
               if (
                 msg.innerHTML.includes(message.message) &&
@@ -515,6 +577,19 @@
 
             if (!isDuplicate) {
               displayMessage(message, message.senderId === userId);
+            }
+            if (message.senderId === currentDoctor.doctorId) {
+              markMessagesAsRead(currentDoctor.doctorId);
+            }
+          } else if (
+            message.receiverId === userId &&
+            message.senderRole === "doctor"
+          ) {
+            unreadCounts[message.senderId] =
+              (unreadCounts[message.senderId] || 0) + 1;
+            updateUnreadBadge(message.senderId);
+            if (window.opener && window.opener.loadPatientUnreadCount) {
+              window.opener.loadPatientUnreadCount();
             }
           }
         });
@@ -542,6 +617,7 @@
 
             const doctors = Array.from(doctorsMap.values());
             displayDoctorsList(doctors);
+            loadUnreadCounts();
           })
           .catch((err) => {
             console.error("Error loading doctors:", err);
@@ -575,11 +651,78 @@
               <div class="doctor-name">Dr. ${escapeHtml(doctor.name)}</div>
               <div class="doctor-specialty">${escapeHtml(doctor.specialty)}</div>
             </div>
+            <div class="unread-badge" id="unread-${doctor.doctorId}" style="display: none;"></div>
             <div class="online-status offline" id="status-${doctor.doctorId}"></div>
           </div>
         `,
           )
           .join("");
+      }
+
+      async function loadUnreadCounts() {
+        const token = localStorage.getItem("authToken");
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/chats/unread/patient/${userId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+          if (response.ok) {
+            unreadCounts = await response.json();
+            updateAllUnreadBadges();
+          }
+        } catch (error) {
+          console.error("Error loading unread counts:", error);
+        }
+      }
+
+      function updateUnreadBadge(doctorId) {
+        const badge = document.getElementById(`unread-${doctorId}`);
+        if (badge) {
+          const count = unreadCounts[doctorId] || 0;
+          if (count > 0) {
+            badge.textContent = count > 99 ? "99+" : count;
+            badge.style.display = "flex";
+          } else {
+            badge.style.display = "none";
+          }
+        }
+      }
+
+      function updateAllUnreadBadges() {
+        document.querySelectorAll(".doctor-item").forEach((item) => {
+          const doctorId = item.getAttribute("data-doctor-id");
+          updateUnreadBadge(doctorId);
+        });
+      }
+
+      async function markMessagesAsRead(doctorId) {
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        try {
+          await fetch(
+            `http://localhost:3000/api/chats/read/${doctorId}/${userId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          unreadCounts[doctorId] = 0;
+          updateUnreadBadge(doctorId);
+
+          // Update main page badge if it's open
+          if (window.opener && window.opener.loadPatientUnreadCount) {
+            window.opener.loadPatientUnreadCount();
+          }
+        } catch (error) {
+          console.error("Error marking messages as read:", error);
+        }
       }
 
       function filterDoctors() {
@@ -625,7 +768,7 @@
 
       async function selectDoctor(doctorId, doctorName, specialty) {
         currentDoctor = { doctorId, name: doctorName, specialty };
-        // await markMessagesAsRead(doctorId);
+        await markMessagesAsRead(doctorId);
 
         // Update UI
         document.querySelectorAll(".doctor-item").forEach((item) => {

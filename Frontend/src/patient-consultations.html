@@ -24,37 +24,101 @@
         align-items: center;
         justify-content: space-between;
         padding: 10px 20px;
-        background-color: rgb(9, 102, 102);
-        color: white;
         position: fixed;
         top: 0;
         width: 100%;
+        background: rgba(9, 102, 102, 0.75);
+        -webkit-backdrop-filter: blur(10);
+        backdrop-filter: blur(10px);
+        color: white;
         z-index: 1000;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        animation: navSlideDown 0.8s ease-out;
       }
-      .logo {
+
+      @keyframes navSlideDown {
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      nav {
         display: flex;
         align-items: center;
-        gap: 10px;
+        justify-content: space-around;
+        padding: 20px;
+        position: fixed;
+        top: 0%;
+        width: 100%;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        z-index: 1000;
+        padding: 10px 20px;
       }
-      .logo img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-      .logo h1 {
-        font-size: 24px;
-      }
+
       nav ul {
         display: flex;
-        list-style: none;
-        gap: 20px;
       }
+
+      nav ul li {
+        list-style: none;
+      }
+
       nav ul li a {
         text-decoration: none;
         color: white;
-        font-size: 16px;
+        font-size: 20px;
+        margin-inline: 20px;
       }
+
+      nav ul li a:hover {
+        color: black;
+        border-bottom: 2px solid black;
+      }
+
+      #bar {
+        display: none;
+        font-size: 30px;
+        cursor: pointer;
+      }
+      /* Logo */
+      .logo {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        margin: 0;
+      }
+
+      .logo img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+      }
+
+      .logo h1 {
+        font-size: 30px;
+        margin: 0;
+      }
+
+      .logo img:hover {
+        transform: scale(1.1) rotate(-5deg);
+      }
+
+      .logo h1 {
+        font-size: 28px;
+        background: linear-gradient(45deg, #ffffff, #cceeff);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
       .container {
         max-width: 800px;
         margin: 80px auto 20px;

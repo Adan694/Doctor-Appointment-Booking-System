@@ -75,6 +75,7 @@
       nav ul li {
         list-style: none;
         margin-top: 15px;
+        position: relative;
       }
 
       nav ul li a {
@@ -381,6 +382,88 @@
         margin-right: 6px;
       }
 
+      /* Loader Styles */
+      .loader-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        display: none;
+      }
+
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #009999;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Custom Alert Toast */
+      .custom-toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        color: white;
+        z-index: 10001;
+        animation: slideInRight 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        min-width: 250px;
+        text-align: center;
+      }
+
+      .custom-toast.success {
+        background-color: #4caf50;
+      }
+
+      .custom-toast.error {
+        background-color: #f44336;
+      }
+
+      .custom-toast.warning {
+        background-color: #ff9800;
+      }
+
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideOutRight {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+
       @media screen and (max-width: 768px) {
         nav {
           flex-direction: column;
@@ -393,7 +476,6 @@
         }
 
         nav ul {
-          /* display: none;  */
           flex-direction: column;
           width: 100%;
           position: absolute;
@@ -409,7 +491,6 @@
         }
 
         nav ul.active {
-          /* display: flex;  */
           max-height: 300px;
           opacity: 1;
         }
@@ -562,38 +643,6 @@
         z-index: 9999;
       }
 
-      .modal-content {
-        background: #fff;
-        padding: 25px 35px;
-        border-radius: 10px;
-        max-width: 400px;
-        width: 90%;
-        text-align: center;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        border: 2px solid #4a90e2;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        color: #222;
-      }
-
-      .modal-content button {
-        margin: 12px 15px 0 15px;
-        padding: 10px 22px;
-        font-size: 1.05rem;
-        cursor: pointer;
-        border: 2px solid transparent;
-        border-radius: 8px;
-        font-weight: 600;
-        transition:
-          background-color 0.25s ease,
-          border-color 0.25s ease,
-          box-shadow 0.25s ease;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-      }
-
-      .modal-content button:hover {
-        border-color: #4a90e2;
-        box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
-      }
       .filter-bar {
         display: flex;
         justify-content: flex-start;
@@ -642,9 +691,6 @@
       }
       .modal-open {
         overflow: hidden;
-      }
-      .modal-overlay {
-        display: none;
       }
       /* Tab Styles */
       .tabs-container {
@@ -851,7 +897,6 @@
       }
 
       /* Navigation Message Badge */
-      /* Navigation Message Badge - Red Dot Only */
       .nav-message-badge {
         position: absolute;
         top: -5px;
@@ -864,10 +909,45 @@
         animation: pulse 1s infinite;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
       }
+
+      /* Reschedule specific styles */
+      .reschedule-modal-content {
+        width: 450px;
+      }
+
+      .date-input-group {
+        margin-bottom: 15px;
+      }
+
+      .date-input-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #006666;
+        font-weight: 600;
+      }
+
+      .date-input-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .date-input-group input:focus {
+        border-color: #009999;
+        outline: none;
+        box-shadow: 0 0 4px rgba(0, 153, 153, 0.3);
+      }
     </style>
   </head>
 
   <body>
+    <!-- Loader -->
+    <div id="loaderOverlay" class="loader-overlay">
+      <div class="loader"></div>
+    </div>
+
     <nav>
       <div class="logo">
         <img src="images/Da.png" alt="DocAssist Logo" />
@@ -891,8 +971,7 @@
               id="navMessageBadge"
               class="nav-message-badge"
               style="display: none"
-              >0</span
-            >
+            ></span>
           </a>
         </li>
         <li><a href="login.html">Logout</a></li>
@@ -953,7 +1032,7 @@
         </div>
       </div>
 
-      <!--  Cancelled Appointments -->
+      <!-- Cancelled Appointments -->
       <div id="tab-cancelled" class="tab-content">
         <div class="section-block">
           <h2>Cancelled Appointments</h2>
@@ -976,7 +1055,7 @@
         </div>
       </div>
 
-      <!--  Completed Appointments -->
+      <!-- Completed Appointments -->
       <div id="tab-completed" class="tab-content">
         <div class="section-block">
           <h2>Completed Appointments</h2>
@@ -999,6 +1078,7 @@
         </div>
       </div>
 
+      <!-- Missed Appointments -->
       <div id="tab-missed" class="tab-content">
         <div class="section-block">
           <h2>Missed Appointments</h2>
@@ -1020,23 +1100,31 @@
         </div>
       </div>
     </div>
-    <!-- MODAL -->
+
+    <!-- Reschedule Modal -->
     <div id="rescheduleModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h3>Choose a New Slot</h3>
-
-        <select id="availableSlots">
-          <option value="">Select a slot</option>
-        </select>
-
-        <input type="hidden" id="appointmentId" />
+      <div class="modal-content reschedule-modal-content">
+        <span class="close" onclick="closeRescheduleModal()">&times;</span>
+        <h3><i class="fas fa-calendar-alt"></i> Reschedule Appointment</h3>
+        <div class="date-input-group">
+          <label>New Date:</label>
+          <input type="date" id="rescheduleDate" />
+        </div>
+        <div class="date-input-group">
+          <label>New Time:</label>
+          <input type="time" id="rescheduleTime" />
+        </div>
+        <p style="font-size: 12px; color: #666; margin-bottom: 15px">
+          <i class="fas fa-info-circle"></i> Note: Rescheduling will send
+          notifications to the patient
+        </p>
+        <input type="hidden" id="rescheduleAppointmentId" />
         <button onclick="confirmReschedule()">Confirm Reschedule</button>
       </div>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div id="confirmModal" class="modal-overlay">
+    <!-- Confirmation Modal for Complete -->
+    <div id="confirmModal" class="modal-overlay" style="display: none">
       <div class="modal-content">
         <p>Are you sure you want to mark this appointment as Completed?</p>
         <button id="confirmYes">Yes</button>
@@ -1045,14 +1133,15 @@
     </div>
 
     <!-- Success Modal -->
-    <div id="successModal" class="modal-overlay">
+    <div id="successModal" class="modal-overlay" style="display: none">
       <div class="modal-content">
         <p>Appointment moved to completed successfully.</p>
         <button id="successOk">OK</button>
       </div>
     </div>
+
     <!-- Missed Confirmation Modal -->
-    <div id="missedConfirmModal" class="modal-overlay">
+    <div id="missedConfirmModal" class="modal-overlay" style="display: none">
       <div class="modal-content">
         <p>Are you sure you want to mark this appointment as Missed?</p>
         <button id="missedConfirmYes">Yes</button>
@@ -1061,7 +1150,7 @@
     </div>
 
     <!-- Missed Success Modal -->
-    <div id="missedSuccessModal" class="modal-overlay">
+    <div id="missedSuccessModal" class="modal-overlay" style="display: none">
       <div class="modal-content">
         <p>Appointment marked as Missed successfully.</p>
         <button id="missedSuccessOk">OK</button>
@@ -1069,7 +1158,7 @@
     </div>
 
     <!-- Cancelled Confirmation Modal -->
-    <div id="cancelConfirmModal" class="modal-overlay">
+    <div id="cancelConfirmModal" class="modal-overlay" style="display: none">
       <div class="modal-content">
         <p>Are you sure you want to mark this appointment as Cancelled?</p>
         <button id="cancelConfirmYes">Yes</button>
@@ -1077,7 +1166,7 @@
       </div>
     </div>
 
-    <div id="cancelSuccessModal" class="modal-overlay">
+    <div id="cancelSuccessModal" class="modal-overlay" style="display: none">
       <div class="modal-content">
         <p>Appointment cancelled successfully.</p>
         <button id="cancelSuccessOk">OK</button>
@@ -1106,6 +1195,7 @@
       // Global variables
       let unreadMessages = {};
       let socket = null;
+      let currentAppointmentToReschedule = null;
       const pageSize = 6;
       const paginationState = {
         newAppointments: { currentPage: 1, rows: [] },
@@ -1114,13 +1204,31 @@
         missedAppointments: { currentPage: 1, rows: [] },
       };
 
+      // Loader functions
+      function showLoader() {
+        document.getElementById("loaderOverlay").style.display = "flex";
+      }
+
+      function hideLoader() {
+        document.getElementById("loaderOverlay").style.display = "none";
+      }
+
+      // Toast notification function
+      function showToast(message, type = "success") {
+        const toast = document.createElement("div");
+        toast.className = `custom-toast ${type}`;
+        toast.innerHTML = `<i class="fas ${type === "success" ? "fa-check-circle" : type === "error" ? "fa-exclamation-circle" : "fa-exclamation-triangle"}"></i> ${message}`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.animation = "slideOutRight 0.3s ease";
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
         const bar = document.getElementById("bar");
         const menu = document.querySelector("nav ul");
-        const logoutButton = document.getElementById("logoutBtn");
-        if (logoutButton) {
-          logoutButton.addEventListener("click", logout);
-        }
 
         if (bar) {
           bar.addEventListener("click", function () {
@@ -1135,13 +1243,11 @@
       });
 
       // Update navigation message badge
-      // Update navigation message badge - Show red dot only
       function updateNavMessageBadge(count) {
         const badge = document.getElementById("navMessageBadge");
         if (badge) {
           if (count > 0) {
             badge.style.display = "inline-block";
-            badge.textContent = ""; // No text, just red dot
           } else {
             badge.style.display = "none";
           }
@@ -1160,30 +1266,20 @@
           socket.emit("join_user", { userId: doctorId, role: "doctor" });
         });
 
-        // Listen for new messages
         socket.on("new_message", (message) => {
           if (message.receiverId === doctorId) {
             const patientId = message.senderId;
-
-            // Increment unread count
             unreadMessages[patientId] = (unreadMessages[patientId] || 0) + 1;
-
-            // Calculate total unread count
-            const totalUnread = Object.values(unreadMessages).reduce(
-              (a, b) => a + b,
-              0,
-            );
-
-            // Update navigation badge
+            const adminId = "689f5be6e5432f608d4b3a54";
+            let totalUnread = 0;
+            for (const [senderId, count] of Object.entries(unreadMessages)) {
+              if (senderId !== adminId) totalUnread += count;
+            }
             updateNavMessageBadge(totalUnread);
-
-            // Show notification toast
             showChatNotification(
               message.senderName || "Patient",
               message.message,
             );
-
-            // Play sound
             playNotificationSound();
           }
         });
@@ -1216,7 +1312,6 @@
         audio.play().catch((e) => console.log("Sound play failed:", e));
       }
 
-      // Open messages page
       function openMessagesPage() {
         window.location.href = "doctor-messages.html";
       }
@@ -1224,6 +1319,7 @@
       async function loadUnreadCounts() {
         const token = localStorage.getItem("authToken");
         const doctorId = localStorage.getItem("doctorId");
+        const adminId = "689f5be6e5432f608d4b3a54";
 
         try {
           const response = await fetch(
@@ -1234,14 +1330,10 @@
           );
           const data = await response.json();
           unreadMessages = data;
-
-          // Calculate total unread count
-          const totalUnread = Object.values(unreadMessages).reduce(
-            (a, b) => a + b,
-            0,
-          );
-
-          // Update navigation badge
+          let totalUnread = 0;
+          for (const [senderId, count] of Object.entries(unreadMessages)) {
+            if (senderId !== adminId) totalUnread += count;
+          }
           updateNavMessageBadge(totalUnread);
         } catch (error) {
           console.error("Error loading unread counts:", error);
@@ -1257,6 +1349,7 @@
           return;
         }
 
+        showLoader();
         fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
@@ -1265,7 +1358,6 @@
             return res.json();
           })
           .then((appointments) => {
-            // Clear all tables first
             paginationState.newAppointments.rows = [];
             paginationState.cancelledAppointments.rows = [];
             paginationState.completedAppointments.rows = [];
@@ -1303,7 +1395,7 @@
                   patientName,
                   appointmentTime,
                   phone,
-                  feedback: "No feedback",
+                  feedback: appointment.feedback || "No feedback",
                 });
               } else if (status === "arrived") {
                 addArrivedAppointmentRow({
@@ -1311,7 +1403,7 @@
                   patientName,
                   appointmentTime,
                   phone,
-                  status: "Arrived ✓",
+                  status: "Arrived",
                 });
               } else {
                 addNewAppointmentRow({
@@ -1329,10 +1421,102 @@
             paginateTable("completedAppointments");
             paginateTable("missedAppointments");
             updateTabBadges();
+            hideLoader();
           })
           .catch((err) => {
             console.error("Error fetching patient appointments:", err);
+            hideLoader();
+            showToast("Failed to load appointments", "error");
           });
+      }
+
+      // Reschedule function - opens modal
+      function rescheduleAppointment(button) {
+        const row = button.closest("tr");
+        const appointmentId = row.getAttribute("data-appointment-id");
+        currentAppointmentToReschedule = appointmentId;
+        document.getElementById("rescheduleAppointmentId").value =
+          appointmentId;
+        document.getElementById("rescheduleModal").style.display = "flex";
+        document.body.classList.add("modal-open");
+
+        // Set min date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const dateInput = document.getElementById("rescheduleDate");
+        dateInput.min = tomorrow.toISOString().split("T")[0];
+        dateInput.value = "";
+        document.getElementById("rescheduleTime").value = "";
+      }
+
+      function closeRescheduleModal() {
+        document.getElementById("rescheduleModal").style.display = "none";
+        document.body.classList.remove("modal-open");
+        currentAppointmentToReschedule = null;
+      }
+
+      async function confirmReschedule() {
+        const appointmentId = document.getElementById(
+          "rescheduleAppointmentId",
+        ).value;
+        const newDate = document.getElementById("rescheduleDate").value;
+        const newTime = document.getElementById("rescheduleTime").value;
+        const token = localStorage.getItem("authToken");
+
+        if (!newDate || !newTime) {
+          showToast("Please select both date and time", "warning");
+          return;
+        }
+
+        // Validate time format (convert to 12-hour with AM/PM)
+        let formattedTime = newTime;
+        let hours = parseInt(newTime.split(":")[0]);
+        let minutes = newTime.split(":")[1];
+        let ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        hours = hours === 0 ? 12 : hours;
+        formattedTime = `${hours}:${minutes} ${ampm}`;
+
+        showLoader();
+        closeRescheduleModal();
+
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/appointments/${appointmentId}/reschedule`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                newDate,
+                newTime: formattedTime,
+                rescheduledBy: "doctor",
+              }),
+            },
+          );
+
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            showToast(
+              "Appointment rescheduled successfully! Notifications sent to patient.",
+              "success",
+            );
+            loadPatientAppointments(); // Refresh the list
+          } else {
+            showToast(
+              data.message || "Failed to reschedule appointment",
+              "error",
+            );
+          }
+        } catch (error) {
+          console.error("Reschedule error:", error);
+          showToast("Network error. Please try again.", "error");
+        } finally {
+          hideLoader();
+        }
       }
 
       function addArrivedAppointmentRow(appointment) {
@@ -1346,7 +1530,7 @@
             <button class="btn btn-warning" onclick="markAsMissed(this)">Missed</button> 
             <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
           </td>
-        </tr>`;
+         </tr>`;
         paginationState.newAppointments.rows.push(rowHTML);
       }
 
@@ -1382,9 +1566,8 @@
             <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
             <button class="btn btn-warning" onclick="markAsMissed(this)">Missed</button> 
             <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
-          </td>
-        </tr>`;
-
+           </td>
+         </tr>`;
         paginationState.newAppointments.rows.push(rowHTML);
       }
 
@@ -1395,8 +1578,8 @@
           <td>${appointment.phone || "N/A"}</td>
           <td>
             <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
-          </td>
-        </tr>`;
+           </td>
+         </tr>`;
         paginationState.cancelledAppointments.rows.push(rowHTML);
       }
 
@@ -1406,7 +1589,7 @@
           <td>${appointment.appointmentTime}</td>
           <td>${appointment.phone || "N/A"}</td>
           <td>${appointment.feedback || "No feedback"}</td>
-        </tr>`;
+         </tr>`;
         paginationState.completedAppointments.rows.push(rowHTML);
       }
 
@@ -1415,7 +1598,7 @@
           <td>${appointment.patientName}</td>
           <td>${appointment.appointmentTime}</td>
           <td>${appointment.phone || "N/A"}</td>
-        </tr>`;
+         </tr>`;
         paginationState.missedAppointments.rows.push(rowHTML);
       }
 
@@ -1434,10 +1617,8 @@
         try {
           const parts = appointmentDateTime.split(" ");
           if (parts.length < 2) return null;
-
           const datePart = parts[0];
           const timePart = parts.slice(1).join(" ");
-
           let year, month, day;
           if (datePart.includes("-")) {
             [year, month, day] = datePart.split("-");
@@ -1446,21 +1627,17 @@
           } else {
             return null;
           }
-
           let timeStr = timePart;
           let modifier = "AM";
           if (timeStr.includes("AM") || timeStr.includes("PM")) {
             modifier = timeStr.includes("PM") ? "PM" : "AM";
             timeStr = timeStr.replace("AM", "").replace("PM", "").trim();
           }
-
           let [hours, minutes] = timeStr.split(":");
           hours = parseInt(hours);
           minutes = parseInt(minutes);
-
           if (modifier === "PM" && hours !== 12) hours += 12;
           if (modifier === "AM" && hours === 12) hours = 0;
-
           const appointmentDate = new Date(
             year,
             month - 1,
@@ -1478,10 +1655,8 @@
         try {
           const deadline = getCheckInDeadline(appointmentDateTime);
           if (!deadline) return "";
-
           const now = new Date();
           const appointmentDate = new Date(deadline.getTime() + 30 * 60 * 1000);
-
           if (now >= deadline && now < appointmentDate) {
             return '<span style="color: red; font-size: 12px; display: block;">⚠️ Check-in deadline passed!</span>';
           }
@@ -1495,15 +1670,11 @@
         try {
           const deadline = getCheckInDeadline(appointmentDateTime);
           if (!deadline) return "";
-
           const now = new Date();
           const diff = deadline - now;
-
           if (diff <= 0) return "Deadline passed";
-
           const minutesLeft = Math.floor(diff / 60000);
           const secondsLeft = Math.floor((diff % 60000) / 1000);
-
           if (minutesLeft < 30) {
             return `${minutesLeft}m ${secondsLeft}s remaining`;
           }
@@ -1521,8 +1692,8 @@
         const doctorId = localStorage.getItem("doctorId");
 
         if (checkIfDeadlinePassed(appointmentTime)) {
-          showNotification(
-            "⚠️ Check-in deadline has passed! Cannot mark arrival.",
+          showToast(
+            "Check-in deadline has passed! Cannot mark arrival.",
             "warning",
           );
           return;
@@ -1549,9 +1720,7 @@
 
         newConfirmYes.onclick = () => {
           modal.style.display = "none";
-          button.disabled = true;
-          const originalText = button.innerHTML;
-          button.innerHTML = "⏳ Marking...";
+          showLoader();
 
           fetch(
             `http://localhost:3000/api/appointments/${appointmentId}/arrive`,
@@ -1561,10 +1730,7 @@
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
               },
-              body: JSON.stringify({
-                markedBy: doctorId,
-                role: "doctor",
-              }),
+              body: JSON.stringify({ markedBy: doctorId, role: "doctor" }),
             },
           )
             .then((response) => {
@@ -1572,29 +1738,14 @@
               return response.json();
             })
             .then(() => {
-              const statusCell = row.cells[3];
-              statusCell.innerHTML =
-                '<span class="arrived-badge">✓ Arrived</span>';
-              const actionsCell = row.cells[4];
-              actionsCell.innerHTML = `
-                <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
-                <button class="btn btn-warning" onclick="markAsMissed(this)">Missed</button>
-                <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
-              `;
-              showNotification(
-                "✅ Patient marked as arrived successfully!",
-                "success",
-              );
+              showToast("Patient marked as arrived successfully!", "success");
+              loadPatientAppointments();
             })
             .catch((err) => {
               console.error("Error marking arrival:", err);
-              showNotification(
-                "❌ Failed to mark arrival: " + err.message,
-                "error",
-              );
-              button.disabled = false;
-              button.innerHTML = originalText;
-            });
+              showToast("Failed to mark arrival: " + err.message, "error");
+            })
+            .finally(() => hideLoader());
         };
 
         newConfirmNo.onclick = () => {
@@ -1603,36 +1754,7 @@
       }
 
       function showNotification(message, type) {
-        let notification = document.getElementById("customNotification");
-        if (!notification) {
-          notification = document.createElement("div");
-          notification.id = "customNotification";
-          notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 8px;
-            z-index: 10000;
-            animation: slideIn 0.3s ease;
-            display: none;
-          `;
-          document.body.appendChild(notification);
-        }
-
-        notification.style.backgroundColor =
-          type === "success"
-            ? "#4CAF50"
-            : type === "warning"
-              ? "#FF9800"
-              : "#f44336";
-        notification.style.color = "white";
-        notification.textContent = message;
-        notification.style.display = "block";
-
-        setTimeout(() => {
-          notification.style.display = "none";
-        }, 3000);
+        showToast(message, type);
       }
 
       setInterval(() => {
@@ -1648,7 +1770,6 @@
             const firstCell = row.cells[0];
             const oldTimer = firstCell.querySelector(".countdown-timer");
             if (oldTimer) oldTimer.remove();
-
             if (timeRemaining && timeRemaining !== "Deadline passed") {
               const timerSpan = document.createElement("span");
               timerSpan.className = "countdown-timer";
@@ -1679,6 +1800,7 @@
             "Are you sure you want to mark this appointment as Completed?",
           )
         ) {
+          showLoader();
           fetch(
             `http://localhost:3000/api/appointments/${appointmentId}/status`,
             {
@@ -1695,16 +1817,14 @@
               return response.json();
             })
             .then(() => {
-              showNotification(
-                "Appointment completed successfully!",
-                "success",
-              );
+              showToast("Appointment completed successfully!", "success");
               loadPatientAppointments();
             })
             .catch((err) => {
               console.error("Error:", err);
-              showNotification("Failed to complete appointment", "error");
-            });
+              showToast("Failed to complete appointment", "error");
+            })
+            .finally(() => hideLoader());
         }
       }
 
@@ -1714,6 +1834,7 @@
         const token = localStorage.getItem("authToken");
 
         if (confirm("Are you sure you want to cancel this appointment?")) {
+          showLoader();
           fetch(
             `http://localhost:3000/api/appointments/${appointmentId}/cancel`,
             {
@@ -1733,16 +1854,14 @@
               return response.json();
             })
             .then(() => {
-              showNotification(
-                "Appointment cancelled successfully!",
-                "success",
-              );
+              showToast("Appointment cancelled successfully!", "success");
               loadPatientAppointments();
             })
             .catch((err) => {
               console.error("Error:", err);
-              showNotification("Failed to cancel appointment", "error");
-            });
+              showToast("Failed to cancel appointment", "error");
+            })
+            .finally(() => hideLoader());
         }
       }
 
@@ -1754,6 +1873,7 @@
         if (
           confirm("Are you sure you want to mark this appointment as Missed?")
         ) {
+          showLoader();
           fetch(
             `http://localhost:3000/api/appointments/${appointmentId}/status`,
             {
@@ -1770,13 +1890,14 @@
               return response.json();
             })
             .then(() => {
-              showNotification("Appointment marked as missed!", "warning");
+              showToast("Appointment marked as missed!", "warning");
               loadPatientAppointments();
             })
             .catch((err) => {
               console.error("Error:", err);
-              showNotification("Failed to mark as missed", "error");
-            });
+              showToast("Failed to mark as missed", "error");
+            })
+            .finally(() => hideLoader());
         }
       }
 
@@ -1881,14 +2002,16 @@
         .getElementById("statusFilter")
         .addEventListener("change", filterAppointments);
 
-      async function rescheduleAppointment(buttonElement) {
-        alert("Reschedule feature - implement as needed");
-      }
-
-      function closeModal() {
-        document.getElementById("rescheduleModal").style.display = "none";
-        document.body.classList.remove("modal-open");
-      }
+      window.rescheduleAppointment = rescheduleAppointment;
+      window.closeRescheduleModal = closeRescheduleModal;
+      window.confirmReschedule = confirmReschedule;
+      window.markArrived = markArrived;
+      window.completeAppointment = completeAppointment;
+      window.cancelAppointment = cancelAppointment;
+      window.markAsMissed = markAsMissed;
+      window.nextPage = nextPage;
+      window.prevPage = prevPage;
+      window.openMessagesPage = openMessagesPage;
     </script>
   </body>
 </html>

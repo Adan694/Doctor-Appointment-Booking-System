@@ -441,7 +441,7 @@
         Messages
       </div>
 
-      <button class="sidebar-toggle" onclick="toggleSidebar()">
+      <button class="sidebar-toggle" onclick="toggleSidebar()" title="toggle">
         <i class="fas fa-bars"></i>
       </button>
 
@@ -567,10 +567,13 @@
           }
 
           // Update badge on main appointments page
-          const totalUnread = Object.values(unreadCounts).reduce(
-            (a, b) => a + b,
-            0,
-          );
+          const adminId = "689f5be6e5432f608d4b3a54";
+          let totalUnread = 0;
+          for (const [senderId, count] of Object.entries(unreadCounts)) {
+            if (senderId !== adminId) {
+              totalUnread += count;
+            }
+          }
           if (window.opener && window.opener.updateNavMessageBadge) {
             window.opener.updateNavMessageBadge(totalUnread);
           }
@@ -748,6 +751,8 @@
 
       async function selectPatient(patientId, patientName) {
         // Mark messages as read first
+        unreadCounts[patientId] = 0;
+
         await markMessagesAsRead(patientId);
         displayedMessages = new Set();
 
@@ -814,11 +819,14 @@
 
       // Function to update badge on main appointments page
       function updateMainPageBadge() {
+        const adminId = "689f5be6e5432f608d4b3a54";
         // Calculate total unread
-        const totalUnread = Object.values(unreadCounts).reduce(
-          (a, b) => a + b,
-          0,
-        );
+        let totalUnread = 0;
+        for (const [senderId, count] of Object.entries(unreadCounts)) {
+          if (senderId !== adminId) {
+            totalUnread += count;
+          }
+        }
 
         // Check if we have access to opener (appointments page)
         if (window.opener && window.opener.updateNavMessageBadge) {

@@ -126,7 +126,7 @@ nav ul li a:hover {
     font-weight: 700;
     text-align: center;
     color: #009999;
-    margin: 20px auto 20px auto; /* top, right, bottom, left */
+    margin: 20px auto 20px auto; 
     padding: 15px;
     border: 3px solid #009999;
     border-radius: 50px;
@@ -720,35 +720,8 @@ margin-top:15px
 
 </div>
 
-<div id="chatFloatingBtn">
-    <i class="fa-solid fa-comments"></i>
-   <span id="unreadCount" class="unread-badge">0</span>
-</div>
 
  <script>
-
-document.getElementById("chatFloatingBtn").addEventListener("click", async () => {
-
-    const token = localStorage.getItem('authToken');
-
-    try {
-        await fetch('http://localhost:3000/user/chat/mark-read', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        const badge = document.getElementById("unreadCount");
-        badge.innerText = "";
-        badge.style.display = "none";
-
-    } catch (err) {
-        console.error("Error clearing unread:", err);
-    }
-
-    window.location.href = "Patientchat.html";
-});
 document.addEventListener('DOMContentLoaded', () => {
     const changePasswordBtn = document.getElementById('change-password-btn');
     const passwordFields = document.getElementById('password-fields');
@@ -839,7 +812,6 @@ function toggleEditForm() {
                 });
                 p.replaceWith(input);
 
-                // DOB error div
                 var dobError = document.createElement('div');
                 dobError.style.color = 'red';
                 dobError.style.fontSize = '0.85em';
@@ -1002,7 +974,6 @@ if (updatedData.age < 18 || updatedData.age > 120) {
     return;
 }
 
-// Continue with existing code...
 showLoader();
 
   
@@ -1065,27 +1036,6 @@ showLoader();
 
 function showLoader() { document.getElementById('loader').style.display = 'block'; }
 function hideLoader() { document.getElementById('loader').style.display = 'none'; }
-async function updateUnreadCount() {
-    const token = localStorage.getItem('authToken');
-    if (!token) return;
-
-    try {
-        const res = await fetch('http://localhost:3000/user/chat/unread-count', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await res.json();
-        const count = data.unreadCount || 0;
-
-        const badge = document.getElementById('unreadCount');
-        badge.innerText = count > 0 ? count : '';
-        badge.style.display = count > 0 ? 'flex' : 'none';
-
-    } catch (err) {
-        console.error('Error fetching unread count:', err);
-    }
-}
-updateUnreadCount();
-
 
 </script>
 <script src="http://localhost:3000/socket.io/socket.io.js"></script>

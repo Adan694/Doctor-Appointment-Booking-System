@@ -115,6 +115,7 @@
       let peerConnection = null;
       let socket = null;
       let callStartTime = null;
+      let iceCandidateQueue = [];
 
       const configuration = {
         iceServers: [
@@ -138,8 +139,8 @@
         }
 
         console.log("Initializing... RoomId:", roomId, "PatientId:", patientId);
-        initSocket();
         await initMedia();
+        initSocket();
       });
 
       function initSocket() {
@@ -177,7 +178,7 @@
         });
 
         socket.on("consultation_ice", async ({ candidate }) => {
-          if (peerConnection) {
+          if (peerConnection && peerConnection.remoteDescription) {
             try {
               await peerConnection.addIceCandidate(
                 new RTCIceCandidate(candidate),
@@ -186,6 +187,9 @@
             } catch (err) {
               console.error("Error adding ICE candidate:", err);
             }
+          } else {
+            console.log("Queueing ICE candidate");
+            iceCandidateQueue.push(candidate);
           }
         });
 
@@ -305,6 +309,8 @@
           await peerConnection.setLocalDescription(answer);
           console.log("Answer created and sent");
           socket.emit("consultation_answer", { roomId, answer });
+          
+          processIceQueue();
         } catch (err) {
           console.error("Error handling offer:", err);
         }
@@ -321,8 +327,24 @@
             new RTCSessionDescription(answer),
           );
           console.log("Answer set as remote description");
+          
+          processIceQueue();
         } catch (err) {
           console.error("Error handling answer:", err);
+        }
+      }
+
+      async function processIceQueue() {
+        console.log(`Processing ${iceCandidateQueue.length} queued ICE candidates`);
+        while (iceCandidateQueue.length > 0) {
+          const candidate = iceCandidateQueue.shift();
+          if (candidate) {
+            try {
+              await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            } catch (err) {
+              console.error("Error adding queued ICE candidate:", err);
+            }
+          }
         }
       }
 

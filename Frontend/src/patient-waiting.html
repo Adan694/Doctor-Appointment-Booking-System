@@ -126,6 +126,12 @@
           <button class="join-btn cancel-btn" onclick="cancelRequest()">
             <i class="fas fa-times"></i> Cancel Request
           </button>
+          <button
+            class="join-btn back-btn"
+            onclick="goToPatientConsultations()"
+          >
+            <i class="fas fa-folder-medical"></i> See my Consultations
+          </button>
         </div>
       </div>
 
@@ -257,7 +263,9 @@
       function joinCall() {
         window.location.href = `patient-call.html?roomId=${roomId}`;
       }
-
+      function goToPatientConsultations() {
+        window.location.href = "patient-consultations.html";
+      }
       function goToConsultations() {
         window.location.href = "my-consultations.html";
       }
