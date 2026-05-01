@@ -314,7 +314,7 @@
       async function loadChats() {
         try {
           const res = await fetch(
-            `http://localhost:3000/api/chats/${userId}?role=doctor`,
+            `http://localhost:3000/api/chats/between/${userId}/${adminId}`,
           );
           const chats = await res.json();
           chatBox.innerHTML = "";

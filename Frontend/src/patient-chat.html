@@ -793,6 +793,9 @@
         // Load chat history
         await loadChatHistory(doctorId);
 
+        // Join private conversation room for real-time messages
+        socket.emit("join_conversation", { userId: userId, otherUserId: doctorId });
+
         // Close sidebar on mobile
         if (window.innerWidth <= 768) {
           document.getElementById("doctorsSidebar").classList.remove("show");

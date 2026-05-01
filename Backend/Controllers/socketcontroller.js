@@ -36,9 +36,17 @@ function initializeSocket(io) {
        ADMIN opens a user's chat -> join room
     ---------------------------------------- */
     socket.on("admin_join", ({ userId }) => {
+      // Intentionally no-op.
+      //
+      // Previously, admin joined the same room named by `userId`.
+      // Since messages are emitted to rooms `senderId` and `receiverId`,
+      // that caused admin to receive doctor<->patient messages whenever
+      // admin had opened either user's chat.
+      //
+      // Admin already receives admin<->user messages via the admin's own
+      // room (admin joins their own userId room via `join_user`).
       if (!userId) return;
-      socket.join(userId);
-      console.log(` Admin joined room ${userId}`);
+      console.log(` Admin view opened for user ${userId}`);
     });
 
     /* ---------------------------------------
@@ -61,8 +69,10 @@ function initializeSocket(io) {
           read: false
         });
 
-        io.to(senderId).emit("new_message", chat);
-        io.to(receiverId).emit("new_message", chat);
+        // Emit ONLY to the private conversation room for these two users.
+        // This prevents other roles from receiving each other's messages.
+        const roomId = [senderId, receiverId].sort().join("_");
+        io.to(roomId).emit("new_message", chat);
         console.log(`📨 Message from ${senderId} to ${receiverId}`);
       } catch (error) {
         console.error("Error saving message:", error);

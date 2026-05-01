@@ -891,6 +891,12 @@
 
         const adminId = "689f5be6e5432f608d4b3a54";
 
+        // IMPORTANT: Admin should only process messages where admin is a participant.
+        // Without this, admin UI can display doctor<->patient messages if they ever arrive.
+        if (msg.senderId !== adminId && msg.receiverId !== adminId) {
+          return;
+        }
+
         console.log("---- NEW MESSAGE RECEIVED ----");
         console.log("Full message object:", msg);
 
@@ -1208,14 +1214,13 @@
         el.classList.add("active");
 
         await markMessagesAsRead(user._id);
-        // WITH THIS:
-        socket.emit("admin_join", { userId: user._id, role });
         socket.emit("join_conversation", {
           userId: "689f5be6e5432f608d4b3a54",
           otherUserId: user._id,
         });
+        // Load ONLY messages between this admin and the selected user
         const res = await fetch(
-          `http://localhost:3000/api/chats/${user._id}?role=${user.role}`,
+          `http://localhost:3000/api/chats/between/689f5be6e5432f608d4b3a54/${user._id}`,
         );
         const chats = await res.json();
 
@@ -1300,7 +1305,7 @@
 
       function sendMessage() {
         if (!activeUser) return;
-        if (isSending) return; // Prevent double sending
+        if (isSending) return;
 
         const msg = msgInput.value.trim();
         if (!msg) return;
@@ -1311,20 +1316,20 @@
           senderId: "689f5be6e5432f608d4b3a54",
           senderRole: "admin",
           receiverId: activeUser._id,
+          receiverRole: activeUser.role, // CRITICAL: Add this!
           message: msg,
           timestamp: new Date().toISOString(),
-          _id: Date.now().toString(), // Add unique ID
+          _id: Date.now().toString(),
         };
 
-        // Add message locally FIRST
+        // Add message locally
         addMessage(messageData);
         updateLastMessage(activeUser._id, msg);
         msgInput.value = "";
 
-        // Then send via socket
+        // Send via socket
         socket.emit("send_message", messageData);
 
-        // Reset sending flag after delay
         setTimeout(() => {
           isSending = false;
         }, 500);
