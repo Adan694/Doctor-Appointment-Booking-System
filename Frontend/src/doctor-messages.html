@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doctor Messages - DocAssist</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #e6f2ff;
+        min-height: 100vh;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .logo h1 {
+        font-size: 24px;
+        background: linear-gradient(45deg, #ffffff, #cceeff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+        gap: 20px;
+      }
+
+      nav ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 16px;
+        transition: color 0.3s;
+      }
+
+      nav ul li a:hover {
+        color: #cceeff;
+      }
+
+      .main-container {
+        margin-top: 80px;
+        padding: 20px;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .page-title {
+        color: #096666;
+        margin-bottom: 20px;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .chat-inbox {
+        display: flex;
+        gap: 20px;
+        height: calc(100vh - 140px);
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+      }
+
+      /* Patients Sidebar */
+      .patients-sidebar {
+        width: 320px;
+        background: #f8f9fa;
+        border-right: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sidebar-header {
+        padding: 20px;
+        background: #096666;
+        color: white;
+      }
+
+      .sidebar-header h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .sidebar-header input {
+        width: 100%;
+        padding: 10px 12px;
+        border: none;
+        border-radius: 8px;
+        outline: none;
+        font-size: 14px;
+      }
+
+      .patients-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      .patient-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 8px;
+        position: relative;
+      }
+
+      .patient-item:hover {
+        background: #e9ecef;
+      }
+
+      .patient-item.active {
+        background: #096666;
+        color: white;
+      }
+
+      .patient-avatar {
+        width: 48px;
+        height: 48px;
+        background: #0f8080;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      .patient-item.active .patient-avatar {
+        background: white;
+        color: #096666;
+      }
+
+      .patient-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .patient-name {
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      .last-message {
+        font-size: 12px;
+        color: #6c757d;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .patient-item.active .last-message {
+        color: #cceeff;
+      }
+
+      .message-time {
+        font-size: 10px;
+        color: #999;
+      }
+
+      /* Red Dot Badge - No Number */
+      .unread-badge {
+        background-color: #ff4444;
+        border-radius: 50%;
+        width: 10px;
+        height: 10px;
+        min-width: 10px;
+        animation: pulse 1s infinite;
+        margin-left: auto;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Chat Area */
+      .chat-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #ffffff;
+      }
+
+      .chat-header {
+        padding: 15px 20px;
+        background: #ffffff;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .chat-header-avatar {
+        width: 40px;
+        height: 40px;
+        background: #0f8080;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .chat-header-info h3 {
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      .chat-header-info p {
+        font-size: 12px;
+        color: #2ecc71;
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: #f8f9fa;
+      }
+
+      .message {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message.sent {
+        align-items: flex-end;
+      }
+
+      .message.received {
+        align-items: flex-start;
+      }
+
+      .message-bubble {
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 18px;
+        font-size: 14px;
+        word-wrap: break-word;
+      }
+
+      .message.sent .message-bubble {
+        background: #096666;
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+
+      .message.received .message-bubble {
+        background: white;
+        color: #333;
+        border: 1px solid #e0e0e0;
+        border-bottom-left-radius: 4px;
+      }
+
+      .message-time {
+        font-size: 10px;
+        color: #999;
+        margin-top: 4px;
+        padding: 0 8px;
+      }
+
+      .chat-input-area {
+        padding: 15px 20px;
+        background: white;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        gap: 10px;
+      }
+
+      .chat-input-area input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 25px;
+        outline: none;
+        font-size: 14px;
+      }
+
+      .chat-input-area button {
+        background: #096666;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .chat-input-area button:hover {
+        background: #055b5b;
+      }
+
+      .empty-chat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+      }
+
+      .empty-chat i {
+        font-size: 64px;
+        margin-bottom: 16px;
+      }
+
+      .no-patients {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+      }
+
+      @media (max-width: 768px) {
+        .patients-sidebar {
+          position: absolute;
+          left: -320px;
+          height: calc(100vh - 80px);
+          z-index: 999;
+          transition: left 0.3s;
+          background: white;
+        }
+
+        .patients-sidebar.show {
+          left: 0;
+        }
+
+        .sidebar-toggle {
+          display: block;
+          position: fixed;
+          bottom: 20px;
+          left: 20px;
+          background: #096666;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          font-size: 24px;
+          cursor: pointer;
+          z-index: 1000;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+      }
+
+      @media (min-width: 769px) {
+        .sidebar-toggle {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="images/Da.png" alt="DocAssist" />
+        <h1>DocAssist</h1>
+      </div>
+      <ul>
+        <li>
+          <a href="docpanel.html"
+            ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="DocAppointment.html"
+            ><i class="fas fa-calendar"></i> Appointments</a
+          >
+        </li>
+        <li>
+          <a href="doctor-messages.html"
+            ><i class="fas fa-envelope"></i> Messages</a
+          >
+        </li>
+        <li>
+          <a href="docprofile.html"><i class="fas fa-user"></i> Profile</a>
+        </li>
+        <li>
+          <a href="login.html" onclick="logout()"
+            ><i class="fas fa-sign-out-alt"></i> Logout</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <div class="main-container">
+      <div class="page-title">
+        <i class="fas fa-comment-dots"></i>
+        Messages
+      </div>
+
+      <button class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <div class="chat-inbox">
+        <!-- Patients Sidebar -->
+        <div class="patients-sidebar" id="patientsSidebar">
+          <div class="sidebar-header">
+            <h3><i class="fas fa-users"></i> Your Patients</h3>
+            <input
+              type="text"
+              id="searchPatient"
+              placeholder="Search patients..."
+              onkeyup="filterPatients()"
+            />
+          </div>
+          <div class="patients-list" id="patientsList">
+            <div style="text-align: center; padding: 20px">
+              <i class="fas fa-spinner fa-spin"></i> Loading...
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+          <div class="empty-chat" id="emptyChat">
+            <i class="fas fa-comments"></i>
+            <p>Select a patient to start chatting</p>
+          </div>
+          <div class="chat-header" id="chatHeader" style="display: none">
+            <div class="chat-header-avatar" id="chatAvatar">P</div>
+            <div class="chat-header-info">
+              <h3 id="chatPatientName">Patient Name</h3>
+              <p id="onlineStatus"><i class="fas fa-circle"></i> Offline</p>
+            </div>
+          </div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-area" id="chatInput" style="display: none">
+            <input
+              type="text"
+              id="messageInput"
+              placeholder="Type your message..."
+              onkeypress="handleKeyPress(event)"
+            />
+            <button onclick="sendMessage()">
+              <i class="fas fa-paper-plane"></i> Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script>
+      let socket = null;
+      let doctorId = null;
+      let currentPatient = null;
+      let allPatients = [];
+      let unreadCounts = {};
+      let onlineStatus = {};
+      let isInitialized = false;
+      let isSending = false;
+      let displayedMessages = new Set();
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        doctorId = localStorage.getItem("doctorId");
+        const token = localStorage.getItem("authToken");
+
+        if (!doctorId || !token) {
+          alert("Please login as doctor");
+          window.location.href = "login.html";
+          return;
+        }
+
+        initSocket();
+        loadPatients();
+      });
+
+      function initSocket() {
+        // Close existing socket if any
+        if (socket && socket.connected) {
+          socket.disconnect();
+        }
+
+        socket = io("http://localhost:3000");
+
+        socket.on("connect", () => {
+          console.log("Socket connected");
+          socket.emit("join_user", { userId: doctorId, role: "doctor" });
+        });
+
+        socket.on("online_users", (users) => {
+          onlineStatus = users;
+          updateOnlineStatus();
+        });
+
+        // Remove any existing listener to prevent duplicates
+        socket.off("new_message");
+        socket.on("new_message", (message) => {
+          console.log("New message received:", message);
+
+          const isForMe =
+            message.receiverId === doctorId || message.senderId === doctorId;
+          if (!isForMe) return;
+
+          const otherUserId =
+            message.senderId === doctorId
+              ? message.receiverId
+              : message.senderId;
+
+          if (currentPatient && currentPatient.patientId === otherUserId) {
+            displayMessage(message, message.senderId === doctorId);
+            unreadCounts[otherUserId] = 0;
+            updatePatientList();
+          } else {
+            unreadCounts[otherUserId] = (unreadCounts[otherUserId] || 0) + 1;
+            updatePatientList();
+            playNotificationSound();
+            showBrowserNotification(
+              message.senderName || "Patient",
+              message.message,
+            );
+          }
+
+          // Update badge on main appointments page
+          const totalUnread = Object.values(unreadCounts).reduce(
+            (a, b) => a + b,
+            0,
+          );
+          if (window.opener && window.opener.updateNavMessageBadge) {
+            window.opener.updateNavMessageBadge(totalUnread);
+          }
+        });
+      }
+
+      async function loadPatients() {
+        const token = localStorage.getItem("authToken");
+
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/appointments/doctor/${doctorId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+          const appointments = await response.json();
+
+          // Create a Map to store unique patients with their details
+          const patientsMap = new Map();
+          appointments.forEach((apt) => {
+            // Get patient ID correctly - check both possibilities
+            let patientId = null;
+            let patientName = null;
+            let patientPhone = null;
+
+            if (apt.patientId) {
+              if (typeof apt.patientId === "object") {
+                patientId = apt.patientId._id;
+                patientName = apt.patientId.name;
+                patientPhone = apt.patientId.phone;
+              } else {
+                patientId = apt.patientId;
+                patientName = apt.name;
+                patientPhone = apt.phone;
+              }
+            }
+
+            if (patientId && !patientsMap.has(patientId)) {
+              patientsMap.set(patientId, {
+                patientId: patientId,
+                name: patientName || apt.name || "Unknown",
+                phone: patientPhone || apt.phone || "",
+                lastMessage: "",
+                lastMessageTime: null,
+              });
+            }
+          });
+
+          // Convert Map to array
+          allPatients = Array.from(patientsMap.values());
+
+          console.log("Loaded patients:", allPatients);
+
+          // Load unread counts and last messages
+          await loadUnreadCounts();
+          await loadLastMessages();
+
+          updatePatientList();
+        } catch (error) {
+          console.error("Error loading patients:", error);
+          document.getElementById("patientsList").innerHTML = `
+        <div class="no-patients">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>Error loading patients</p>
+        </div>
+      `;
+        }
+      }
+
+      async function loadUnreadCounts() {
+        const token = localStorage.getItem("authToken");
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/chats/unread/doctor/${doctorId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+          if (response.ok) {
+            unreadCounts = await response.json();
+          }
+        } catch (error) {
+          console.error("Error loading unread counts:", error);
+        }
+      }
+
+      async function loadLastMessages() {
+        const token = localStorage.getItem("authToken");
+
+        for (let i = 0; i < allPatients.length; i++) {
+          const patient = allPatients[i];
+          try {
+            const response = await fetch(
+              `http://localhost:3000/api/chats/${doctorId}/${patient.patientId}?limit=1`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              },
+            );
+            if (response.ok) {
+              const messages = await response.json();
+              if (messages && messages.length > 0) {
+                patient.lastMessage = messages[0].message;
+                patient.lastMessageTime = messages[0].timestamp;
+              }
+            }
+          } catch (error) {
+            console.error(
+              "Error loading last message for patient:",
+              patient.name,
+              error,
+            );
+          }
+        }
+
+        console.log(
+          "After loading last messages:",
+          allPatients.map((p) => ({
+            name: p.name,
+            lastMessage: p.lastMessage,
+          })),
+        );
+      }
+
+      function updatePatientList() {
+        const container = document.getElementById("patientsList");
+
+        if (allPatients.length === 0) {
+          container.innerHTML = `
+        <div class="no-patients">
+          <i class="fas fa-user-md"></i>
+          <p>No patients yet</p>
+          <p style="font-size: 12px;">Patients will appear here after appointments</p>
+        </div>
+      `;
+          return;
+        }
+
+        // Sort by unread count first, then by last message time
+        const sortedPatients = [...allPatients].sort((a, b) => {
+          const aUnread = unreadCounts[a.patientId] || 0;
+          const bUnread = unreadCounts[b.patientId] || 0;
+          if (aUnread > 0 && bUnread === 0) return -1;
+          if (aUnread === 0 && bUnread > 0) return 1;
+          return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
+        });
+
+        container.innerHTML = sortedPatients
+          .map((patient) => {
+            const unread = unreadCounts[patient.patientId] || 0;
+            const isOnline = onlineStatus[patient.patientId];
+            const lastMessage = patient.lastMessage || "No messages yet";
+            const lastMessagePreview =
+              lastMessage.length > 40
+                ? lastMessage.substring(0, 40) + "..."
+                : lastMessage;
+
+            return `
+          <div class="patient-item ${currentPatient?.patientId === patient.patientId ? "active" : ""}" 
+               onclick="selectPatient('${patient.patientId}', '${patient.name.replace(/'/g, "\\'")}')">
+            <div class="patient-avatar">${patient.name.charAt(0).toUpperCase()}</div>
+            <div class="patient-info">
+              <div class="patient-name">
+                ${patient.name}
+                ${isOnline ? '<i class="fas fa-circle" style="color: #2ecc71; font-size: 10px; margin-left: 5px;"></i>' : ""}
+              </div>
+              <div class="last-message">${escapeHtml(lastMessagePreview)}</div>
+            </div>
+            ${unread > 0 ? `<div class="unread-badge"></div>` : ""}
+          </div>
+        `;
+          })
+          .join("");
+      }
+
+      async function selectPatient(patientId, patientName) {
+        // Mark messages as read first
+        await markMessagesAsRead(patientId);
+        displayedMessages = new Set();
+
+        unreadCounts[patientId] = 0;
+        currentPatient = { patientId, name: patientName };
+
+        updatePatientList();
+
+        document.getElementById("emptyChat").style.display = "none";
+        document.getElementById("chatHeader").style.display = "flex";
+        document.getElementById("chatInput").style.display = "flex";
+        document.getElementById("chatAvatar").textContent = patientName
+          .charAt(0)
+          .toUpperCase();
+        document.getElementById("chatPatientName").textContent = patientName;
+
+        const isOnline = onlineStatus[patientId];
+        document.getElementById("onlineStatus").innerHTML = isOnline
+          ? '<i class="fas fa-circle" style="color: #2ecc71; font-size: 10px;"></i> Online'
+          : '<i class="fas fa-circle" style="color: #95a5a6; font-size: 10px;"></i> Offline';
+
+        await loadChatHistory(patientId);
+        socket.emit("join_conversation", {
+          userId: doctorId,
+          otherUserId: patientId,
+        });
+
+        if (window.innerWidth <= 768) {
+          document.getElementById("patientsSidebar").classList.remove("show");
+        }
+      }
+
+      // Mark messages as read when opening chat
+      async function markMessagesAsRead(patientId) {
+        const token = localStorage.getItem("authToken");
+
+        if (!token) return;
+
+        try {
+          // Mark messages from this patient as read
+          await fetch(
+            `http://localhost:3000/api/chats/read/${patientId}/${doctorId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          console.log("Messages marked as read for patient:", patientId);
+
+          // Update unread counts in the sidebar
+          unreadCounts[patientId] = 0;
+          updatePatientList();
+
+          // Also update the badge on the main appointments page
+          updateMainPageBadge();
+        } catch (error) {
+          console.error("Error marking messages as read:", error);
+        }
+      }
+
+      // Function to update badge on main appointments page
+      function updateMainPageBadge() {
+        // Calculate total unread
+        const totalUnread = Object.values(unreadCounts).reduce(
+          (a, b) => a + b,
+          0,
+        );
+
+        // Check if we have access to opener (appointments page)
+        if (window.opener && window.opener.updateNavMessageBadge) {
+          window.opener.updateNavMessageBadge(totalUnread);
+        }
+      }
+
+      async function loadChatHistory(patientId) {
+        const token = localStorage.getItem("authToken");
+        const chatMessages = document.getElementById("chatMessages");
+        chatMessages.innerHTML =
+          '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading messages...</div>';
+
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/chats/${doctorId}/${patientId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+          const messages = await response.json();
+          displayChatMessages(messages);
+        } catch (error) {
+          console.error("Error loading chat history:", error);
+          chatMessages.innerHTML =
+            '<div class="empty-chat" style="display: flex;"><i class="fas fa-comments"></i><p>No messages yet. Start a conversation!</p></div>';
+        }
+      }
+
+      function displayChatMessages(messages) {
+        const chatMessages = document.getElementById("chatMessages");
+        displayedMessages = new Set();
+
+        if (!messages || messages.length === 0) {
+          chatMessages.innerHTML =
+            '<div class="empty-chat" style="display: flex;"><i class="fas fa-comments"></i><p>No messages yet. Start a conversation!</p></div>';
+          return;
+        }
+
+        chatMessages.innerHTML = "";
+        messages.forEach((msg) => {
+          displayMessage(msg, msg.senderId === doctorId);
+        });
+        scrollToBottom();
+      }
+
+      function displayMessage(message, isSent) {
+        const chatMessages = document.getElementById("chatMessages");
+
+        if (chatMessages.querySelector(".empty-chat")) {
+          chatMessages.innerHTML = "";
+        }
+
+        // Prevent duplicate display using a stable key
+        const msgKey =
+          message._id ||
+          `${message.senderId}_${message.receiverId}_${message.message}_${message.createdAt || message.updatedAt || message.timestamp || ""}`;
+        if (displayedMessages.has(msgKey)) return;
+        displayedMessages.add(msgKey);
+
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${isSent ? "sent" : "received"}`;
+        const messageTime =
+          message.createdAt ||
+          message.updatedAt ||
+          message.timestamp ||
+          Date.now();
+        const time = new Date(messageTime).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        messageDiv.innerHTML = `
+      <div class="message-bubble">${escapeHtml(message.message)}</div>
+      <div class="message-time">${time}</div>
+    `;
+
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
+      }
+
+      function sendMessage() {
+        if (isSending) return;
+
+        const input = document.getElementById("messageInput");
+        const message = input.value.trim();
+
+        if (!message || !currentPatient) return;
+
+        isSending = true;
+
+        const messageData = {
+          senderId: doctorId,
+          senderRole: "doctor",
+          receiverId: currentPatient.patientId,
+          receiverRole: "patient",
+          message: message,
+          timestamp: new Date().toISOString(),
+        };
+
+        socket.emit("send_message", messageData);
+        input.value = "";
+
+        setTimeout(() => {
+          isSending = false;
+        }, 500);
+      }
+
+      function updateOnlineStatus() {
+        if (currentPatient) {
+          const isOnline = onlineStatus[currentPatient.patientId];
+          document.getElementById("onlineStatus").innerHTML = isOnline
+            ? '<i class="fas fa-circle" style="color: #2ecc71; font-size: 10px;"></i> Online'
+            : '<i class="fas fa-circle" style="color: #95a5a6; font-size: 10px;"></i> Offline';
+        }
+        updatePatientList();
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          sendMessage();
+        }
+      }
+
+      function scrollToBottom() {
+        const chatMessages = document.getElementById("chatMessages");
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function filterPatients() {
+        const searchTerm = document
+          .getElementById("searchPatient")
+          .value.toLowerCase();
+        const patientItems = document.querySelectorAll(".patient-item");
+
+        patientItems.forEach((item) => {
+          const name = item
+            .querySelector(".patient-name")
+            .textContent.toLowerCase();
+          if (name.includes(searchTerm)) {
+            item.style.display = "flex";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      }
+
+      function toggleSidebar() {
+        document.getElementById("patientsSidebar").classList.toggle("show");
+      }
+
+      function playNotificationSound() {
+        const audio = new Audio(
+          "https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3",
+        );
+        audio.volume = 0.3;
+        audio.play().catch((e) => console.log("Sound play failed:", e));
+      }
+
+      function showBrowserNotification(senderName, message) {
+        if (Notification.permission === "granted") {
+          new Notification(`New message from ${senderName}`, {
+            body: message,
+            icon: "images/Da.png",
+          });
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission();
+        }
+      }
+
+      function escapeHtml(text) {
+        if (!text) return "";
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
+      }
+
+      if (Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+    </script>
+  </body>
+</html>

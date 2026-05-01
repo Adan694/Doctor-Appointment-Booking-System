@@ -882,6 +882,10 @@ body {
 .hidden-date {
     display: none !important;
 }
+/* Waiting List Section - Hidden by default, shows only when no slots */
+.waiting-list-section {
+    display: none;
+}
     </style>
 </head>
 
@@ -935,6 +939,17 @@ body {
     <h1 class="heading">Book an Appointment</h1>
     <div id="booking-info"></div>
     <button onclick="loadAvailability()" class="book-btn"> Refresh Slots</button>
+    <div class="waiting-list-section" style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #fef9e6, #fff3d1); border-radius: 12px; text-align: center; border: 1px solid #ffd966; display: none;">
+    <h3 style="color: #cc7a00; margin-bottom: 10px;">
+        <i class="fas fa-clock"></i> No suitable time slot?
+    </h3>
+    <button onclick="openWaitingListModal()" class="book-btn" style="background: #ff9800; margin-top: 10px;">
+        <i class="fas fa-list"></i> Join Waiting List
+    </button>
+    <p style="font-size: 12px; margin-top: 10px; color: #666;">
+        Get notified instantly when a slot becomes available
+    </p>
+</div>
     <div id="loadingOverlay">
         <div>
             <div class="spinner"></div>
@@ -1096,11 +1111,19 @@ searchContainer.innerHTML = `
     <button id="clearSearchBtn" class="clear-btn">Clear</button>
 `;
 bookingInfoDiv.appendChild(searchContainer);
-
-            if (!data.availabilitySlots || !data.availabilitySlots.length) {
-                bookingInfoDiv.innerHTML = '<p>No availability slots available.</p>';
-                return;
-            }
+if (!data.availabilitySlots || !data.availabilitySlots.length) {
+    // Doctor has NO slots configured - DO NOT show waiting list
+    bookingInfoDiv.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+            <i class="fas fa-calendar-alt" style="font-size: 48px; color: #999; margin-bottom: 15px; display: block;"></i>
+            <p style="color: #999;">This doctor has not set any availability slots yet.</p>
+            <p style="color: #999; font-size: 14px;">Please check back later.</p>
+        </div>
+    `;
+    const waitingSection = document.querySelector('.waiting-list-section');
+    if (waitingSection) waitingSection.style.display = 'none';
+    return;
+}
 
             const mergedSlots = data.availabilitySlots.reduce((acc, slot) => {
                 const existing = acc.find(s => s.date === slot.date);
@@ -1115,21 +1138,44 @@ bookingInfoDiv.appendChild(searchContainer);
             // Sort dates ascending
             mergedSlots.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            // Filter only dates that have at least one future slot
-            const futureDates = mergedSlots.filter(slot => {
-                return slot.slots.some(time => {
-                    const slotDateTime = new Date(`${slot.date} ${time}`);
-                    return slotDateTime > new Date();
-                });
-            });
-            window.futureDates = futureDates;  
+            // Keep all dates returned by the backend (which are already >= today)
+            // This ensures that fully booked dates (or dates with only past slots)
+            // still appear in the carousel, allowing patients to join the waiting list.
+            window.futureDates = mergedSlots;
+            const futureDates = mergedSlots;
 
 
-            if (!futureDates.length) {
-                bookingInfoDiv.innerHTML = '<p>No future availability slots.</p>';
-                return;
-            }
-
+          if (!futureDates.length) {
+    // Check if doctor has any slots at all (even past ones)
+    const hasAnySlots = data.availabilitySlots && data.availabilitySlots.length > 0;
+    
+    if (hasAnySlots) {
+        // Doctor has slots but all are booked/past - SHOW WAITING LIST
+        bookingInfoDiv.innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+                <i class="fas fa-calendar-times" style="font-size: 48px; color: #ff9800; margin-bottom: 15px; display: block;"></i>
+                <p style="color: #ff9800; font-size: 18px;"> All slots are currently booked!</p>
+                <p style="color: #666; margin-top: 10px;">No available time slots at the moment.</p>
+            </div>
+        `;
+        // Show waiting list section (doctor has slots but all booked)
+        const waitingSection = document.querySelector('.waiting-list-section');
+        if (waitingSection) waitingSection.style.display = 'block';
+    } else {
+        // Doctor has NO slots configured at all - DO NOT show waiting list
+        bookingInfoDiv.innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+                <i class="fas fa-calendar-alt" style="font-size: 48px; color: #999; margin-bottom: 15px; display: block;"></i>
+                <p style="color: #999;">This doctor has not set any availability slots yet.</p>
+                <p style="color: #999; font-size: 14px;">Please check back later.</p>
+            </div>
+        `;
+        // Hide waiting list section (doctor has no slots configured)
+        const waitingSection = document.querySelector('.waiting-list-section');
+        if (waitingSection) waitingSection.style.display = 'none';
+    }
+    return;
+}
             // Create carousel container
             const carouselContainer = document.createElement('div');
             carouselContainer.className = 'dates-carousel-container';
@@ -1179,26 +1225,6 @@ futureDates.forEach((slot, index) => {
 
 initDateSearch(dateButtons);
             
-            futureDates.forEach((slot, index) => {
-                const dateBtn = document.createElement('button');
-                const dateObj = new Date(slot.date);
-                const formattedDate = dateObj.toLocaleDateString('en-US', { 
-                    weekday: 'short', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
-                dateBtn.textContent = formattedDate;
-                dateBtn.title = slot.date;
-                dateBtn.className = 'time-slot';
-                if (index === 0) dateBtn.classList.add('selected');
-                dateBtn.addEventListener('click', () => {
-                    document.querySelectorAll('.dates-carousel .time-slot').forEach(b => b.classList.remove('selected'));
-                    dateBtn.classList.add('selected');
-                    renderSlots(slot);
-                });
-                carousel.appendChild(dateBtn);
-            });
-            
             carouselContainer.appendChild(leftBtn);
             carouselContainer.appendChild(carousel);
             carouselContainer.appendChild(rightBtn);
@@ -1236,66 +1262,91 @@ initDateSearch(dateButtons);
             
             renderSlots(futureDates[0]);
             
-            function renderSlots(slot) {
-                const slotsDiv = document.getElementById('slots-container');
-                slotsDiv.innerHTML = '';
-                const bookBtn = document.querySelector('.book-btn:not([onclick])');
-                if (bookBtn) bookBtn.disabled = true;
-                
-                // Add date header for slots
-                const dateHeader = document.createElement('div');
-                const selectedDateObj = new Date(slot.date);
-                dateHeader.style.cssText = 'font-size: 14px; color: #009999; margin-bottom: 12px; font-weight: 600;';
-                dateHeader.innerHTML = `⏰ Available time slots for ${selectedDateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}:`;
-                slotsDiv.appendChild(dateHeader);
-                
-                const timesContainer = document.createElement('div');
-                timesContainer.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px;';
-                let hasFutureSlot = false;
-                
-                slot.slots.sort((a, b) => {
-                    const parseTime = s => {
-                        const [time, ampm] = s.split(" ");
-                        let [h, m] = time.split(":").map(Number);
-                        if (ampm === "PM" && h !== 12) h += 12;
-                        if (ampm === "AM" && h === 12) h = 0;
-                        return h * 60 + m;
-                    };
-                    return parseTime(a) - parseTime(b);
-                });
-                
-                slot.slots.forEach(time => {
-                    const dateTimeString = `${slot.date} ${time}`;
-                    const slotDateTime = new Date(dateTimeString);
-                    const now = new Date();
-                    
-                    if (slotDateTime < now) {
-                        return;
-                    }
-                    
-                    hasFutureSlot = true;
-                    
-                    const timeSlot = document.createElement('span');
-                    timeSlot.className = 'time-slot';
-                    timeSlot.textContent = time;
-                    timeSlot.dataset.date = slot.date;
-                    timeSlot.dataset.time = time;
-                    
-                    timeSlot.addEventListener('click', function () {
-                        document.querySelectorAll('#slots-container .time-slot').forEach(t => t.classList.remove('selected'));
-                        this.classList.add('selected');
-                    });
-                    
-                    timesContainer.appendChild(timeSlot);
-                });
-                
-                if (hasFutureSlot) {
-                    slotsDiv.appendChild(timesContainer);
-                } else {
-                    slotsDiv.innerHTML = '<p style="color: #999;">No future slots available for this date.</p>';
-                }
-            }
-            
+function renderSlots(slot) {
+    const slotsDiv = document.getElementById('slots-container');
+    slotsDiv.innerHTML = '';
+    const bookBtn = document.querySelector('.book-btn:not([onclick])');
+    if (bookBtn) bookBtn.disabled = true;
+    
+    const selectedDateObj = new Date(slot.date);
+    const dateHeader = document.createElement('div');
+    dateHeader.style.cssText = 'font-size: 14px; color: #009999; margin-bottom: 12px; font-weight: 600;';
+    dateHeader.innerHTML = ` Available time slots for ${selectedDateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}:`;
+    slotsDiv.appendChild(dateHeader);
+    
+    //  Check if slots array is empty (fully booked)
+    if (!slot.slots || slot.slots.length === 0) {
+        slotsDiv.innerHTML = `
+            <div style="text-align: center; padding: 30px;">
+                <i class="fas fa-calendar-times" style="font-size: 48px; color: #ff9800; margin-bottom: 15px; display: block;"></i>
+                <p style="color: #ff9800; font-size: 16px;"> All slots for this date are booked!</p>
+                <p style="color: #666; margin-top: 10px;">Please check another date or join the waiting list.</p>
+            </div>
+        `;
+        // Show waiting list section
+        const waitingSection = document.querySelector('.waiting-list-section');
+        if (waitingSection) waitingSection.style.display = 'block';
+        return;
+    }
+    
+    // Rest of your existing code for displaying slots...
+    const timesContainer = document.createElement('div');
+    timesContainer.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px;';
+    let hasFutureSlot = false;
+    
+    // Sort and display slots...
+    const sortedSlots = [...slot.slots].sort((a, b) => {
+        const parseTime = s => {
+            const [time, ampm] = s.split(" ");
+            let [h, m] = time.split(":").map(Number);
+            if (ampm === "PM" && h !== 12) h += 12;
+            if (ampm === "AM" && h === 12) h = 0;
+            return h * 60 + m;
+        };
+        return parseTime(a) - parseTime(b);
+    });
+    
+    sortedSlots.forEach(time => {
+        const dateTimeString = `${slot.date} ${time}`;
+        const slotDateTime = new Date(dateTimeString);
+        const now = new Date();
+        
+        if (slotDateTime < now) {
+            return;
+        }
+        
+        hasFutureSlot = true;
+        
+        const timeSlot = document.createElement('span');
+        timeSlot.className = 'time-slot';
+        timeSlot.textContent = time;
+        timeSlot.dataset.date = slot.date;
+        timeSlot.dataset.time = time;
+        
+        timeSlot.addEventListener('click', function () {
+            document.querySelectorAll('#slots-container .time-slot').forEach(t => t.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+        
+        timesContainer.appendChild(timeSlot);
+    });
+    
+    if (hasFutureSlot) {
+        slotsDiv.appendChild(timesContainer);
+        const waitingSection = document.querySelector('.waiting-list-section');
+        if (waitingSection) waitingSection.style.display = 'none';
+    } else {
+        slotsDiv.innerHTML = `
+            <div style="text-align: center; padding: 30px;">
+                <i class="fas fa-calendar-times" style="font-size: 48px; color: #ff9800; margin-bottom: 15px; display: block;"></i>
+                <p style="color: #ff9800; font-size: 16px;"> No future slots available for this date!</p>
+                <p style="color: #666; margin-top: 10px;">Please check another date or join the waiting list.</p>
+            </div>
+        `;
+        const waitingSection = document.querySelector('.waiting-list-section');
+        if (waitingSection) waitingSection.style.display = 'block';
+    }
+}
             addBookButtonIfMissing();
         })
         .catch(err => {
@@ -1502,7 +1553,7 @@ function initDateSearch(dateButtons) {
 
                                 const patientId = localStorage.getItem('patientId');
                                 if (!patientId || patientId === "undefined" || patientId.trim() === "") {
-                                    alert("⚠️ You need to log in first.");
+                                    alert(" You need to log in first.");
                                     setTimeout(() => {
                                         window.location.href = 'login.html';
                                     }, 1500);
@@ -1710,29 +1761,77 @@ const normalizedTime = normalizeTime(selectedTime);
                             })
                                 .then(res => res.json())
                                 .then(data => {
-                                    hideLoadingOverlay();
-                                    closeModal();
-                                    if (data.success) {
-                                        localStorage.setItem('patientName', name);
-                                        localStorage.setItem('patientPhone', phone);
-                                        localStorage.setItem('patientEmail', email);
-                                        alert(`✅ Appointment booked for ${selectedDate} at ${selectedTime}`);
-                                    }
-                                    else {
-                                        if (data.message && data.message.includes("blocked")) {
-                                            alert(`⚠️ ${data.message}`);
-                                        } else {
-                                            alert(`❌ Error: ${data.message || "Booking failed"}`);
-                                        }
-                                    }
-                                })
+    hideLoadingOverlay();
+    closeModal();
+    if (data.success) {
+        localStorage.setItem('patientName', name);
+        localStorage.setItem('patientPhone', phone);
+        localStorage.setItem('patientEmail', email);
+        alert(` Appointment booked for ${selectedDate} at ${selectedTime}`);
+    }
+    else {
+        if (data.message && data.message.includes("blocked")) {
+            alert(` ${data.message}`);
+        } else if (data.message && (data.message.includes("already booked") || data.message.includes("Slot already"))) {
+            // Show waiting list option when slot is booked
+            const joinWaiting = confirm(` This slot is already booked!\n\nWould you like to JOIN THE WAITING LIST?\n\nYou will be notified if a slot opens up.`);
+            if (joinWaiting) {
+                joinWaitingList(doctorId, selectedDate, selectedTime);
+            }
+        } else {
+            alert(` Error: ${data.message || "Booking failed"}`);
+        }
+    }
+})
                                 .catch(err => {
                                     hideLoadingOverlay();
                                     closeModal();
-                                    alert('❌ Network error: ' + err.message);
+                                    alert(' Network error: ' + err.message);
                                 });
                         }
-
+// ========== WAITING LIST FUNCTION ==========
+async function joinWaitingList(doctorId, date, time) {
+    const token = localStorage.getItem("authToken");
+    const patientId = localStorage.getItem("patientId");
+    
+    if (!patientId || !token) {
+        alert(" Please login first");
+        window.location.href = "login.html";
+        return;
+    }
+    
+    showLoadingOverlay();
+    
+    try {
+        const response = await fetch("http://localhost:3000/api/waitinglist/join", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                patientId: patientId,
+                doctorId: doctorId,
+                preferredDate: date,
+                preferredTime: time,
+                contactMethod: "email"
+            })
+        });
+        
+        const data = await response.json();
+        hideLoadingOverlay();
+        
+        if (data.success) {
+            alert(" Added to waiting list!\n\nYou will be notified by email if a slot opens up.");
+        } else {
+            alert(" " + data.message);
+        }
+    } catch (error) {
+        hideLoadingOverlay();
+        alert(" Network error: " + error.message);
+    }
+}
+// ========== END WAITING LIST FUNCTION ==========
                        document.addEventListener("DOMContentLoaded", () => {
     // Phone validation
     const phoneInput = document.getElementById("modalPhone");
@@ -1861,6 +1960,98 @@ const nameRegex = /^[A-Za-z\s\-']{3,}$/;
       socket.emit("join_user", { userId, role });
     }
   });
+
+  // ========== WAITING LIST MODAL FUNCTIONS ==========
+async function openWaitingListModal() {
+    const doctorId = new URLSearchParams(window.location.search).get('doctorId');
+    const patientId = localStorage.getItem('patientId');
+    const token = localStorage.getItem('authToken');
+    
+    if (!patientId || !token) {
+        alert(" Please login first");
+        window.location.href = "login.html";
+        return;
+    }
+    
+    const selectedDateBtn = document.querySelector('.dates-carousel .time-slot.selected');
+    const selectedDate = selectedDateBtn ? selectedDateBtn.title : '';
+    
+    // Create modal popup
+    const modalHtml = `
+        <div id="waitingListModal" class="modal-overlay" style="display: flex; z-index: 5000;">
+            <div class="modal-content" style="max-width: 400px;">
+                <h3 style="color: #009999; text-align: center;">Join Waiting List</h3>
+                <div class="form-group">
+                    <label>Preferred Date</label>
+                    <input type="date" id="waitingDate" min="${new Date().toISOString().split('T')[0]}" value="${selectedDate}" style="width: 100%; padding: 10px;" readonly>
+                    <small style="color: #666; margin-top: 5px; display: block;">You will be automatically assigned to any slot that becomes available on this date.</small>
+                </div>
+                <div class="modal-actions" style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button onclick="confirmJoinWaitingList()" class="book-btn" style="background: #009999;">Join</button>
+                    <button onclick="closeWaitingListModal()" class="cancel-btn" style="background: #eee;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('waitingListModal');
+    if (existingModal) existingModal.remove();
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.body.style.overflow = 'hidden';
+}
+
+function closeWaitingListModal() {
+    const modal = document.getElementById('waitingListModal');
+    if (modal) modal.remove();
+    document.body.style.overflow = 'auto';
+}
+
+async function confirmJoinWaitingList() {
+    const doctorId = new URLSearchParams(window.location.search).get('doctorId');
+    const patientId = localStorage.getItem('patientId');
+    const token = localStorage.getItem('authToken');
+    const preferredDate = document.getElementById('waitingDate').value;
+    
+    if (!preferredDate) {
+        alert(" Please select a preferred date");
+        return;
+    }
+    
+    showLoadingOverlay();
+    closeWaitingListModal();
+    
+    try {
+        const response = await fetch("http://localhost:3000/api/waitinglist/join", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                patientId: patientId,
+                doctorId: doctorId,
+                preferredDate: preferredDate,
+                preferredTime: "Any time",
+                contactMethod: "email"
+            })
+        });
+        
+        const data = await response.json();
+        hideLoadingOverlay();
+        
+        if (data.success) {
+            alert(" Added to waiting list!\n\nYou will be notified when a slot becomes available.");
+        } else {
+            alert("❌ " + data.message);
+        }
+    } catch (error) {
+        hideLoadingOverlay();
+        alert(" Network error: " + error.message);
+    }
+}
+// ========== END WAITING LIST FUNCTIONS ==========
 </script>
 </body>
 </html>

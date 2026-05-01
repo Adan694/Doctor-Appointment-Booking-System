@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat with Doctor - DocAssist</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #e6f2ff 0%, #cce0ff 100%);
+        min-height: 100vh;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: rgb(9, 102, 102);
+        color: white;
+        z-index: 1000;
+        flex-wrap: wrap;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .logo h1 {
+        font-size: 24px;
+        background: linear-gradient(45deg, #ffffff, #cceeff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+        gap: 20px;
+      }
+
+      nav ul li a {
+        text-decoration: none;
+        color: white;
+        font-size: 16px;
+        transition: color 0.3s;
+      }
+
+      nav ul li a:hover {
+        color: #cceeff;
+      }
+
+      #bar {
+        display: none;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .chat-container {
+        max-width: 1200px;
+        margin: 80px auto 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: flex;
+        height: calc(100vh - 100px);
+      }
+
+      /* Doctors Sidebar */
+      .doctors-sidebar {
+        width: 300px;
+        background: #f8f9fa;
+        border-right: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sidebar-header {
+        padding: 20px;
+        background: #096666;
+        color: white;
+      }
+
+      .sidebar-header h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .sidebar-header input {
+        width: 100%;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 8px;
+        outline: none;
+        font-size: 14px;
+      }
+
+      .doctors-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      .doctor-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 8px;
+      }
+
+      .doctor-item:hover {
+        background: #e9ecef;
+      }
+
+      .doctor-item.active {
+        background: #096666;
+        color: white;
+      }
+
+      .doctor-avatar {
+        width: 45px;
+        height: 45px;
+        background: #0f8080;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .doctor-info {
+        flex: 1;
+      }
+
+      .doctor-name {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .doctor-specialty {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .doctor-item.active .doctor-specialty {
+        color: #cceeff;
+      }
+
+      .online-status {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #2ecc71;
+        margin-left: auto;
+      }
+
+      .online-status.offline {
+        background: #95a5a6;
+      }
+
+      /* Chat Area */
+      .chat-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #ffffff;
+      }
+
+      .chat-header {
+        padding: 15px 20px;
+        background: #ffffff;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .chat-header-avatar {
+        width: 40px;
+        height: 40px;
+        background: #0f8080;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+      }
+
+      .chat-header-info h3 {
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      .chat-header-info p {
+        font-size: 12px;
+        color: #2ecc71;
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background: #f8f9fa;
+      }
+
+      .message {
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message.sent {
+        align-items: flex-end;
+      }
+
+      .message.received {
+        align-items: flex-start;
+      }
+
+      .message-bubble {
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 18px;
+        font-size: 14px;
+        word-wrap: break-word;
+      }
+
+      .message.sent .message-bubble {
+        background: #096666;
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+
+      .message.received .message-bubble {
+        background: white;
+        color: #333;
+        border: 1px solid #e0e0e0;
+        border-bottom-left-radius: 4px;
+      }
+
+      .message-time {
+        font-size: 10px;
+        color: #999;
+        margin-top: 4px;
+        padding: 0 8px;
+      }
+
+      .chat-input-area {
+        padding: 15px 20px;
+        background: white;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        gap: 10px;
+      }
+
+      .chat-input-area input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 25px;
+        outline: none;
+        font-size: 14px;
+      }
+
+      .chat-input-area button {
+        background: #096666;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .chat-input-area button:hover {
+        background: #055b5b;
+      }
+
+      /* Empty state */
+      .empty-chat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+      }
+
+      .empty-chat i {
+        font-size: 64px;
+        margin-bottom: 16px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .doctors-sidebar {
+          position: absolute;
+          left: -300px;
+          height: calc(100vh - 70px);
+          z-index: 999;
+          transition: left 0.3s;
+        }
+
+        .doctors-sidebar.show {
+          left: 0;
+        }
+
+        .chat-container {
+          margin-top: 70px;
+        }
+
+        #bar {
+          display: block;
+        }
+      }
+
+      .footer {
+        background: linear-gradient(135deg, #096666, #064949);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo">
+        <img src="images/Da.png" alt="DocAssist Logo" />
+        <h1>DocAssist</h1>
+      </div>
+      <i id="bar" class="fa-solid fa-bars"></i>
+      <ul>
+        <li>
+          <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        </li>
+        <li>
+          <a href="Alldoctorsreal.html"
+            ><i class="fas fa-user-md"></i> Find a Doctor</a
+          >
+        </li>
+        <li>
+          <a href="myprofile.html"><i class="fas fa-user"></i> My Profile</a>
+        </li>
+        <li>
+          <a href="myappointments.html"
+            ><i class="fas fa-calendar"></i> Appointments</a
+          >
+        </li>
+        <li>
+          <a href="faqs.html"><i class="fas fa-question-circle"></i> FAQs</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="chat-container">
+      <!-- Doctors Sidebar -->
+      <div class="doctors-sidebar" id="doctorsSidebar">
+        <div class="sidebar-header">
+          <h3><i class="fas fa-user-md"></i> My Doctors</h3>
+          <input
+            type="text"
+            id="searchDoctor"
+            placeholder="Search doctors..."
+            onkeyup="filterDoctors()"
+          />
+        </div>
+        <div class="doctors-list" id="doctorsList">
+          <div style="text-align: center; padding: 20px; color: #999">
+            <i class="fas fa-spinner fa-spin"></i> Loading doctors...
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="chat-area">
+        <div class="chat-header" id="chatHeader" style="display: none">
+          <div class="chat-header-avatar" id="chatAvatar">D</div>
+          <div class="chat-header-info">
+            <h3 id="chatDoctorName">Dr. Name</h3>
+            <p id="onlineStatus"><i class="fas fa-circle"></i> Offline</p>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="empty-chat">
+            <i class="fas fa-comments"></i>
+            <p>Select a doctor to start chatting</p>
+          </div>
+        </div>
+        <div class="chat-input-area" id="chatInput" style="display: none">
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="Type your message..."
+            onkeypress="handleKeyPress(event)"
+          />
+          <button onclick="sendMessage()">
+            <i class="fas fa-paper-plane"></i> Send
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2024 DocAssist. All rights reserved.</p>
+    </div>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script>
+      let socket = null;
+      let currentDoctor = null;
+      let userId = null;
+      let userRole = null;
+      let onlineDoctors = {};
+      let isSending = false; // Prevent double sending
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        userId = localStorage.getItem("userId");
+        userRole = localStorage.getItem("userRole");
+
+        if (!userId || userRole !== "patient") {
+          alert("Please login as patient to continue");
+          window.location.href = "login.html";
+          return;
+        }
+
+        initSocket();
+        loadDoctors();
+
+        // Mobile sidebar toggle
+        const bar = document.getElementById("bar");
+        if (bar) {
+          bar.addEventListener("click", () => {
+            document.getElementById("doctorsSidebar").classList.toggle("show");
+          });
+        }
+      });
+
+      function initSocket() {
+        if (socket && socket.connected) {
+          socket.disconnect();
+        }
+
+        socket = io("http://localhost:3000");
+
+        socket.on("connect", () => {
+          console.log("Socket connected");
+          socket.emit("join_user", { userId, role: "patient" });
+        });
+
+        socket.on("online_users", (users) => {
+          onlineDoctors = users;
+          updateDoctorOnlineStatus();
+          updateCurrentDoctorStatus();
+        });
+
+        // Remove any existing listeners to prevent duplicates
+        socket.off("new_message");
+        socket.on("new_message", (message) => {
+          if (!currentDoctor) return;
+
+          const isMyConversation =
+            (message.senderId === userId &&
+              message.receiverId === currentDoctor.doctorId) ||
+            (message.senderId === currentDoctor.doctorId &&
+              message.receiverId === userId);
+
+          if (isMyConversation) {
+            // Only display if message is not already in DOM (check by timestamp and content)
+            const existingMessages = document.querySelectorAll(".message");
+            let isDuplicate = false;
+
+            existingMessages.forEach((msg) => {
+              if (
+                msg.innerHTML.includes(message.message) &&
+                msg.innerHTML.includes(
+                  new Date(message.timestamp).toLocaleTimeString(),
+                )
+              ) {
+                isDuplicate = true;
+              }
+            });
+
+            if (!isDuplicate) {
+              displayMessage(message, message.senderId === userId);
+            }
+          }
+        });
+      }
+
+      function loadDoctors() {
+        const token = localStorage.getItem("authToken");
+        const patientId = localStorage.getItem("patientId");
+
+        fetch(`http://localhost:3000/api/appointments/patient/${patientId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((res) => res.json())
+          .then((appointments) => {
+            const doctorsMap = new Map();
+            appointments.forEach((apt) => {
+              if (apt.doctorId && !doctorsMap.has(apt.doctorId._id)) {
+                doctorsMap.set(apt.doctorId._id, {
+                  doctorId: apt.doctorId._id,
+                  name: apt.doctorId.name,
+                  specialty: apt.doctorId.specialty || "General Physician",
+                });
+              }
+            });
+
+            const doctors = Array.from(doctorsMap.values());
+            displayDoctorsList(doctors);
+          })
+          .catch((err) => {
+            console.error("Error loading doctors:", err);
+            document.getElementById("doctorsList").innerHTML = `
+          <div style="text-align: center; padding: 20px; color: #999;">
+            <i class="fas fa-exclamation-triangle"></i> No doctors found
+          </div>
+        `;
+          });
+      }
+
+      function displayDoctorsList(doctors) {
+        const container = document.getElementById("doctorsList");
+
+        if (doctors.length === 0) {
+          container.innerHTML = `
+        <div style="text-align: center; padding: 20px; color: #999;">
+          <i class="fas fa-user-md"></i> No doctors found
+          <p style="font-size: 12px; margin-top: 10px;">Book an appointment first to chat with doctors</p>
+        </div>
+      `;
+          return;
+        }
+
+        container.innerHTML = doctors
+          .map(
+            (doctor) => `
+          <div class="doctor-item" data-doctor-id="${doctor.doctorId}" onclick="selectDoctor('${doctor.doctorId}', '${escapeHtml(doctor.name)}', '${escapeHtml(doctor.specialty)}')">
+            <div class="doctor-avatar">${doctor.name.charAt(0)}</div>
+            <div class="doctor-info">
+              <div class="doctor-name">Dr. ${escapeHtml(doctor.name)}</div>
+              <div class="doctor-specialty">${escapeHtml(doctor.specialty)}</div>
+            </div>
+            <div class="online-status offline" id="status-${doctor.doctorId}"></div>
+          </div>
+        `,
+          )
+          .join("");
+      }
+
+      function filterDoctors() {
+        const searchTerm = document
+          .getElementById("searchDoctor")
+          .value.toLowerCase();
+        const doctorItems = document.querySelectorAll(".doctor-item");
+
+        doctorItems.forEach((item) => {
+          const name = item
+            .querySelector(".doctor-name")
+            .textContent.toLowerCase();
+          if (name.includes(searchTerm)) {
+            item.style.display = "flex";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      }
+
+      function updateDoctorOnlineStatus() {
+        document.querySelectorAll(".doctor-item").forEach((item) => {
+          const doctorId = item.getAttribute("data-doctor-id");
+          const statusDot = document.getElementById(`status-${doctorId}`);
+          if (statusDot) {
+            const isOnline = onlineDoctors[doctorId];
+            statusDot.className = `online-status ${isOnline ? "" : "offline"}`;
+          }
+        });
+      }
+
+      function updateCurrentDoctorStatus() {
+        if (currentDoctor) {
+          const statusElement = document.getElementById("onlineStatus");
+          const isOnline = onlineDoctors[currentDoctor.doctorId];
+          if (statusElement) {
+            statusElement.innerHTML = isOnline
+              ? '<i class="fas fa-circle" style="color: #2ecc71; font-size: 10px;"></i> Online'
+              : '<i class="fas fa-circle" style="color: #95a5a6; font-size: 10px;"></i> Offline';
+          }
+        }
+      }
+
+      async function selectDoctor(doctorId, doctorName, specialty) {
+        currentDoctor = { doctorId, name: doctorName, specialty };
+        // await markMessagesAsRead(doctorId);
+
+        // Update UI
+        document.querySelectorAll(".doctor-item").forEach((item) => {
+          item.classList.remove("active");
+          if (item.getAttribute("data-doctor-id") === doctorId) {
+            item.classList.add("active");
+          }
+        });
+
+        document.getElementById("chatHeader").style.display = "flex";
+        document.getElementById("chatInput").style.display = "flex";
+        document.getElementById("chatAvatar").textContent =
+          doctorName.charAt(0);
+        document.getElementById("chatDoctorName").textContent =
+          `Dr. ${doctorName}`;
+
+        const isOnline = onlineDoctors[doctorId];
+        document.getElementById("onlineStatus").innerHTML = isOnline
+          ? '<i class="fas fa-circle" style="color: #2ecc71; font-size: 10px;"></i> Online'
+          : '<i class="fas fa-circle" style="color: #95a5a6; font-size: 10px;"></i> Offline';
+
+        // Load chat history
+        await loadChatHistory(doctorId);
+
+        // Close sidebar on mobile
+        if (window.innerWidth <= 768) {
+          document.getElementById("doctorsSidebar").classList.remove("show");
+        }
+      }
+
+      async function loadChatHistory(doctorId) {
+        const token = localStorage.getItem("authToken");
+        const chatMessages = document.getElementById("chatMessages");
+        chatMessages.innerHTML =
+          '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading messages...</div>';
+
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/chats/${userId}/${doctorId}`,
+            { headers: { Authorization: `Bearer ${token}` } },
+          );
+
+          const messages = await response.json();
+          displayChatMessages(messages);
+        } catch (error) {
+          console.error("Error loading chat history:", error);
+          chatMessages.innerHTML =
+            '<div class="empty-chat"><i class="fas fa-comments"></i><p>No messages yet. Start a conversation!</p></div>';
+        }
+      }
+
+      function displayChatMessages(messages) {
+        const chatMessages = document.getElementById("chatMessages");
+
+        if (!messages || messages.length === 0) {
+          chatMessages.innerHTML =
+            '<div class="empty-chat"><i class="fas fa-comments"></i><p>No messages yet. Start a conversation!</p></div>';
+          return;
+        }
+
+        chatMessages.innerHTML = "";
+        messages.forEach((msg) => {
+          // ✅ Ensure each message has a valid timestamp
+          if (!msg.timestamp && msg.createdAt) {
+            msg.timestamp = msg.createdAt;
+          }
+          if (!msg.timestamp && msg.updatedAt) {
+            msg.timestamp = msg.updatedAt;
+          }
+          displayMessage(msg, msg.senderId === userId);
+        });
+        scrollToBottom();
+      }
+      function displayMessage(message, isSent) {
+        const chatMessages = document.getElementById("chatMessages");
+
+        // Remove empty state if present
+        if (chatMessages.querySelector(".empty-chat")) {
+          chatMessages.innerHTML = "";
+        }
+
+        // Check for duplicate (prevent double display)
+        const messageKey = `${message.message}_${message.timestamp}`;
+        if (
+          window.displayedMessages &&
+          window.displayedMessages.has(messageKey)
+        ) {
+          return;
+        }
+        if (!window.displayedMessages) {
+          window.displayedMessages = new Set();
+        }
+        window.displayedMessages.add(messageKey);
+
+        // Clean up old keys after 5 seconds
+        setTimeout(() => {
+          window.displayedMessages.delete(messageKey);
+        }, 5000);
+
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${isSent ? "sent" : "received"}`;
+
+        // ✅ FIX: Properly parse the timestamp
+        let timeString = "Just now";
+        try {
+          let date;
+          if (message.timestamp) {
+            date = new Date(message.timestamp);
+            // If timestamp is invalid, try using createdAt or updatedAt
+            if (isNaN(date.getTime()) && message.createdAt) {
+              date = new Date(message.createdAt);
+            }
+            if (isNaN(date.getTime()) && message.updatedAt) {
+              date = new Date(message.updatedAt);
+            }
+            if (!isNaN(date.getTime())) {
+              timeString = date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+            }
+          }
+        } catch (e) {
+          console.error("Date parsing error:", e);
+          timeString = "Just now";
+        }
+
+        messageDiv.innerHTML = `
+    <div class="message-bubble">${escapeHtml(message.message)}</div>
+    <div class="message-time">${timeString}</div>
+  `;
+
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
+      }
+
+      function sendMessage() {
+        // Prevent double sending
+        if (isSending) return;
+
+        const input = document.getElementById("messageInput");
+        const message = input.value.trim();
+
+        if (!message || !currentDoctor) return;
+
+        isSending = true;
+
+        // ✅ Use ISO string format for consistent date handling
+        const now = new Date();
+        const timestamp = now.toISOString();
+
+        const messageData = {
+          senderId: userId,
+          senderRole: "patient",
+          receiverId: currentDoctor.doctorId,
+          receiverRole: "doctor",
+          message: message,
+          timestamp: timestamp,
+          createdAt: timestamp,
+        };
+
+        // Display immediately with formatted time
+        // const localMessage = {
+        //   message: message,
+        //   timestamp: now,
+        //   senderId: userId,
+        // };
+        // displayMessage(localMessage, true);
+
+        // Clear input
+        input.value = "";
+
+        // Emit via socket for real-time
+        socket.emit("send_message", messageData);
+
+        // Reset sending flag after short delay
+        setTimeout(() => {
+          isSending = false;
+        }, 500);
+      }
+      async function saveMessageToDB(messageData) {
+        const token = localStorage.getItem("authToken");
+
+        try {
+          await fetch("http://localhost:3000/api/chats", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(messageData),
+          });
+        } catch (error) {
+          console.error("Error saving message:", error);
+        }
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          event.preventDefault(); // Prevent default form submission
+          sendMessage();
+        }
+      }
+
+      function scrollToBottom() {
+        const chatMessages = document.getElementById("chatMessages");
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function escapeHtml(text) {
+        if (!text) return "";
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    </script>
+  </body>
+</html>

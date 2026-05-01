@@ -26,7 +26,13 @@ const { patientId, doctorId, date, time, name, phone, age, issue } = req.body;
     if (!patient) {
       return res.status(404).json({ success: false, message: "Patient not found" });
     }
-
+   if (patient.isBlocked) {
+      const blockEndDate = patient.blockedUntil ? new Date(patient.blockedUntil).toLocaleDateString() : 'a future date';
+      return res.status(403).json({
+        success: false,
+        message: `Your account is BLOCKED until ${blockEndDate} due to ${patient.missedAppointments} missed appointments. Please contact support.`
+      });
+    }
     if (patient.isBlocked && patient.blockedUntil && patient.blockedUntil <= new Date()) {
   patient.isBlocked = false;
   patient.missedAppointments = 0;
@@ -128,7 +134,14 @@ const generatePatientNumber = async (patientId, name) => {
 };
 
 const patientNumber = await generatePatientNumber(patientId, name);
+   const appointmentDateTime = new Date(formattedDate);
+const [timeStr, ampm] = time.split(" ");
+let [hours, minutes] = timeStr.split(":").map(Number);
+if (ampm === "PM" && hours !== 12) hours += 12;
+if (ampm === "AM" && hours === 12) hours = 0;
+appointmentDateTime.setHours(hours, minutes, 0, 0);
 
+const checkInDeadline = new Date(appointmentDateTime.getTime() - 30 * 60 * 1000);
     const newBooking = new Booking({
       patientId,
       doctorId,
@@ -141,13 +154,17 @@ const patientNumber = await generatePatientNumber(patientId, name);
       email: req.body.email,
       age,
       token,
-      issue
+      issue,
+      checkInDeadline: checkInDeadline
+
     });
-    await newBooking.save();
+ 
+
+await newBooking.save();
 
 slotDay.slots = slotDay.slots.filter(s => normalizeTime(s) !== normalizedTime);
 // cleaning up empty days
-doctor.availabilitySlots = doctor.availabilitySlots.filter(s => s.slots.length > 0);
+// doctor.availabilitySlots = doctor.availabilitySlots.filter(s => s.slots.length > 0);
 
 await doctor.save();
 
@@ -742,5 +759,5 @@ module.exports = {
   getAllAppointmentsForDoctor,
   getAllAppointments,
   getSingleAppointment,
-  deleteAppointment
+  deleteAppointment,
 };

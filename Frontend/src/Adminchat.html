@@ -979,16 +979,10 @@
         // ----------------------------
         // ACTIVE CHAT DEBUG
         // ----------------------------
-        if (
-          activeUser &&
-          msg.senderRole === "patient" &&
-          msg.senderId === activeUser._id
-        ) {
-          console.log("Message belongs to active chat — adding to window");
+        // WITH THIS:
+        if (activeUser && chatUserId === activeUser._id) {
           addMessage(msg);
-
           if (!isFromAdmin && !msg.read) {
-            console.log("Marking messages as read...");
             markMessagesAsRead(chatUserId);
           }
         } else {
@@ -1209,9 +1203,15 @@
         el.classList.add("active");
 
         await markMessagesAsRead(user._id);
+        // WITH THIS:
         socket.emit("admin_join", { userId: user._id, role });
-
-        const res = await fetch(`http://localhost:3000/api/chats/${user._id}`);
+        socket.emit("join_conversation", {
+          userId: "689f5be6e5432f608d4b3a54",
+          otherUserId: user._id,
+        });
+        const res = await fetch(
+          `http://localhost:3000/api/chats/${user._id}?role=${user.role}`,
+        );
         const chats = await res.json();
 
         chatBox.innerHTML = "";

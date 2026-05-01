@@ -389,13 +389,12 @@
 
         <div class="chat-input">
           <input id="msgInput" type="text" placeholder="Type your message..." />
-          <button id="sendBtn" onclick="sendMessage()">Send</button>
+          <button id="sendBtn">Send</button>
         </div>
       </div>
     </div>
 
     <div id="footer"></div>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
       console.log(" PATIENT CHAT PAGE LOADED");
       console.log("Socket.io available?", typeof io !== "undefined");
@@ -412,9 +411,7 @@
         console.log(" clearUnreadMessages called");
         const token = localStorage.getItem("authToken");
         const userId = localStorage.getItem("patientId");
-
-        console.log("Token exists?", !!token);
-        console.log("PatientId:", userId);
+        const adminId = "689f5be6e5432f608d4b3a54";
 
         if (!token || !userId) {
           console.error(" Missing token or userId");
@@ -422,24 +419,24 @@
         }
 
         try {
-          console.log(" Calling mark-read API with userId:", userId);
+          // Mark ONLY admin messages as read
           const response = await fetch(
-            "http://localhost:3000/user/chat/mark-read",
+            `http://localhost:3000/api/chats/read/${adminId}/${userId}`,
             {
-              method: "POST",
+              method: "PUT",
               headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ userId: userId }),
             },
           );
 
           if (response.ok) {
-            console.log(" Unread messages cleared successfully on server");
-            console.log(" Emitting messages_read event for userId:", userId);
-            socket.emit("messages_read", { userId: userId });
-            console.log(" messages_read event emitted");
+            console.log(" Admin unread messages cleared successfully");
+            localStorage.setItem("adminUnreadCount", "0");
+
+            // Update badge on homepage
+            updateMessageBadge(0);
           } else {
             console.error(
               " Failed to clear unread messages:",
@@ -449,12 +446,23 @@
         } catch (err) {
           console.error(" Error clearing unread:", err);
         }
-      }
+      } // Function to update the badge on homepage
+      function updateMessageBadge(count) {
+        console.log("Updating badge with count:", count);
+        // Store in localStorage so homepage can read it
+        localStorage.setItem("adminUnreadCount", count);
 
-      window.addEventListener("load", () => {
-        console.log("Patient chat window loaded");
-        clearUnreadMessages();
-      });
+        // Also try to update any badge on current page
+        const badge = document.getElementById("messageBadge");
+        if (badge) {
+          if (count > 0) {
+            badge.textContent = count > 99 ? "99+" : count;
+            badge.style.display = "inline-block";
+          } else {
+            badge.style.display = "none";
+          }
+        }
+      }
 
       const userId = localStorage.getItem("patientId");
       const role = localStorage.getItem("userRole") || "patient";
@@ -466,6 +474,8 @@
 
       const chatBox = document.getElementById("messages");
       const msgInput = document.getElementById("msgInput");
+      const renderedMessageKeys = new Set();
+      let isSending = false;
 
       let lastRenderedDate = null;
 
@@ -486,26 +496,63 @@
       }
 
       // join room for live updates
+      // WITH THIS:
       if (userId) {
         console.log(" Emitting join_user for patient:", userId);
         socket.emit("join_user", { userId, role });
+        socket.emit("join_conversation", {
+          userId: userId,
+          otherUserId: receiverId,
+        });
       }
 
       // load previous chat
+      // load previous chat
       console.log("Fetching previous chats for:", userId);
-      fetch(`http://localhost:3000/api/chats/${userId}`)
+      fetch(`http://localhost:3000/api/chats/${userId}?role=patient`)
         .then((res) => res.json())
         .then((chats) => {
           console.log(" Loaded", chats.length, "previous messages");
+          renderedMessageKeys.clear();
           chats.forEach(addMessage);
           if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+
+          // Calculate ONLY ADMIN unread messages
+          const adminUnreadCount = chats.filter(
+            (chat) =>
+              chat.senderId === "689f5be6e5432f608d4b3a54" && // Admin ID
+              chat.read === false &&
+              chat.senderRole === "admin",
+          ).length;
+
+          // Update the message badge on homepage
+          updateMessageBadge(adminUnreadCount);
         })
         .catch((err) => console.error(" Error loading chats:", err));
 
+      // Function to update the badge on homepage
+      function updateMessageBadge(count) {
+        // Try to update badge on current page
+        const badge = document.getElementById("messageBadge");
+        if (badge) {
+          if (count > 0) {
+            badge.textContent = count > 99 ? "99+" : count;
+            badge.style.display = "inline-block";
+          } else {
+            badge.style.display = "none";
+          }
+        }
+
+        // Store in localStorage so homepage can read it
+        localStorage.setItem("adminUnreadCount", count);
+      }
+
       // send message
       function sendMessage() {
+        if (isSending) return;
         const msg = msgInput.value.trim();
         if (!msg) return;
+        isSending = true;
 
         console.log("📤 Sending message:", msg);
         socket.emit("send_message", {
@@ -517,23 +564,31 @@
         });
 
         msgInput.value = "";
+        setTimeout(() => {
+          isSending = false;
+        }, 500);
       }
 
       // receive real-time messages
+      // WITH THIS:
       socket.on("new_message", (msg) => {
-        console.log(" new_message received on patient page:", msg);
-        if (msg.senderId === userId || msg.receiverId === userId) {
-          console.log("Message belongs to this user, adding to chat");
-          addMessage(msg);
+        // ✅ SKIP if the message was sent by current user (already handled)
+        // if (msg.senderId === userId) {
+        //   console.log("Skipping own message from socket");
+        //   return;
+        // }
 
-          // If this is a message from admin, clear unread count again
+        const isMyConversation =
+          (msg.senderId === userId && msg.receiverId === receiverId) ||
+          (msg.senderId === receiverId && msg.receiverId === userId);
+
+        if (isMyConversation) {
+          addMessage(msg);
           if (msg.senderId === receiverId) {
-            console.log(" Message from admin, clearing unread count");
             clearUnreadMessages();
           }
         }
       });
-
       // Listen for read confirmation
       socket.on("messages_read", (data) => {
         console.log(" messages_read received on patient page:", data);
@@ -571,6 +626,12 @@
 
       // render message
       function addMessage(msg) {
+        const messageKey =
+          msg._id ||
+          `${msg.senderId}_${msg.receiverId}_${msg.message}_${msg.createdAt || msg.updatedAt || msg.timestamp || ""}`;
+        if (renderedMessageKeys.has(messageKey)) return;
+        renderedMessageKeys.add(messageKey);
+
         const div = chatBox;
         if (!div) {
           console.error(" chatBox element not found");

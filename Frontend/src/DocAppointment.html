@@ -82,6 +82,7 @@
         color: white;
         font-size: 20px;
         margin-inline: 20px;
+        position: relative;
       }
 
       nav ul li a:hover {
@@ -569,7 +570,7 @@
         width: 90%;
         text-align: center;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        border: 2px solid #4a90e2; /* soft blue border */
+        border: 2px solid #4a90e2;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         color: #222;
       }
@@ -746,6 +747,123 @@
         border-left: 4px solid #0b2b3b;
         padding-left: 1rem;
       }
+      /* Deadline warning styles */
+      .deadline-warning {
+        color: #ff6b6b;
+        font-size: 11px;
+        display: block;
+        margin-top: 4px;
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.6;
+        }
+      }
+
+      .deadline-passed {
+        background-color: #fff3f3 !important;
+        border-left: 3px solid #ff4444;
+      }
+
+      .arrived-badge {
+        color: #4caf50;
+        font-weight: bold;
+      }
+
+      .btn-arrived {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .btn-arrived:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+
+      /* Countdown timer */
+      .countdown-timer {
+        font-size: 12px;
+        color: #ff9800;
+        font-weight: bold;
+      }
+
+      .countdown-critical {
+        color: #ff4444;
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      /* Notification styles */
+      .custom-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .notification-success {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .notification-error {
+        background-color: #f44336;
+        color: white;
+      }
+
+      .notification-warning {
+        background-color: #ff9800;
+        color: white;
+      }
+
+      /* Navigation Message Badge */
+      /* Navigation Message Badge - Red Dot Only */
+      .nav-message-badge {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background-color: #ff4444;
+        border-radius: 50%;
+        width: 10px;
+        height: 10px;
+        min-width: 10px;
+        animation: pulse 1s infinite;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+      }
     </style>
   </head>
 
@@ -762,6 +880,21 @@
         <li><a href="docprofile.html">Profile</a></li>
         <li><a href="docavailability.html">Manage Availability</a></li>
         <li><a href="Docfeedback.html">Feedback</a></li>
+        <li>
+          <a
+            href="javascript:void(0);"
+            onclick="openMessagesPage()"
+            style="position: relative"
+          >
+            <i class="fas fa-comment-dots"></i> Messages
+            <span
+              id="navMessageBadge"
+              class="nav-message-badge"
+              style="display: none"
+              >0</span
+            >
+          </a>
+        </li>
         <li><a href="login.html">Logout</a></li>
       </ul>
     </nav>
@@ -951,8 +1084,36 @@
       </div>
     </div>
 
+    <!-- Arrival Confirmation Modal -->
+    <div id="arrivedConfirmModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <h3 style="color: #006666">Confirm Patient Arrival</h3>
+        <p>Has the patient arrived at the hospital?</p>
+        <p style="font-size: 14px; color: #ff6b6b" id="deadlineWarningMsg"></p>
+        <button id="arrivedConfirmYes" style="background-color: #4caf50">
+          Yes, Mark Arrived
+        </button>
+        <button id="arrivedConfirmNo" style="background-color: #999">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>
       console.log("Script loaded");
+
+      // Global variables
+      let unreadMessages = {};
+      let socket = null;
+      const pageSize = 6;
+      const paginationState = {
+        newAppointments: { currentPage: 1, rows: [] },
+        cancelledAppointments: { currentPage: 1, rows: [] },
+        completedAppointments: { currentPage: 1, rows: [] },
+        missedAppointments: { currentPage: 1, rows: [] },
+      };
+
       document.addEventListener("DOMContentLoaded", () => {
         const bar = document.getElementById("bar");
         const menu = document.querySelector("nav ul");
@@ -968,69 +1129,123 @@
         }
 
         initializeTabs();
-        setTimeout(updateTabBadges, 500);
+        loadPatientAppointments();
+        initChatSocket();
+        loadUnreadCounts();
       });
-      function filterAppointments() {
-        const searchValue = document
-          .getElementById("searchAppointments")
-          .value.toLowerCase();
-        const statusValue = document.getElementById("statusFilter").value;
 
-        if (statusValue !== "all") {
-          const tabBtn = document.querySelector(
-            `.tab-btn[data-tab="${statusValue}"]`,
-          );
-          if (tabBtn) {
-            tabBtn.click();
+      // Update navigation message badge
+      // Update navigation message badge - Show red dot only
+      function updateNavMessageBadge(count) {
+        const badge = document.getElementById("navMessageBadge");
+        if (badge) {
+          if (count > 0) {
+            badge.style.display = "inline-block";
+            badge.textContent = ""; // No text, just red dot
+          } else {
+            badge.style.display = "none";
           }
         }
-
-        // Apply search filter in all tabs
-        document
-          .querySelectorAll(".appointment-table tbody tr")
-          .forEach((row) => {
-            const patientName =
-              row.querySelector("td:first-child")?.textContent.toLowerCase() ||
-              "";
-
-            if (patientName.includes(searchValue)) {
-              row.style.display = "";
-            } else {
-              row.style.display = "none";
-            }
-          });
       }
 
-      // Attach event listeners
-      document
-        .getElementById("searchAppointments")
-        .addEventListener("input", filterAppointments);
-      document
-        .getElementById("statusFilter")
-        .addEventListener("change", filterAppointments);
+      // Initialize Socket.IO for real-time chat
+      function initChatSocket() {
+        const doctorId = localStorage.getItem("doctorId");
+        if (!doctorId) return;
 
-      function markAppointmentAsMissed(appointmentId) {
+        socket = io("http://localhost:3000");
+
+        socket.on("connect", () => {
+          console.log("Chat socket connected");
+          socket.emit("join_user", { userId: doctorId, role: "doctor" });
+        });
+
+        // Listen for new messages
+        socket.on("new_message", (message) => {
+          if (message.receiverId === doctorId) {
+            const patientId = message.senderId;
+
+            // Increment unread count
+            unreadMessages[patientId] = (unreadMessages[patientId] || 0) + 1;
+
+            // Calculate total unread count
+            const totalUnread = Object.values(unreadMessages).reduce(
+              (a, b) => a + b,
+              0,
+            );
+
+            // Update navigation badge
+            updateNavMessageBadge(totalUnread);
+
+            // Show notification toast
+            showChatNotification(
+              message.senderName || "Patient",
+              message.message,
+            );
+
+            // Play sound
+            playNotificationSound();
+          }
+        });
+      }
+
+      function showChatNotification(patientName, message) {
+        const toast = document.createElement("div");
+        toast.className = "custom-notification notification-warning";
+        toast.style.cursor = "pointer";
+        toast.innerHTML = `
+          <i class="fas fa-comment-dots"></i>
+          <span style="margin-left: 10px;">
+            <strong>${patientName}</strong><br>
+            <small>${message.substring(0, 50)}${message.length > 50 ? "..." : ""}</small>
+          </span>
+        `;
+        toast.onclick = () => {
+          toast.remove();
+          openMessagesPage();
+        };
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+      }
+
+      function playNotificationSound() {
+        const audio = new Audio(
+          "https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3",
+        );
+        audio.volume = 0.3;
+        audio.play().catch((e) => console.log("Sound play failed:", e));
+      }
+
+      // Open messages page
+      function openMessagesPage() {
+        window.location.href = "doctor-messages.html";
+      }
+
+      async function loadUnreadCounts() {
         const token = localStorage.getItem("authToken");
-        return fetch(
-          `http://localhost:3000/api/appointments/${appointmentId}`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+        const doctorId = localStorage.getItem("doctorId");
+
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/chats/unread/doctor/${doctorId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
             },
-            body: JSON.stringify({ status: "Missed" }),
-          },
-        )
-          .then((response) => {
-            if (!response.ok)
-              throw new Error("Failed to mark appointment as missed");
-            return response.json();
-          })
-          .then((data) => {
-            console.log(`Marked appointment ${appointmentId} as Missed`);
-            return data;
-          });
+          );
+          const data = await response.json();
+          unreadMessages = data;
+
+          // Calculate total unread count
+          const totalUnread = Object.values(unreadMessages).reduce(
+            (a, b) => a + b,
+            0,
+          );
+
+          // Update navigation badge
+          updateNavMessageBadge(totalUnread);
+        } catch (error) {
+          console.error("Error loading unread counts:", error);
+        }
       }
 
       function loadPatientAppointments() {
@@ -1042,285 +1257,428 @@
           return;
         }
 
-        Promise.all([
-          fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }).then((res) => {
+        fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((res) => {
             if (!res.ok) throw new Error("Failed to fetch appointments");
             return res.json();
-          }),
-
-          fetch(
-            `http://localhost:3000/api/feedback/doctors/${doctorId}/feedback`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          ).then((res) => {
-            if (!res.ok) throw new Error("Failed to fetch feedback");
-            return res.json();
-          }),
-        ])
-          .then(([appointments, feedbackList]) => {
-            console.log("Loaded feedbackList:", feedbackList);
+          })
+          .then((appointments) => {
+            // Clear all tables first
+            paginationState.newAppointments.rows = [];
+            paginationState.cancelledAppointments.rows = [];
+            paginationState.completedAppointments.rows = [];
+            paginationState.missedAppointments.rows = [];
 
             appointments.forEach((appointment) => {
-              console.log("Checking appointment:", appointment);
-
               const status = appointment.status?.toLowerCase() || "pending";
-              const appointmentDateTime = new Date(
-                `${appointment.date} ${appointment.time}`,
-              );
-              const now = new Date();
-              const feedback = feedbackList.find((fb) => {
-                let apptPatientId = null;
-
-                if (appointment.patientId) {
-                  apptPatientId =
-                    typeof appointment.patientId === "object"
-                      ? appointment.patientId._id
-                      : appointment.patientId;
-                }
-
-                return (
-                  fb.patientId?.toString() === apptPatientId?.toString() &&
-                  fb.doctorId?.toString() === doctorId?.toString() &&
-                  fb.appointmentId?.toString() === appointment._id?.toString()
-                );
-              });
-
-              console.log(
-                "Looking for feedback: userId",
-                appointment.patientId?._id,
-                "doctorId",
-                doctorId,
-              );
+              const patientName =
+                appointment.name || appointment.patientId?.name || "Unknown";
+              const appointmentTime =
+                new Date(appointment.date).toLocaleDateString() +
+                " " +
+                appointment.time;
+              const phone =
+                appointment.phone || appointment.patientId?.phone || "N/A";
+              const appointmentId = appointment._id;
 
               if (status === "cancelled") {
                 addCancelledAppointmentRow({
-                  id: appointment._id,
-                  patientName: appointment.name || appointment.patientId.name,
-                  appointmentTime:
-                    new Date(appointment.date).toLocaleDateString() +
-                    " " +
-                    appointment.time,
-                  phone: appointment.phone || appointment.patientId.phone,
+                  id: appointmentId,
+                  patientName,
+                  appointmentTime,
+                  phone,
                 });
               } else if (status === "missed") {
                 addMissedAppointmentRow({
-                  patientName: appointment.name || appointment.patientId.name,
-                  appointmentTime:
-                    new Date(appointment.date).toLocaleDateString() +
-                    " " +
-                    appointment.time,
-                  phone: appointment.phone || appointment.patientId.phone,
+                  id: appointmentId,
+                  patientName,
+                  appointmentTime,
+                  phone,
                 });
               } else if (status === "completed") {
                 addCompletedAppointmentRow({
-                  id: appointment._id,
-                  patientName: appointment.name || appointment.patientId.name,
-                  phone: appointment.phone || appointment.patientId.phone,
-                  appointmentTime:
-                    new Date(appointment.date).toLocaleDateString() +
-                    " " +
-                    appointment.time,
-                  feedback: feedback
-                    ? `<strong>Rating:</strong> ${feedback.rating}<br><strong>Comment:</strong> ${feedback.comment}`
-                    : "No feedback yet",
+                  id: appointmentId,
+                  patientName,
+                  appointmentTime,
+                  phone,
+                  feedback: "No feedback",
+                });
+              } else if (status === "arrived") {
+                addArrivedAppointmentRow({
+                  id: appointmentId,
+                  patientName,
+                  appointmentTime,
+                  phone,
+                  status: "Arrived ✓",
                 });
               } else {
                 addNewAppointmentRow({
-                  id: appointment._id,
-                  patientName: appointment.name || appointment.patientId.name,
-                  appointmentTime:
-                    new Date(appointment.date).toLocaleDateString() +
-                    " " +
-                    appointment.time,
-                  phone: appointment.phone || appointment.patientId.phone,
-                  status: appointment.status || "Pending",
+                  id: appointmentId,
+                  patientName,
+                  appointmentTime,
+                  phone,
+                  status: "Pending",
                 });
               }
             });
+
+            paginateTable("newAppointments");
+            paginateTable("cancelledAppointments");
+            paginateTable("completedAppointments");
+            paginateTable("missedAppointments");
+            updateTabBadges();
           })
           .catch((err) => {
-            console.error(
-              "Error fetching patient appointments or feedback:",
-              err,
-            );
+            console.error("Error fetching patient appointments:", err);
           });
       }
 
-      function loadDoctorAppointments() {
-        const doctorId = localStorage.getItem("doctorId");
-        const token = localStorage.getItem("authToken");
-
-        fetch(`http://localhost:3000/api/appointments/doctor/${doctorId}`)
-          .then((response) => {
-            if (!response.ok) throw new Error("Failed to fetch appointments");
-            return response.json();
-          })
-          .then((data) => {
-            data.forEach((appointment) => {
-              if (appointment.status === "Completed") {
-                addCompletedAppointmentRow({
-                  id: appointment._id,
-                  patientName: appointment.patientId.name,
-                  phone: appointment.patientId.phone || "N/A",
-                  appointmentTime:
-                    new Date(appointment.date).toLocaleDateString() +
-                    " " +
-                    appointment.time,
-                  feedback: appointment.feedback || "",
-                });
-              }
-            });
-          })
-          .catch((err) =>
-            console.error("Error fetching doctor appointments:", err),
-          );
-      }
-
-      function loadFromLocalStorage() {
-        const doctorId = localStorage.getItem("doctorId");
-        const cancelledAppointments =
-          JSON.parse(localStorage.getItem("cancelledAppointments")) || [];
-
-        cancelledAppointments
-          .filter((appointment) => appointment.doctorId === doctorId)
-          .forEach((appointment) => {
-            addCancelledAppointmentRow(appointment);
-          });
-      }
-
-      window.onload = function () {
-        loadFromLocalStorage();
-        loadPatientAppointments();
-        // loadDoctorAppointments();
-      };
-      function addNewAppointmentRow(appointment) {
-        const rowHTML = `<tr data-appointment-id="${appointment.id}"> 
-        <td>${appointment.patientName}</td>
-        <td>${appointment.appointmentTime}</td>
-        <td>${appointment.phone || "N/A"}</td>
-        <td>${appointment.status}</td>
-        <td>
+      function addArrivedAppointmentRow(appointment) {
+        const rowHTML = `<tr data-appointment-id="${appointment.id}" data-appointment-time="${appointment.appointmentTime}">
+          <td>${appointment.patientName}</td>
+          <td>${appointment.appointmentTime}</td>
+          <td>${appointment.phone || "N/A"}</td>
+          <td><span class="arrived-badge">✓ Arrived</span></td>
+          <td>
             <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
             <button class="btn btn-warning" onclick="markAsMissed(this)">Missed</button> 
             <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
-        </td>
-    </tr>`;
+          </td>
+        </tr>`;
+        paginationState.newAppointments.rows.push(rowHTML);
+      }
+
+      function addNewAppointmentRow(appointment) {
+        const isDeadlinePassed = checkIfDeadlinePassed(
+          appointment.appointmentTime,
+        );
+        const deadlineWarning = getDeadlineWarning(appointment.appointmentTime);
+        const timeRemaining = getTimeRemaining(appointment.appointmentTime);
+
+        const countdownHtml =
+          !isDeadlinePassed &&
+          timeRemaining &&
+          timeRemaining !== "Deadline passed"
+            ? `<span class="countdown-timer"><i class="fas fa-hourglass-half"></i> ${timeRemaining}</span>`
+            : "";
+
+        const markArrivedBtnHtml = !isDeadlinePassed
+          ? `<button class="btn btn-info" onclick="markArrived(this)">Mark Arrived</button>`
+          : `<button class="btn btn-info" disabled style="background-color:#ccc; cursor:not-allowed;">Deadline Passed</button>`;
+
+        const rowHTML = `<tr data-appointment-id="${appointment.id}" data-appointment-time="${appointment.appointmentTime}" ${isDeadlinePassed ? 'class="deadline-passed"' : ""}>
+          <td>
+            ${appointment.patientName}
+            ${deadlineWarning}
+            ${countdownHtml}
+          </td>
+          <td>${appointment.appointmentTime}</td>
+          <td>${appointment.phone || "N/A"}</td>
+          <td>${appointment.status}</td>
+          <td>
+            ${markArrivedBtnHtml}
+            <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
+            <button class="btn btn-warning" onclick="markAsMissed(this)">Missed</button> 
+            <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
+          </td>
+        </tr>`;
 
         paginationState.newAppointments.rows.push(rowHTML);
-        paginateTable("newAppointments");
-        updateTabBadges();
       }
 
       function addCancelledAppointmentRow(appointment) {
-        const formattedTime = new Date(
-          appointment.appointmentTime,
-        ).toLocaleString([], {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
         const rowHTML = `<tr data-appointment-id="${appointment.id || ""}">
-        <td>${appointment.patientName}</td>
-        <td>${formattedTime}</td>
-        <td>${appointment.phone || "N/A"}</td>
-        <td>
+          <td>${appointment.patientName}</td>
+          <td>${appointment.appointmentTime}</td>
+          <td>${appointment.phone || "N/A"}</td>
+          <td>
             <button class="btn btn-warning" onclick="rescheduleAppointment(this)">Reschedule</button>
-        </td>
-    </tr>`;
+          </td>
+        </tr>`;
         paginationState.cancelledAppointments.rows.push(rowHTML);
-        paginateTable("cancelledAppointments");
-        updateTabBadges();
       }
 
       function addCompletedAppointmentRow(appointment) {
-        const feedbackText =
-          appointment.feedback && appointment.feedback.trim() !== ""
-            ? appointment.feedback
-            : "No feedback yet";
-
         const rowHTML = `<tr data-appointment-id="${appointment.id || ""}">
-        <td>${appointment.patientName}</td>
-        <td>${appointment.appointmentTime}</td>
-        <td>${appointment.phone || "N/A"}</td>
-        <td>
-            ${feedbackText}
-        </td>
-    </tr>`;
+          <td>${appointment.patientName}</td>
+          <td>${appointment.appointmentTime}</td>
+          <td>${appointment.phone || "N/A"}</td>
+          <td>${appointment.feedback || "No feedback"}</td>
+        </tr>`;
         paginationState.completedAppointments.rows.push(rowHTML);
-        paginateTable("completedAppointments");
-        updateTabBadges(); // ADD THIS LINE
       }
-      function initializeTabs() {
-        const tabBtns = document.querySelectorAll(".tab-btn");
-        const tabContents = document.querySelectorAll(".tab-content");
 
-        tabBtns.forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const tabId = btn.getAttribute("data-tab");
+      function addMissedAppointmentRow(appointment) {
+        const rowHTML = `<tr data-appointment-id="${appointment.id || ""}">
+          <td>${appointment.patientName}</td>
+          <td>${appointment.appointmentTime}</td>
+          <td>${appointment.phone || "N/A"}</td>
+        </tr>`;
+        paginationState.missedAppointments.rows.push(rowHTML);
+      }
 
-            tabBtns.forEach((b) => b.classList.remove("active"));
-            tabContents.forEach((c) => c.classList.remove("active"));
+      function checkIfDeadlinePassed(appointmentDateTime) {
+        try {
+          const deadline = getCheckInDeadline(appointmentDateTime);
+          if (!deadline) return false;
+          const now = new Date();
+          return now >= deadline;
+        } catch (e) {
+          return false;
+        }
+      }
 
-            btn.classList.add("active");
-            document.getElementById(`tab-${tabId}`).classList.add("active");
-          });
+      function getCheckInDeadline(appointmentDateTime) {
+        try {
+          const parts = appointmentDateTime.split(" ");
+          if (parts.length < 2) return null;
+
+          const datePart = parts[0];
+          const timePart = parts.slice(1).join(" ");
+
+          let year, month, day;
+          if (datePart.includes("-")) {
+            [year, month, day] = datePart.split("-");
+          } else if (datePart.includes("/")) {
+            [month, day, year] = datePart.split("/");
+          } else {
+            return null;
+          }
+
+          let timeStr = timePart;
+          let modifier = "AM";
+          if (timeStr.includes("AM") || timeStr.includes("PM")) {
+            modifier = timeStr.includes("PM") ? "PM" : "AM";
+            timeStr = timeStr.replace("AM", "").replace("PM", "").trim();
+          }
+
+          let [hours, minutes] = timeStr.split(":");
+          hours = parseInt(hours);
+          minutes = parseInt(minutes);
+
+          if (modifier === "PM" && hours !== 12) hours += 12;
+          if (modifier === "AM" && hours === 12) hours = 0;
+
+          const appointmentDate = new Date(
+            year,
+            month - 1,
+            day,
+            hours,
+            minutes,
+          );
+          return new Date(appointmentDate.getTime() - 30 * 60 * 1000);
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function getDeadlineWarning(appointmentDateTime) {
+        try {
+          const deadline = getCheckInDeadline(appointmentDateTime);
+          if (!deadline) return "";
+
+          const now = new Date();
+          const appointmentDate = new Date(deadline.getTime() + 30 * 60 * 1000);
+
+          if (now >= deadline && now < appointmentDate) {
+            return '<span style="color: red; font-size: 12px; display: block;">⚠️ Check-in deadline passed!</span>';
+          }
+          return "";
+        } catch (e) {
+          return "";
+        }
+      }
+
+      function getTimeRemaining(appointmentDateTime) {
+        try {
+          const deadline = getCheckInDeadline(appointmentDateTime);
+          if (!deadline) return "";
+
+          const now = new Date();
+          const diff = deadline - now;
+
+          if (diff <= 0) return "Deadline passed";
+
+          const minutesLeft = Math.floor(diff / 60000);
+          const secondsLeft = Math.floor((diff % 60000) / 1000);
+
+          if (minutesLeft < 30) {
+            return `${minutesLeft}m ${secondsLeft}s remaining`;
+          }
+          return `${minutesLeft} minutes remaining`;
+        } catch (e) {
+          return "";
+        }
+      }
+
+      function markArrived(button) {
+        const row = button.closest("tr");
+        const appointmentId = row.getAttribute("data-appointment-id");
+        const appointmentTime = row.getAttribute("data-appointment-time");
+        const token = localStorage.getItem("authToken");
+        const doctorId = localStorage.getItem("doctorId");
+
+        if (checkIfDeadlinePassed(appointmentTime)) {
+          showNotification(
+            "⚠️ Check-in deadline has passed! Cannot mark arrival.",
+            "warning",
+          );
+          return;
+        }
+
+        const modal = document.getElementById("arrivedConfirmModal");
+        const warningMsg = document.getElementById("deadlineWarningMsg");
+        const timeRemaining = getTimeRemaining(appointmentTime);
+        const deadline = getCheckInDeadline(appointmentTime);
+
+        if (warningMsg && deadline) {
+          warningMsg.innerHTML = `Patient must check-in by: ${deadline.toLocaleTimeString()}<br>⏰ ${timeRemaining}`;
+        }
+
+        modal.style.display = "flex";
+
+        const confirmYes = document.getElementById("arrivedConfirmYes");
+        const confirmNo = document.getElementById("arrivedConfirmNo");
+
+        const newConfirmYes = confirmYes.cloneNode(true);
+        const newConfirmNo = confirmNo.cloneNode(true);
+        confirmYes.parentNode.replaceChild(newConfirmYes, confirmYes);
+        confirmNo.parentNode.replaceChild(newConfirmNo, confirmNo);
+
+        newConfirmYes.onclick = () => {
+          modal.style.display = "none";
+          button.disabled = true;
+          const originalText = button.innerHTML;
+          button.innerHTML = "⏳ Marking...";
+
+          fetch(
+            `http://localhost:3000/api/appointments/${appointmentId}/arrive`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                markedBy: doctorId,
+                role: "doctor",
+              }),
+            },
+          )
+            .then((response) => {
+              if (!response.ok) throw new Error("Failed to mark arrival");
+              return response.json();
+            })
+            .then(() => {
+              const statusCell = row.cells[3];
+              statusCell.innerHTML =
+                '<span class="arrived-badge">✓ Arrived</span>';
+              const actionsCell = row.cells[4];
+              actionsCell.innerHTML = `
+                <button class="btn btn-success" onclick="completeAppointment(this)">Complete</button>
+                <button class="btn btn-warning" onclick="markAsMissed(this)">Missed</button>
+                <button class="btn btn-danger" onclick="cancelAppointment(this)">Cancel</button>
+              `;
+              showNotification(
+                "✅ Patient marked as arrived successfully!",
+                "success",
+              );
+            })
+            .catch((err) => {
+              console.error("Error marking arrival:", err);
+              showNotification(
+                "❌ Failed to mark arrival: " + err.message,
+                "error",
+              );
+              button.disabled = false;
+              button.innerHTML = originalText;
+            });
+        };
+
+        newConfirmNo.onclick = () => {
+          modal.style.display = "none";
+        };
+      }
+
+      function showNotification(message, type) {
+        let notification = document.getElementById("customNotification");
+        if (!notification) {
+          notification = document.createElement("div");
+          notification.id = "customNotification";
+          notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            display: none;
+          `;
+          document.body.appendChild(notification);
+        }
+
+        notification.style.backgroundColor =
+          type === "success"
+            ? "#4CAF50"
+            : type === "warning"
+              ? "#FF9800"
+              : "#f44336";
+        notification.style.color = "white";
+        notification.textContent = message;
+        notification.style.display = "block";
+
+        setTimeout(() => {
+          notification.style.display = "none";
+        }, 3000);
+      }
+
+      setInterval(() => {
+        calculateAndDisplayCountdown();
+      }, 1000);
+
+      function calculateAndDisplayCountdown() {
+        const rows = document.querySelectorAll("#newAppointments tr");
+        rows.forEach((row) => {
+          const appointmentTime = row.getAttribute("data-appointment-time");
+          if (appointmentTime && !checkIfDeadlinePassed(appointmentTime)) {
+            const timeRemaining = getTimeRemaining(appointmentTime);
+            const firstCell = row.cells[0];
+            const oldTimer = firstCell.querySelector(".countdown-timer");
+            if (oldTimer) oldTimer.remove();
+
+            if (timeRemaining && timeRemaining !== "Deadline passed") {
+              const timerSpan = document.createElement("span");
+              timerSpan.className = "countdown-timer";
+              timerSpan.innerHTML = `<i class="fas fa-hourglass-half"></i> ${timeRemaining}`;
+              if (timeRemaining.includes("m") && parseInt(timeRemaining) < 10) {
+                timerSpan.classList.add("countdown-critical");
+              }
+              firstCell.appendChild(timerSpan);
+            }
+          }
         });
       }
-      function updateTabBadges() {
-        const newCount = document.querySelectorAll(
-          "#newAppointments tr:not(.empty-row)",
-        ).length;
-        const cancelledCount = document.querySelectorAll(
-          "#cancelledAppointments tr:not(.empty-row)",
-        ).length;
-        const completedCount = document.querySelectorAll(
-          "#completedAppointments tr:not(.empty-row)",
-        ).length;
-        const missedCount = document.querySelectorAll(
-          "#missedAppointments tr:not(.empty-row)",
-        ).length;
 
-        const newBadge = document.getElementById("newBadge");
-        const cancelledBadge = document.getElementById("cancelledBadge");
-        const completedBadge = document.getElementById("completedBadge");
-        const missedBadge = document.getElementById("missedBadge");
+      setInterval(() => {
+        const activeTab = document.querySelector(".tab-content.active");
+        if (activeTab && activeTab.id === "tab-new") {
+          loadPatientAppointments();
+        }
+      }, 30000);
 
-        if (newBadge) newBadge.textContent = newCount;
-        if (cancelledBadge) cancelledBadge.textContent = cancelledCount;
-        if (completedBadge) completedBadge.textContent = completedCount;
-        if (missedBadge) missedBadge.textContent = missedCount;
-      }
       function completeAppointment(button) {
-        const row = button.parentElement.parentElement;
-        const patientName = row.cells[0].innerText;
-        const appointmentTime = row.cells[1].innerText;
+        const row = button.closest("tr");
         const appointmentId = row.getAttribute("data-appointment-id");
         const token = localStorage.getItem("authToken");
 
-        const confirmModal = document.getElementById("confirmModal");
-        const successModal = document.getElementById("successModal");
-        const confirmYesBtn = document.getElementById("confirmYes");
-        const confirmNoBtn = document.getElementById("confirmNo");
-        const successOkBtn = document.getElementById("successOk");
-
-        confirmModal.style.display = "flex";
-
-        confirmYesBtn.onclick = null;
-        confirmNoBtn.onclick = null;
-        successOkBtn.onclick = null;
-
-        confirmYesBtn.onclick = () => {
-          confirmModal.style.display = "none";
-          const originalText = button.innerHTML;
-          button.disabled = true;
-          button.innerHTML = "Completing...";
-
+        if (
+          confirm(
+            "Are you sure you want to mark this appointment as Completed?",
+          )
+        ) {
           fetch(
             `http://localhost:3000/api/appointments/${appointmentId}/status`,
             {
@@ -1336,220 +1694,33 @@
               if (!response.ok) throw new Error("Failed to update appointment");
               return response.json();
             })
-            .then((data) => {
-              addCompletedAppointmentRow({
-                patientName,
-                appointmentTime,
-              });
-              row.remove();
-              updateLocalStorage();
-
-              successModal.style.display = "flex";
+            .then(() => {
+              showNotification(
+                "Appointment completed successfully!",
+                "success",
+              );
+              loadPatientAppointments();
             })
             .catch((err) => {
-              console.error("Error updating appointment:", err);
-              alert("Failed to update appointment. Please try again.");
+              console.error("Error:", err);
+              showNotification("Failed to complete appointment", "error");
             });
-        };
-
-        confirmNoBtn.onclick = () => {
-          confirmModal.style.display = "none";
-        };
-
-        successOkBtn.onclick = () => {
-          successModal.style.display = "none";
-        };
-      }
-
-      async function rescheduleAppointment(buttonElement) {
-        const token = localStorage.getItem("token");
-        const row = buttonElement.closest("tr");
-        const appointmentId = row.dataset.appointmentId;
-        document.getElementById("appointmentId").value = appointmentId;
-
-        // Get doctorId
-        let doctorId = row.getAttribute("data-doctor-id");
-        if (!doctorId) {
-          const doctorData = JSON.parse(localStorage.getItem("user"));
-          doctorId = doctorData?._id || localStorage.getItem("doctorId");
         }
-
-        if (!appointmentId || !doctorId) {
-          console.error("Missing appointment or doctor ID");
-          return;
-        }
-
-        try {
-          const res = await fetch(
-            `http://localhost:3000/api/doctors/${doctorId}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
-
-          if (!res.ok) throw new Error("Failed to fetch availability");
-
-          const data = await res.json();
-          const slotsData = data.availabilitySlots || [];
-
-          const select = document.getElementById("availableSlots");
-          select.innerHTML = "<option value=''>Select a slot</option>";
-
-          let slotCount = 0;
-          const now = new Date();
-
-          slotsData.forEach((day) => {
-            const dateStr = day.date.trim();
-
-            day.slots.forEach((timeStr) => {
-              const timeTrimmed = timeStr.trim();
-              let [timePart, ampm] = timeTrimmed.split(" ");
-              let [hour, minute] = timePart.split(":").map(Number);
-
-              if (ampm) {
-                ampm = ampm.toUpperCase();
-                if (ampm === "PM" && hour < 12) hour += 12;
-                if (ampm === "AM" && hour === 12) hour = 0;
-              }
-
-              const [year, month, dayNum] = dateStr.split("-").map(Number);
-              const slotDateTime = new Date(
-                year,
-                month - 1,
-                dayNum,
-                hour,
-                minute,
-              );
-
-              console.log("Parsed slotDateTime:", slotDateTime.toString());
-
-              if (slotDateTime <= now) return;
-
-              const option = document.createElement("option");
-              option.value = `${dateStr}|${timeTrimmed}`;
-              option.textContent = `${dateStr} at ${timeTrimmed}`;
-              select.appendChild(option);
-              slotCount++;
-            });
-          });
-
-          if (slotCount === 0) {
-            alert("No available slots for this doctor.");
-            return;
-          }
-          document.getElementById("rescheduleModal").style.display = "block";
-          document.body.classList.add("modal-open");
-        } catch (error) {
-          console.error("Reschedule error:", error);
-          alert("Could not load available slots.");
-        }
-      }
-      function confirmReschedule() {
-        const selectedSlot = document.getElementById("availableSlots").value;
-        const confirmBtn = document.querySelector(
-          '#rescheduleModal button[onclick="confirmReschedule()"]',
-        );
-        const originalBtnText = confirmBtn.textContent;
-        confirmBtn.disabled = true;
-        confirmBtn.textContent = "Processing...";
-        if (!selectedSlot) {
-          alert("Please select a time slot.");
-          return;
-        }
-
-        const [newDate, newTime] = selectedSlot.split("|");
-
-        const appointmentId = document.getElementById("appointmentId").value;
-        console.log("Using appointmentId in confirmReschedule:", appointmentId);
-
-        if (!appointmentId || !newDate || !newTime) {
-          alert("Missing data to reschedule.");
-          return;
-        }
-        console.log("Using appointmentId:", appointmentId);
-
-        fetch(
-          `http://localhost:3000/api/appointments/${appointmentId}/reschedule`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              newDate,
-              newTime,
-              rescheduledBy: "doctor",
-            }),
-          },
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("Reschedule response:", data);
-
-            if (data.success) {
-              alert("Appointment successfully rescheduled!");
-              document.getElementById("rescheduleModal").style.display = "none";
-              document.body.classList.remove("modal-open");
-
-              location.reload();
-            } else {
-              alert(
-                "Failed to reschedule: " + (data.message || "Unknown error"),
-              );
-            }
-          })
-          .catch((err) => {
-            console.error("Error during rescheduling:", err);
-            alert("Error occurred. Try again.");
-          });
-      }
-
-      function rescheduleFromButton(buttonElement) {
-        const appointmentId = buttonElement.getAttribute("data-appointment-id");
-        rescheduleAppointment(appointmentId);
-      }
-      function closeModal() {
-        document.getElementById("rescheduleModal").style.display = "none";
-
-        // Remove scroll lock
-        document.body.classList.remove("modal-open");
       }
 
       function cancelAppointment(button) {
         const row = button.closest("tr");
         const appointmentId = row.getAttribute("data-appointment-id");
-        const patientName = row.cells[0].innerText;
-        const appointmentTime = row.cells[1].innerText;
-        const phone = row.cells[2].innerText;
         const token = localStorage.getItem("authToken");
 
-        const confirmModal = document.getElementById("cancelConfirmModal");
-        const successModal = document.getElementById("cancelSuccessModal");
-        const yesBtn = document.getElementById("cancelConfirmYes");
-        const noBtn = document.getElementById("cancelConfirmNo");
-        const okBtn = document.getElementById("cancelSuccessOk");
-
-        confirmModal.style.display = "flex";
-
-        // Clear previous listeners
-        yesBtn.onclick = null;
-        noBtn.onclick = null;
-        okBtn.onclick = null;
-
-        yesBtn.onclick = () => {
-          confirmModal.style.display = "none";
-
-          button.disabled = true;
-          const originalText = button.textContent;
-          button.textContent = "Cancelling...";
-
+        if (confirm("Are you sure you want to cancel this appointment?")) {
           fetch(
             `http://localhost:3000/api/appointments/${appointmentId}/cancel`,
             {
               method: "PUT",
               headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({
                 status: "Cancelled",
@@ -1558,74 +1729,31 @@
             },
           )
             .then((response) => {
-              if (!response.ok) {
-                return response.json().then((err) => {
-                  throw new Error(
-                    err.message || "Failed to cancel appointment",
-                  );
-                });
-              }
+              if (!response.ok) throw new Error("Failed to cancel appointment");
               return response.json();
             })
-            .then((data) => {
-              addCancelledAppointmentRow({
-                id: appointmentId,
-                patientName,
-                appointmentTime,
-                phone,
-              });
-              row.remove();
-              updateLocalStorage();
-
-              successModal.style.display = "flex";
+            .then(() => {
+              showNotification(
+                "Appointment cancelled successfully!",
+                "success",
+              );
+              loadPatientAppointments();
             })
             .catch((err) => {
-              console.error("Error cancelling appointment:", err);
-              alert(`Error: ${err.message}`);
-            })
-            .finally(() => {
-              button.disabled = false;
-              button.textContent = originalText;
+              console.error("Error:", err);
+              showNotification("Failed to cancel appointment", "error");
             });
-        };
-
-        noBtn.onclick = () => {
-          confirmModal.style.display = "none";
-        };
-
-        okBtn.onclick = () => {
-          successModal.style.display = "none";
-        };
+        }
       }
 
       function markAsMissed(button) {
         const row = button.closest("tr");
         const appointmentId = row.getAttribute("data-appointment-id");
-        const patientName = row.cells[0].innerText;
-        const appointmentTime = row.cells[1].innerText;
-        const phone = row.cells[2].innerText;
         const token = localStorage.getItem("authToken");
 
-        // Get modal elements
-        const confirmModal = document.getElementById("missedConfirmModal");
-        const successModal = document.getElementById("missedSuccessModal");
-        const yesBtn = document.getElementById("missedConfirmYes");
-        const noBtn = document.getElementById("missedConfirmNo");
-        const okBtn = document.getElementById("missedSuccessOk");
-
-        confirmModal.style.display = "flex";
-
-        yesBtn.onclick = null;
-        noBtn.onclick = null;
-        okBtn.onclick = null;
-
-        yesBtn.onclick = () => {
-          confirmModal.style.display = "none";
-
-          const originalText = button.innerHTML;
-          button.disabled = true;
-          button.innerHTML = "Marking...";
-
+        if (
+          confirm("Are you sure you want to mark this appointment as Missed?")
+        ) {
           fetch(
             `http://localhost:3000/api/appointments/${appointmentId}/status`,
             {
@@ -1642,56 +1770,20 @@
               return response.json();
             })
             .then(() => {
-              row.remove();
-              addMissedAppointmentRow({ patientName, appointmentTime, phone });
-              updateLocalStorage();
-
-              button.disabled = false;
-              button.innerHTML = originalText;
-
-              successModal.style.display = "flex";
+              showNotification("Appointment marked as missed!", "warning");
+              loadPatientAppointments();
             })
             .catch((err) => {
-              console.error("Error marking as missed:", err);
-              alert("Failed to mark appointment as missed.");
-              button.disabled = false;
-              button.innerHTML = originalText;
+              console.error("Error:", err);
+              showNotification("Failed to mark as missed", "error");
             });
-        };
-
-        noBtn.onclick = () => {
-          confirmModal.style.display = "none";
-        };
-
-        okBtn.onclick = () => {
-          successModal.style.display = "none";
-        };
+        }
       }
-
-      function addMissedAppointmentRow(appointment) {
-        const rowHTML = `<tr data-appointment-id="${appointment.id || ""}">
-        <td>${appointment.patientName}</td>
-        <td>${appointment.appointmentTime}</td>
-        <td>${appointment.phone || "N/A"}</td>
-    </tr>`;
-
-        paginationState.missedAppointments.rows.push(rowHTML);
-
-        paginateTable("missedAppointments");
-        updateTabBadges();
-      }
-
-      const pageSize = 6;
-      const paginationState = {
-        newAppointments: { currentPage: 1, rows: [] },
-        cancelledAppointments: { currentPage: 1, rows: [] },
-        completedAppointments: { currentPage: 1, rows: [] },
-        missedAppointments: { currentPage: 1, rows: [] },
-      };
 
       function paginateTable(sectionId) {
         const state = paginationState[sectionId];
         const tableBody = document.getElementById(sectionId);
+        if (!tableBody) return;
 
         const start = (state.currentPage - 1) * pageSize;
         const end = start + pageSize;
@@ -1701,8 +1793,10 @@
         });
 
         const totalPages = Math.ceil(state.rows.length / pageSize) || 1;
-        document.getElementById(`${sectionId}PageInfo`).textContent =
-          `Page ${state.currentPage} of ${totalPages}`;
+        const pageInfo = document.getElementById(`${sectionId}PageInfo`);
+        if (pageInfo) {
+          pageInfo.textContent = `Page ${state.currentPage} of ${totalPages}`;
+        }
 
         const prevBtn = document.querySelector(
           `#${sectionId}Pagination button:first-child`,
@@ -1710,10 +1804,8 @@
         const nextBtn = document.querySelector(
           `#${sectionId}Pagination button:last-child`,
         );
-
-        prevBtn.disabled = state.currentPage === 1;
-        nextBtn.disabled = state.currentPage === totalPages;
-        updateTabBadges();
+        if (prevBtn) prevBtn.disabled = state.currentPage === 1;
+        if (nextBtn) nextBtn.disabled = state.currentPage === totalPages;
       }
 
       function nextPage(sectionId) {
@@ -1733,59 +1825,70 @@
         }
       }
 
-      function updateLocalStorage() {
-        const newAppointments = Array.from(
-          document.querySelectorAll("#newAppointments tr"),
-        ).map((row) => ({
-          patientName: row.cells[0].innerText,
-          appointmentTime: row.cells[1].innerText,
-          status: row.cells[2].innerText,
-        }));
+      function initializeTabs() {
+        const tabBtns = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
 
-        const cancelledAppointments = Array.from(
-          document.querySelectorAll("#cancelledAppointments tr"),
-        ).map((row) => ({
-          id: row.getAttribute("data-appointment-id"),
-          patientName: row.cells[0].innerText,
-          appointmentTime: row.cells[1].innerText,
-          phone: row.cells[2]?.innerText || "N/A",
-        }));
-
-        const completedAppointments = Array.from(
-          document.querySelectorAll("#completedAppointments tr"),
-        ).map((row) => ({
-          patientName: row.cells[0].innerText,
-          appointmentTime: row.cells[1].innerText,
-        }));
-
-        localStorage.setItem(
-          "newAppointments",
-          JSON.stringify(newAppointments),
-        );
-        localStorage.setItem(
-          "cancelledAppointments",
-          JSON.stringify(cancelledAppointments),
-        );
-        localStorage.setItem(
-          "completedAppointments",
-          JSON.stringify(completedAppointments),
-        );
+        tabBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const tabId = btn.getAttribute("data-tab");
+            tabBtns.forEach((b) => b.classList.remove("active"));
+            tabContents.forEach((c) => c.classList.remove("active"));
+            btn.classList.add("active");
+            document.getElementById(`tab-${tabId}`).classList.add("active");
+          });
+        });
       }
-    </script>
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
 
-    <script>
-      const socket = io("http://localhost:3000");
+      function updateTabBadges() {
+        const newCount = paginationState.newAppointments.rows.length;
+        const cancelledCount =
+          paginationState.cancelledAppointments.rows.length;
+        const completedCount =
+          paginationState.completedAppointments.rows.length;
+        const missedCount = paginationState.missedAppointments.rows.length;
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const userId = localStorage.getItem("userId");
-        const role = localStorage.getItem("userRole");
+        const tabs = document.querySelectorAll(".tab-btn");
+        if (tabs[0])
+          tabs[0].innerHTML = `New Appointments <span class="tab-badge">${newCount}</span>`;
+        if (tabs[1])
+          tabs[1].innerHTML = `Cancelled <span class="tab-badge">${cancelledCount}</span>`;
+        if (tabs[2])
+          tabs[2].innerHTML = `Completed <span class="tab-badge">${completedCount}</span>`;
+        if (tabs[3])
+          tabs[3].innerHTML = `Missed <span class="tab-badge">${missedCount}</span>`;
+      }
 
-        if (userId && role) {
-          console.log(" Reconnecting user:", userId, role);
-          socket.emit("join_user", { userId, role });
+      function filterAppointments() {
+        const searchValue = document
+          .getElementById("searchAppointments")
+          .value.toLowerCase();
+        const statusValue = document.getElementById("statusFilter").value;
+
+        if (statusValue !== "all") {
+          const tabMap = { new: 0, cancelled: 1, completed: 2, missed: 3 };
+          const tabIndex = tabMap[statusValue];
+          if (tabIndex !== undefined) {
+            document.querySelectorAll(".tab-btn")[tabIndex]?.click();
+          }
         }
-      });
+      }
+
+      document
+        .getElementById("searchAppointments")
+        .addEventListener("input", filterAppointments);
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", filterAppointments);
+
+      async function rescheduleAppointment(buttonElement) {
+        alert("Reschedule feature - implement as needed");
+      }
+
+      function closeModal() {
+        document.getElementById("rescheduleModal").style.display = "none";
+        document.body.classList.remove("modal-open");
+      }
     </script>
   </body>
 </html>

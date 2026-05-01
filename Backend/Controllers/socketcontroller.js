@@ -42,18 +42,48 @@ console.log(" Current online users:", onlineUsers);
              SEND MESSAGE
        saves DB + sends once to both users
     ---------------------------------------- */
-    socket.on("send_message", async (data) => {
-      const { senderId, receiverId } = data;
-      if (!senderId || !receiverId) return;
+    // WITH THIS:
+/* ---------------------------------------
+   SEND MESSAGE - Send to receiver only
+---------------------------------------- */
+socket.on("send_message", async (data) => {
+  const { senderId, senderRole, receiverId, receiverRole, message, timestamp, createdAt } = data;
+  
+  if (!senderId || !receiverId) return;
 
-      const chat = await Chat.create(data);
-
-      // emit to sender + receiver without duplicates
-      const recipients = new Set([senderId, receiverId]);
-      recipients.forEach((id) => io.to(id).emit("new_message", chat));
-
-      console.log(` Message from ${senderId} -> ${receiverId}`);
+  try {
+    // Save to database
+    const chat = await Chat.create({
+      senderId,
+      senderRole,
+      receiverId,
+      receiverRole,
+      message,
+      timestamp: timestamp || new Date(),
+      createdAt: createdAt || new Date(),
+      read: false
     });
+
+    // ✅ Send to receiver ONLY (not to sender)
+        io.to(senderId).emit("new_message", chat);
+
+    io.to(receiverId).emit("new_message", chat);
+    
+    // ✅ Optionally send confirmation to sender (for read receipts)
+    // io.to(senderId).emit("message_sent", { success: true, messageId: chat._id });
+
+    console.log(`📨 Message from ${senderId} to ${receiverId}`);
+  } catch (error) {
+    console.error("Error saving message:", error);
+  }
+});
+    // ADD THIS (after the join_user block):
+socket.on("join_conversation", ({ userId, otherUserId }) => {
+  if (!userId || !otherUserId) return;
+  const roomId = [userId, otherUserId].sort().join("_");
+  socket.join(roomId);
+  console.log(`Joined conversation room: ${roomId}`);
+});
 /* ---------------------------------------
    USER LOGOUT -> mark offline
 ---------------------------------------- */

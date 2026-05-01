@@ -304,12 +304,18 @@
       const msgInput = document.getElementById("msgInput");
       const sendBtn = document.getElementById("sendBtn");
 
+      // WITH THIS:
       socket.emit("join_user", { userId });
-
+      socket.emit("join_conversation", {
+        userId: userId,
+        otherUserId: adminId,
+      });
       // Load chat history
       async function loadChats() {
         try {
-          const res = await fetch(`http://localhost:3000/api/chats/${userId}`);
+          const res = await fetch(
+            `http://localhost:3000/api/chats/${userId}?role=doctor`,
+          );
           const chats = await res.json();
           chatBox.innerHTML = "";
           chats.forEach(renderMessage);
@@ -388,8 +394,13 @@
         chatBox.scrollTop = chatBox.scrollHeight;
       }
 
+      // WITH THIS:
       socket.on("new_message", (msg) => {
-        if (msg.senderId === userId || msg.receiverId === userId) {
+        const isMyConversation =
+          (msg.senderId === userId && msg.receiverId === adminId) ||
+          (msg.senderId === adminId && msg.receiverId === userId);
+
+        if (isMyConversation) {
           renderMessage(msg);
         }
       });
