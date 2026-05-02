@@ -1,0 +1,27 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# After this file is on GitHub: Render Dashboard → New → Blueprint → pick this repo.
+# Set secret env vars when prompted (MONGODB_URI, JWT/email keys if you use them).
+
+version: "1"
+
+services:
+  - type: web
+    name: doctor-appointment-api
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: .
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true

@@ -19,24 +19,26 @@ const adminRoutes = require('./routes/adminRoutes');
 const feedbackroute = require('./routes/feedbackroute');
 const bookingRoutes = require('./routes/bookingroutes'); 
 const contactRoutes = require('./routes/contact');
-const { initSocket } = require('./Controllers/socketcontroller');
-const doctorChatRoutes = require('./routes/doctorchat'); 
-const waitingListRoutes = require('./routes/waitinglistroutes'); 
+const waitingListRoutes = require('./routes/waitinglistroutes');
 const consultationRoutes = require('./routes/consultationRoutes');
-
-const chatRoutes = require('./routes/chatroutes');
+const Contact = require('./models/contact');
 const session = require('express-session');
+
+function allowedCorsOrigins() {
+  const raw = process.env.CORS_ORIGINS || process.env.FRONTEND_URL;
+  if (raw) {
+    return raw.split(',').map((s) => s.trim()).filter(Boolean);
+  }
+  return ['http://localhost:4200', 'http://localhost:5500', 'http://127.0.0.1:5500'];
+}
+
 const app = express();
 const port = process.env.PORT || 3000;
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:4200",
-      "http://localhost:5500",
-      "http://127.0.0.1:5500"
-    ],
+    origin: allowedCorsOrigins(),
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true
@@ -49,9 +51,10 @@ initializeSocket(io);
 console.log("Socket.io initialized with server");
 
 app.use(cors({
-  origin: ['http://localhost:4200', 'http://localhost:5500', 'http://127.0.0.1:5500'],
-  methods: ['GET','POST','PUT','DELETE','PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: allowedCorsOrigins(),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 app.use(express.json());
 app.use('/api/appointments', bookingRoutes);
@@ -72,10 +75,10 @@ app.use('/api/consultation', consultationRoutes);
 
 app.use(express.static(path.join(__dirname, 'Frontend')));
 app.use(session({
-  secret: 'yourSecretKey', 
+  secret: process.env.SESSION_SECRET || 'yourSecretKey',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } 
+  cookie: { secure: process.env.NODE_ENV === 'production' },
 }));
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
@@ -102,7 +105,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/contact', async (req, res) => {
-  const { email, password, phone } = req.body;
+  const { email, name, phone } = req.body;
 
   try {
       const newContact = new Contact({ email, name, phone });
