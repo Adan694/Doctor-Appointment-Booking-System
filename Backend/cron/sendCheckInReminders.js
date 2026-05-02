@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const Booking = require('../models/booking');
+const Booking = require('../models/Booking');
 const notifyAll = require('../Utils/notifyAll');
 
 // Run every 15 minutes to send reminders
