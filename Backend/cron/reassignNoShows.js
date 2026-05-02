@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const Booking = require('../models/Booking');
+const Booking = require('../models/booking');
 const { User } = require('../models/users');
 const Doctor = require('../models/doctors');
 const notifyAll = require('../Utils/notifyAll');
